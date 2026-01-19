@@ -1,0 +1,156 @@
+{
+    "hooks": [
+        {
+            "id": "question-based",
+            "label": "Question-Based Hooks",
+            "description": "Engage audience with thought-provoking questions that spark curiosity",
+            "icon": "HelpCircle",
+            "color": "text-blue-500 dark:text-blue-400",
+            "bgColor": "bg-blue-50 dark:bg-blue-950/30"
+        },
+        {
+            "id": "shock-surprise",
+            "label": "Shock & Surprise Hooks",
+            "description": "Capture attention with unexpected facts or statements",
+            "icon": "Zap",
+            "color": "text-yellow-500 dark:text-yellow-400",
+            "bgColor": "bg-yellow-50 dark:bg-yellow-950/30"
+        },
+        {
+            "id": "controversial-polarizing",
+            "label": "Controversial & Polarizing Hooks",
+            "description": "Start discussions with thought-provoking perspectives",
+            "icon": "Flame",
+            "color": "text-orange-500 dark:text-orange-400",
+            "bgColor": "bg-orange-50 dark:bg-orange-950/30"
+        },
+        {
+            "id": "emotional-appeal",
+            "label": "Emotional Appeal Hooks",
+            "description": "Connect through powerful emotional resonance",
+            "icon": "Heart",
+            "color": "text-red-500 dark:text-red-400",
+            "bgColor": "bg-red-50 dark:bg-red-950/30"
+        },
+        {
+            "id": "relatable-humor",
+            "label": "Relatable & Humor Hooks",
+            "description": "Build connection through shared experiences and humor",
+            "icon": "SmilePlus",
+            "color": "text-pink-500 dark:text-pink-400",
+            "bgColor": "bg-pink-50 dark:bg-pink-950/30"
+        },
+        {
+            "id": "pov",
+            "label": "POV (Point-of-View) Hooks",
+            "description": "Share unique perspectives and personal insights",
+            "icon": "Eye",
+            "color": "text-purple-500 dark:text-purple-400",
+            "bgColor": "bg-purple-50 dark:bg-purple-950/30"
+        },
+        {
+            "id": "trend-based",
+            "label": "Trend-Based Hooks",
+            "description": "Leverage current trends and viral topics",
+            "icon": "TrendingUp",
+            "color": "text-green-500 dark:text-green-400",
+            "bgColor": "bg-green-50 dark:bg-green-950/30"
+        },
+        {
+            "id": "challenge-dare",
+            "label": "Challenge & Dare Hooks",
+            "description": "Motivate through challenges and calls to action",
+            "icon": "Target",
+            "color": "text-indigo-500 dark:text-indigo-400",
+            "bgColor": "bg-indigo-50 dark:bg-indigo-950/30"
+        },
+        {
+            "id": "transformation",
+            "label": "Transformation & Before/After Hooks",
+            "description": "Showcase dramatic changes and results",
+            "icon": "Sparkles",
+            "color": "text-violet-500 dark:text-violet-400",
+            "bgColor": "bg-violet-50 dark:bg-violet-950/30"
+        },
+        {
+            "id": "storytelling",
+            "label": "Storytelling & Narrative Hooks",
+            "description": "Engage through compelling stories and narratives",
+            "icon": "ScrollText",
+            "color": "text-amber-500 dark:text-amber-400",
+            "bgColor": "bg-amber-50 dark:bg-amber-950/30"
+        },
+        {
+            "id": "list-countdown",
+            "label": "List & Countdown Hooks",
+            "description": "Organize information in engaging list format",
+            "icon": "ListOrdered",
+            "color": "text-cyan-500 dark:text-cyan-400",
+            "bgColor": "bg-cyan-50 dark:bg-cyan-950/30"
+        },
+        {
+            "id": "how-to-tutorial",
+            "label": "How-To & Tutorial Hooks",
+            "description": "Guide audience with step-by-step instructions",
+            "icon": "GraduationCap",
+            "color": "text-teal-500 dark:text-teal-400",
+            "bgColor": "bg-teal-50 dark:bg-teal-950/30"
+        },
+        {
+            "id": "problem-solution",
+            "label": "Problem-Solution & Advice Hooks",
+            "description": "Address pain points with practical solutions",
+            "icon": "BrainCircuit",
+            "color": "text-lime-500 dark:text-lime-400",
+            "bgColor": "bg-lime-50 dark:bg-lime-950/30"
+        },
+        {
+            "id": "secret-mystery",
+            "label": "Secret & Mystery Hooks",
+            "description": "Intrigue audience with hidden insights",
+            "icon": "Lock",
+            "color": "text-rose-500 dark:text-rose-400",
+            "bgColor": "bg-rose-50 dark:bg-rose-950/30"
+        },
+        {
+            "id": "direct-address",
+            "label": "Direct Address & Call-Out Hooks",
+            "description": "Personally engage with your audience",
+            "icon": "Users",
+            "color": "text-sky-500 dark:text-sky-400",
+            "bgColor": "bg-sky-50 dark:bg-sky-950/30"
+        },
+        {
+            "id": "fear-warning",
+            "label": "Fear & Warning Hooks",
+            "description": "Alert audience to potential risks or mistakes",
+            "icon": "AlertTriangle",
+            "color": "text-red-600 dark:text-red-400",
+            "bgColor": "bg-red-50 dark:bg-red-950/30"
+        },
+        {
+            "id": "aspirational",
+            "label": "Aspirational & Future-Pacing Hooks",
+            "description": "Inspire with future possibilities and goals",
+            "icon": "Rocket",
+            "color": "text-fuchsia-500 dark:text-fuchsia-400",
+            "bgColor": "bg-fuchsia-50 dark:bg-fuchsia-950/30"
+        },
+        {
+            "id": "statistical",
+            "label": "Statistical & Factual Hooks",
+            "description": "Support claims with data and research",
+            "icon": "LineChart",
+            "color": "text-emerald-500 dark:text-emerald-400",
+            "bgColor": "bg-emerald-50 dark:bg-emerald-950/30"
+        },
+        {
+            "id": "visual-pattern",
+            "label": "Visual & Pattern-Interrupt Hooks",
+            "description": "Break patterns with striking visuals",
+            "icon": "ImagePlus",
+            "color": "text-blue-600 dark:text-blue-400",
+            "bgColor": "bg-blue-50 dark:bg-blue-950/30"
+        }
+    ]
+}

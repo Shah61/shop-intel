@@ -1,0 +1,164 @@
+{
+    "storyboards": [
+        {
+            "id": "problem-solution",
+            "label": "Problem → Solution",
+            "description": "Present a relatable problem and provide the solution",
+            "icon": "BrainCircuit",
+            "color": "text-blue-500 dark:text-blue-400",
+            "bgColor": "bg-blue-50 dark:bg-blue-950/30"
+        },
+        {
+            "id": "before-after",
+            "label": "Before vs After (Transformation)",
+            "description": "Showcase dramatic transformations and results",
+            "icon": "Sparkles",
+            "color": "text-purple-500 dark:text-purple-400",
+            "bgColor": "bg-purple-50 dark:bg-purple-950/30"
+        },
+        {
+            "id": "step-by-step",
+            "label": "Step-by-Step Guide / Tutorial",
+            "description": "Break down complex processes into easy steps",
+            "icon": "GraduationCap",
+            "color": "text-green-500 dark:text-green-400",
+            "bgColor": "bg-green-50 dark:bg-green-950/30"
+        },
+        {
+            "id": "pov-story",
+            "label": "POV Story (First-Person Angle)",
+            "description": "Share personal experiences from your perspective",
+            "icon": "Eye",
+            "color": "text-indigo-500 dark:text-indigo-400",
+            "bgColor": "bg-indigo-50 dark:bg-indigo-950/30"
+        },
+        {
+            "id": "relatable-skit",
+            "label": "Relatable Skit (Everyday Situation)",
+            "description": "Act out common scenarios your audience faces",
+            "icon": "Drama",
+            "color": "text-pink-500 dark:text-pink-400",
+            "bgColor": "bg-pink-50 dark:bg-pink-950/30"
+        },
+        {
+            "id": "time-lapse",
+            "label": "Time-Lapse Journey",
+            "description": "Compress long processes into engaging quick views",
+            "icon": "Timer",
+            "color": "text-orange-500 dark:text-orange-400",
+            "bgColor": "bg-orange-50 dark:bg-orange-950/30"
+        },
+        {
+            "id": "testimonial-review",
+            "label": "Testimonial / Review Format",
+            "description": "Share honest reviews and testimonials",
+            "icon": "Star",
+            "color": "text-yellow-500 dark:text-yellow-400",
+            "bgColor": "bg-yellow-50 dark:bg-yellow-950/30"
+        },
+        {
+            "id": "expectation-reality",
+            "label": "Expectation vs Reality",
+            "description": "Contrast what people expect vs what actually happens",
+            "icon": "Contrast",
+            "color": "text-red-500 dark:text-red-400",
+            "bgColor": "bg-red-50 dark:bg-red-950/30"
+        },
+        {
+            "id": "countdown-list",
+            "label": "Countdown or List (Top 3, Top 5, etc.)",
+            "description": "Organize content in numbered countdown format",
+            "icon": "ListOrdered",
+            "color": "text-cyan-500 dark:text-cyan-400",
+            "bgColor": "bg-cyan-50 dark:bg-cyan-950/30"
+        },
+        {
+            "id": "myth-busting",
+            "label": "Myth Busting / Fact-Checking",
+            "description": "Debunk common misconceptions with facts",
+            "icon": "Shield",
+            "color": "text-emerald-500 dark:text-emerald-400",
+            "bgColor": "bg-emerald-50 dark:bg-emerald-950/30"
+        },
+        {
+            "id": "challenge-completion",
+            "label": "Challenge Completion (Start to Finish)",
+            "description": "Document the entire journey of completing a challenge",
+            "icon": "Target",
+            "color": "text-violet-500 dark:text-violet-400",
+            "bgColor": "bg-violet-50 dark:bg-violet-950/30"
+        },
+        {
+            "id": "behind-scenes",
+            "label": "Behind the Scenes",
+            "description": "Show the process behind your content or work",
+            "icon": "Camera",
+            "color": "text-amber-500 dark:text-amber-400",
+            "bgColor": "bg-amber-50 dark:bg-amber-950/30"
+        },
+        {
+            "id": "day-in-life",
+            "label": "Day in My Life / Routine",
+            "description": "Share your daily routines and lifestyle",
+            "icon": "Clock",
+            "color": "text-teal-500 dark:text-teal-400",
+            "bgColor": "bg-teal-50 dark:bg-teal-950/30"
+        },
+        {
+            "id": "unboxing-reveal",
+            "label": "Unboxing / Reveal",
+            "description": "Build anticipation with product reveals and unboxings",
+            "icon": "Package",
+            "color": "text-rose-500 dark:text-rose-400",
+            "bgColor": "bg-rose-50 dark:bg-rose-950/30"
+        },
+        {
+            "id": "comparison",
+            "label": "Comparison (A vs B)",
+            "description": "Compare two products, methods, or options side by side",
+            "icon": "Scale",
+            "color": "text-sky-500 dark:text-sky-400",
+            "bgColor": "bg-sky-50 dark:bg-sky-950/30"
+        },
+        {
+            "id": "voiceover-visual",
+            "label": "Voiceover with Visual Actions",
+            "description": "Narrate while showing visual demonstrations",
+            "icon": "Mic",
+            "color": "text-fuchsia-500 dark:text-fuchsia-400",
+            "bgColor": "bg-fuchsia-50 dark:bg-fuchsia-950/30"
+        },
+        {
+            "id": "screen-recording",
+            "label": "Screen Recording with Narration",
+            "description": "Capture screen activities with explanatory narration",
+            "icon": "Monitor",
+            "color": "text-lime-500 dark:text-lime-400",
+            "bgColor": "bg-lime-50 dark:bg-lime-950/30"
+        },
+        {
+            "id": "qa-format",
+            "label": "Q&A / You Asked, I Answer",
+            "description": "Address audience questions in dedicated Q&A format",
+            "icon": "HelpCircle",
+            "color": "text-blue-600 dark:text-blue-400",
+            "bgColor": "bg-blue-50 dark:bg-blue-950/30"
+        },
+        {
+            "id": "reaction-commentary",
+            "label": "Reaction + Commentary (Duet, Stitch, etc.)",
+            "description": "React to and comment on existing content",
+            "icon": "MessageSquare",
+            "color": "text-red-600 dark:text-red-400",
+            "bgColor": "bg-red-50 dark:bg-red-950/30"
+        },
+        {
+            "id": "mini-storytelling",
+            "label": "Mini Storytelling (Beginning → Conflict → Resolution)",
+            "description": "Tell complete stories with clear narrative structure",
+            "icon": "ScrollText",
+            "color": "text-purple-600 dark:text-purple-400",
+            "bgColor": "bg-purple-50 dark:bg-purple-950/30"
+        }
+    ]
+}

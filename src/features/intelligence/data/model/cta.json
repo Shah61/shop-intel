@@ -1,0 +1,164 @@
+{
+    "ctas": [
+        {
+            "id": "like-agree",
+            "label": "Like if you agree",
+            "description": "Encourage likes through agreement and validation",
+            "icon": "Heart",
+            "color": "text-red-500 dark:text-red-400",
+            "bgColor": "bg-red-50 dark:bg-red-950/30"
+        },
+        {
+            "id": "comment-thoughts",
+            "label": "Comment your thoughts",
+            "description": "Invite audience to share their opinions and experiences",
+            "icon": "MessageCircle",
+            "color": "text-blue-500 dark:text-blue-400",
+            "bgColor": "bg-blue-50 dark:bg-blue-950/30"
+        },
+        {
+            "id": "follow-tips",
+            "label": "Follow for more tips",
+            "description": "Build following by promising valuable future content",
+            "icon": "UserPlus",
+            "color": "text-green-500 dark:text-green-400",
+            "bgColor": "bg-green-50 dark:bg-green-950/30"
+        },
+        {
+            "id": "share-friend",
+            "label": "Share with a friend",
+            "description": "Expand reach through friend-to-friend recommendations",
+            "icon": "Share",
+            "color": "text-purple-500 dark:text-purple-400",
+            "bgColor": "bg-purple-50 dark:bg-purple-950/30"
+        },
+        {
+            "id": "save-later",
+            "label": "Save this for later",
+            "description": "Encourage saves for future reference and revisits",
+            "icon": "Bookmark",
+            "color": "text-yellow-500 dark:text-yellow-400",
+            "bgColor": "bg-yellow-50 dark:bg-yellow-950/30"
+        },
+        {
+            "id": "try-today",
+            "label": "Try this today",
+            "description": "Create urgency for immediate action and implementation",
+            "icon": "Play",
+            "color": "text-orange-500 dark:text-orange-400",
+            "bgColor": "bg-orange-50 dark:bg-orange-950/30"
+        },
+        {
+            "id": "tag-someone",
+            "label": "Tag someone who needs this",
+            "description": "Increase reach by encouraging user tagging",
+            "icon": "AtSign",
+            "color": "text-pink-500 dark:text-pink-400",
+            "bgColor": "bg-pink-50 dark:bg-pink-950/30"
+        },
+        {
+            "id": "link-bio",
+            "label": "Check the link in bio",
+            "description": "Drive traffic to external links and resources",
+            "icon": "ExternalLink",
+            "color": "text-indigo-500 dark:text-indigo-400",
+            "bgColor": "bg-indigo-50 dark:bg-indigo-950/30"
+        },
+        {
+            "id": "dm-details",
+            "label": "DM me for details",
+            "description": "Generate private conversations and lead generation",
+            "icon": "Mail",
+            "color": "text-cyan-500 dark:text-cyan-400",
+            "bgColor": "bg-cyan-50 dark:bg-cyan-950/30"
+        },
+        {
+            "id": "watch-part2",
+            "label": "Watch part 2",
+            "description": "Create content series and increase view time",
+            "icon": "ArrowRight",
+            "color": "text-teal-500 dark:text-teal-400",
+            "bgColor": "bg-teal-50 dark:bg-teal-950/30"
+        },
+        {
+            "id": "subscribe-content",
+            "label": "Subscribe for more content",
+            "description": "Build subscriber base with content promises",
+            "icon": "Bell",
+            "color": "text-red-600 dark:text-red-400",
+            "bgColor": "bg-red-50 dark:bg-red-950/30"
+        },
+        {
+            "id": "what-would-you-do",
+            "label": "What would you do?",
+            "description": "Spark discussion with hypothetical scenarios",
+            "icon": "HelpCircle",
+            "color": "text-violet-500 dark:text-violet-400",
+            "bgColor": "bg-violet-50 dark:bg-violet-950/30"
+        },
+        {
+            "id": "double-tap-helped",
+            "label": "Double tap if this helped",
+            "description": "Encourage quick engagement through double-tap likes",
+            "icon": "Zap",
+            "color": "text-amber-500 dark:text-amber-400",
+            "bgColor": "bg-amber-50 dark:bg-amber-950/30"
+        },
+        {
+            "id": "join-challenge",
+            "label": "Join the challenge",
+            "description": "Build community through shared challenges",
+            "icon": "Trophy",
+            "color": "text-emerald-500 dark:text-emerald-400",
+            "bgColor": "bg-emerald-50 dark:bg-emerald-950/30"
+        },
+        {
+            "id": "snap-screenshot",
+            "label": "Snap a screenshot",
+            "description": "Encourage content sharing through screenshots",
+            "icon": "Camera",
+            "color": "text-rose-500 dark:text-rose-400",
+            "bgColor": "bg-rose-50 dark:bg-rose-950/30"
+        },
+        {
+            "id": "bookmark-trick",
+            "label": "Bookmark this trick",
+            "description": "Promote saves for useful tips and tutorials",
+            "icon": "BookmarkPlus",
+            "color": "text-sky-500 dark:text-sky-400",
+            "bgColor": "bg-sky-50 dark:bg-sky-950/30"
+        },
+        {
+            "id": "let-know-worked",
+            "label": "Let me know if this worked",
+            "description": "Build feedback loop and community engagement",
+            "icon": "CheckCircle",
+            "color": "text-green-600 dark:text-green-400",
+            "bgColor": "bg-green-50 dark:bg-green-950/30"
+        },
+        {
+            "id": "recreate-tag",
+            "label": "Recreate this and tag me",
+            "description": "Encourage user-generated content and tags",
+            "icon": "Repeat",
+            "color": "text-fuchsia-500 dark:text-fuchsia-400",
+            "bgColor": "bg-fuchsia-50 dark:bg-fuchsia-950/30"
+        },
+        {
+            "id": "want-more-like-this",
+            "label": "Want more like this?",
+            "description": "Gauge interest for similar future content",
+            "icon": "ThumbsUp",
+            "color": "text-lime-500 dark:text-lime-400",
+            "bgColor": "bg-lime-50 dark:bg-lime-950/30"
+        },
+        {
+            "id": "changed-life-try",
+            "label": "This changed my life – try it",
+            "description": "Create strong social proof through personal testimonial",
+            "icon": "Sparkles",
+            "color": "text-purple-600 dark:text-purple-400",
+            "bgColor": "bg-purple-50 dark:bg-purple-950/30"
+        }
+    ]
+}
