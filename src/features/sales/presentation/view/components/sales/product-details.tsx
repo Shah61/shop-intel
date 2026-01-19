@@ -867,7 +867,7 @@ const ProductDetailsScreen = ({ productID }: ProductDetailsScreenProps) => {
                       <SelectValue placeholder="Select currency" />
                     </SelectTrigger>
                     <SelectContent>
-                      {countries?.countries?.map((country) => (
+                      {countries?.countries?.map((country: Country) => (
                         <SelectItem key={country.id} value={country.currency || ''}>
                           {country.currency} - {country.name}
                         </SelectItem>

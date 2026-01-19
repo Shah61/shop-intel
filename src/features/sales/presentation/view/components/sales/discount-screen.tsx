@@ -88,8 +88,8 @@ const DiscountScreen = () => {
     has_previous?: boolean;
   } = discountsData 
     ? 'metadata' in discountsData 
-      ? discountsData.metadata 
-      : discountsData.data?.metadata || {}
+      ? (discountsData.metadata as typeof metadata)
+      : ((discountsData.data?.metadata || {}) as typeof metadata)
     : {}
 
   // Format date helper
@@ -351,7 +351,7 @@ const DiscountScreen = () => {
                 {metadata.total && ` (${metadata.total} total)`}
               </span>
               {/* Show buttons when there are multiple pages */}
-              {(metadata.total_pages > 1) && (
+              {(metadata.total_pages && metadata.total_pages > 1) && (
                 <>
                   <Button
                     variant="outline"

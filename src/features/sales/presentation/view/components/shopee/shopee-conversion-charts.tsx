@@ -123,7 +123,7 @@ export function ShopeeConversionCharts() {
         };
         
         const months = quarterMonths[quarter as keyof typeof quarterMonths] || [0, 1, 2];
-        const data = [];
+        const data: any[] = [];
         
         // Different base values for different quarters and years
         const yearMultiplier = year === 2023 ? 0.8 : year === 2025 ? 1.3 : 1.0;

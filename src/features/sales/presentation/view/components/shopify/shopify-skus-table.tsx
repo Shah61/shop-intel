@@ -20,7 +20,7 @@ import { Badge } from "@/components/ui/badge";
 import { SkuEntity } from "@/src/features/sales/data/model/sku-entity";
 import { formatCurrency, formatDateToMMDDYYYY, isAdmin } from "@/src/core/constant/helper";
 import { ArrowRightIcon } from "lucide-react";
-import { skuData } from "@/src/features/sales/data/services/sku-api.service";
+import { getSkuData } from "@/src/features/sales/data/services/sku-api.service";
 import { useRouter } from "next/navigation";
 import { ShopifySku, ShopifyStock } from "@/src/features/sales/data/model/shopify-entity";
 import { useSession } from "@/src/core/lib/dummy-session-provider";
