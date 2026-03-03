@@ -1,13 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Input } from "@/components/ui/input";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from "@/components/ui/table";
 import {
     TrendingUp,
     DollarSign,
@@ -49,7 +43,7 @@ import {
     ComposedChart
 } from "recharts";
 import DataCard from "@/src/core/shared/view/components/data-card";
-import { TiktokConversionCharts } from "../components/tiktok/tiktok-conversion-charts";
+import { PageHeader, PageSection } from "@/src/core/shared/view/components/page-section";
 import ShopeeConversionTable from "../components/shopee/shopee-conversion-table";
 import { ShopeeConversionCharts } from "../components/shopee/shopee-conversion-charts";
 import { ShopeeTrafficCharts } from "../components/shopee/shopee-traffic-charts";
@@ -195,7 +189,7 @@ const ShopeeDashboardScreen = () => {
         },
         {
             title: "Conversion Rate",
-            value: metadata?.conversionRate.toFixed(2) || 0,
+            value: (metadata?.conversionRate ?? 0).toFixed(2),
             change: "+0.5%",
             trending: "up",
             icon: <Percent className="h-5 w-5 text-orange-500" />,
@@ -205,79 +199,90 @@ const ShopeeDashboardScreen = () => {
     ];
 
 
+    const mainTabs = [
+        { id: "overview", label: "Overview" },
+        { id: "campaigns", label: "Conversion" },
+        { id: "skus", label: "SKUs" },
+    ];
+    const timeframePills = [
+        { value: AnalysisTimeFrame.DAILY, label: "Daily" },
+        { value: AnalysisTimeFrame.WEEKLY, label: "Weekly" },
+        { value: AnalysisTimeFrame.MONTHLY, label: "Monthly" },
+        { value: AnalysisTimeFrame.YEARLY, label: "Yearly" },
+    ];
+
     return (
-        <div className="flex flex-col items-start gap-4 w-full">
-            <div className="flex flex-col sm:flex-row w-full justify-between items-start sm:items-center space-y-2 sm:space-y-0">
-                <div>
-                    <h2 className="text-2xl font-bold">Shopee Financial Dashboard</h2>
-                    <p className="text-muted-foreground">Track your Shopee store's performance and revenue</p>
-                </div>
+        <div className="space-y-8 w-full">
+            <PageHeader
+                title="Shopee"
+                description="Track your Shopee store performance, conversion, and SKUs."
+                actions={
+                    <div className="flex items-center gap-2">
+                        <DatePicker date={startDate} onSelect={setStartDate} placeholder="Start date" />
+                        <DatePicker date={endDate} onSelect={setEndDate} placeholder="End date" />
+                    </div>
+                }
+            />
 
-                <div className="flex items-center gap-2">
-                    <DatePicker
-                        date={startDate}
-                        onSelect={setStartDate}
-                        placeholder="Start date"
-                    />
-                    <DatePicker
-                        date={endDate}
-                        onSelect={setEndDate}
-                        placeholder="End date"
-                    />
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                <div className="rounded-2xl border border-border bg-white dark:bg-card p-1.5 shadow-sm w-fit">
+                    <div className="flex gap-1">
+                        {mainTabs.map((tab) => (
+                            <button
+                                key={tab.id}
+                                onClick={() => setActiveTab(tab.id)}
+                                className={`px-5 py-2.5 text-sm font-medium rounded-xl transition-all ${activeTab === tab.id ? "bg-foreground text-background shadow-sm" : "text-muted-foreground hover:text-foreground hover:bg-accent/60"}`}
+                            >
+                                {tab.label}
+                            </button>
+                        ))}
+                    </div>
                 </div>
-
+                {activeTab === "overview" && (
+                    <div className="flex items-center gap-2 bg-white dark:bg-card rounded-xl border border-border p-1 shadow-sm">
+                        {timeframePills.map((tf) => (
+                            <button
+                                key={tf.value}
+                                onClick={() => setTimeframe(tf.value as AnalysisTimeFrame)}
+                                className={`px-4 py-2 text-[13px] font-medium rounded-lg transition-all ${timeframe === tf.value ? "bg-foreground text-background" : "text-muted-foreground hover:bg-accent/50"}`}
+                            >
+                                {tf.label}
+                            </button>
+                        ))}
+                    </div>
+                )}
             </div>
 
-            <Tabs defaultValue="overview" value={activeTab} onValueChange={setActiveTab} className="w-full">
-                <div className="flex md:flex-row flex-col w-full justify-between md:items-center items-start gap-4 mb-4">
-                    <Tabs value={activeTab} onValueChange={setActiveTab} className="w-auto">
-                        <TabsList>
-                            <TabsTrigger value="overview">Overview</TabsTrigger>
-                            <TabsTrigger value="campaigns">Conversion</TabsTrigger>
-                            <TabsTrigger value="skus">SKUs</TabsTrigger>
-                        </TabsList>
-                    </Tabs>
-
-                    {
-                        activeTab === "overview" && (
-                            <Tabs value={timeframe} onValueChange={(value: string) => setTimeframe(value as AnalysisTimeFrame)} className="w-fit">
-                                <TabsList>
-                                    <TabsTrigger value={AnalysisTimeFrame.DAILY}>Daily</TabsTrigger>
-                                    <TabsTrigger value={AnalysisTimeFrame.WEEKLY}>Weekly</TabsTrigger>
-                                    <TabsTrigger value={AnalysisTimeFrame.MONTHLY}>Monthly</TabsTrigger>
-                                    <TabsTrigger value={AnalysisTimeFrame.YEARLY}>Yearly</TabsTrigger>
-                                </TabsList>
-                            </Tabs>
-                        )
-                    }
-                </div>
-
-                <TabsContent value="overview" className="space-y-4 w-full">
-                    {/* Financial Overview Cards */}
+            {activeTab === "overview" && (
+                <div className="space-y-8 w-full">
+                    <PageSection title="Key metrics" description={getDataDescription(timeframe)}>
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                         {isLoadingMetadata ? (
                             Array(4).fill(0).map((_, index) => (
-                                <div key={index} className="rounded-lg border p-4 flex flex-col space-y-3">
-                                    <div className="h-5 w-1/3 bg-gray-200 animate-pulse rounded"></div>
-                                    <div className="h-8 w-1/2 bg-gray-200 animate-pulse rounded"></div>
-                                    <div className="h-4 w-1/4 bg-gray-200 animate-pulse rounded"></div>
+                                <div key={index} className="rounded-2xl border border-border p-5 flex flex-col space-y-3 bg-white dark:bg-card">
+                                    <div className="h-5 w-1/3 bg-muted animate-pulse rounded" />
+                                    <div className="h-8 w-1/2 bg-muted animate-pulse rounded" />
+                                    <div className="h-4 w-1/4 bg-muted animate-pulse rounded" />
                                 </div>
                             ))
                         ) : (
                             financialMetrics.map((metric, index) => (
-                                <DataCard key={index}
+                                <DataCard
+                                    key={index}
                                     icon={metric.icon}
                                     title={metric.title}
-                                    value={metric.value as any}
-                                    trending={metric.trending as any}
+                                    value={metric.value as string | number}
+                                    trending={metric.trending as "up" | "down"}
                                     change={metric.change}
                                     description={metric.description}
+                                    variant="orange"
                                 />
                             ))
                         )}
-
                     </div>
+                    </PageSection>
 
+                    <PageSection title="Conversion & charts" description="Conversion trends and recent data.">
                     <div className="grid grid-cols-1 lg:grid-cols-8 gap-4 w-full h-full">
                         <div className="md:col-span-5 col-span-6 h-full w-full">
                             <ShopeeConversionCharts />
@@ -293,34 +298,29 @@ const ShopeeDashboardScreen = () => {
                             />
                         </div>
                     </div>
-                    <div className="space-y-4 w-full">
-                        <ShopeeSkusTable skus={skus || []} onSelectTap={() => {
-                            setActiveTab("skus")
-                        }} selectedTab={activeTab} />
-                    </div>
-                </TabsContent>
+                    </PageSection>
+                    <PageSection title="SKUs" description="Product SKU performance.">
+                    <ShopeeSkusTable skus={skus || []} onSelectTap={() => setActiveTab("skus")} selectedTab={activeTab} />
+                    </PageSection>
+                </div>
+            )}
 
-                <TabsContent value="campaigns" className="space-y-4 w-full">
-                    <ShopeeConversionTable
-                        conversionRate={allConversionRates}
-                        onSelectTap={() => {
-                            setActiveTab("campaigns")
-                        }}
-                        selectedTab={activeTab}
-                        onLoadMore={decrementDateRange}
-                    />
-                </TabsContent>
+            {activeTab === "campaigns" && (
+                <PageSection title="Conversion data" description="Full conversion table.">
+                <ShopeeConversionTable
+                    conversionRate={allConversionRates}
+                    onSelectTap={() => setActiveTab("campaigns")}
+                    selectedTab={activeTab}
+                    onLoadMore={decrementDateRange}
+                />
+                </PageSection>
+            )}
 
-                <TabsContent value="skus" className="space-y-4 w-full">
-                    <ShopeeSkusTable
-                        skus={skus || []}
-                        onSelectTap={() => {
-                            setActiveTab("skus")
-                        }}
-                        selectedTab={activeTab}
-                    />
-                </TabsContent>
-            </Tabs>
+            {activeTab === "skus" && (
+                <PageSection title="SKUs" description="Product SKU list.">
+                <ShopeeSkusTable skus={skus || []} onSelectTap={() => setActiveTab("skus")} selectedTab={activeTab} />
+                </PageSection>
+            )}
         </div>
     );
 };

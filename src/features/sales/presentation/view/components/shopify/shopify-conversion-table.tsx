@@ -1,25 +1,9 @@
-import {
-    Card,
-    CardHeader,
-    CardTitle,
-    CardDescription,
-    CardContent
-} from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import {
-    Table,
-    TableHeader,
-    TableBody,
-    TableRow,
-    TableCell,
-    TableHead
-} from "@/components/ui/table";
-import { Badge } from "@/components/ui/badge";
-import { ConversionEntity } from "@/src/features/sales/data/model/conversion-entity";
 import { formatCurrency, formatDateToMMDDYYYY, isAdmin } from "@/src/core/constant/helper";
 import { ArrowRightIcon } from "lucide-react";
 import { ShopifyConversionRate } from "@/src/features/sales/data/model/shopify-entity";
 import { useSession } from "@/src/core/lib/dummy-session-provider";
+import { DashboardPanel } from "@/src/core/shared/view/components/dashboard-panel";
 
 
 // const conversionData: ConversionEntity[] = [
@@ -47,74 +31,42 @@ const ShopifyConversionTable = (
     const { data: session } = useSession()
     const isUserAdmin = isAdmin(session?.user_entity || {})
 
+    const rows = selectedTab === "campaigns" ? conversionRate : conversionRate.slice(0, 7);
+
     return (
-        <Card className="hover:shadow-lg transition-shadow h-full w-full">
-            <CardHeader>
-                <CardTitle className="flex items-center justify-between">
-                    <div className="flex flex-col items-start">
-                        <p className="text-lg font-bold">List Conversion</p>
-                        <p className="text-sm text-muted-foreground font-normal">Conversion rate for each date</p>
-                    </div>
-
-                    {
-                        selectedTab !== "campaigns" && (
-                            <Button
-                                variant="ghost"
-                                size="sm"
-                                onClick={onSelectTap}
-                            >
-                                <span className="hidden md:inline-block">View All</span>
-                                <ArrowRightIcon className="h-4 w-4" />
-                            </Button>
-                        )
-                    }
-                </CardTitle>
-
-            </CardHeader>
-            <CardContent>
-                <Table>
-                    <TableHeader>
-                        <TableRow>
-                            <TableHead>Date</TableHead>
-                            <TableHead>Revenus</TableHead>
-                            <TableHead>Orders</TableHead>
-                            {/* <TableHead>Conversion</TableHead> */}
-                        </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                        {selectedTab === "campaigns" ? (
-                            conversionRate.map((conversion) => (
-                                <TableRow key={conversion.date}>
-                                    <TableCell className="font-medium">{formatDateToMMDDYYYY(conversion.date)}</TableCell>
-                                    <TableCell>{formatCurrency(conversion.total_revenues)}</TableCell>
-                                    <TableCell>{conversion.total_orders}</TableCell>
-
-                                    {/* <TableCell>
-                                        <Badge variant={conversion.conversion_rate <= 20 ? "default" : "secondary"}>
-                                            {conversion.conversion_rate}
-                                        </Badge>
-                                    </TableCell> */}
-                                </TableRow>
-                            ))
-                        ) : (
-                            conversionRate.slice(0, 7).map((conversion) => (
-                                <TableRow key={conversion.date}>
-                                    <TableCell className="font-medium">{formatDateToMMDDYYYY(conversion.date)}</TableCell>
-                                    <TableCell>{formatCurrency(conversion.total_revenues)}</TableCell>
-                                    <TableCell>{conversion.total_orders}</TableCell>
-
-                                    {/* <TableCell>
-                                        <Badge variant={conversion.conversion_rate <= 20 ? "default" : "secondary"}>
-                                            {conversion.conversion_rate}
-                                        </Badge>
-                                    </TableCell> */}
-                                </TableRow>
-                            ))
-                        )}
-                    </TableBody>
-                </Table>
-            </CardContent>
-        </Card>
+        <DashboardPanel
+            title="List conversion"
+            description="Conversion rate by date"
+            actions={selectedTab !== "campaigns" ? (
+                <Button variant="ghost" size="sm" onClick={onSelectTap} className="text-xs h-7">
+                    View all <ArrowRightIcon className="h-3.5 w-3.5 ml-0.5" />
+                </Button>
+            ) : undefined}
+            className="h-full"
+        >
+            <div className="flex-1 overflow-auto min-h-0">
+                <table className="w-full">
+                    <thead className="sticky top-0 z-10 bg-muted/30">
+                        <tr className="border-b border-border/80">
+                            <th className="text-left text-[10px] font-medium text-muted-foreground uppercase tracking-wider px-5 py-2.5">Date</th>
+                            <th className="text-left text-[10px] font-medium text-muted-foreground uppercase tracking-wider px-5 py-2.5">Revenue</th>
+                            <th className="text-left text-[10px] font-medium text-muted-foreground uppercase tracking-wider px-5 py-2.5">Orders</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {rows.length === 0 ? (
+                            <tr><td colSpan={3} className="px-5 py-8 text-center text-sm text-muted-foreground">No data yet</td></tr>
+                        ) : rows.map((conversion) => (
+                            <tr key={conversion.date} className="border-b border-border/60 last:border-0 hover:bg-muted/40 transition-colors">
+                                <td className="px-5 py-2.5 text-xs font-medium">{formatDateToMMDDYYYY(conversion.date)}</td>
+                                <td className="px-5 py-2.5 text-xs tabular-nums">{formatCurrency(conversion.total_revenues)}</td>
+                                <td className="px-5 py-2.5 text-xs tabular-nums">{conversion.total_orders}</td>
+                            </tr>
+                        ))}
+                    </tbody>
+                </table>
+            </div>
+        </DashboardPanel>
     )
 }
 

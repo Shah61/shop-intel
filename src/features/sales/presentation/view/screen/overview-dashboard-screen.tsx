@@ -1,304 +1,342 @@
 "use client"
 
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { SalesOverviewChart } from "../components/sales/sales-overview-chart";
-
-import { Video } from "lucide-react";
-import { ShoppingBag } from "lucide-react";
-import { Store } from "lucide-react";
+import {
+    Video,
+    ShoppingBag,
+    Store,
+    TrendingUp,
+    TrendingDown,
+    DollarSign,
+    ShoppingCart,
+    BarChart3,
+    Sparkles,
+} from "lucide-react";
 import { PlatformMetrics } from "@/app/(routes)/(protected)/sales/page";
-import { SalesSummaryCards } from "../components/sales/sales-summary-list";
-import { TopPerformingSkusList } from "../components/sku/top-performing-sku-list";
-import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { useState } from "react";
-import { TopPerformingSkusTable } from "../components/sku/top-performing-sku-table";
-import { Calendar } from "@/components/ui/calendar";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { CalendarIcon } from "lucide-react";
-import { format } from "date-fns";
-import PlatformSalesTable from "../components/platform/platform-table";
-import SkuTable from "../components/sku/sku-table";
-import { Button } from "@/components/ui/button";
-import { useRouter } from "next/navigation";
-import { useAnalysticsSales, useAnalyticsMetadata, useAnalyticsSalesHistoricalData, useAnalyticsSKU } from "../../tanstack/mock-analytics-tanstack";
-import { AnalysisTimeFrame, AnalyticsType } from "../../../data/model/analytics-entity";
+import {
+    useAnalysticsSales,
+    useAnalyticsMetadata,
+    useAnalyticsSalesHistoricalData,
+} from "../../tanstack/mock-analytics-tanstack";
+import {
+    AnalysisTimeFrame,
+    AnalyticsType,
+} from "../../../data/model/analytics-entity";
 import AnalyticsSalesTable from "../components/analytics/analytics-sales-table";
-import { formatCurrency, getDataDescription, isAdmin } from "@/src/core/constant/helper";
-import { useSession } from "@/src/core/lib/dummy-session-provider";
-import { Session } from "next-auth";
-import TotalCumulativeCard from "../components/analytics/total-cumulative-card";
+import {
+    formatCurrency,
+    getDataDescription,
+} from "@/src/core/constant/helper";
+import { SalesOverviewChart } from "../components/sales/sales-overview-chart";
+import DataCard, { type CardVariant } from "@/src/core/shared/view/components/data-card";
+import { PageSection, PageHeader } from "@/src/core/shared/view/components/page-section";
 
-interface DatePickerProps {
-    date: Date | undefined;
-    onSelect: (date: Date | undefined) => void;
-    placeholder: string;
-}
+const timeframes = [
+    { value: "daily", label: "Daily" },
+    { value: "weekly", label: "Weekly" },
+    { value: "monthly", label: "Monthly" },
+    { value: "yearly", label: "Yearly" },
+];
 
-const DatePicker = ({ date, onSelect, placeholder }: DatePickerProps) => {
-    return (
-        <Popover>
-            <PopoverTrigger asChild>
-                <Button
-                    variant="outline"
-                    className="w-[240px] justify-start text-left font-normal"
-                >
-                    <CalendarIcon className="mr-2 h-4 w-4" />
-                    {date ? format(date, "PPP") : <span>{placeholder}</span>}
-                </Button>
-            </PopoverTrigger>
-            <PopoverContent className="w-auto p-0" align="start">
-                <Calendar
-                    mode="single"
-                    selected={date}
-                    onSelect={onSelect}
-                    initialFocus
-                />
-            </PopoverContent>
-        </Popover>
-    );
+const platformColors: Record<string, string> = {
+    tiktok: "#FF0066",
+    shopee: "#EE4D2D",
+    shopify: "#22C55E",
+    physical: "#2D9CDB",
 };
 
 export const OverviewDashboardScreen = () => {
+    const [timeframe, setTimeframe] = useState("daily");
+    const [selectedYear, setSelectedYear] = useState("2025");
+    const [selectedQuarter, setSelectedQuarter] = useState("Q1");
 
+    const { data, isLoading } = useAnalyticsMetadata(
+        timeframe as AnalysisTimeFrame
+    );
 
-    const [activeTab, setActiveTab] = useState('overview');
-    const router = useRouter();
-    const [timeframe, setTimeframe] = useState('daily');
-    const [startDate, setStartDate] = useState<Date>();
-    const [endDate, setEndDate] = useState<Date>();
+    const { data: salesData, isLoading: salesLoading } =
+        useAnalyticsSalesHistoricalData({
+            year: selectedYear,
+            quarter: selectedQuarter,
+        });
 
-    const [selectedYear, setSelectedYear] = useState("2025")
-    const [selectedQuarter, setSelectedQuarter] = useState("Q1")
+    const { data: salesByPlatform } = useAnalysticsSales();
 
-    const { data: session } = useSession();
+    const totalData = data?.find((item) => item.type === AnalyticsType.TOTAL);
+    const totalSales = totalData?.total_sales ?? 0;
+    const totalOrders = totalData?.total_orders ?? 0;
+    const avgOrderValue = Number(totalData?.total_average_order_value ?? 0);
 
-    const {
-        data,
-        isLoading,
-        error
-    } = useAnalyticsMetadata(timeframe as AnalysisTimeFrame);
+    const statCards: {
+        title: string;
+        value: string;
+        icon: React.ComponentType<{ className?: string }>;
+        trend: string;
+        trendUp: boolean;
+        description: string;
+        variant: CardVariant;
+    }[] = [
+        {
+            title: "Total Revenue",
+            value: formatCurrency(totalSales),
+            icon: DollarSign,
+            trend: "+12.5%",
+            trendUp: true,
+            description: "vs last period",
+            variant: "blue",
+        },
+        {
+            title: "Total Orders",
+            value: totalOrders.toLocaleString(),
+            icon: ShoppingCart,
+            trend: "+8.2%",
+            trendUp: true,
+            description: "vs last period",
+            variant: "emerald",
+        },
+        {
+            title: "Avg. Order Value",
+            value: formatCurrency(avgOrderValue),
+            icon: BarChart3,
+            trend: "-2.4%",
+            trendUp: false,
+            description: "vs last period",
+            variant: "violet",
+        },
+        {
+            title: "Platforms Active",
+            value: "4",
+            icon: Store,
+            trend: "Stable",
+            trendUp: true,
+            description: "All connected",
+            variant: "amber",
+        },
+    ];
 
-    const {
-        data: salesData,
-        isLoading: salesLoading,
-        error: salesError
-    } = useAnalyticsSalesHistoricalData({
-        year: selectedYear,
-        quarter: selectedQuarter
-    });
-
-    const {
-        data: skuData,
-        isLoading: skuLoading,
-        error: skuError
-    } = useAnalyticsSKU();
-
-    const {
-        data: salesByPlatform,
-        isLoading: salesByPlatformLoading,
-        error: salesByPlatformError
-    } = useAnalysticsSales();
-
-
-
-
-    // Platform-specific metrics
     const platformMetrics: PlatformMetrics[] = [
         {
-            platform: 'tiktok',
-            dailySales: data?.find(item => item.type === AnalyticsType.TIKTOK)?.total_sales || 0,
-            orderCount: data?.find(item => item.type === AnalyticsType.TIKTOK)?.total_orders || 0,
-            averageOrderValue: Number(data?.find(item => item.type === AnalyticsType.TIKTOK)?.average_order_value) || 0,
+            platform: "tiktok",
+            dailySales: data?.find((i) => i.type === AnalyticsType.TIKTOK)?.total_sales || 0,
+            orderCount: data?.find((i) => i.type === AnalyticsType.TIKTOK)?.total_orders || 0,
+            averageOrderValue: Number(data?.find((i) => i.type === AnalyticsType.TIKTOK)?.average_order_value) || 0,
             conversionRate: 4.2,
-            icon: <Video className="h-5 w-5 text-pink-500" />,
-            trend: {
-                percentage: 15.8,
-                direction: 'up'
-            }
+            icon: <Video className="w-5 h-5 text-pink-500" />,
+            trend: { percentage: 15.8, direction: "up" },
         },
         {
-            platform: 'shopee',
-            dailySales: data?.find(item => item.type === AnalyticsType.SHOPEE)?.total_sales || 0,
-            orderCount: data?.find(item => item.type === AnalyticsType.SHOPEE)?.total_orders || 0,
-            averageOrderValue: Number(data?.find(item => item.type === AnalyticsType.SHOPEE)?.average_order_value) || 0,
-            conversionRate: Number(data?.find(item => item.type === AnalyticsType.SHOPEE)?.conversion_rate) || 0,
-            icon: <ShoppingBag className="h-5 w-5 text-orange-500" />,
-            trend: {
-                percentage: 8.3,
-                direction: 'up'
-            }
+            platform: "shopee",
+            dailySales: data?.find((i) => i.type === AnalyticsType.SHOPEE)?.total_sales || 0,
+            orderCount: data?.find((i) => i.type === AnalyticsType.SHOPEE)?.total_orders || 0,
+            averageOrderValue: Number(data?.find((i) => i.type === AnalyticsType.SHOPEE)?.average_order_value) || 0,
+            conversionRate: Number(data?.find((i) => i.type === AnalyticsType.SHOPEE)?.conversion_rate) || 0,
+            icon: <ShoppingBag className="w-5 h-5 text-orange-500" />,
+            trend: { percentage: 8.3, direction: "up" },
         },
         {
-            platform: 'shopify',
-            dailySales: data?.find(item => item.type === AnalyticsType.SHOPIFY)?.total_sales || 0,
-            orderCount: data?.find(item => item.type === AnalyticsType.SHOPIFY)?.total_orders || 0,
-            averageOrderValue: Number(data?.find(item => item.type === AnalyticsType.SHOPIFY)?.average_order_value) || 0,
+            platform: "shopify",
+            dailySales: data?.find((i) => i.type === AnalyticsType.SHOPIFY)?.total_sales || 0,
+            orderCount: data?.find((i) => i.type === AnalyticsType.SHOPIFY)?.total_orders || 0,
+            averageOrderValue: Number(data?.find((i) => i.type === AnalyticsType.SHOPIFY)?.average_order_value) || 0,
             conversionRate: 2.9,
-            icon: <Store className="h-5 w-5 text-green-500" />,
-            trend: {
-                percentage: 2.1,
-                direction: 'down'
-            }
+            icon: <Store className="w-5 h-5 text-green-500" />,
+            trend: { percentage: 2.1, direction: "down" },
         },
         {
-            platform: 'physical',
-            dailySales: data?.find(item => item.type === AnalyticsType.PHYSICAL)?.total_sales || 0,
-            orderCount: data?.find(item => item.type === AnalyticsType.PHYSICAL)?.total_orders || 0,
-            averageOrderValue: Number(data?.find(item => item.type === AnalyticsType.PHYSICAL)?.average_order_value) || 0,
+            platform: "physical",
+            dailySales: data?.find((i) => i.type === AnalyticsType.PHYSICAL)?.total_sales || 0,
+            orderCount: data?.find((i) => i.type === AnalyticsType.PHYSICAL)?.total_orders || 0,
+            averageOrderValue: Number(data?.find((i) => i.type === AnalyticsType.PHYSICAL)?.average_order_value) || 0,
             conversionRate: 2.9,
-            icon: <Store className="h-5 w-5 text-blue-500" />,
-            trend: {
-                percentage: 2.1,
-                direction: 'down'
-            }
-        }
+            icon: <Store className="w-5 h-5 text-blue-500" />,
+            trend: { percentage: 2.1, direction: "down" },
+        },
     ];
 
     return (
-        <div className="flex flex-col gap-4 w-full">
-
-
-
-            <div className="flex items-center justify-between w-full">
-                <div>
-                    <h2 className="text-2xl font-bold">Overview Dashboard</h2>
-                    <p className="text-muted-foreground">Track your overall sales performance and revenue</p>
-                </div>
-
-                <div className="flex items-center gap-4">
-                    <Tabs value={timeframe} onValueChange={setTimeframe} className="w-fit">
-                        <TabsList>
-                            <TabsTrigger value="daily">Daily</TabsTrigger>
-                            <TabsTrigger value="weekly">Weekly</TabsTrigger>
-                            <TabsTrigger value="monthly">Monthly</TabsTrigger>
-                            <TabsTrigger value="yearly">Yearly</TabsTrigger>
-                        </TabsList>
-                    </Tabs>
-
-                    <div className="flex items-center gap-2">
-                        <DatePicker
-                            date={startDate}
-                            onSelect={setStartDate}
-                            placeholder="Start date"
-                        />
-                        <DatePicker
-                            date={endDate}
-                            onSelect={setEndDate}
-                            placeholder="End date"
-                        />
+        <div className="space-y-10">
+            <PageHeader
+                title="Overview"
+                description={getDataDescription(timeframe)}
+                actions={
+                    <div className="flex items-center gap-2 bg-white dark:bg-card rounded-xl border border-border p-1 shadow-sm">
+                        {timeframes.map((tf) => (
+                            <button
+                                key={tf.value}
+                                onClick={() => setTimeframe(tf.value)}
+                                className={`
+                                    px-4 py-2 text-[13px] font-medium rounded-lg transition-all duration-200
+                                    ${timeframe === tf.value
+                                        ? "bg-foreground text-background shadow-sm"
+                                        : "text-muted-foreground hover:text-foreground hover:bg-accent/50"
+                                    }
+                                `}
+                            >
+                                {tf.label}
+                            </button>
+                        ))}
                     </div>
-                </div>
-
-            </div>
-
-            <TotalCumulativeCard
-                totalSales={data?.find(item => item.type === AnalyticsType.TOTAL)?.total_sales || 0}
-                totalOrders={data?.find(item => item.type === AnalyticsType.TOTAL)?.total_orders || 0}
-                avgOrderValue={Number(data?.find(item => item.type === AnalyticsType.TOTAL)?.total_average_order_value) || 0}
-                isLoading={isLoading}
+                }
             />
 
-
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 w-full">
-                {isLoading ? (
-                    Array(4).fill(0).map((_, index) => (
-                        <div key={index} className="rounded-lg border p-4 flex flex-col space-y-3">
-                            <div className="h-5 w-1/3 bg-gray-200 animate-pulse rounded"></div>
-                            <div className="h-8 w-1/2 bg-gray-200 animate-pulse rounded"></div>
-                            <div className="h-4 w-1/4 bg-gray-200 animate-pulse rounded"></div>
-                            <div className="h-8 w-2/3 bg-gray-200 animate-pulse rounded"></div>
-
+            {/* Hero: Total cumulative */}
+            <PageSection
+                title="Total performance"
+                description="Combined revenue and orders across all connected platforms for the selected period."
+            >
+                <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-foreground via-foreground to-foreground/95 dark:from-[hsl(222,47%,12%)] dark:via-[hsl(222,47%,10%)] dark:to-[hsl(222,47%,8%)] p-6 sm:p-8 text-background dark:text-foreground ring-1 ring-white/10">
+                    <div className="absolute inset-0 opacity-[0.03] dark:opacity-[0.05]" style={{ backgroundImage: "radial-gradient(circle at 1px 1px, currentColor 1px, transparent 0)", backgroundSize: "24px 24px" }} />
+                    <div className="relative flex flex-col lg:flex-row lg:items-center lg:justify-between gap-8">
+                        <div>
+                            <p className="text-sm font-medium opacity-80 mb-1">All platforms combined</p>
+                            {isLoading ? (
+                                <div className="h-12 w-64 bg-white/10 rounded-xl animate-pulse" />
+                            ) : (
+                                <p className="text-4xl sm:text-5xl font-bold tracking-tight">
+                                    {formatCurrency(totalSales)}
+                                </p>
+                            )}
+                            <p className="text-xs opacity-60 mt-2">Cumulative sales this period</p>
                         </div>
-                    ))
-                ) : (
-                    platformMetrics.map((platform) => (
-                        <OverviewDataCard
-                            key={platform.platform}
-                            platform={platform}
-                            session={session as Session}
-                            timeframe={timeframe as AnalysisTimeFrame}
+                        <div className="flex flex-wrap gap-8 lg:gap-12">
+                            <div>
+                                <p className="text-xs opacity-60 uppercase tracking-wider mb-1">Total orders</p>
+                                {isLoading ? <div className="h-8 w-20 bg-white/10 rounded animate-pulse" /> : <p className="text-2xl font-bold">{totalOrders.toLocaleString()}</p>}
+                            </div>
+                            <div className="w-px bg-white/20 hidden sm:block" />
+                            <div>
+                                <p className="text-xs opacity-60 uppercase tracking-wider mb-1">Avg. order value</p>
+                                {isLoading ? <div className="h-8 w-24 bg-white/10 rounded animate-pulse" /> : <p className="text-2xl font-bold">RM {avgOrderValue.toFixed(2)}</p>}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </PageSection>
+
+            {/* Insight line */}
+            {!isLoading && totalSales > 0 && (
+                <div className="flex items-center gap-2 px-4 py-3 rounded-xl bg-emerald-50 dark:bg-emerald-500/10 border border-emerald-100 dark:border-emerald-500/20">
+                    <Sparkles className="w-4 h-4 text-emerald-600 dark:text-emerald-400 shrink-0" />
+                    <p className="text-sm text-emerald-800 dark:text-emerald-200">
+                        Revenue is up <span className="font-semibold">12%</span> vs last period across all platforms. TikTok and Shopee are driving the most growth.
+                    </p>
+                </div>
+            )}
+
+            {/* Key metrics */}
+            <PageSection
+                title="Key metrics"
+                description="Snapshot of revenue, orders, and average order value with period-over-period comparison."
+            >
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                    {statCards.map((card) => (
+                        <DataCard
+                            key={card.title}
+                            icon={<card.icon className="w-5 h-5" />}
+                            title={card.title}
+                            value={isLoading ? "" : card.value}
+                            trending={card.trendUp ? "up" : "down"}
+                            change={card.trend}
+                            description={card.description}
+                            variant={card.variant}
+                            isLoading={isLoading}
                         />
-                    ))
-                )}
-            </div>
-
-
-
-            <div className="grid grid-cols-1 lg:grid-cols-8 gap-4 w-full">
-
-                <div className="md:col-span-5">
-                    <SalesOverviewChart
-                        data={salesData || []}
-                        selectedYear={selectedYear}
-                        selectedQuarter={selectedQuarter}
-                        onYearChange={setSelectedYear}
-                        onQuarterChange={setSelectedQuarter}
-                        isLoading={salesLoading}
-                        isAdmin={true}
-                    />
+                    ))}
                 </div>
+            </PageSection>
 
-                <div className="md:col-span-3">
-                    {/* <SalesSummaryCards /> */}
-                    {/* <PlatformSalesTable /> */}
-                    <AnalyticsSalesTable data={salesByPlatform || []} isLimit={true} />
+            {/* Sales over time + Recent activity */}
+            <PageSection
+                title="Sales over time"
+                description="Revenue by platform across months. Use the chart controls to switch view or change quarter."
+            >
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                    <div className="lg:col-span-2">
+                        <SalesOverviewChart
+                            data={salesData || []}
+                            selectedYear={selectedYear}
+                            selectedQuarter={selectedQuarter}
+                            onYearChange={setSelectedYear}
+                            onQuarterChange={setSelectedQuarter}
+                            isLoading={salesLoading}
+                            isAdmin={true}
+                        />
+                    </div>
+                    <div className="lg:col-span-1">
+                        <AnalyticsSalesTable
+                            data={salesByPlatform || []}
+                            isLimit={true}
+                        />
+                    </div>
                 </div>
+            </PageSection>
 
-            </div>
-            {/* <SkuTable data={skuData || []} isLimit={true} isLoading={skuLoading} /> */}
-
-            {/* <div className="grid grid-cols-1 lg:grid-cols-8 gap-4 w-full">
-
-                <div className="md:col-span-5">
-                    <SkuTable data={skuData || []} isLimit={true} />
+            {/* By platform */}
+            <PageSection
+                title="By platform"
+                description="Revenue and order breakdown per sales channel. Compare performance at a glance."
+            >
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                    {isLoading
+                        ? Array(4).fill(0).map((_, i) => <PlatformCardSkeleton key={i} />)
+                        : platformMetrics.map((p) => (
+                            <PlatformCard key={p.platform} platform={p} />
+                        ))}
                 </div>
-
-                <div className="md:col-span-3">
-                    <TopPerformingSkusList />
-                </div>
-
-            </div> */}
-
+            </PageSection>
         </div>
     );
-};
+}
 
-const OverviewDataCard = ({ platform, session, timeframe }: { platform: PlatformMetrics, session: Session, timeframe: AnalysisTimeFrame }) => {
+function PlatformCard({ platform }: { platform: PlatformMetrics }) {
+    const color = platformColors[platform.platform] || "#6B7280";
+
     return (
-        <Card key={platform.platform} className="hover:shadow-lg transition-shadow w-full">
-            <CardHeader className="flex flex-row items-center justify-between pb-2">
-                <div className="flex items-center space-x-2">
-                    {platform.icon}
-                    <CardTitle className="text-lg capitalize">
-                        {platform.platform}
-                    </CardTitle>
-                </div>
-                {/* <Badge variant={platform.trend.direction === 'up' ? 'default' : 'secondary'}>
-                    {platform.trend.direction === 'up' ? '+' : '-'}{platform.trend.percentage}%
-                </Badge> */}
-            </CardHeader>
-            <CardContent className="space-y-4">
-                <div>
-                    <div className="flex flex-col  items-start mb-1">
-                        <p className="text-sm font-medium">Daily Sales</p>
-                        <p className="text-xs font-light text-muted-foreground mt-1">{getDataDescription(timeframe)}</p>
+        <div className="group bg-white dark:bg-card rounded-2xl overflow-hidden ring-1 ring-border/60 hover:ring-2 hover:ring-border hover:shadow-xl hover:shadow-black/[0.04] transition-all duration-300">
+            <div className="h-1.5" style={{ backgroundColor: color }} />
+            <div className="p-5">
+                <div className="flex items-center justify-between mb-4">
+                    <div className="flex items-center gap-2.5">
+                        <div className="w-10 h-10 rounded-xl flex items-center justify-center" style={{ backgroundColor: `${color}18` }}>
+                            {platform.icon}
+                        </div>
+                        <span className="text-sm font-semibold capitalize">{platform.platform}</span>
                     </div>
+                    <span className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] font-bold ${platform.trend.direction === "up" ? "bg-emerald-100 text-emerald-700 dark:bg-emerald-500/15 dark:text-emerald-400" : "bg-red-100 text-red-600 dark:bg-red-500/15 dark:text-red-400"}`}>
+                        {platform.trend.direction === "up" ? <TrendingUp className="w-3 h-3" /> : <TrendingDown className="w-3 h-3" />}
+                        {platform.trend.percentage}%
+                    </span>
+                </div>
+                <p className="text-2xl font-bold tracking-tight mb-4">{formatCurrency(platform.dailySales)}</p>
+                <div className="flex items-center gap-4 text-[13px]">
+                    <div className="flex items-center gap-1.5">
+                        <span className="w-2 h-2 rounded-full shrink-0" style={{ backgroundColor: color, opacity: 0.6 }} />
+                        <span className="text-muted-foreground"><span className="font-semibold text-foreground">{platform.orderCount.toLocaleString()}</span> orders</span>
+                    </div>
+                    <div className="flex items-center gap-1.5">
+                        <span className="w-2 h-2 rounded-full shrink-0" style={{ backgroundColor: color, opacity: 0.35 }} />
+                        <span className="text-muted-foreground"><span className="font-semibold text-foreground">{formatCurrency(platform.averageOrderValue)}</span> AOV</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    );
+}
 
-                    <p className="text-2xl font-bold">{formatCurrency(platform.dailySales)}</p>
+function PlatformCardSkeleton() {
+    return (
+        <div className="bg-white dark:bg-card rounded-2xl overflow-hidden ring-1 ring-border/60">
+            <div className="h-1.5 bg-muted animate-pulse" />
+            <div className="p-5">
+                <div className="flex items-center gap-2.5 mb-4">
+                    <div className="w-10 h-10 rounded-xl bg-muted animate-pulse" />
+                    <div className="h-4 w-20 bg-muted rounded animate-pulse" />
                 </div>
-                <div className="grid grid-cols-2 gap-4 text-sm">
-                    <div>
-                        <p className="text-muted-foreground">Orders</p>
-                        <p className="font-medium">{platform.orderCount.toLocaleString()}</p>
-                    </div>
-                    <div>
-                        <p className="text-muted-foreground">Avg. Order Value</p>
-                        <p className="font-medium">{formatCurrency(platform.averageOrderValue)}</p>
-                    </div>
-                </div>
-            </CardContent>
-        </Card>
-    )
+                <div className="h-8 w-32 bg-muted rounded animate-pulse mb-4" />
+                <div className="h-4 w-48 bg-muted rounded animate-pulse" />
+            </div>
+        </div>
+    );
 }
 
 export default OverviewDashboardScreen;

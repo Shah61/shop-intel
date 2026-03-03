@@ -30,7 +30,6 @@ const OverviewPhysicalScreen = () => {
     } = usePhysicalStock()
 
     return (
-        <PhysicalSidebar>
             <div className="flex flex-col items-start justify-center w-full gap-4">
                 {/* Title and Tabs in same row */}
                 <div className="flex flex-col sm:flex-row w-full justify-between items-start sm:items-center gap-3 sm:gap-0 pt-4 sm:pt-6 md:pt-8">
@@ -61,7 +60,6 @@ const OverviewPhysicalScreen = () => {
                     timeframe={timeframe}
                 />
             </div>
-        </PhysicalSidebar>
     )
 }
 

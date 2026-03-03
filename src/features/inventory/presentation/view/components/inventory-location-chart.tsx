@@ -1,16 +1,6 @@
 "use client"
 
-import { TrendingUp } from "lucide-react"
 import { Bar, BarChart, CartesianGrid, XAxis } from "recharts"
-
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card"
 import {
   ChartConfig,
   ChartContainer,
@@ -20,6 +10,7 @@ import {
   ChartTooltipContent,
 } from "@/components/ui/chart"
 import { useGetInventoryStockByLocation } from "@/src/features/inventory/presentation/tanstack/inventory-tanstack"
+import { DashboardPanel } from "@/src/core/shared/view/components/dashboard-panel"
 
 export const description = "A stacked bar chart showing inventory by location"
 
@@ -43,15 +34,9 @@ export function ChartBarStacked() {
 
   if (isLoading) {
     return (
-      <Card className="h-full flex flex-col">
-        <CardHeader className="pb-2">
-          <CardTitle>Inventory by Location</CardTitle>
-          <CardDescription>Loading stock distribution data...</CardDescription>
-        </CardHeader>
-        <CardContent className="flex-1 min-h-[280px] md:min-h-[320px] lg:min-h-[300px] flex items-center justify-center">
-          <div className="animate-pulse">Loading...</div>
-        </CardContent>
-      </Card>
+      <DashboardPanel title="Inventory by location" description="Stock distribution across locations" className="h-full">
+        <div className="flex-1 min-h-[260px] flex items-center justify-center text-sm text-muted-foreground">Loading…</div>
+      </DashboardPanel>
     )
   }
 
@@ -75,41 +60,23 @@ export function ChartBarStacked() {
   ] : [];
 
   return (
-    <Card className="h-full flex flex-col">
-      <CardHeader className="pb-2">
-        <CardTitle>Inventory by Location</CardTitle>
-        <CardDescription>Stock distribution across all locations</CardDescription>
-      </CardHeader>
-      <CardContent className="flex-1 min-h-[280px] md:min-h-[320px] lg:min-h-[300px]">
-        <div className="h-full w-full">
-          <ChartContainer config={chartConfig} className="h-full w-full">
-            <BarChart accessibilityLayer data={chartData} margin={{ top: 20, right: 20, bottom: 20, left: 20 }}>
-              <CartesianGrid vertical={false} className="stroke-muted" />
-              <XAxis
-                dataKey="location"
-                tickLine={false}
-                tickMargin={10}
-                axisLine={false}
-                className="text-xs fill-muted-foreground"
-              />
-              <ChartTooltip content={<ChartTooltipContent hideLabel />} />
-              <ChartLegend content={<ChartLegendContent />} />
-              <Bar
-                dataKey="totalStock"
-                radius={[4, 4, 0, 0]}
-              />
-            </BarChart>
-          </ChartContainer>
-        </div>
-      </CardContent>
-      <CardFooter className="flex-col items-start gap-2 text-sm pt-2">
-        <div className="flex gap-2 leading-none font-medium">
-          Stock distribution overview <TrendingUp className="h-4 w-4" />
-        </div>
-        <div className="text-muted-foreground leading-none text-center">
-          Comparing inventory levels across all locations
-        </div>
-      </CardFooter>
-    </Card>
+    <DashboardPanel
+      title="Inventory by location"
+      description="Stock distribution across all locations"
+      footer="Comparing inventory levels across all locations"
+      className="h-full"
+    >
+      <div className="flex-1 min-h-[260px] px-2 py-4">
+        <ChartContainer config={chartConfig} className="h-full w-full">
+          <BarChart accessibilityLayer data={chartData} margin={{ top: 16, right: 16, bottom: 16, left: 16 }}>
+            <CartesianGrid vertical={false} className="stroke-border/60" />
+            <XAxis dataKey="location" tickLine={false} tickMargin={8} axisLine={false} className="text-[11px] fill-muted-foreground" />
+            <ChartTooltip content={<ChartTooltipContent hideLabel />} />
+            <ChartLegend content={<ChartLegendContent />} />
+            <Bar dataKey="totalStock" radius={[4, 4, 0, 0]} />
+          </BarChart>
+        </ChartContainer>
+      </div>
+    </DashboardPanel>
   )
 }

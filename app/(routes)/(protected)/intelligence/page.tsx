@@ -4,7 +4,7 @@ import AIScreen from '@/src/features/intelligence/presentation/view/screen/ai-sc
 
 const IntelligencePage = () => {
     return (
-        <div className="w-screen min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-100 dark:from-slate-950 dark:via-slate-900 dark:to-slate-950 -mx-4 md:-mx-10">
+        <div className="-m-4 sm:-m-6 lg:-m-8 h-[calc(100vh-3.5rem)] overflow-hidden flex flex-col bg-background">
             <AIScreen />
         </div>
     );

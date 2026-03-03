@@ -1,16 +1,6 @@
 "use client"
 
-import { TrendingUp } from "lucide-react"
 import { LabelList, RadialBar, RadialBarChart } from "recharts"
-
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card"
 import {
   ChartConfig,
   ChartContainer,
@@ -18,6 +8,7 @@ import {
   ChartTooltipContent,
 } from "@/components/ui/chart"
 import { useGetStockDistribution } from "../../tanstack/inventory-tanstack"
+import { DashboardPanel } from "@/src/core/shared/view/components/dashboard-panel"
 
 export const description = "A radial chart with inventory distribution"
 
@@ -52,15 +43,9 @@ export function ChartRadialLabel() {
 
   if (isLoading) {
     return (
-      <Card className="h-full flex flex-col">
-        <CardHeader className="pb-2">
-          <CardTitle>Inventory Distribution</CardTitle>
-          <CardDescription>Loading stock allocation data...</CardDescription>
-        </CardHeader>
-        <CardContent className="flex-1 min-h-[280px] md:min-h-[320px] lg:min-h-[300px] flex items-center justify-center">
-          <div className="animate-pulse">Loading...</div>
-        </CardContent>
-      </Card>
+      <DashboardPanel title="Inventory distribution" description="Stock allocation across categories" className="h-full">
+        <div className="flex-1 min-h-[260px] flex items-center justify-center text-sm text-muted-foreground">Loading…</div>
+      </DashboardPanel>
     )
   }
 
@@ -74,46 +59,28 @@ export function ChartRadialLabel() {
   ] : [];
 
   return (
-    <Card className="h-full flex flex-col">
-      <CardHeader className="pb-2">
-        <CardTitle>Inventory Distribution</CardTitle>
-        <CardDescription>Stock allocation across categories</CardDescription>
-      </CardHeader>
-      <CardContent className="flex-1 min-h-[280px] md:min-h-[320px] lg:min-h-[300px] flex items-center justify-center">
-        <ChartContainer
-          config={chartConfig}
-          className="w-full h-full max-h-[280px]"
-        >
+    <DashboardPanel
+      title="Inventory distribution"
+      description="Stock allocation across categories"
+      footer="Current stock distribution across all locations"
+      className="h-full"
+    >
+      <div className="flex-1 min-h-[260px] md:min-h-[280px] flex items-center justify-center px-2 py-4">
+        <ChartContainer config={chartConfig} className="w-full h-full max-h-[260px]">
           <RadialBarChart
             data={chartData}
             startAngle={-90}
             endAngle={380}
-            innerRadius={40}
-            outerRadius={120}
+            innerRadius={36}
+            outerRadius={100}
           >
-            <ChartTooltip
-              cursor={false}
-              content={<ChartTooltipContent hideLabel nameKey="category" />}
-            />
+            <ChartTooltip cursor={false} content={<ChartTooltipContent hideLabel nameKey="category" />} />
             <RadialBar dataKey="quantity" background>
-              <LabelList
-                position="insideStart"
-                dataKey="category"
-                className="fill-white capitalize mix-blend-luminosity"
-                fontSize={10}
-              />
+              <LabelList position="insideStart" dataKey="category" className="fill-white capitalize mix-blend-luminosity" fontSize={9} />
             </RadialBar>
           </RadialBarChart>
         </ChartContainer>
-      </CardContent>
-      <CardFooter className="flex-col gap-2 text-sm pt-2">
-        <div className="flex items-center gap-2 leading-none font-medium">
-          Inventory levels stable this month <TrendingUp className="h-4 w-4" />
-        </div>
-        <div className="text-muted-foreground leading-none text-center">
-          Current stock distribution across all locations
-        </div>
-      </CardFooter>
-    </Card>
+      </div>
+    </DashboardPanel>
   )
 }

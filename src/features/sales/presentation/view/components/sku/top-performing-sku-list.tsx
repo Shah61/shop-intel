@@ -1,11 +1,9 @@
 "use client";
 
-import { useState } from "react";
-import { Card, CardContent, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
 import { ChevronRight } from "lucide-react";
+import { DashboardPanel } from "@/src/core/shared/view/components/dashboard-panel";
 
 // Define the SKU entity type
 interface SkuEntity {
@@ -43,71 +41,39 @@ export function TopPerformingSkusList() {
     const router = useRouter();
 
     return (
-        <Card className="border shadow-sm">
-            <CardHeader className="pb-3">
-                <CardTitle className="text-base font-medium">
-                    <div className="flex items-center justify-between">
-                        <div className="flex flex-col items-start">
-                            <p className="text-lg font-bold">Top Performing SKUs</p>
-                            <p className="text-sm text-muted-foreground font-normal">Here is the top performing SKUs</p>
-                        </div>
-                    </div>
-                </CardTitle>
-            </CardHeader>
-            <CardContent className="px-6 py-2">
-                <div className="space-y-4">
-                    {skuData.slice(0, 5).map((sku) => (
-                        <div key={sku.id} className="flex items-center gap-6">
-                            <div className="w-6 text-center text-sm text-muted-foreground">
-                                {sku.id.slice(-3)}
-                            </div>
-
-                            <div className="flex-1 min-w-0">
-                                <div className="flex justify-between">
-                                    <p className="text-sm text-foreground truncate" title={sku.name}>
-                                        {sku.name}
-                                    </p>
-                                    <p className="text-xs text-muted-foreground ml-2 whitespace-nowrap">
-                                        {formatCurrency(sku.quantity)} units
-                                    </p>
-                                </div>
-
-                                <div className="mt-2 w-full h-2 bg-slate-100 rounded-full overflow-hidden">
-                                    <div
-                                        className="h-full rounded-full"
-                                        style={{
-                                            width: `${sku.percentage}%`,
-                                            backgroundColor: sku.color
-                                        }}
-                                    />
-                                </div>
-                            </div>
-
-                            <Badge
-                                className="ml-2 font-medium px-2.5 py-1 text-xs rounded-md"
-                                style={{
-                                    backgroundColor: `${sku.color}20`,
-                                    color: sku.color
-                                }}
-                            >
-                                {sku.percentage}%
-                            </Badge>
-                        </div>
-                    ))}
-                </div>
-            </CardContent>
-
-            <CardFooter className="flex-col gap-2 text-sm pt-0 pb-6">
-                <Button
-                    onClick={() => router.push('/sales/sku')}
-                    variant="ghost"
-                    size="sm"
-                    className="text-muted-foreground hover:text-primary text-sm w-full flex items-center justify-center"
-                >
-                    View more
-                    <ChevronRight className="ml-1 h-4 w-4" />
+        <DashboardPanel
+            title="Top performing SKUs"
+            description="Best sellers by revenue share"
+            actions={
+                <Button variant="ghost" size="sm" onClick={() => router.push("/sales/sku")} className="text-xs h-7">
+                    View more <ChevronRight className="h-3.5 w-3.5 ml-0.5" />
                 </Button>
-            </CardFooter>
-        </Card>
+            }
+        >
+            <div className="px-5 py-3 space-y-4">
+                {skuData.slice(0, 5).map((sku) => (
+                    <div key={sku.id} className="flex items-center gap-3">
+                        <div className="w-8 shrink-0 text-center text-[10px] font-medium text-muted-foreground tabular-nums">
+                            #{sku.id.slice(-3)}
+                        </div>
+                        <div className="flex-1 min-w-0">
+                            <div className="flex items-baseline justify-between gap-2">
+                                <p className="text-xs font-medium truncate" title={sku.name}>{sku.name}</p>
+                                <span className="text-[10px] text-muted-foreground whitespace-nowrap">{formatCurrency(sku.quantity)} units</span>
+                            </div>
+                            <div className="mt-1.5 h-1.5 w-full rounded-full bg-muted overflow-hidden">
+                                <div
+                                    className="h-full rounded-full transition-[width]"
+                                    style={{ width: `${sku.percentage}%`, backgroundColor: sku.color }}
+                                />
+                            </div>
+                        </div>
+                        <span className="text-[10px] font-semibold tabular-nums shrink-0 w-8 text-right" style={{ color: sku.color }}>
+                            {sku.percentage}%
+                        </span>
+                    </div>
+                ))}
+            </div>
+        </DashboardPanel>
     );
 }

@@ -3,20 +3,11 @@
 import { TrendingUp, TrendingDown, AlertTriangle } from "lucide-react"
 import { RadialBar, RadialBarChart, PolarRadiusAxis, Label } from "recharts"
 import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card"
-import {
   ChartConfig,
   ChartContainer,
   ChartTooltip,
   ChartTooltipContent,
 } from "@/components/ui/chart"
-import { Badge } from "@/components/ui/badge"
 
 export const description = "A radial chart showing individual SKU stock distribution"
 
@@ -101,11 +92,11 @@ export function SkuIndividualChart({
 
   const getStockStatus = () => {
     if (availableQty === 0) {
-      return <Badge variant="destructive" className="text-xs">Out of Stock</Badge>
+      return <span className="text-[10px] font-semibold px-1.5 py-0.5 rounded bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400">Out of stock</span>
     } else if (availableQty <= thresholdQty && thresholdQty > 0) {
-      return <Badge variant="secondary" className="text-xs bg-orange-100 text-orange-800 dark:bg-orange-900/20 dark:text-orange-400">Low Stock</Badge>
+      return <span className="text-[10px] font-semibold px-1.5 py-0.5 rounded bg-amber-100 text-amber-800 dark:bg-amber-900/30 dark:text-amber-400">Low stock</span>
     } else {
-      return <Badge className="text-xs bg-emerald-100 text-emerald-800 dark:bg-emerald-900/20 dark:text-emerald-400">In Stock</Badge>
+      return <span className="text-[10px] font-semibold px-1.5 py-0.5 rounded bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400">In stock</span>
     }
   }
 

@@ -24,6 +24,7 @@ import { useInventoryIstoreListSku, useStocksMetadata, useGetTotalSkus, useGetSt
 import { ChartRadialLabel } from "../components/inventory-distribution-chart";
 import { ChartBarStacked } from "../components/inventory-location-chart";
 import DataCard from "@/src/core/shared/view/components/data-card";
+import { DashboardPanel } from "@/src/core/shared/view/components/dashboard-panel";
 import { IStoreScreen } from "./istore-screen";
 import { SepangScreen } from "./sepang-screen";
 import { PhysicalStoreScreen } from "./physical-store-screen";
@@ -289,44 +290,27 @@ export const InventoryScreen = () => {
                                 <ChartBarStacked />
                             </div>
                             <div className="col-span-1 md:col-span-2 lg:col-span-1 h-full">
-                                <Card className="h-full flex flex-col">
-                                    <CardHeader className="pb-2">
-                                        <CardTitle>Stock Distribution</CardTitle>
-                                        <CardDescription>Current inventory breakdown</CardDescription>
-                                    </CardHeader>
-                                    <CardContent className="flex-1 min-h-[280px] md:min-h-[320px] lg:min-h-[300px]">
-                                        <div className="flex flex-col justify-center h-full space-y-4 md:space-y-6">
-                                            <div className="flex justify-between items-center">
-                                                <span className="text-sm text-muted-foreground">Good Stock</span>
-                                                <span className="font-semibold text-base sm:text-lg">{summaryMetrics.totalGoodQty.toLocaleString()}</span>
+                                <DashboardPanel
+                                    title="Stock distribution"
+                                    description="Current inventory breakdown"
+                                    footer="Summary across all locations"
+                                    className="h-full"
+                                >
+                                    <div className="flex flex-col justify-center h-full min-h-[260px] px-5 py-4 space-y-3">
+                                        {[
+                                            { label: "Good stock", value: summaryMetrics.totalGoodQty, color: "" },
+                                            { label: "Available", value: summaryMetrics.totalAvailableQty, color: "text-emerald-600 dark:text-emerald-400" },
+                                            { label: "Processing", value: summaryMetrics.processingQty, color: "text-blue-600 dark:text-blue-400" },
+                                            { label: "Allocating", value: summaryMetrics.allocatingQty, color: "text-orange-600 dark:text-orange-400" },
+                                            { label: "Damaged", value: summaryMetrics.totalDamagedQty, color: "text-red-600 dark:text-red-400" },
+                                        ].map(({ label, value, color }) => (
+                                            <div key={label} className="flex justify-between items-center py-1">
+                                                <span className="text-xs text-muted-foreground capitalize">{label}</span>
+                                                <span className={`text-sm font-semibold tabular-nums ${color}`}>{value.toLocaleString()}</span>
                                             </div>
-                                            <div className="flex justify-between items-center">
-                                                <span className="text-sm text-muted-foreground">Available</span>
-                                                <span className="font-semibold text-base sm:text-lg text-emerald-600 dark:text-emerald-400">{summaryMetrics.totalAvailableQty.toLocaleString()}</span>
-                                            </div>
-                                            <div className="flex justify-between items-center">
-                                                <span className="text-sm text-muted-foreground">Processing</span>
-                                                <span className="font-semibold text-base sm:text-lg text-blue-600 dark:text-blue-400">{summaryMetrics.processingQty.toLocaleString()}</span>
-                                            </div>
-                                            <div className="flex justify-between items-center">
-                                                <span className="text-sm text-muted-foreground">Allocating</span>
-                                                <span className="font-semibold text-base sm:text-lg text-orange-600 dark:text-orange-400">{summaryMetrics.allocatingQty.toLocaleString()}</span>
-                                            </div>
-                                            <div className="flex justify-between items-center">
-                                                <span className="text-sm text-muted-foreground">Damaged</span>
-                                                <span className="font-semibold text-base sm:text-lg text-red-600 dark:text-red-400">{summaryMetrics.totalDamagedQty.toLocaleString()}</span>
-                                            </div>
-                                        </div>
-                                    </CardContent>
-                                    <CardFooter className="flex-col gap-2 text-sm pt-2">
-                                        <div className="flex items-center gap-2 leading-none font-medium">
-                                            Real-time inventory levels <TrendingUp className="h-4 w-4" />
-                                        </div>
-                                        <div className="text-muted-foreground leading-none text-center">
-                                            Summary across all locations
-                                        </div>
-                                    </CardFooter>
-                                </Card>
+                                        ))}
+                                    </div>
+                                </DashboardPanel>
                             </div>
                         </div>
                     </TabsContent>
