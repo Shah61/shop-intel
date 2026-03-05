@@ -334,36 +334,8 @@ export default function AppSidebar() {
                 accentLighter: pc.lighter,
             }
         }
-        if (isIntegrate) {
-            return {
-                sidebarBg: pc.primary,
-                sidebarBorder: `rgba(255, 255, 255, 0.12)`,
-                sectionLabel: "rgba(255, 255, 255, 0.45)",
-                itemText: "rgba(255, 255, 255, 0.7)",
-                hoverText: "#fff",
-                hoverBg: "rgba(255, 255, 255, 0.1)",
-                activeText: "#fff",
-                activeBg: "rgba(255, 255, 255, 0.18)",
-                activeChildBg: "rgba(255, 255, 255, 0.12)",
-                childText: "rgba(255, 255, 255, 0.6)",
-                dashLine: "rgba(255, 255, 255, 0.2)",
-                popoverBg: "#ffffff",
-                popoverShadow: "0 0 2px rgba(145,158,171,0.24), 0 16px 32px -4px rgba(145,158,171,0.24)",
-                toggleBg: "rgba(255, 255, 255, 0.12)",
-                toggleBorder: "rgba(255, 255, 255, 0.18)",
-                toggleKnob: "#fff",
-                collapseBg: "rgba(255, 255, 255, 0.15)",
-                collapseBorder: "rgba(255, 255, 255, 0.2)",
-                collapseIcon: "#fff",
-                logoBg: pc.gradient,
-                logoText: "#fff",
-                divider: "rgba(255, 255, 255, 0.1)",
-                userText: "#fff",
-                userSub: "rgba(255, 255, 255, 0.6)",
-                accent: pc.primary,
-                accentLighter: pc.lighter,
-            }
-        }
+        // Light mode: always use a clean white sidebar background,
+        // regardless of the selected nav color preset.
         return {
             sidebarBg: "#ffffff",
             sidebarBorder: `rgba(${pcRgb}, 0.08)`,
