@@ -1,12 +1,12 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useMemo } from "react";
+import { useTheme } from "next-themes";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Tabs, TabsContent } from "@/components/ui/tabs";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { 
@@ -37,6 +37,8 @@ import {
     Pie,
     Cell
 } from "recharts";
+import DateRangePickerPro, { type DateRange, type Timeframe } from "@/components/ui/date-range-picker-pro";
+import { startOfMonth, endOfMonth } from "date-fns";
 
 // Generate expanded Facebook campaigns data
 const generateFacebookCampaigns = () => {
@@ -225,25 +227,61 @@ const campaignPerformanceData = [
     { date: "Feb 10", spend: 6800, reach: 25000, impressions: 48000, clicks: 1200 }
 ];
 
-const getPerformanceColor = (score: string) => {
-    switch (score) {
-        case "Excellent": return "bg-green-500";
-        case "Good": return "bg-blue-500";
-        case "Average": return "bg-yellow-500";
-        case "Needs Work": return "bg-red-500";
-        default: return "bg-gray-500";
-    }
+/* ─── Badge config (Overview / List Conversion Platform badge style) ─── */
+const BADGE_CONFIG: Record<string, { label: string; gradient: string; shadow: string }> = {
+    Excellent: { label: "Excellent", gradient: "linear-gradient(135deg, #059669, #10b981)", shadow: "0 2px 8px rgba(16, 185, 129, 0.35)" },
+    Good: { label: "Good", gradient: "linear-gradient(135deg, #2563eb, #3b82f6)", shadow: "0 2px 8px rgba(59, 130, 246, 0.35)" },
+    Average: { label: "Average", gradient: "linear-gradient(135deg, #d97706, #f59e0b)", shadow: "0 2px 8px rgba(245, 158, 11, 0.35)" },
+    "Needs Work": { label: "Needs Work", gradient: "linear-gradient(135deg, #dc2626, #ef4444)", shadow: "0 2px 8px rgba(239, 68, 68, 0.35)" },
+    Active: { label: "Active", gradient: "linear-gradient(135deg, #059669, #10b981)", shadow: "0 2px 8px rgba(16, 185, 129, 0.35)" },
+    Paused: { label: "Paused", gradient: "linear-gradient(135deg, #d97706, #f59e0b)", shadow: "0 2px 8px rgba(245, 158, 11, 0.35)" },
+    Completed: { label: "Completed", gradient: "linear-gradient(135deg, #6b7280, #9ca3af)", shadow: "0 2px 8px rgba(156, 163, 175, 0.35)" },
+    Video: { label: "Video", gradient: "linear-gradient(135deg, var(--preset-primary), var(--preset-lighter))", shadow: "0 2px 8px rgba(var(--preset-primary-rgb), 0.35)" },
+    Image: { label: "Image", gradient: "linear-gradient(135deg, #2563eb, #60a5fa)", shadow: "0 2px 8px rgba(96, 165, 250, 0.35)" },
+    Carousel: { label: "Carousel", gradient: "linear-gradient(135deg, #059669, #34d399)", shadow: "0 2px 8px rgba(52, 211, 153, 0.35)" },
+    Collection: { label: "Collection", gradient: "linear-gradient(135deg, #dc2626, #f87171)", shadow: "0 2px 8px rgba(248, 113, 113, 0.35)" },
 };
 
-const getPerformanceTextColor = (score: string) => {
-    switch (score) {
-        case "Excellent": return "text-green-600";
-        case "Good": return "text-blue-600";
-        case "Average": return "text-yellow-600";
-        case "Needs Work": return "text-red-600";
-        default: return "text-gray-600";
-    }
-};
+function StyledBadge({ value }: { value: string }) {
+    const config = BADGE_CONFIG[value] || { label: value, gradient: "linear-gradient(135deg, #6b7280, #9ca3af)", shadow: "0 2px 8px rgba(156, 163, 175, 0.3)" };
+    return (
+        <span
+            style={{
+                display: "inline-flex",
+                alignItems: "center",
+                position: "relative",
+                overflow: "hidden",
+                background: config.gradient,
+                boxShadow: config.shadow,
+                borderRadius: 6,
+                padding: "2px 8px",
+                fontSize: 10,
+                fontWeight: 700,
+                textTransform: "uppercase",
+                letterSpacing: "0.5px",
+                color: "#fff",
+                lineHeight: 1.6,
+            }}
+        >
+            <span style={{ position: "relative", zIndex: 1 }}>{config.label}</span>
+            <span
+                style={{
+                    position: "absolute",
+                    inset: 0,
+                    background: "linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.25) 50%, transparent 100%)",
+                    backgroundSize: "200% 100%",
+                    animation: "shimmer-slide 2s infinite linear",
+                }}
+            />
+            <style>{`
+                @keyframes shimmer-slide {
+                    0% { background-position: -200% 0; }
+                    100% { background-position: 200% 0; }
+                }
+            `}</style>
+        </span>
+    );
+}
 
 const formatCurrency = (value: number) => {
     return new Intl.NumberFormat("en-MY", {
@@ -268,9 +306,16 @@ const formatDate = (dateString: string) => {
 };
 
 export default function FacebookMarketingDashboard() {
+    const { resolvedTheme } = useTheme();
+    const isDark = resolvedTheme === "dark";
+
     const [activeTab, setActiveTab] = useState("campaigns");
     const [selectedAccount, setSelectedAccount] = useState("all");
-    const [dateRange, setDateRange] = useState({ start: "2025-01-01", end: "2025-02-28" });
+    const [timeframe, setTimeframe] = useState<Timeframe>("daily");
+    const [dateRange, setDateRange] = useState<DateRange>(() => {
+        const now = new Date();
+        return { from: startOfMonth(now), to: endOfMonth(now) };
+    });
     const [searchTerm, setSearchTerm] = useState("");
     const [selectedMetric, setSelectedMetric] = useState("REACH");
     
@@ -278,6 +323,29 @@ export default function FacebookMarketingDashboard() {
     const [campaignPage, setCampaignPage] = useState(1);
     const [adPage, setAdPage] = useState(1);
     const itemsPerPage = 20;
+
+    const tabTheme = useMemo(() => {
+        if (isDark) {
+            return {
+                pillBg: "rgba(var(--preset-primary-rgb), 0.12)",
+                pillActive: "rgba(var(--preset-primary-rgb), 0.6)",
+                pillText: "var(--preset-lighter)",
+                pillActiveText: "#fff",
+                cardBorder: "rgba(var(--preset-primary-rgb), 0.12)",
+                title: "#fff",
+                subtitle: "#a1a1aa",
+            };
+        }
+        return {
+            pillBg: "rgba(var(--preset-primary-rgb), 0.08)",
+            pillActive: "rgba(var(--preset-primary-rgb), 0.85)",
+            pillText: "var(--preset-primary)",
+            pillActiveText: "#fff",
+            cardBorder: "rgba(var(--preset-primary-rgb), 0.1)",
+            title: "#18181b",
+            subtitle: "#71717a",
+        };
+    }, [isDark]);
 
     const filteredCampaigns = facebookCampaigns.filter(campaign =>
         campaign.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -317,16 +385,30 @@ export default function FacebookMarketingDashboard() {
     return (
         <div className="space-y-6">
             {/* Header */}
-            <div className="flex items-center justify-between">
+            <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4 w-full">
                 <div>
-                    <h1 className="text-3xl font-bold bg-gradient-to-r from-blue-600 to-blue-800 bg-clip-text text-transparent">
+                    <h1 className="text-2xl font-bold" style={{ color: tabTheme.title, fontFamily: "'Outfit', sans-serif" }}>
                         Facebook Marketing
                     </h1>
-                    <p className="text-muted-foreground">Manage your Facebook campaigns and track performance</p>
+                    <p style={{ color: tabTheme.subtitle, fontSize: 14 }}>Manage your Facebook campaigns and track performance</p>
                 </div>
-                <div className="flex items-center gap-4">
+                <div className="flex flex-wrap items-center gap-3">
+                    <DateRangePickerPro
+                        value={dateRange}
+                        onChange={setDateRange}
+                        placeholder="Pick a date range"
+                        label=""
+                        timeframe={timeframe}
+                        onTimeframeChange={setTimeframe}
+                        className="min-w-[240px]"
+                    />
                     <Select value={selectedAccount} onValueChange={setSelectedAccount}>
-                        <SelectTrigger className="w-48">
+                        <SelectTrigger
+                            className="w-48"
+                            style={{
+                                borderColor: isDark ? "rgba(var(--preset-primary-rgb), 0.25)" : "rgba(var(--preset-primary-rgb), 0.2)",
+                            }}
+                        >
                             <SelectValue placeholder="Select Account" />
                         </SelectTrigger>
                         <SelectContent>
@@ -335,114 +417,160 @@ export default function FacebookMarketingDashboard() {
                             <SelectItem value="secondary">Shop-Intel Secondary</SelectItem>
                         </SelectContent>
                     </Select>
-                    <Button variant="outline" className="gap-2">
+                    <Button
+                        variant="outline"
+                        className="gap-2"
+                        style={{
+                            borderColor: isDark ? "rgba(var(--preset-primary-rgb), 0.35)" : "rgba(var(--preset-primary-rgb), 0.3)",
+                            color: "var(--preset-primary)",
+                        }}
+                    >
                         <Download className="h-4 w-4" />
                         Export CSV
                     </Button>
                 </div>
             </div>
 
-            {/* Metrics Cards */}
+            {/* Metrics Cards — Overview style (card bg from globals) */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                <Card className="bg-gradient-to-br from-blue-50 to-blue-100 dark:from-blue-950 dark:to-blue-900">
+                <Card className="border overflow-hidden" style={{ fontFamily: "'Outfit', sans-serif", borderColor: isDark ? "rgba(var(--preset-primary-rgb), 0.12)" : "rgba(var(--preset-primary-rgb), 0.1)" }}>
                     <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                        <CardTitle className="text-sm font-medium text-blue-600">Highest Spend</CardTitle>
-                        <DollarSign className="h-4 w-4 text-blue-600" />
+                        <CardTitle className="text-sm font-medium" style={{ color: tabTheme.subtitle }}>Highest Spend</CardTitle>
+                        <DollarSign className="h-4 w-4" style={{ color: "var(--preset-primary)" }} />
                     </CardHeader>
                     <CardContent>
-                        <div className="text-2xl font-bold text-blue-700">{formatCurrency(metrics.highestSpend)}</div>
-                        <p className="text-xs text-blue-600">Campaign: Hair Care Promotion</p>
+                        <div className="text-2xl font-bold" style={{ color: tabTheme.title }}>{formatCurrency(metrics.highestSpend)}</div>
+                        <p className="text-xs" style={{ color: tabTheme.subtitle }}>Campaign: Hair Care Promotion</p>
                     </CardContent>
                 </Card>
 
-                <Card className="bg-gradient-to-br from-green-50 to-green-100 dark:from-green-950 dark:to-green-900">
+                <Card className="border overflow-hidden" style={{ fontFamily: "'Outfit', sans-serif", borderColor: isDark ? "rgba(var(--preset-primary-rgb), 0.12)" : "rgba(var(--preset-primary-rgb), 0.1)" }}>
                     <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                        <CardTitle className="text-sm font-medium text-green-600">Highest Reach</CardTitle>
-                        <Users className="h-4 w-4 text-green-600" />
+                        <CardTitle className="text-sm font-medium" style={{ color: tabTheme.subtitle }}>Highest Reach</CardTitle>
+                        <Users className="h-4 w-4" style={{ color: "var(--preset-primary)" }} />
                     </CardHeader>
                     <CardContent>
-                        <div className="text-2xl font-bold text-green-700">{formatNumber(metrics.highestReach)}</div>
-                        <p className="text-xs text-green-600">Campaign: Hair Care Promotion</p>
+                        <div className="text-2xl font-bold" style={{ color: tabTheme.title }}>{formatNumber(metrics.highestReach)}</div>
+                        <p className="text-xs" style={{ color: tabTheme.subtitle }}>Campaign: Hair Care Promotion</p>
                     </CardContent>
                 </Card>
 
-                <Card className="bg-gradient-to-br from-purple-50 to-purple-100 dark:from-purple-950 dark:to-purple-900">
+                <Card className="border overflow-hidden" style={{ fontFamily: "'Outfit', sans-serif", borderColor: isDark ? "rgba(var(--preset-primary-rgb), 0.12)" : "rgba(var(--preset-primary-rgb), 0.1)" }}>
                     <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                        <CardTitle className="text-sm font-medium text-purple-600">Highest Impressions</CardTitle>
-                        <Eye className="h-4 w-4 text-purple-600" />
+                        <CardTitle className="text-sm font-medium" style={{ color: tabTheme.subtitle }}>Highest Impressions</CardTitle>
+                        <Eye className="h-4 w-4" style={{ color: "var(--preset-primary)" }} />
                     </CardHeader>
                     <CardContent>
-                        <div className="text-2xl font-bold text-purple-700">{formatNumber(metrics.highestImpressions)}</div>
-                        <p className="text-xs text-purple-600">Campaign: Hair Care Promotion</p>
+                        <div className="text-2xl font-bold" style={{ color: tabTheme.title }}>{formatNumber(metrics.highestImpressions)}</div>
+                        <p className="text-xs" style={{ color: tabTheme.subtitle }}>Campaign: Hair Care Promotion</p>
                     </CardContent>
                 </Card>
 
-                <Card className="bg-gradient-to-br from-orange-50 to-orange-100 dark:from-orange-950 dark:to-orange-900">
+                <Card className="border overflow-hidden" style={{ fontFamily: "'Outfit', sans-serif", borderColor: isDark ? "rgba(var(--preset-primary-rgb), 0.12)" : "rgba(var(--preset-primary-rgb), 0.1)" }}>
                     <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                        <CardTitle className="text-sm font-medium text-orange-600">Highest Clicks</CardTitle>
-                        <MousePointer className="h-4 w-4 text-orange-600" />
+                        <CardTitle className="text-sm font-medium" style={{ color: tabTheme.subtitle }}>Highest Clicks</CardTitle>
+                        <MousePointer className="h-4 w-4" style={{ color: "var(--preset-primary)" }} />
                     </CardHeader>
                     <CardContent>
-                        <div className="text-2xl font-bold text-orange-700">{formatNumber(metrics.highestClicks)}</div>
-                        <p className="text-xs text-orange-600">Campaign: Hair Care Promotion</p>
+                        <div className="text-2xl font-bold" style={{ color: tabTheme.title }}>{formatNumber(metrics.highestClicks)}</div>
+                        <p className="text-xs" style={{ color: tabTheme.subtitle }}>Campaign: Hair Care Promotion</p>
                     </CardContent>
                 </Card>
             </div>
 
-            {/* Date Range and Search */}
+            {/* Search */}
             <div className="flex flex-col md:flex-row gap-4">
-                <div className="flex gap-2">
-                    <Input
-                        type="date"
-                        value={dateRange.start}
-                        onChange={(e) => setDateRange(prev => ({ ...prev, start: e.target.value }))}
-                        className="w-40"
-                    />
-                    <span className="flex items-center text-muted-foreground">to</span>
-                    <Input
-                        type="date"
-                        value={dateRange.end}
-                        onChange={(e) => setDateRange(prev => ({ ...prev, end: e.target.value }))}
-                        className="w-40"
-                    />
-                </div>
                 <div className="flex-1">
                     <div className="relative">
-                        <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                        <Search
+                            className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4"
+                            style={{ color: "var(--preset-primary)" }}
+                        />
                         <Input
                             placeholder="Search campaigns..."
                             value={searchTerm}
                             onChange={(e) => setSearchTerm(e.target.value)}
-                            className="pl-10"
+                            className="pl-10 focus-visible:ring-2 focus-visible:ring-violet-500/30 focus-visible:ring-offset-0 border-violet-500/20"
+                            style={{
+                                borderColor: isDark ? "rgba(var(--preset-primary-rgb), 0.25)" : "rgba(var(--preset-primary-rgb), 0.2)",
+                            }}
                         />
                     </div>
                 </div>
             </div>
 
-            {/* Main Tabs */}
+            {/* Main Tabs — pill style like Overview / SalesOverviewChart */}
             <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-                <TabsList className="grid w-full grid-cols-2">
-                    <TabsTrigger value="campaigns" className="flex items-center gap-2">
-                        <BarChart3 className="h-4 w-4" />
+                <div
+                    style={{
+                        display: "flex",
+                        background: tabTheme.pillBg,
+                        borderRadius: 10,
+                        padding: 3,
+                        gap: 2,
+                        width: "fit-content",
+                    }}
+                >
+                    <button
+                        type="button"
+                        onClick={() => setActiveTab("campaigns")}
+                        style={{
+                            display: "flex",
+                            alignItems: "center",
+                            gap: 6,
+                            fontSize: 13,
+                            fontWeight: 600,
+                            padding: "8px 16px",
+                            borderRadius: 8,
+                            border: "none",
+                            cursor: "pointer",
+                            transition: "all 0.15s ease",
+                            color: activeTab === "campaigns" ? tabTheme.pillActiveText : tabTheme.pillText,
+                            background: activeTab === "campaigns" ? tabTheme.pillActive : "transparent",
+                            boxShadow: activeTab === "campaigns" ? "0 1px 4px rgba(var(--preset-primary-rgb), 0.25)" : "none",
+                        }}
+                    >
+                        <BarChart3 size={16} />
                         Campaigns
-                    </TabsTrigger>
-                    <TabsTrigger value="ads" className="flex items-center gap-2">
-                        <Target className="h-4 w-4" />
+                    </button>
+                    <button
+                        type="button"
+                        onClick={() => setActiveTab("ads")}
+                        style={{
+                            display: "flex",
+                            alignItems: "center",
+                            gap: 6,
+                            fontSize: 13,
+                            fontWeight: 600,
+                            padding: "8px 16px",
+                            borderRadius: 8,
+                            border: "none",
+                            cursor: "pointer",
+                            transition: "all 0.15s ease",
+                            color: activeTab === "ads" ? tabTheme.pillActiveText : tabTheme.pillText,
+                            background: activeTab === "ads" ? tabTheme.pillActive : "transparent",
+                            boxShadow: activeTab === "ads" ? "0 1px 4px rgba(var(--preset-primary-rgb), 0.25)" : "none",
+                        }}
+                    >
+                        <Target size={16} />
                         Ads
-                    </TabsTrigger>
-                </TabsList>
+                    </button>
+                </div>
 
                 <TabsContent value="campaigns" className="space-y-6">
                     {/* Top Performing Campaigns */}
-                    <Card>
+                    <Card className="border overflow-hidden" style={{ fontFamily: "'Outfit', sans-serif", borderColor: isDark ? "rgba(var(--preset-primary-rgb), 0.12)" : "rgba(var(--preset-primary-rgb), 0.1)" }}>
                         <CardHeader>
                             <div className="flex items-center justify-between">
-                                <CardTitle className="flex items-center gap-2">
-                                    <Award className="h-5 w-5 text-yellow-500" />
+                                <CardTitle className="flex items-center gap-2" style={{ color: tabTheme.title }}>
+                                    <Award className="h-5 w-5" style={{ color: "#eab308" }} />
                                     Top Performing Campaigns
                                 </CardTitle>
                                 <Select value={selectedMetric} onValueChange={setSelectedMetric}>
-                                    <SelectTrigger className="w-40">
+                                    <SelectTrigger
+                                        className="w-40 border-violet-500/25"
+                                        style={{ borderColor: isDark ? "rgba(var(--preset-primary-rgb), 0.25)" : "rgba(var(--preset-primary-rgb), 0.2)" }}
+                                    >
                                         <SelectValue />
                                     </SelectTrigger>
                                     <SelectContent>
@@ -457,7 +585,7 @@ export default function FacebookMarketingDashboard() {
                         <CardContent>
                             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                                 {topCampaigns.map((campaign, index) => (
-                                    <Card key={campaign.id} className="hover:shadow-lg transition-shadow cursor-pointer">
+                                    <Card key={campaign.id} className="hover:shadow-lg transition-shadow cursor-pointer border overflow-hidden" style={{ fontFamily: "'Outfit', sans-serif", borderColor: isDark ? "rgba(var(--preset-primary-rgb), 0.12)" : "rgba(var(--preset-primary-rgb), 0.1)" }}>
                                         <CardHeader className="pb-2">
                                             <div className="flex items-center justify-between">
                                                 <div className="flex items-center gap-2">
@@ -466,9 +594,7 @@ export default function FacebookMarketingDashboard() {
                                                     </span>
                                                     <CardTitle className="text-sm">{campaign.name}</CardTitle>
                                                 </div>
-                                                <Badge className={getPerformanceColor(campaign.performanceScore)}>
-                                                    {campaign.performanceScore}
-                                                </Badge>
+                                                <StyledBadge value={campaign.performanceScore} />
                                             </div>
                                         </CardHeader>
                                         <CardContent className="space-y-2">
@@ -492,9 +618,9 @@ export default function FacebookMarketingDashboard() {
                     </Card>
 
                     {/* Campaign Analytics Chart */}
-                    <Card>
+                    <Card className="border overflow-hidden" style={{ fontFamily: "'Outfit', sans-serif", borderColor: isDark ? "rgba(var(--preset-primary-rgb), 0.12)" : "rgba(var(--preset-primary-rgb), 0.1)" }}>
                         <CardHeader>
-                            <CardTitle>Campaign Performance Over Time</CardTitle>
+                            <CardTitle style={{ color: tabTheme.title }}>Campaign Performance Over Time</CardTitle>
                         </CardHeader>
                         <CardContent>
                             <ResponsiveContainer width="100%" height={300}>
@@ -503,7 +629,7 @@ export default function FacebookMarketingDashboard() {
                                     <XAxis dataKey="date" />
                                     <YAxis />
                                     <RechartsTooltip />
-                                    <Line type="monotone" dataKey="spend" stroke="#3B82F6" strokeWidth={2} />
+                                    <Line type="monotone" dataKey="spend" stroke="var(--preset-primary)" strokeWidth={2} />
                                     <Line type="monotone" dataKey="reach" stroke="#10B981" strokeWidth={2} />
                                 </LineChart>
                             </ResponsiveContainer>
@@ -511,23 +637,21 @@ export default function FacebookMarketingDashboard() {
                     </Card>
 
                     {/* All Campaigns */}
-                    <Card>
+                    <Card className="border overflow-hidden" style={{ fontFamily: "'Outfit', sans-serif", borderColor: isDark ? "rgba(var(--preset-primary-rgb), 0.12)" : "rgba(var(--preset-primary-rgb), 0.1)" }}>
                         <CardHeader>
-                            <CardTitle>All Campaigns</CardTitle>
+                            <CardTitle style={{ color: tabTheme.title }}>All Campaigns</CardTitle>
                         </CardHeader>
                         <CardContent>
                             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                                 {paginatedCampaigns.map((campaign) => (
-                                    <Card key={campaign.id} className="hover:shadow-lg transition-shadow">
+                                    <Card key={campaign.id} className="hover:shadow-lg transition-shadow border overflow-hidden" style={{ fontFamily: "'Outfit', sans-serif", borderColor: isDark ? "rgba(var(--preset-primary-rgb), 0.12)" : "rgba(var(--preset-primary-rgb), 0.1)" }}>
                                         <CardHeader className="pb-2">
                                             <div className="flex items-center justify-between">
                                                 <div>
                                                     <CardTitle className="text-sm">{campaign.name}</CardTitle>
                                                     <p className="text-xs text-muted-foreground">{campaign.accountName}</p>
                                                 </div>
-                                                <Badge className={getPerformanceColor(campaign.performanceScore)}>
-                                                    {campaign.performanceScore}
-                                                </Badge>
+                                                <StyledBadge value={campaign.performanceScore} />
                                             </div>
                                         </CardHeader>
                                         <CardContent className="space-y-3">
@@ -567,7 +691,7 @@ export default function FacebookMarketingDashboard() {
                                                 <span>{formatDate(campaign.startDate)} - {formatDate(campaign.endDate)}</span>
                                                 <Dialog>
                                                     <DialogTrigger asChild>
-                                                        <Button variant="outline" size="sm">Details</Button>
+                                                        <Button variant="outline" size="sm" className="border-violet-500/30 text-violet-600 dark:text-violet-400 hover:bg-violet-500/10">Details</Button>
                                                     </DialogTrigger>
                                                     <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto">
                                                         <DialogHeader>
@@ -626,6 +750,7 @@ export default function FacebookMarketingDashboard() {
                                     size="sm" 
                                     disabled={campaignPage === 1}
                                     onClick={() => setCampaignPage(p => Math.max(1, p - 1))}
+                                    className="border-violet-500/25 text-violet-600 dark:text-violet-400 hover:bg-violet-500/10"
                                 >
                                     Previous
                                 </Button>
@@ -637,6 +762,7 @@ export default function FacebookMarketingDashboard() {
                                     size="sm" 
                                     disabled={campaignPage === totalCampaignPages}
                                     onClick={() => setCampaignPage(p => Math.min(totalCampaignPages, p + 1))}
+                                    className="border-violet-500/25 text-violet-600 dark:text-violet-400 hover:bg-violet-500/10"
                                 >
                                     Next
                                 </Button>
@@ -647,9 +773,9 @@ export default function FacebookMarketingDashboard() {
 
                 <TabsContent value="ads" className="space-y-6">
                     {/* Ads Performance */}
-                    <Card>
+                    <Card className="border overflow-hidden" style={{ fontFamily: "'Outfit', sans-serif", borderColor: isDark ? "rgba(var(--preset-primary-rgb), 0.12)" : "rgba(var(--preset-primary-rgb), 0.1)" }}>
                         <CardHeader>
-                            <CardTitle>Ad Performance</CardTitle>
+                            <CardTitle style={{ color: tabTheme.title }}>Ad Performance</CardTitle>
                         </CardHeader>
                         <CardContent>
                             <Table>
@@ -671,16 +797,14 @@ export default function FacebookMarketingDashboard() {
                                             <TableCell className="font-medium">{ad.name}</TableCell>
                                             <TableCell>{ad.campaignName}</TableCell>
                                             <TableCell>
-                                                <Badge variant={ad.creativeType === "Video" ? "default" : "secondary"}>
-                                                    {ad.creativeType}
-                                                </Badge>
+                                                <StyledBadge value={ad.creativeType} />
                                             </TableCell>
                                             <TableCell>{formatCurrency(ad.spend)}</TableCell>
                                             <TableCell>{formatNumber(ad.reach)}</TableCell>
                                             <TableCell>{ad.ctr}%</TableCell>
                                             <TableCell>{formatCurrency(ad.cpc)}</TableCell>
                                             <TableCell>
-                                                <Badge className="bg-green-500">{ad.status}</Badge>
+                                                <StyledBadge value={ad.status} />
                                             </TableCell>
                                         </TableRow>
                                     ))}
@@ -693,6 +817,7 @@ export default function FacebookMarketingDashboard() {
                                     size="sm" 
                                     disabled={adPage === 1}
                                     onClick={() => setAdPage(p => Math.max(1, p - 1))}
+                                    className="border-violet-500/25 text-violet-600 dark:text-violet-400 hover:bg-violet-500/10"
                                 >
                                     Previous
                                 </Button>
@@ -704,6 +829,7 @@ export default function FacebookMarketingDashboard() {
                                     size="sm" 
                                     disabled={adPage === totalAdPages}
                                     onClick={() => setAdPage(p => Math.min(totalAdPages, p + 1))}
+                                    className="border-violet-500/25 text-violet-600 dark:text-violet-400 hover:bg-violet-500/10"
                                 >
                                     Next
                                 </Button>

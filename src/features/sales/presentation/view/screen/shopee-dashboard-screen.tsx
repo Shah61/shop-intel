@@ -1,281 +1,213 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Input } from "@/components/ui/input";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from "@/components/ui/table";
-import {
-    TrendingUp,
-    DollarSign,
-    Package,
-    ShoppingCart,
-    ArrowUp,
-    ArrowDown,
-    Filter,
-    MoreHorizontal,
-    Download,
-    ShoppingBag,
-    LineChart,
-    BarChart3,
-    Star,
-    RefreshCcw,
-    Users,
-    Percent,
-    TrendingDown,
-    Clock,
-    Truck,
-    ChevronRight
-} from "lucide-react";
-import {
-    LineChart as RechartsLineChart,
-    Line,
-    XAxis,
-    YAxis,
-    CartesianGrid,
-    Tooltip as RechartsTooltip,
-    ResponsiveContainer,
-    PieChart as RechartsPieChart,
-    Pie,
-    Cell,
-    Legend,
-    BarChart,
-    Bar,
-    Area,
-    AreaChart,
-    ComposedChart
-} from "recharts";
-import DataCard from "@/src/core/shared/view/components/data-card";
-import { TiktokConversionCharts } from "../components/tiktok/tiktok-conversion-charts";
+import { useState, useEffect, useMemo } from "react";
+import { useTheme } from "next-themes";
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { DollarSign, ShoppingBag, ShoppingCart, Percent } from "lucide-react";
+import { Skeleton } from "@/components/ui/skeleton";
 import ShopeeConversionTable from "../components/shopee/shopee-conversion-table";
 import { ShopeeConversionCharts } from "../components/shopee/shopee-conversion-charts";
-import { ShopeeTrafficCharts } from "../components/shopee/shopee-traffic-charts";
-import ShopeeTrafficPieChart from "../components/shopee/shopee-traffic-pie-chart";
-import { AnalysisTimeFrame } from "../../../data/model/analytics-entity";
 import ShopeeSkusTable from "../components/shopee/shopee-skus-table";
-import { ShopeeConversionRate, ShopeeSku } from "../../../data/model/shopee-entity";
-import { useShopeeConversionRate, useShopeeMetadata } from "../../tanstack/mock-shopee-tanstack";
-import { useShopeeSkus } from "../../tanstack/mock-shopee-tanstack";
-import { formatCurrency, getDataDescription, getDateRangeShopee, isAdmin } from "@/src/core/constant/helper";
+import { ShopeeConversionRate } from "../../../data/model/shopee-entity";
+import { useShopeeConversionRate, useShopeeMetadata, useShopeeSkus } from "../../tanstack/mock-shopee-tanstack";
+import { formatCurrency, getDateRangeShopee } from "@/src/core/constant/helper";
 import { useSession } from "@/src/core/lib/dummy-session-provider";
-import { Calendar as CalendarIcon } from "lucide-react";
-import { Calendar } from "@/components/ui/calendar";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { format } from "date-fns";
+import DateRangePickerPro, { type DateRange, type Timeframe } from "@/components/ui/date-range-picker-pro";
+import { startOfMonth, endOfMonth } from "date-fns";
 
-interface DatePickerProps {
-    date: Date | undefined;
-    onSelect: (date: Date | undefined) => void;
-    placeholder: string;
+interface ShopeeMetricCardProps {
+    icon: React.ReactNode;
+    label: string;
+    value: string | number;
+    subtitle: string;
+    isLoading: boolean;
 }
 
-const DatePicker = ({ date, onSelect, placeholder }: DatePickerProps) => {
+function ShopeeMetricCard({ icon, label, value, subtitle, isLoading }: ShopeeMetricCardProps) {
+    const { resolvedTheme } = useTheme();
+    const isDark = resolvedTheme === "dark";
+
+    const t = useMemo(() => {
+        if (isDark) {
+            return {
+                cardBg: "linear-gradient(135deg, rgba(26, 34, 44, 0.9), rgba(35, 45, 56, 0.85))",
+                cardBorder: "1px solid rgba(var(--preset-primary-rgb), 0.12)",
+                glow: "rgba(var(--preset-primary-rgb), 0.08)",
+                iconBg: "linear-gradient(135deg, var(--preset-primary), var(--preset-lighter))",
+                title: "#fafafa",
+                subtitle: "#a1a1aa",
+                amount: "#fff",
+            };
+        }
+        return {
+            cardBg: "linear-gradient(135deg, rgba(250, 247, 255, 0.95), rgba(243, 237, 255, 0.85))",
+            cardBorder: "1px solid rgba(var(--preset-primary-rgb), 0.1)",
+            glow: "rgba(var(--preset-primary-rgb), 0.05)",
+            iconBg: "linear-gradient(135deg, var(--preset-primary), var(--preset-lighter))",
+            title: "#18181b",
+            subtitle: "#71717a",
+            amount: "#18181b",
+        };
+    }, [isDark]);
+
     return (
-        <Popover>
-            <PopoverTrigger asChild>
-                <Button
-                    variant="outline"
-                    className="w-[200px] justify-start text-left font-normal"
+        <div
+            style={{
+                background: t.cardBg,
+                borderRadius: 20,
+                border: t.cardBorder,
+                padding: "20px 22px",
+                display: "flex",
+                flexDirection: "column",
+                gap: 14,
+                fontFamily: "'Outfit', sans-serif",
+                position: "relative",
+                overflow: "hidden",
+                backdropFilter: "blur(20px)",
+                WebkitBackdropFilter: "blur(20px)",
+            }}
+        >
+            <div
+                style={{
+                    position: "absolute",
+                    top: -40,
+                    right: -40,
+                    width: 120,
+                    height: 120,
+                    background: `radial-gradient(circle, ${t.glow} 0%, transparent 70%)`,
+                    pointerEvents: "none",
+                }}
+            />
+            <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+                <div
+                    style={{
+                        width: 38,
+                        height: 38,
+                        borderRadius: "50%",
+                        background: t.iconBg,
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        flexShrink: 0,
+                        boxShadow: `0 2px 12px ${t.glow}`,
+                    }}
                 >
-                    <CalendarIcon className="mr-2 h-4 w-4" />
-                    {date ? format(date, "PPP") : <span>{placeholder}</span>}
-                </Button>
-            </PopoverTrigger>
-            <PopoverContent className="w-auto p-0" align="start">
-                <Calendar
-                    mode="single"
-                    selected={date}
-                    onSelect={onSelect}
-                    initialFocus
-                />
-            </PopoverContent>
-        </Popover>
+                    <div style={{ color: "#fff", display: "flex" }}>{icon}</div>
+                </div>
+                <div style={{ display: "flex", flexDirection: "column", gap: 2 }}>
+                    <span style={{ fontSize: 14, fontWeight: 600, color: t.title }}>{label}</span>
+                    <span style={{ fontSize: 11, color: t.subtitle }}>{subtitle}</span>
+                </div>
+            </div>
+            {isLoading ? (
+                <Skeleton style={{ height: 32, width: 120 }} />
+            ) : (
+                <p style={{ fontSize: 28, fontWeight: 700, color: t.amount, margin: 0, letterSpacing: "-0.5px", lineHeight: 1 }}>
+                    {value}
+                </p>
+            )}
+        </div>
     );
-};
+}
 
 const ShopeeDashboardScreen = () => {
     const [activeTab, setActiveTab] = useState("overview");
-    const [timeframe, setTimeframe] = useState<AnalysisTimeFrame>(AnalysisTimeFrame.DAILY);
+    const [timeframe, setTimeframe] = useState<Timeframe>("daily");
+    const [dateRange, setDateRange] = useState<DateRange>(() => {
+        const now = new Date();
+        return { from: startOfMonth(now), to: endOfMonth(now) };
+    });
     const [currentDateRange, setCurrentDateRange] = useState(() => getDateRangeShopee());
     const [allConversionRates, setAllConversionRates] = useState<ShopeeConversionRate[]>([]);
-    const [startDate, setStartDate] = useState<Date>();
-    const [endDate, setEndDate] = useState<Date>();
 
     const decrementDateRange = () => {
         setCurrentDateRange(prev => {
             const newStartTime = new Date(prev.startTime);
             const newEndTime = new Date(prev.endTime);
-
-            // Decrease both dates by one month
             newStartTime.setMonth(newStartTime.getMonth() - 1);
             newEndTime.setMonth(newEndTime.getMonth() - 1);
-
-            return {
-                startTime: newStartTime.toISOString(),
-                endTime: newEndTime.toISOString()
-            };
+            return { startTime: newStartTime.toISOString(), endTime: newEndTime.toISOString() };
         });
     };
 
     const { data: session } = useSession();
 
-    const {
-        data: skus,
-        isLoading: isLoadingSkus,
-        error: errorSkus } = useShopeeSkus({
-            startTime: currentDateRange.startTime,
-            endTime: currentDateRange.endTime,
-            period: "month",
-            limit: 10
-        });
-
-    const {
-        data: metadata,
-        isLoading: isLoadingMetadata,
-        error: errorMetadata
-    } = useShopeeMetadata({
-        type: timeframe
+    const { data: skus } = useShopeeSkus({
+        startTime: currentDateRange.startTime,
+        endTime: currentDateRange.endTime,
+        period: "month",
+        limit: 10,
     });
 
+    const { data: metadata, isLoading: isLoadingMetadata } = useShopeeMetadata({
+        type: timeframe as any,
+    });
 
-    const {
-        data: conversionRate,
-        isLoading: isLoadingConversionRate,
-        error: errorConversionRate } = useShopeeConversionRate({
-            startTime: currentDateRange.startTime,
-            endTime: currentDateRange.endTime
-        });
+    const { data: conversionRate } = useShopeeConversionRate({
+        startTime: currentDateRange.startTime,
+        endTime: currentDateRange.endTime,
+    });
 
     useEffect(() => {
         if (conversionRate) {
             setAllConversionRates(prev => {
                 const combined = [...prev, ...conversionRate];
-
-                const unique = Array.from(
-                    new Map(combined.map(item => [item.date, item])).values()
-                );
-
-                return unique.sort((a, b) =>
-                    new Date(b.date).getTime() - new Date(a.date).getTime()
-                );
+                const unique = Array.from(new Map(combined.map(item => [item.date, item])).values());
+                return unique.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
             });
         }
     }, [conversionRate]);
 
     const financialMetrics = [
-        {
-            title: "Products",
-            value: 10,
-            change: "+8.3%",
-            trending: "up",
-            icon: <DollarSign className="h-5 w-5 text-orange-500" />,
-            isLoading: isLoadingMetadata,
-            description: getDataDescription(timeframe)
-        },
-        {
-            title: "Total Sales",
-            value: formatCurrency(Number(metadata?.sales || 0)),
-            change: "+12.5%",
-            trending: "up",
-            icon: <ShoppingBag className="h-5 w-5 text-orange-500" />,
-            isLoading: isLoadingMetadata,
-            description: getDataDescription(timeframe)
-        },
-        {
-            title: "Orders",
-            value: metadata?.orders || 0,
-            change: "-2.8%",
-            trending: "down",
-            icon: <ShoppingCart className="h-5 w-5 text-orange-500" />,
-            isLoading: isLoadingMetadata,
-            description: getDataDescription(timeframe)
-        },
-        {
-            title: "Conversion Rate",
-            value: metadata?.conversionRate.toFixed(2) || 0,
-            change: "+0.5%",
-            trending: "up",
-            icon: <Percent className="h-5 w-5 text-orange-500" />,
-            isLoading: isLoadingMetadata,
-            description: getDataDescription(timeframe)
-        }
+        { label: "Products", value: 10, subtitle: "Total listed", icon: <DollarSign className="h-4 w-4" /> },
+        { label: "Total Sales", value: formatCurrency(Number(metadata?.sales || 0)), subtitle: "Revenue", icon: <ShoppingBag className="h-4 w-4" /> },
+        { label: "Orders", value: metadata?.orders || 0, subtitle: "Total orders", icon: <ShoppingCart className="h-4 w-4" /> },
+        { label: "Conversion Rate", value: `${metadata?.conversionRate?.toFixed(2) || 0}%`, subtitle: "Visitor to buyer", icon: <Percent className="h-4 w-4" /> },
     ];
-
 
     return (
         <div className="flex flex-col items-start gap-4 w-full">
-            <div className="flex flex-col sm:flex-row w-full justify-between items-start sm:items-center space-y-2 sm:space-y-0">
+            <div className="flex flex-col lg:flex-row w-full justify-between items-start lg:items-center gap-4">
                 <div>
                     <h2 className="text-2xl font-bold">Shopee Financial Dashboard</h2>
-                    <p className="text-muted-foreground">Track your Shopee store's performance and revenue</p>
+                    <p className="text-muted-foreground">Shopee metrics & performance analysis</p>
                 </div>
 
-                <div className="flex items-center gap-2">
-                    <DatePicker
-                        date={startDate}
-                        onSelect={setStartDate}
-                        placeholder="Start date"
-                    />
-                    <DatePicker
-                        date={endDate}
-                        onSelect={setEndDate}
-                        placeholder="End date"
-                    />
-                </div>
-
+                <DateRangePickerPro
+                    value={dateRange}
+                    onChange={setDateRange}
+                    placeholder="Pick a date range"
+                    label=""
+                    timeframe={timeframe}
+                    onTimeframeChange={setTimeframe}
+                    className="min-w-[240px]"
+                />
             </div>
 
-            <Tabs defaultValue="overview" value={activeTab} onValueChange={setActiveTab} className="w-full">
-                <div className="flex md:flex-row flex-col w-full justify-between md:items-center items-start gap-4 mb-4">
-                    <Tabs value={activeTab} onValueChange={setActiveTab} className="w-auto">
-                        <TabsList>
-                            <TabsTrigger value="overview">Overview</TabsTrigger>
-                            <TabsTrigger value="campaigns">Conversion</TabsTrigger>
-                            <TabsTrigger value="skus">SKUs</TabsTrigger>
-                        </TabsList>
-                    </Tabs>
+            <Tabs value={activeTab} onValueChange={setActiveTab} className="w-auto">
+                <TabsList>
+                    <TabsTrigger value="overview">Overview</TabsTrigger>
+                    <TabsTrigger value="campaigns">Conversion</TabsTrigger>
+                    <TabsTrigger value="skus">SKUs</TabsTrigger>
+                </TabsList>
+            </Tabs>
 
-                    {
-                        activeTab === "overview" && (
-                            <Tabs value={timeframe} onValueChange={(value: string) => setTimeframe(value as AnalysisTimeFrame)} className="w-fit">
-                                <TabsList>
-                                    <TabsTrigger value={AnalysisTimeFrame.DAILY}>Daily</TabsTrigger>
-                                    <TabsTrigger value={AnalysisTimeFrame.WEEKLY}>Weekly</TabsTrigger>
-                                    <TabsTrigger value={AnalysisTimeFrame.MONTHLY}>Monthly</TabsTrigger>
-                                    <TabsTrigger value={AnalysisTimeFrame.YEARLY}>Yearly</TabsTrigger>
-                                </TabsList>
-                            </Tabs>
-                        )
-                    }
-                </div>
-
-                <TabsContent value="overview" className="space-y-4 w-full">
-                    {/* Financial Overview Cards */}
-                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                        {isLoadingMetadata ? (
-                            Array(4).fill(0).map((_, index) => (
-                                <div key={index} className="rounded-lg border p-4 flex flex-col space-y-3">
-                                    <div className="h-5 w-1/3 bg-gray-200 animate-pulse rounded"></div>
-                                    <div className="h-8 w-1/2 bg-gray-200 animate-pulse rounded"></div>
-                                    <div className="h-4 w-1/4 bg-gray-200 animate-pulse rounded"></div>
-                                </div>
-                            ))
-                        ) : (
-                            financialMetrics.map((metric, index) => (
-                                <DataCard key={index}
-                                    icon={metric.icon}
-                                    title={metric.title}
-                                    value={metric.value as any}
-                                    trending={metric.trending as any}
-                                    change={metric.change}
-                                    description={metric.description}
-                                />
-                            ))
-                        )}
-
+            {activeTab === "overview" && (
+                <div className="space-y-4 w-full">
+                    <div
+                        style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 16, width: "100%" }}
+                        className="!grid-cols-1 sm:!grid-cols-2 lg:!grid-cols-4"
+                    >
+                        {financialMetrics.map((m, i) => (
+                            <ShopeeMetricCard
+                                key={i}
+                                icon={m.icon}
+                                label={m.label}
+                                value={m.value}
+                                subtitle={m.subtitle}
+                                isLoading={isLoadingMetadata}
+                            />
+                        ))}
                     </div>
 
                     <div className="grid grid-cols-1 lg:grid-cols-8 gap-4 w-full h-full">
@@ -286,41 +218,40 @@ const ShopeeDashboardScreen = () => {
                             <ShopeeConversionTable
                                 onLoadMore={decrementDateRange}
                                 conversionRate={conversionRate || []}
-                                onSelectTap={() => {
-                                    setActiveTab("campaigns")
-                                }}
+                                onSelectTap={() => setActiveTab("campaigns")}
                                 selectedTab={activeTab}
                             />
                         </div>
                     </div>
-                    <div className="space-y-4 w-full">
-                        <ShopeeSkusTable skus={skus || []} onSelectTap={() => {
-                            setActiveTab("skus")
-                        }} selectedTab={activeTab} />
-                    </div>
-                </TabsContent>
 
-                <TabsContent value="campaigns" className="space-y-4 w-full">
+                    <ShopeeSkusTable
+                        skus={skus || []}
+                        onSelectTap={() => setActiveTab("skus")}
+                        selectedTab={activeTab}
+                    />
+                </div>
+            )}
+
+            {activeTab === "campaigns" && (
+                <div className="space-y-4 w-full">
                     <ShopeeConversionTable
                         conversionRate={allConversionRates}
-                        onSelectTap={() => {
-                            setActiveTab("campaigns")
-                        }}
+                        onSelectTap={() => setActiveTab("campaigns")}
                         selectedTab={activeTab}
                         onLoadMore={decrementDateRange}
                     />
-                </TabsContent>
+                </div>
+            )}
 
-                <TabsContent value="skus" className="space-y-4 w-full">
+            {activeTab === "skus" && (
+                <div className="space-y-4 w-full">
                     <ShopeeSkusTable
                         skus={skus || []}
-                        onSelectTap={() => {
-                            setActiveTab("skus")
-                        }}
+                        onSelectTap={() => setActiveTab("skus")}
                         selectedTab={activeTab}
                     />
-                </TabsContent>
-            </Tabs>
+                </div>
+            )}
         </div>
     );
 };

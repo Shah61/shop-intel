@@ -1,6 +1,7 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useMemo } from "react"
+import { useTheme } from "next-themes"
 import {
     TrendingUp,
     BarChart3,
@@ -18,22 +19,12 @@ import {
     LineChart,
     XAxis,
     YAxis,
-    ResponsiveContainer,
     Tooltip
 } from "recharts"
 
 import {
-    Card,
-    CardContent,
-    CardDescription,
-    CardHeader,
-    CardTitle,
-} from "@/components/ui/card"
-import {
     ChartConfig,
     ChartContainer,
-    ChartTooltip,
-    ChartTooltipContent,
 } from "@/components/ui/chart"
 import {
     DropdownMenu,
@@ -41,42 +32,8 @@ import {
     DropdownMenuItem,
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import {
-    Tabs,
-    TabsList,
-    TabsTrigger
-} from "@/components/ui/tabs"
-import { Button } from "@/components/ui/button"
 import { useConversionRateHistoricalData } from "../../../tanstack/mock-shopify-tanstack"
-import { capitalizeFirstLetter, formatCurrencyToShort, isAdmin } from "@/src/core/constant/helper"
-import { useSession } from "@/src/core/lib/dummy-session-provider"
-
-// Monthly data for the entire year of 2024
-const monthlyData2024 = [
-    { month: "January", visitors: 186, orders: 80, conversion: 100 },
-    { month: "February", visitors: 305, orders: 200, conversion: 100 },
-    { month: "March", visitors: 237, orders: 120, conversion: 100 },
-    { month: "April", visitors: 253, orders: 190, conversion: 100 },
-    { month: "May", visitors: 209, orders: 130, conversion: 100 },
-    { month: "June", visitors: 214, orders: 140, conversion: 105 },
-    { month: "July", visitors: 258, orders: 160, conversion: 120 },
-    { month: "August", visitors: 342, orders: 210, conversion: 135 },
-    { month: "September", visitors: 370, orders: 230, conversion: 150 },
-    { month: "October", visitors: 410, orders: 250, conversion: 180 },
-    { month: "November", visitors: 470, orders: 290, conversion: 200 },
-    { month: "December", visitors: 520, orders: 320, conversion: 230 },
-]
-
-// Data periods options
-const dataPeriods = {
-    "All 2024": monthlyData2024,
-    "Q1 2024": monthlyData2024.slice(0, 3),
-    "Q2 2024": monthlyData2024.slice(3, 6),
-    "Q3 2024": monthlyData2024.slice(6, 9),
-    "Q4 2024": monthlyData2024.slice(9, 12),
-    "H1 2024": monthlyData2024.slice(0, 6),
-    "H2 2024": monthlyData2024.slice(6, 12),
-}
+import { capitalizeFirstLetter, formatCurrencyToShort } from "@/src/core/constant/helper"
 
 const chartConfig = {
     revenue: {
@@ -135,26 +92,64 @@ export function ShopifyConversionCharts() {
     const [chartType, setChartType] = useState("bar")
     const [quarter, setQuarter] = useState("Q1")
     const [year, setYear] = useState(new Date().getFullYear())
-    const { data: session } = useSession()
-    const isUserAdmin = isAdmin(session?.user_entity || {})
+    const { resolvedTheme } = useTheme()
+    const isDark = resolvedTheme === "dark"
 
     const years = [2023, 2024, 2025, 2026]
 
-    const { data, isLoading, error } = useConversionRateHistoricalData(quarter, year.toString())
+    const { data, isLoading } = useConversionRateHistoricalData(quarter, year.toString())
 
     const formattedData = data?.map((item: any) => ({
         date: new Date(item.date || "").toLocaleDateString('en-US', { month: 'short' }),
         revenue: item.total_revenues,
         orders: item.total_orders,
-        conversion: item.total_conversions
+        conversion: item.conversion_rate ?? item.total_conversions ?? 0
     })) || []
 
-    const chartTypes = {
+    const t = useMemo(() => {
+        if (isDark) {
+            return {
+                cardBg: "linear-gradient(135deg, rgba(26, 34, 44, 0.9), rgba(35, 45, 56, 0.85))",
+                cardBorder: "1px solid rgba(var(--preset-primary-rgb), 0.12)",
+                glowColor: "rgba(var(--preset-primary-rgb), 0.08)",
+                title: "#fff",
+                subtitle: "#7a6a9a",
+                pillBg: "rgba(var(--preset-primary-rgb), 0.12)",
+                pillActive: "rgba(var(--preset-primary-rgb), 0.6)",
+                pillText: "var(--preset-lighter)",
+                pillActiveText: "#fff",
+                btnBg: "rgba(var(--preset-primary-rgb), 0.1)",
+                btnText: "var(--preset-lighter)",
+            }
+        }
+        return {
+            cardBg: "linear-gradient(135deg, rgba(250, 247, 255, 0.95), rgba(243, 237, 255, 0.85))",
+            cardBorder: "1px solid rgba(var(--preset-primary-rgb), 0.1)",
+            glowColor: "rgba(var(--preset-primary-rgb), 0.05)",
+            title: "#1a1025",
+            subtitle: "#8b7aa0",
+            pillBg: "rgba(var(--preset-primary-rgb), 0.08)",
+            pillActive: "rgba(var(--preset-primary-rgb), 0.85)",
+            pillText: "var(--preset-primary)",
+            pillActiveText: "#fff",
+            btnBg: "rgba(var(--preset-primary-rgb), 0.06)",
+            btnText: "var(--preset-primary)",
+        }
+    }, [isDark])
+
+    const chartTypes: Record<string, string> = {
         line: "Line Chart",
         area: "Area Chart",
         bar: "Bar Chart",
         stackedArea: "Stacked Area"
     }
+
+    const chartTypeButtons = [
+        { value: "line", label: "Line", icon: <LineChartIcon size={14} /> },
+        { value: "area", label: "Area", icon: <TrendingUp size={14} /> },
+        { value: "bar", label: "Bar", icon: <BarChart3 size={14} /> },
+        { value: "stackedArea", label: "Stacked", icon: <PieChartIcon size={14} /> },
+    ]
 
     const renderChart = () => {
         switch (chartType) {
@@ -406,93 +401,161 @@ export function ShopifyConversionCharts() {
     }
 
     return (
-        <Card className="shadow-sm relative">
-            <CardHeader className="pb-3">
-                <div className="flex flex-col md:flex-row md:items-center justify-between gap-2">
-                    <div>
-                        <CardTitle className="text-lg font-bold">Shopify Conversion Metrics</CardTitle>
-                        <CardDescription className="text-sm text-muted-foreground">
-                            {chartType === "line" ? "Line" :
-                                chartType === "area" ? "Area" :
-                                    chartType === "bar" ? "Bar" : "Stacked Area"} Chart showing visitors, orders, and conversion rates
-                        </CardDescription>
-                    </div>
-                    <div className="flex flex-wrap gap-2">
-                        {/* Quarter selector */}
-                        <DropdownMenu>
-                            <DropdownMenuTrigger asChild>
-                                <Button variant="outline" size="sm" className="h-8">
-                                    {quarter}
-                                    <ChevronDown className="ml-2 h-4 w-4 text-muted-foreground" />
-                                </Button>
-                            </DropdownMenuTrigger>
-                            <DropdownMenuContent align="end">
-                                {["Q1", "Q2", "Q3", "Q4"].map((q) => (
-                                    <DropdownMenuItem key={q} onClick={() => setQuarter(q)}>
-                                        {q}
-                                    </DropdownMenuItem>
-                                ))}
-                            </DropdownMenuContent>
-                        </DropdownMenu>
+        <div
+            style={{
+                background: t.cardBg,
+                borderRadius: 20,
+                border: t.cardBorder,
+                padding: "22px 26px",
+                display: "flex",
+                flexDirection: "column",
+                gap: 16,
+                fontFamily: "'Outfit', sans-serif",
+                position: "relative",
+                overflow: "hidden",
+                backdropFilter: "blur(20px)",
+                WebkitBackdropFilter: "blur(20px)",
+            }}
+        >
+            <div
+                style={{
+                    position: "absolute",
+                    top: -60,
+                    right: -60,
+                    width: 180,
+                    height: 180,
+                    background: `radial-gradient(circle, ${t.glowColor} 0%, transparent 70%)`,
+                    pointerEvents: "none",
+                }}
+            />
 
-                        {/* Year selector */}
-                        <DropdownMenu>
-                            <DropdownMenuTrigger asChild>
-                                <Button variant="outline" size="sm" className="h-8">
-                                    {year}
-                                    <ChevronDown className="ml-2 h-4 w-4 text-muted-foreground" />
-                                </Button>
-                            </DropdownMenuTrigger>
-                            <DropdownMenuContent align="end">
-                                {years.map((y) => (
-                                    <DropdownMenuItem key={y} onClick={() => setYear(y)}>
-                                        {y}
-                                    </DropdownMenuItem>
-                                ))}
-                            </DropdownMenuContent>
-                        </DropdownMenu>
-
-                        {/* Chart type selector */}
-                        <DropdownMenu>
-                            <DropdownMenuTrigger asChild>
-                                <Button variant="outline" size="icon" className="h-8 w-8">
-                                    {chartType === 'line' && <LineChartIcon className="h-4 w-4" />}
-                                    {chartType === 'area' && <TrendingUp className="h-4 w-4" />}
-                                    {chartType === 'bar' && <BarChart3 className="h-4 w-4" />}
-                                    {chartType === 'stackedArea' && <PieChartIcon className="h-4 w-4" />}
-                                </Button>
-                            </DropdownMenuTrigger>
-                            <DropdownMenuContent align="end">
-                                <DropdownMenuItem onClick={() => setChartType("line")}>
-                                    <LineChartIcon className="h-4 w-4 mr-2" />
-                                    Line Chart
-                                </DropdownMenuItem>
-                                <DropdownMenuItem onClick={() => setChartType("area")}>
-                                    <TrendingUp className="h-4 w-4 mr-2" />
-                                    Area Chart
-                                </DropdownMenuItem>
-                                <DropdownMenuItem onClick={() => setChartType("bar")}>
-                                    <BarChart3 className="h-4 w-4 mr-2" />
-                                    Bar Chart
-                                </DropdownMenuItem>
-                                <DropdownMenuItem onClick={() => setChartType("stackedArea")}>
-                                    <PieChartIcon className="h-4 w-4 mr-2" />
-                                    Stacked Area
-                                </DropdownMenuItem>
-                            </DropdownMenuContent>
-                        </DropdownMenu>
+            {isLoading && (
+                <div
+                    style={{
+                        position: "absolute",
+                        inset: 0,
+                        background: isDark ? "rgba(26, 34, 44, 0.75)" : "rgba(250, 247, 255, 0.6)",
+                        backdropFilter: "blur(2px)",
+                        zIndex: 10,
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        borderRadius: 20,
+                    }}
+                >
+                    <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 10 }}>
+                        <div style={{ display: "flex", gap: 4 }}>
+                            {[0, 150, 300].map((delay) => (
+                                <div
+                                    key={delay}
+                                    style={{
+                                        width: 8,
+                                        height: 8,
+                                        borderRadius: "50%",
+                                        background: "rgba(var(--preset-primary-rgb), 0.6)",
+                                        animation: "bounce 1s infinite",
+                                        animationDelay: `${delay}ms`,
+                                    }}
+                                />
+                            ))}
+                        </div>
+                        <span style={{ fontSize: 13, color: t.subtitle }}>Loading chart data...</span>
                     </div>
                 </div>
-            </CardHeader>
-            <CardContent>
-                <div className="h-[350px] w-full">
-                    <ChartContainer config={chartConfig} className="h-[350px] w-full">
-                        <ResponsiveContainer width="100%" height="100%">
-                            {renderChart()}
-                        </ResponsiveContainer>
-                    </ChartContainer>
+            )}
+
+            <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", flexWrap: "wrap", gap: 12 }}>
+                <div>
+                    <h2 style={{ fontSize: 18, fontWeight: 700, color: t.title, margin: 0, letterSpacing: "-0.3px", lineHeight: 1.2 }}>
+                        Shopify Conversion Metrics
+                    </h2>
+                    <p style={{ fontSize: 12, color: t.subtitle, margin: "4px 0 0 0" }}>
+                        {chartTypes[chartType]} showing visitors, orders, and conversion rates
+                    </p>
                 </div>
-            </CardContent>
-        </Card>
+
+                <div style={{ display: "flex", alignItems: "center", gap: 6, flexWrap: "wrap" }}>
+                    <div
+                        className="hidden md:flex"
+                        style={{ background: t.pillBg, borderRadius: 10, padding: 3, gap: 2 }}
+                    >
+                        {chartTypeButtons.map((btn) => (
+                            <button
+                                key={btn.value}
+                                type="button"
+                                onClick={() => setChartType(btn.value)}
+                                style={{
+                                    display: "flex",
+                                    alignItems: "center",
+                                    gap: 4,
+                                    fontSize: 12,
+                                    fontWeight: 600,
+                                    padding: "5px 10px",
+                                    borderRadius: 8,
+                                    border: "none",
+                                    cursor: "pointer",
+                                    transition: "all 0.15s ease",
+                                    color: chartType === btn.value ? t.pillActiveText : t.pillText,
+                                    background: chartType === btn.value ? t.pillActive : "transparent",
+                                    boxShadow: chartType === btn.value ? "0 1px 4px rgba(var(--preset-primary-rgb), 0.25)" : "none",
+                                }}
+                            >
+                                {btn.icon}
+                                {btn.label}
+                            </button>
+                        ))}
+                    </div>
+
+                    <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                            <button type="button" style={{ display: "flex", alignItems: "center", gap: 4, fontSize: 12, fontWeight: 600, padding: "5px 10px", borderRadius: 8, border: t.cardBorder, cursor: "pointer", color: t.btnText, background: t.btnBg }}>
+                                {quarter}
+                                <ChevronDown size={14} />
+                            </button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end">
+                            {["Q1", "Q2", "Q3", "Q4"].map((q) => (
+                                <DropdownMenuItem key={q} onClick={() => setQuarter(q)}>{q}</DropdownMenuItem>
+                            ))}
+                        </DropdownMenuContent>
+                    </DropdownMenu>
+
+                    <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                            <button type="button" style={{ display: "flex", alignItems: "center", gap: 4, fontSize: 12, fontWeight: 600, padding: "5px 10px", borderRadius: 8, border: t.cardBorder, cursor: "pointer", color: t.btnText, background: t.btnBg }}>
+                                {year}
+                                <ChevronDown size={14} />
+                            </button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end">
+                            {years.map((y) => (
+                                <DropdownMenuItem key={y} onClick={() => setYear(y)}>{y}</DropdownMenuItem>
+                            ))}
+                        </DropdownMenuContent>
+                    </DropdownMenu>
+
+                    <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                            <button type="button" className="md:hidden" style={{ display: "flex", alignItems: "center", justifyContent: "center", width: 32, height: 32, borderRadius: 8, border: t.cardBorder, cursor: "pointer", color: t.btnText, background: t.btnBg }}>
+                                {chartType === 'line' && <LineChartIcon size={16} />}
+                                {chartType === 'area' && <TrendingUp size={16} />}
+                                {chartType === 'bar' && <BarChart3 size={16} />}
+                                {chartType === 'stackedArea' && <PieChartIcon size={16} />}
+                            </button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end">
+                            <DropdownMenuItem onClick={() => setChartType("line")}><LineChartIcon className="h-4 w-4 mr-2" /> Line</DropdownMenuItem>
+                            <DropdownMenuItem onClick={() => setChartType("area")}><TrendingUp className="h-4 w-4 mr-2" /> Area</DropdownMenuItem>
+                            <DropdownMenuItem onClick={() => setChartType("bar")}><BarChart3 className="h-4 w-4 mr-2" /> Bar</DropdownMenuItem>
+                            <DropdownMenuItem onClick={() => setChartType("stackedArea")}><PieChartIcon className="h-4 w-4 mr-2" /> Stacked</DropdownMenuItem>
+                        </DropdownMenuContent>
+                    </DropdownMenu>
+                </div>
+            </div>
+
+            <ChartContainer config={chartConfig} className="h-[350px] w-full">
+                {renderChart()}
+            </ChartContainer>
+        </div>
     )
 }

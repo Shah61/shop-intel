@@ -1,29 +1,24 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useMemo } from "react";
+import { useTheme } from "next-themes";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Tabs, TabsContent } from "@/components/ui/tabs";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { 
-    TrendingUp, 
-    DollarSign, 
-    ShoppingCart, 
-    Package, 
-    Globe,
+import {
+    TrendingUp,
+    DollarSign,
+    ShoppingCart,
+    Package,
     BarChart3,
     Calendar,
     Search,
     Download,
-    Store,
     Target,
     Zap,
-    Users,
-    Eye
 } from "lucide-react";
 import {
     LineChart,
@@ -34,11 +29,10 @@ import {
     Tooltip as RechartsTooltip,
     ResponsiveContainer,
     BarChart,
-    Bar,
-    PieChart,
-    Pie,
-    Cell
+    Bar
 } from "recharts";
+import DateRangePickerPro, { type DateRange, type Timeframe } from "@/components/ui/date-range-picker-pro";
+import { startOfMonth, endOfMonth } from "date-fns";
 
 // Static data for WooCommerce sales
 const wooCommerceData = {
@@ -137,21 +131,93 @@ const formatDate = (dateString: string) => {
     });
 };
 
-const getStatusColor = (status: string) => {
-    switch (status.toLowerCase()) {
-        case "completed": return "bg-green-500";
-        case "processing": return "bg-yellow-500";
-        case "shipped": return "bg-blue-500";
-        case "cancelled": return "bg-red-500";
-        default: return "bg-gray-500";
-    }
+/* ─── Badge config (Overview / List Conversion Platform badge style) ─── */
+const BADGE_CONFIG: Record<string, { label: string; gradient: string; shadow: string }> = {
+    Completed: { label: "Completed", gradient: "linear-gradient(135deg, #059669, #10b981)", shadow: "0 2px 8px rgba(16, 185, 129, 0.35)" },
+    Processing: { label: "Processing", gradient: "linear-gradient(135deg, #d97706, #f59e0b)", shadow: "0 2px 8px rgba(245, 158, 11, 0.35)" },
+    Shipped: { label: "Shipped", gradient: "linear-gradient(135deg, #2563eb, #3b82f6)", shadow: "0 2px 8px rgba(59, 130, 246, 0.35)" },
+    Cancelled: { label: "Cancelled", gradient: "linear-gradient(135deg, #dc2626, #ef4444)", shadow: "0 2px 8px rgba(239, 68, 68, 0.35)" },
+    WooCommerce: { label: "WooCommerce", gradient: "linear-gradient(135deg, var(--preset-primary), var(--preset-lighter))", shadow: "0 2px 8px rgba(var(--preset-primary-rgb), 0.35)" },
+    Facebook: { label: "Facebook", gradient: "linear-gradient(135deg, #2563eb, #60a5fa)", shadow: "0 2px 8px rgba(96, 165, 250, 0.35)" },
+    "In Development": { label: "In Development", gradient: "linear-gradient(135deg, #d97706, #fbbf24)", shadow: "0 2px 8px rgba(251, 191, 36, 0.35)" },
+    "magicclothing.com": { label: "magicclothing.com", gradient: "linear-gradient(135deg, var(--preset-primary), var(--preset-lighter))", shadow: "0 2px 8px rgba(var(--preset-primary-rgb), 0.35)" },
+    "magicclothing.sg": { label: "magicclothing.sg", gradient: "linear-gradient(135deg, #5b21b6, #8b5cf6)", shadow: "0 2px 8px rgba(139, 92, 246, 0.35)" },
 };
 
+function StyledBadge({ value }: { value: string }) {
+    const config = BADGE_CONFIG[value] || { label: value, gradient: "linear-gradient(135deg, #6b7280, #9ca3af)", shadow: "0 2px 8px rgba(156, 163, 175, 0.3)" };
+    return (
+        <span
+            style={{
+                display: "inline-flex",
+                alignItems: "center",
+                position: "relative",
+                overflow: "hidden",
+                background: config.gradient,
+                boxShadow: config.shadow,
+                borderRadius: 6,
+                padding: "2px 8px",
+                fontSize: 10,
+                fontWeight: 700,
+                textTransform: "uppercase",
+                letterSpacing: "0.5px",
+                color: "#fff",
+                lineHeight: 1.6,
+            }}
+        >
+            <span style={{ position: "relative", zIndex: 1 }}>{config.label}</span>
+            <span
+                style={{
+                    position: "absolute",
+                    inset: 0,
+                    background: "linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.25) 50%, transparent 100%)",
+                    backgroundSize: "200% 100%",
+                    animation: "shimmer-slide 2s infinite linear",
+                }}
+            />
+            <style>{`
+                @keyframes shimmer-slide {
+                    0% { background-position: -200% 0; }
+                    100% { background-position: 200% 0; }
+                }
+            `}</style>
+        </span>
+    );
+}
+
 export default function WooCommerceDashboard() {
+    const { resolvedTheme } = useTheme();
+    const isDark = resolvedTheme === "dark";
+
     const [activeTab, setActiveTab] = useState("overview");
     const [selectedDomain, setSelectedDomain] = useState("all");
-    const [dateRange, setDateRange] = useState({ start: "2025-01-01", end: "2025-01-31" });
+    const [timeframe, setTimeframe] = useState<Timeframe>("daily");
+    const [dateRange, setDateRange] = useState<DateRange>(() => {
+        const now = new Date();
+        return { from: startOfMonth(now), to: endOfMonth(now) };
+    });
     const [searchTerm, setSearchTerm] = useState("");
+
+    const tabTheme = useMemo(() => {
+        if (isDark) {
+            return {
+                pillBg: "rgba(var(--preset-primary-rgb), 0.12)",
+                pillActive: "rgba(var(--preset-primary-rgb), 0.6)",
+                pillText: "var(--preset-lighter)",
+                pillActiveText: "#fff",
+                title: "#fff",
+                subtitle: "#a1a1aa",
+            };
+        }
+        return {
+            pillBg: "rgba(var(--preset-primary-rgb), 0.08)",
+            pillActive: "rgba(var(--preset-primary-rgb), 0.85)",
+            pillText: "var(--preset-primary)",
+            pillActiveText: "#fff",
+            title: "#18181b",
+            subtitle: "#71717a",
+        };
+    }, [isDark]);
 
     const filteredTopSellers = topSellersData.filter(product =>
         product.name.toLowerCase().includes(searchTerm.toLowerCase())
@@ -165,16 +231,28 @@ export default function WooCommerceDashboard() {
     return (
         <div className="space-y-6">
             {/* Header */}
-            <div className="flex items-center justify-between">
+            <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4 w-full">
                 <div>
-                    <h1 className="text-3xl font-bold bg-gradient-to-r from-green-600 to-green-800 bg-clip-text text-transparent">
+                    <h1 className="text-2xl font-bold" style={{ color: tabTheme.title, fontFamily: "'Outfit', sans-serif" }}>
                         WooCommerce Dashboard
                     </h1>
-                    <p className="text-muted-foreground">Track your e-commerce performance and sales analytics</p>
+                    <p style={{ color: tabTheme.subtitle, fontSize: 14 }}>Track your e-commerce performance and sales analytics</p>
                 </div>
-                <div className="flex items-center gap-4">
+                <div className="flex flex-wrap items-center gap-3">
+                    <DateRangePickerPro
+                        value={dateRange}
+                        onChange={setDateRange}
+                        placeholder="Pick a date range"
+                        label=""
+                        timeframe={timeframe}
+                        onTimeframeChange={setTimeframe}
+                        className="min-w-[240px]"
+                    />
                     <Select value={selectedDomain} onValueChange={setSelectedDomain}>
-                        <SelectTrigger className="w-48">
+                        <SelectTrigger
+                            className="w-48"
+                            style={{ borderColor: isDark ? "rgba(var(--preset-primary-rgb), 0.25)" : "rgba(var(--preset-primary-rgb), 0.2)" }}
+                        >
                             <SelectValue placeholder="Select Domain" />
                         </SelectTrigger>
                         <SelectContent>
@@ -183,133 +261,140 @@ export default function WooCommerceDashboard() {
                             <SelectItem value="magicclothing.sg">magicclothing.sg</SelectItem>
                         </SelectContent>
                     </Select>
-                    <Button variant="outline" className="gap-2">
+                    <Button
+                        variant="outline"
+                        className="gap-2"
+                        style={{
+                            borderColor: isDark ? "rgba(var(--preset-primary-rgb), 0.35)" : "rgba(var(--preset-primary-rgb), 0.3)",
+                            color: isDark ? "var(--preset-lighter)" : "var(--preset-primary)",
+                        }}
+                    >
                         <Download className="h-4 w-4" />
                         Export CSV
                     </Button>
                 </div>
             </div>
 
-            {/* Key Metrics Cards */}
+            {/* Key Metrics Cards — Overview style + purple essence */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                <Card className="bg-gradient-to-br from-green-50 to-green-100 dark:from-green-950 dark:to-green-900">
+                <Card className="border overflow-hidden" style={{ fontFamily: "'Outfit', sans-serif", borderColor: isDark ? "rgba(var(--preset-primary-rgb), 0.12)" : "rgba(var(--preset-primary-rgb), 0.1)" }}>
                     <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                        <CardTitle className="text-sm font-medium text-green-600">Total Revenue</CardTitle>
-                        <DollarSign className="h-4 w-4 text-green-600" />
+                        <CardTitle className="text-sm font-medium" style={{ color: tabTheme.subtitle }}>Total Revenue</CardTitle>
+                        <DollarSign className="h-4 w-4" style={{ color: isDark ? "var(--preset-lighter)" : "var(--preset-primary)" }} />
                     </CardHeader>
                     <CardContent>
-                        <div className="text-2xl font-bold text-green-700">{formatCurrency(wooCommerceData.revenue)}</div>
-                        <div className="flex items-center gap-2 text-xs text-green-600">
+                        <div className="text-2xl font-bold" style={{ color: tabTheme.title }}>{formatCurrency(wooCommerceData.revenue)}</div>
+                        <div className="flex items-center gap-2 text-xs" style={{ color: tabTheme.subtitle }}>
                             <span>{formatNumber(wooCommerceData.orders)} orders</span>
                             <span>•</span>
                             <span>Avg: {formatCurrency(wooCommerceData.averageOrderValue)}</span>
                         </div>
-                        <p className="text-xs text-green-600 mt-1">Top domain: {wooCommerceData.topDomain}</p>
+                        <p className="text-xs mt-1" style={{ color: tabTheme.subtitle }}>Top domain: {wooCommerceData.topDomain}</p>
                     </CardContent>
                 </Card>
 
-                <Card className="bg-gradient-to-br from-blue-50 to-blue-100 dark:from-blue-950 dark:to-blue-900">
+                <Card className="border overflow-hidden" style={{ fontFamily: "'Outfit', sans-serif", borderColor: isDark ? "rgba(var(--preset-primary-rgb), 0.12)" : "rgba(var(--preset-primary-rgb), 0.1)" }}>
                     <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                        <CardTitle className="text-sm font-medium text-blue-600">Marketing Spend</CardTitle>
-                        <Target className="h-4 w-4 text-blue-600" />
+                        <CardTitle className="text-sm font-medium" style={{ color: tabTheme.subtitle }}>Marketing Spend</CardTitle>
+                        <Target className="h-4 w-4" style={{ color: isDark ? "var(--preset-lighter)" : "var(--preset-primary)" }} />
                     </CardHeader>
                     <CardContent>
-                        <div className="text-2xl font-bold text-blue-700">{formatCurrency(wooCommerceData.marketingSpend)}</div>
-                        <div className="flex items-center gap-2 text-xs text-blue-600">
+                        <div className="text-2xl font-bold" style={{ color: tabTheme.title }}>{formatCurrency(wooCommerceData.marketingSpend)}</div>
+                        <div className="flex items-center gap-2 text-xs" style={{ color: tabTheme.subtitle }}>
                             <span>{formatNumber(wooCommerceData.purchases)} purchases</span>
                             <span>•</span>
                             <span>{formatNumber(wooCommerceData.totalReach)} reach</span>
                         </div>
-                        <p className="text-xs text-blue-600 mt-1">Facebook Ads</p>
+                        <p className="text-xs mt-1" style={{ color: tabTheme.subtitle }}>Facebook Ads</p>
                     </CardContent>
                 </Card>
 
-                <Card className="bg-gradient-to-br from-purple-50 to-purple-100 dark:from-purple-950 dark:to-purple-900">
+                <Card className="border overflow-hidden" style={{ fontFamily: "'Outfit', sans-serif", borderColor: isDark ? "rgba(var(--preset-primary-rgb), 0.12)" : "rgba(var(--preset-primary-rgb), 0.1)" }}>
                     <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                        <CardTitle className="text-sm font-medium text-purple-600">ROI Performance</CardTitle>
-                        <TrendingUp className="h-4 w-4 text-purple-600" />
+                        <CardTitle className="text-sm font-medium" style={{ color: tabTheme.subtitle }}>ROI Performance</CardTitle>
+                        <TrendingUp className="h-4 w-4" style={{ color: isDark ? "var(--preset-lighter)" : "var(--preset-primary)" }} />
                     </CardHeader>
                     <CardContent>
-                        <div className="text-2xl font-bold text-purple-700">{formatCurrency(wooCommerceData.netProfit)}</div>
-                        <div className="flex items-center gap-2 text-xs text-purple-600">
+                        <div className="text-2xl font-bold" style={{ color: tabTheme.title }}>{formatCurrency(wooCommerceData.netProfit)}</div>
+                        <div className="flex items-center gap-2 text-xs" style={{ color: tabTheme.subtitle }}>
                             <span>ROI: {wooCommerceData.roi}%</span>
                             <span>•</span>
                             <span>ROAS: {wooCommerceData.roas}x</span>
                         </div>
-                        <p className="text-xs text-purple-600 mt-1">Net profit</p>
+                        <p className="text-xs mt-1" style={{ color: tabTheme.subtitle }}>Net profit</p>
                     </CardContent>
                 </Card>
 
-                <Card className="bg-gradient-to-br from-orange-50 to-orange-100 dark:from-orange-950 dark:to-orange-900">
+                <Card className="border overflow-hidden" style={{ fontFamily: "'Outfit', sans-serif", borderColor: isDark ? "rgba(var(--preset-primary-rgb), 0.12)" : "rgba(var(--preset-primary-rgb), 0.1)" }}>
                     <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                        <CardTitle className="text-sm font-medium text-orange-600">TikTok Integration</CardTitle>
-                        <Zap className="h-4 w-4 text-orange-600" />
+                        <CardTitle className="text-sm font-medium" style={{ color: tabTheme.subtitle }}>TikTok Integration</CardTitle>
+                        <Zap className="h-4 w-4" style={{ color: isDark ? "var(--preset-lighter)" : "var(--preset-primary)" }} />
                     </CardHeader>
                     <CardContent>
-                        <div className="text-2xl font-bold text-orange-700">Coming Soon</div>
-                        <p className="text-xs text-orange-600 mt-1">TikTok Shop integration</p>
-                        <Badge className="mt-2 bg-orange-500">In Development</Badge>
+                        <div className="text-2xl font-bold" style={{ color: tabTheme.title }}>Coming Soon</div>
+                        <p className="text-xs mt-1" style={{ color: tabTheme.subtitle }}>TikTok Shop integration</p>
+                        <div className="mt-2"><StyledBadge value="In Development" /></div>
                     </CardContent>
                 </Card>
             </div>
 
-            {/* Date Range and Search */}
+            {/* Search */}
             <div className="flex flex-col md:flex-row gap-4">
-                <div className="flex gap-2">
-                    <Input
-                        type="date"
-                        value={dateRange.start}
-                        onChange={(e) => setDateRange(prev => ({ ...prev, start: e.target.value }))}
-                        className="w-40"
-                    />
-                    <span className="flex items-center text-muted-foreground">to</span>
-                    <Input
-                        type="date"
-                        value={dateRange.end}
-                        onChange={(e) => setDateRange(prev => ({ ...prev, end: e.target.value }))}
-                        className="w-40"
-                    />
-                </div>
                 <div className="flex-1">
                     <div className="relative">
-                        <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                        <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4" style={{ color: isDark ? "var(--preset-lighter)" : "var(--preset-primary)" }} />
                         <Input
                             placeholder="Search products, orders..."
                             value={searchTerm}
                             onChange={(e) => setSearchTerm(e.target.value)}
-                            className="pl-10"
+                            className="pl-10 focus-visible:ring-2 focus-visible:ring-violet-500/30 focus-visible:ring-offset-0"
+                            style={{ borderColor: isDark ? "rgba(var(--preset-primary-rgb), 0.25)" : "rgba(var(--preset-primary-rgb), 0.2)" }}
                         />
                     </div>
                 </div>
             </div>
 
-            {/* Main Tabs */}
+            {/* Main Tabs — pill style */}
             <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-                <TabsList className="grid w-full grid-cols-4">
-                    <TabsTrigger value="overview" className="flex items-center gap-2">
-                        <BarChart3 className="h-4 w-4" />
-                        Overview
-                    </TabsTrigger>
-                    <TabsTrigger value="top-sellers" className="flex items-center gap-2">
-                        <Package className="h-4 w-4" />
-                        Top Sellers
-                    </TabsTrigger>
-                    <TabsTrigger value="orders" className="flex items-center gap-2">
-                        <ShoppingCart className="h-4 w-4" />
-                        Orders
-                    </TabsTrigger>
-                    <TabsTrigger value="daily-sales" className="flex items-center gap-2">
-                        <Calendar className="h-4 w-4" />
-                        Daily Sales
-                    </TabsTrigger>
-                </TabsList>
+                <div style={{ display: "flex", background: tabTheme.pillBg, borderRadius: 10, padding: 3, gap: 2, width: "fit-content", flexWrap: "wrap" }}>
+                    {[
+                        { value: "overview", label: "Overview", icon: <BarChart3 size={16} /> },
+                        { value: "top-sellers", label: "Top Sellers", icon: <Package size={16} /> },
+                        { value: "orders", label: "Orders", icon: <ShoppingCart size={16} /> },
+                        { value: "daily-sales", label: "Daily Sales", icon: <Calendar size={16} /> },
+                    ].map((tab) => (
+                        <button
+                            key={tab.value}
+                            type="button"
+                            onClick={() => setActiveTab(tab.value)}
+                            style={{
+                                display: "flex",
+                                alignItems: "center",
+                                gap: 6,
+                                fontSize: 13,
+                                fontWeight: 600,
+                                padding: "8px 16px",
+                                borderRadius: 8,
+                                border: "none",
+                                cursor: "pointer",
+                                transition: "all 0.15s ease",
+                                color: activeTab === tab.value ? tabTheme.pillActiveText : tabTheme.pillText,
+                                background: activeTab === tab.value ? tabTheme.pillActive : "transparent",
+                                boxShadow: activeTab === tab.value ? "0 1px 4px rgba(var(--preset-primary-rgb), 0.25)" : "none",
+                            }}
+                        >
+                            {tab.icon}
+                            {tab.label}
+                        </button>
+                    ))}
+                </div>
 
                 <TabsContent value="overview" className="space-y-6">
                     {/* Performance Charts */}
                     <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                        <Card>
+                        <Card className="border overflow-hidden" style={{ fontFamily: "'Outfit', sans-serif", borderColor: isDark ? "rgba(var(--preset-primary-rgb), 0.12)" : "rgba(var(--preset-primary-rgb), 0.1)" }}>
                             <CardHeader>
-                                <CardTitle>Revenue vs Marketing Spend</CardTitle>
+                                <CardTitle style={{ color: tabTheme.title }}>Revenue vs Marketing Spend</CardTitle>
                             </CardHeader>
                             <CardContent>
                                 <ResponsiveContainer width="100%" height={300}>
@@ -318,15 +403,15 @@ export default function WooCommerceDashboard() {
                                         <XAxis dataKey="date" />
                                         <YAxis />
                                         <RechartsTooltip />
-                                        <Bar dataKey="revenue" fill="#10B981" name="Revenue" />
+                                        <Bar dataKey="revenue" fill="var(--preset-primary)" name="Revenue" />
                                     </BarChart>
                                 </ResponsiveContainer>
                             </CardContent>
                         </Card>
 
-                        <Card>
+                        <Card className="border overflow-hidden" style={{ fontFamily: "'Outfit', sans-serif", borderColor: isDark ? "rgba(var(--preset-primary-rgb), 0.12)" : "rgba(var(--preset-primary-rgb), 0.1)" }}>
                             <CardHeader>
-                                <CardTitle>Revenue Trend</CardTitle>
+                                <CardTitle style={{ color: tabTheme.title }}>Revenue Trend</CardTitle>
                             </CardHeader>
                             <CardContent>
                                 <ResponsiveContainer width="100%" height={300}>
@@ -335,7 +420,7 @@ export default function WooCommerceDashboard() {
                                         <XAxis dataKey="date" />
                                         <YAxis />
                                         <RechartsTooltip />
-                                        <Line type="monotone" dataKey="revenue" stroke="#10B981" strokeWidth={2} />
+                                        <Line type="monotone" dataKey="revenue" stroke="var(--preset-primary)" strokeWidth={2} />
                                     </LineChart>
                                 </ResponsiveContainer>
                             </CardContent>
@@ -343,9 +428,9 @@ export default function WooCommerceDashboard() {
                     </div>
 
                     {/* Performance Summary Table */}
-                    <Card>
+                    <Card className="border overflow-hidden" style={{ fontFamily: "'Outfit', sans-serif", borderColor: isDark ? "rgba(var(--preset-primary-rgb), 0.12)" : "rgba(var(--preset-primary-rgb), 0.1)" }}>
                         <CardHeader>
-                            <CardTitle>Performance Summary</CardTitle>
+                            <CardTitle style={{ color: tabTheme.title }}>Performance Summary</CardTitle>
                         </CardHeader>
                         <CardContent>
                             <Table>
@@ -364,9 +449,7 @@ export default function WooCommerceDashboard() {
                                         <TableRow key={index}>
                                             <TableCell>{formatDate(item.date)}</TableCell>
                                             <TableCell>
-                                                <Badge variant={item.platform === "WooCommerce" ? "default" : "secondary"}>
-                                                    {item.platform}
-                                                </Badge>
+                                                <StyledBadge value={item.platform} />
                                             </TableCell>
                                             <TableCell>{item.type}</TableCell>
                                             <TableCell>{formatCurrency(item.amount)}</TableCell>
@@ -380,33 +463,33 @@ export default function WooCommerceDashboard() {
                     </Card>
 
                     {/* Marketing Performance Insights */}
-                    <Card>
+                    <Card className="border overflow-hidden" style={{ fontFamily: "'Outfit', sans-serif", borderColor: isDark ? "rgba(var(--preset-primary-rgb), 0.12)" : "rgba(var(--preset-primary-rgb), 0.1)" }}>
                         <CardHeader>
-                            <CardTitle>Marketing Performance Insights</CardTitle>
+                            <CardTitle style={{ color: tabTheme.title }}>Marketing Performance Insights</CardTitle>
                         </CardHeader>
                         <CardContent className="space-y-4">
                             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                                <div className="text-center p-4 bg-green-50 dark:bg-green-950 rounded-lg">
-                                    <div className="text-2xl font-bold text-green-600">{wooCommerceData.roas}x</div>
-                                    <div className="text-sm text-green-600">ROAS</div>
-                                    <div className="text-xs text-green-500">Return on Ad Spend</div>
+                                <div className="text-center p-4 rounded-lg border" style={{ borderColor: isDark ? "rgba(var(--preset-primary-rgb), 0.2)" : "rgba(var(--preset-primary-rgb), 0.15)", background: isDark ? "rgba(var(--preset-primary-rgb), 0.08)" : "rgba(var(--preset-primary-rgb), 0.06)" }}>
+                                    <div className="text-2xl font-bold" style={{ color: isDark ? "var(--preset-lighter)" : "var(--preset-primary)" }}>{wooCommerceData.roas}x</div>
+                                    <div className="text-sm" style={{ color: tabTheme.subtitle }}>ROAS</div>
+                                    <div className="text-xs" style={{ color: tabTheme.subtitle }}>Return on Ad Spend</div>
                                 </div>
-                                <div className="text-center p-4 bg-blue-50 dark:bg-blue-950 rounded-lg">
-                                    <div className="text-2xl font-bold text-blue-600">{formatCurrency(wooCommerceData.marketingSpend / wooCommerceData.purchases)}</div>
-                                    <div className="text-sm text-blue-600">CPA</div>
-                                    <div className="text-xs text-blue-500">Cost per Acquisition</div>
+                                <div className="text-center p-4 rounded-lg border" style={{ borderColor: isDark ? "rgba(var(--preset-primary-rgb), 0.2)" : "rgba(var(--preset-primary-rgb), 0.15)", background: isDark ? "rgba(var(--preset-primary-rgb), 0.08)" : "rgba(var(--preset-primary-rgb), 0.06)" }}>
+                                    <div className="text-2xl font-bold" style={{ color: isDark ? "var(--preset-lighter)" : "var(--preset-primary)" }}>{formatCurrency(wooCommerceData.marketingSpend / wooCommerceData.purchases)}</div>
+                                    <div className="text-sm" style={{ color: tabTheme.subtitle }}>CPA</div>
+                                    <div className="text-xs" style={{ color: tabTheme.subtitle }}>Cost per Acquisition</div>
                                 </div>
-                                <div className="text-center p-4 bg-purple-50 dark:bg-purple-950 rounded-lg">
-                                    <div className="text-2xl font-bold text-purple-600">{((wooCommerceData.purchases / wooCommerceData.totalReach) * 100).toFixed(2)}%</div>
-                                    <div className="text-sm text-purple-600">Conversion Rate</div>
-                                    <div className="text-xs text-purple-500">From Reach to Purchase</div>
+                                <div className="text-center p-4 rounded-lg border" style={{ borderColor: isDark ? "rgba(var(--preset-primary-rgb), 0.2)" : "rgba(var(--preset-primary-rgb), 0.15)", background: isDark ? "rgba(var(--preset-primary-rgb), 0.08)" : "rgba(var(--preset-primary-rgb), 0.06)" }}>
+                                    <div className="text-2xl font-bold" style={{ color: isDark ? "var(--preset-lighter)" : "var(--preset-primary)" }}>{((wooCommerceData.purchases / wooCommerceData.totalReach) * 100).toFixed(2)}%</div>
+                                    <div className="text-sm" style={{ color: tabTheme.subtitle }}>Conversion Rate</div>
+                                    <div className="text-xs" style={{ color: tabTheme.subtitle }}>From Reach to Purchase</div>
                                 </div>
                             </div>
-                            <div className="p-4 bg-gray-50 dark:bg-gray-900 rounded-lg">
-                                <h4 className="font-semibold mb-2">Performance Summary</h4>
-                                <p className="text-sm text-muted-foreground">
-                                    Your WooCommerce store is performing excellently with a strong ROAS of {wooCommerceData.roas}x. 
-                                    The conversion rate from Facebook ads is healthy at {((wooCommerceData.purchases / wooCommerceData.totalReach) * 100).toFixed(2)}%. 
+                            <div className="p-4 rounded-lg border" style={{ borderColor: isDark ? "rgba(var(--preset-primary-rgb), 0.12)" : "rgba(var(--preset-primary-rgb), 0.1)", background: isDark ? "rgba(var(--preset-primary-rgb), 0.04)" : "rgba(var(--preset-primary-rgb), 0.04)" }}>
+                                <h4 className="font-semibold mb-2" style={{ color: tabTheme.title }}>Performance Summary</h4>
+                                <p className="text-sm" style={{ color: tabTheme.subtitle }}>
+                                    Your WooCommerce store is performing excellently with a strong ROAS of {wooCommerceData.roas}x.
+                                    The conversion rate from Facebook ads is healthy at {((wooCommerceData.purchases / wooCommerceData.totalReach) * 100).toFixed(2)}%.
                                     Consider increasing ad spend on high-performing campaigns to scale revenue further.
                                 </p>
                             </div>
@@ -415,9 +498,9 @@ export default function WooCommerceDashboard() {
                 </TabsContent>
 
                 <TabsContent value="top-sellers" className="space-y-6">
-                    <Card>
+                    <Card className="border overflow-hidden" style={{ fontFamily: "'Outfit', sans-serif", borderColor: isDark ? "rgba(var(--preset-primary-rgb), 0.12)" : "rgba(var(--preset-primary-rgb), 0.1)" }}>
                         <CardHeader>
-                            <CardTitle>Top Selling Products</CardTitle>
+                            <CardTitle style={{ color: tabTheme.title }}>Top Selling Products</CardTitle>
                         </CardHeader>
                         <CardContent>
                             <Table>
@@ -436,7 +519,7 @@ export default function WooCommerceDashboard() {
                                             <TableCell>{product.name}</TableCell>
                                             <TableCell>{formatNumber(product.quantity)}</TableCell>
                                             <TableCell>
-                                                <Badge variant="outline">{product.domain}</Badge>
+                                                <StyledBadge value={product.domain} />
                                             </TableCell>
                                         </TableRow>
                                     ))}
@@ -447,9 +530,9 @@ export default function WooCommerceDashboard() {
                 </TabsContent>
 
                 <TabsContent value="orders" className="space-y-6">
-                    <Card>
+                    <Card className="border overflow-hidden" style={{ fontFamily: "'Outfit', sans-serif", borderColor: isDark ? "rgba(var(--preset-primary-rgb), 0.12)" : "rgba(var(--preset-primary-rgb), 0.1)" }}>
                         <CardHeader>
-                            <CardTitle>Recent Orders</CardTitle>
+                            <CardTitle style={{ color: tabTheme.title }}>Recent Orders</CardTitle>
                         </CardHeader>
                         <CardContent>
                             <Table>
@@ -468,14 +551,12 @@ export default function WooCommerceDashboard() {
                                         <TableRow key={order.id}>
                                             <TableCell className="font-medium">{order.id}</TableCell>
                                             <TableCell>
-                                                <Badge className={getStatusColor(order.status)}>
-                                                    {order.status}
-                                                </Badge>
+                                                <StyledBadge value={order.status} />
                                             </TableCell>
                                             <TableCell>{formatCurrency(order.total)}</TableCell>
                                             <TableCell>{formatDate(order.date)}</TableCell>
                                             <TableCell>
-                                                <Badge variant="outline">{order.domain}</Badge>
+                                                <StyledBadge value={order.domain} />
                                             </TableCell>
                                             <TableCell>
                                                 <div className="text-sm">
@@ -491,9 +572,9 @@ export default function WooCommerceDashboard() {
                 </TabsContent>
 
                 <TabsContent value="daily-sales" className="space-y-6">
-                    <Card>
+                    <Card className="border overflow-hidden" style={{ fontFamily: "'Outfit', sans-serif", borderColor: isDark ? "rgba(var(--preset-primary-rgb), 0.12)" : "rgba(var(--preset-primary-rgb), 0.1)" }}>
                         <CardHeader>
-                            <CardTitle>Daily Sales Overview</CardTitle>
+                            <CardTitle style={{ color: tabTheme.title }}>Daily Sales Overview</CardTitle>
                         </CardHeader>
                         <CardContent>
                             <Table>
@@ -514,7 +595,7 @@ export default function WooCommerceDashboard() {
                                             <TableCell>{day.orders}</TableCell>
                                             <TableCell>{day.currency}</TableCell>
                                             <TableCell>
-                                                <Badge variant="outline">{day.domain}</Badge>
+                                                <StyledBadge value={day.domain} />
                                             </TableCell>
                                         </TableRow>
                                     ))}

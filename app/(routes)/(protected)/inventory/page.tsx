@@ -1,35 +1,29 @@
 "use client";
 
-import { useState } from "react";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Suspense } from "react";
+import { useSearchParams } from "next/navigation";
 import { InventoryScreen } from "@/src/features/inventory/presentation/view/screen/inventory-screen";
 import NinjaVanDashboard from "./ninjavan/page";
 
-const InventoryPage = () => {
-    const [activeTab, setActiveTab] = useState("inventory");
+function InventoryContent() {
+    const searchParams = useSearchParams();
+    const tab = searchParams.get("tab") || "inventory";
 
     return (
         <div className="space-y-4 sm:space-y-6 pt-4 sm:pt-6 md:pt-10">
-            <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-4 sm:space-y-6">
-                <TabsList className="grid w-full grid-cols-2 h-auto overflow-x-auto">
-                    <TabsTrigger value="inventory" className="flex items-center gap-1 sm:gap-2 text-xs sm:text-sm px-2 sm:px-4 py-2">
-                        <span className="truncate">Inventory Management</span>
-                    </TabsTrigger>
-                    <TabsTrigger value="ninjavan" className="flex items-center gap-1 sm:gap-2 text-xs sm:text-sm px-2 sm:px-4 py-2">
-                        <span className="truncate">NinjaVan Delivery</span>
-                    </TabsTrigger>
-                </TabsList>
-
-                <TabsContent value="inventory" className="space-y-4 sm:space-y-6 mt-4 sm:mt-6">
-                    <InventoryScreen />
-                </TabsContent>
-
-                <TabsContent value="ninjavan" className="space-y-4 sm:space-y-6 mt-4 sm:mt-6">
-                    <NinjaVanDashboard />
-                </TabsContent>
-            </Tabs>
+            {tab === "ninjavan" ? <NinjaVanDashboard /> : <InventoryScreen />}
         </div>
     );
-};
+}
 
-export default InventoryPage;
+export default function InventoryPage() {
+    return (
+        <Suspense fallback={
+            <div className="flex items-center justify-center min-h-[400px]">
+                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary" />
+            </div>
+        }>
+            <InventoryContent />
+        </Suspense>
+    );
+}

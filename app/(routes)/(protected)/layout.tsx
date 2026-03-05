@@ -1,6 +1,6 @@
 'use client';
 
-import HeadNav from "@/src/core/shared/view/components/head-nav";
+import AppSidebar from "@/src/core/shared/view/components/app-sidebar";
 import { useSession } from "@/src/core/lib/dummy-session-provider";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
@@ -31,12 +31,12 @@ const ProtectedLayout = ({ children }: { children: React.ReactNode }) => {
     }
 
     return (
-        <>
-            <HeadNav />
-            <div className="mx-2 sm:mx-4 md:mx-6 lg:mx-10">
+        <div className="flex min-h-screen">
+            <AppSidebar />
+            <main className="flex-1 overflow-x-hidden p-4 sm:p-6 lg:p-8 pb-24 lg:pb-8">
                 {children}
-            </div>
-        </>
+            </main>
+        </div>
     );
 };
 

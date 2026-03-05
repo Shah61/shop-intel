@@ -1,32 +1,11 @@
 "use client"
-import {
-    Card,
-    CardHeader,
-    CardTitle,
-    CardDescription,
-    CardContent
-} from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import {
-    Table,
-    TableHeader,
-    TableBody,
-    TableRow,
-    TableCell,
-    TableHead,
-    TableFooter
-} from "@/components/ui/table";
-import { Badge } from "@/components/ui/badge";
-import { SkuEntity } from "@/src/features/sales/data/model/sku-entity";
-import { formatCurrency, formatDateToMMDDYYYY, isAdmin } from "@/src/core/constant/helper";
-import { ArrowRightIcon } from "lucide-react";
-import { getSkuData } from "@/src/features/sales/data/services/sku-api.service";
-import { useRouter } from "next/navigation";
-import { ShopifySku, ShopifyStock } from "@/src/features/sales/data/model/shopify-entity";
-import { useSession } from "@/src/core/lib/dummy-session-provider";
 
-
-
+import { useMemo } from "react"
+import { useTheme } from "next-themes"
+import { ArrowRightIcon } from "lucide-react"
+import { formatCurrency, isAdmin } from "@/src/core/constant/helper"
+import { useSession } from "@/src/core/lib/dummy-session-provider"
+import { ShopifySku, ShopifyStock } from "@/src/features/sales/data/model/shopify-entity"
 
 const ShopifySkusTable = ({
     skus,
@@ -41,22 +20,42 @@ const ShopifySkusTable = ({
     selectedTab: string,
     isLoading: boolean
 }) => {
+    const { resolvedTheme } = useTheme()
+    const isDark = resolvedTheme === "dark"
+    const { data: session } = useSession()
 
-    const router = useRouter();
-
-
-    const getColorPercentage = (percentage: number) => {
-        if (percentage <= 20) {
-            return "#10b981"; // green
+    const t = useMemo(() => {
+        if (isDark) {
+            return {
+                cardBg: "linear-gradient(135deg, rgba(26, 34, 44, 0.9), rgba(35, 45, 56, 0.85))",
+                cardBorder: "1px solid rgba(var(--preset-primary-rgb), 0.12)",
+                glowColor: "rgba(var(--preset-primary-rgb), 0.08)",
+                title: "#fff",
+                subtitle: "#7a6a9a",
+                headerText: "#7a6a9a",
+                cellText: "#c8bfe0",
+                cellBold: "#e8dff8",
+                rowHover: "rgba(var(--preset-primary-rgb), 0.06)",
+                divider: "rgba(var(--preset-primary-rgb), 0.08)",
+                btnText: "var(--preset-lighter)",
+                btnBg: "rgba(var(--preset-primary-rgb), 0.1)",
+            }
         }
-        return "#8b5cf6"; // purple
-    }
-
-    const calculateTotalSales = (sku: SkuEntity) => {
-        return sku.sales * sku.quantity;
-    }
-
-    const { data: session } = useSession();
+        return {
+            cardBg: "linear-gradient(135deg, rgba(250, 247, 255, 0.95), rgba(243, 237, 255, 0.85))",
+            cardBorder: "1px solid rgba(var(--preset-primary-rgb), 0.1)",
+            glowColor: "rgba(var(--preset-primary-rgb), 0.05)",
+            title: "#1a1025",
+            subtitle: "#8b7aa0",
+            headerText: "#8b7aa0",
+            cellText: "#4a3a60",
+            cellBold: "#1a1025",
+            rowHover: "rgba(var(--preset-primary-rgb), 0.04)",
+            divider: "rgba(var(--preset-primary-rgb), 0.08)",
+            btnText: "var(--preset-primary)",
+            btnBg: "rgba(var(--preset-primary-rgb), 0.06)",
+        }
+    }, [isDark])
 
     const getStockQuantity = (skuName: string) => {
         const result = stock
@@ -65,126 +64,205 @@ const ShopifySkusTable = ({
         return result < 0 ? 0 : result;
     };
 
-    const getStockStatus = (stockQuantity: number) => {
-        return stockQuantity > 0 ? (
-            <Badge variant="default" className="bg-green-500 text-white">In Stock</Badge>
-        ) : (
-            <Badge variant="destructive" className="text-white">Out of Stock</Badge>
-        );
-    };
+    const isFullView = selectedTab === "skus"
+    const displaySkus = isFullView ? skus : skus.slice(0, 5)
+    const headers = isFullView
+        ? ["Image", "SKU", "Stock", "Status", "Quantity", "Revenue"]
+        : ["SKU", "Stock", "Status", "Quantity", "Revenue"]
+
+    const StatusBadge = ({ stockQty }: { stockQty: number }) => {
+        const inStock = stockQty > 0
+        const gradient = inStock
+            ? "linear-gradient(135deg, #10b981, #34d399)"
+            : "linear-gradient(135deg, #ef4444, #f87171)"
+        const shadow = inStock
+            ? "0 2px 8px rgba(16, 185, 129, 0.35)"
+            : "0 2px 8px rgba(239, 68, 68, 0.35)"
+
+        return (
+            <span
+                style={{
+                    display: "inline-flex",
+                    alignItems: "center",
+                    position: "relative",
+                    overflow: "hidden",
+                    background: gradient,
+                    boxShadow: shadow,
+                    borderRadius: 6,
+                    padding: "2px 8px",
+                    fontSize: 10,
+                    fontWeight: 700,
+                    textTransform: "uppercase",
+                    letterSpacing: "0.5px",
+                    color: "#fff",
+                    lineHeight: 1.6,
+                }}
+            >
+                <span style={{ position: "relative", zIndex: 1 }}>
+                    {inStock ? "In Stock" : "Out of Stock"}
+                </span>
+                <span
+                    style={{
+                        position: "absolute",
+                        inset: 0,
+                        background: "linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.25) 50%, transparent 100%)",
+                        backgroundSize: "200% 100%",
+                        animation: "shimmer-slide 2s infinite linear",
+                    }}
+                />
+                <style>{`
+                    @keyframes shimmer-slide {
+                        0% { background-position: -200% 0; }
+                        100% { background-position: 200% 0; }
+                    }
+                `}</style>
+            </span>
+        )
+    }
 
     return (
-        <Card className="hover:shadow-lg transition-shadow h-full w-full">
-            <CardHeader>
-                <CardTitle className="flex items-center justify-between">
-                    <div className="flex flex-col items-start">
-                        <p className="text-lg font-bold">Top Performing SKUs</p>
-                        <p className="text-sm text-muted-foreground font-normal">Here is the top performing SKUs</p>
+        <div
+            style={{
+                background: t.cardBg,
+                borderRadius: 20,
+                border: t.cardBorder,
+                padding: "22px 26px",
+                display: "flex",
+                flexDirection: "column",
+                gap: 16,
+                fontFamily: "'Outfit', sans-serif",
+                position: "relative",
+                overflow: "hidden",
+                backdropFilter: "blur(20px)",
+                WebkitBackdropFilter: "blur(20px)",
+            }}
+        >
+            <div
+                style={{
+                    position: "absolute",
+                    top: -60,
+                    right: -60,
+                    width: 180,
+                    height: 180,
+                    background: `radial-gradient(circle, ${t.glowColor} 0%, transparent 70%)`,
+                    pointerEvents: "none",
+                }}
+            />
+
+            <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between" }}>
+                <div>
+                    <h2 style={{ fontSize: 18, fontWeight: 700, color: t.title, margin: 0, letterSpacing: "-0.3px", lineHeight: 1.2 }}>
+                        Top Performing SKUs
+                    </h2>
+                    <p style={{ fontSize: 12, color: t.subtitle, margin: "4px 0 0 0" }}>
+                        Best sellers by revenue
+                    </p>
+                </div>
+                {!isFullView && (
+                    <button
+                        type="button"
+                        onClick={onSelectTap}
+                        style={{
+                            display: "flex",
+                            alignItems: "center",
+                            gap: 4,
+                            fontSize: 12,
+                            fontWeight: 600,
+                            padding: "5px 10px",
+                            borderRadius: 8,
+                            border: "none",
+                            cursor: "pointer",
+                            color: t.btnText,
+                            background: t.btnBg,
+                        }}
+                    >
+                        View All
+                        <ArrowRightIcon size={14} />
+                    </button>
+                )}
+            </div>
+
+            <div style={{ overflow: "auto" }}>
+                {isLoading ? (
+                    <div style={{ display: "flex", justifyContent: "center", padding: "32px 0" }}>
+                        <div style={{ width: 24, height: 24, border: "2px solid rgba(var(--preset-primary-rgb), 0.3)", borderTopColor: "var(--preset-primary)", borderRadius: "50%", animation: "spin 1s linear infinite" }} />
+                        <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
                     </div>
-
-                    {
-                        selectedTab !== "skus" && (
-                            <Button variant="ghost" size="sm" onClick={onSelectTap}>
-                                <span className="hidden md:inline-block">View All</span>
-                                <ArrowRightIcon className="h-4 w-4" />
-                            </Button>
-                        )
-                    }
-                </CardTitle>
-
-            </CardHeader>
-            <CardContent>
-                <Table>
-                    <TableHeader>
-                        <TableRow>
-                            {selectedTab === "skus" && (
-                                <>
-                                    <TableHead>Image</TableHead>
-                                    <TableHead>SKU</TableHead>
-                                    <TableHead>Stock</TableHead>
-                                    <TableHead>Status</TableHead>
-                                    <TableHead>Quantity</TableHead>
-                                    <TableHead>Revenue</TableHead>
-                                </>
-                            )}
-                            {
-                                selectedTab !== "skus" && (
-                                    <>
-                                        <TableHead>SKU</TableHead>
-                                        <TableHead>Stock</TableHead>
-                                        <TableHead>Status</TableHead>
-                                        <TableHead>Quantity</TableHead>
-                                        <TableHead>Revenue</TableHead>
-                                    </>
-                                )
-                            }
-                        </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                        {isLoading ? (
-                            <TableRow>
-                                <TableCell colSpan={selectedTab === "skus" ? 8 : 7} className="text-center py-8">
-                                    <div className="flex justify-center">
-                                        <div className="w-6 h-6 border-2 border-primary border-t-transparent rounded-full animate-spin" />
-                                    </div>
-                                </TableCell>
-                            </TableRow>
-                        ) : (
-                            selectedTab === "skus" ? (
-                                skus.map((sku: ShopifySku) => {
-                                    const stockQuantity = getStockQuantity(sku.sku);
-                                    return (
-                                        <TableRow key={sku.sku}>
-                                            <TableCell>
+                ) : (
+                    <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 13 }}>
+                        <thead>
+                            <tr>
+                                {headers.map((h) => (
+                                    <th
+                                        key={h}
+                                        style={{
+                                            textAlign: "left",
+                                            fontSize: 11,
+                                            fontWeight: 600,
+                                            color: t.headerText,
+                                            textTransform: "uppercase",
+                                            letterSpacing: "0.5px",
+                                            padding: "6px 8px 10px",
+                                            borderBottom: `1px solid ${t.divider}`,
+                                        }}
+                                    >
+                                        {h}
+                                    </th>
+                                ))}
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {displaySkus.map((sku: ShopifySku) => {
+                                const stockQuantity = getStockQuantity(sku.sku);
+                                return (
+                                    <tr
+                                        key={sku.sku}
+                                        style={{ transition: "background 0.15s ease" }}
+                                        onMouseOver={(e) => (e.currentTarget.style.background = t.rowHover)}
+                                        onMouseOut={(e) => (e.currentTarget.style.background = "transparent")}
+                                    >
+                                        {isFullView && (
+                                            <td style={{ padding: "8px 8px" }}>
                                                 {sku.image && (
                                                     <img
                                                         src={sku.image}
                                                         alt={sku.sku}
-                                                        className="w-16 h-16 object-cover rounded"
+                                                        style={{
+                                                            width: 48,
+                                                            height: 48,
+                                                            objectFit: "cover",
+                                                            borderRadius: 8,
+                                                        }}
                                                     />
                                                 )}
-                                            </TableCell>
-                                            <TableCell className="font-medium">{sku.sku}</TableCell>
-                                            <TableCell>{stockQuantity}</TableCell>
-                                            <TableCell>{getStockStatus(stockQuantity)}</TableCell>
-                                            <TableCell className="max-w-[120px] truncate">{sku.quantity}</TableCell>
-                                            <TableCell>
-                                                {isAdmin(session?.user_entity || {}) ? (
-                                                    <p>{formatCurrency(Number(sku.revenue))}</p>
-                                                ) : (
-                                                    <p>********</p>
-                                                )}
-                                            </TableCell>
-                                        </TableRow>
-                                    );
-                                })
-                            ) : (
-                                skus.slice(0, 5).map((sku: ShopifySku) => {
-                                    const stockQuantity = getStockQuantity(sku.sku);
-                                    return (
-                                        <TableRow key={sku.sku}>
-                                            <TableCell className="font-medium">{sku.sku}</TableCell>
-                                            <TableCell>{stockQuantity}</TableCell>
-                                            <TableCell>{getStockStatus(stockQuantity)}</TableCell>
-                                            <TableCell className="max-w-[120px] truncate">{sku.quantity}</TableCell>
-                                            <TableCell>
-                                                {isAdmin(session?.user_entity || {}) ? (
-                                                    <p>{formatCurrency(sku.revenue)}</p>
-                                                ) : (
-                                                    <p>********</p>
-                                                )}
-                                            </TableCell>
-                                        </TableRow>
-                                    );
-                                })
-                            )
-                        )}
-                    </TableBody>
-
-                </Table>
-            </CardContent>
-        </Card>
+                                            </td>
+                                        )}
+                                        <td style={{ padding: "8px 8px", color: t.cellBold, fontWeight: 600, fontSize: 12 }}>
+                                            {sku.sku}
+                                        </td>
+                                        <td style={{ padding: "8px 8px", color: t.cellText, fontSize: 12 }}>
+                                            {stockQuantity}
+                                        </td>
+                                        <td style={{ padding: "8px 8px" }}>
+                                            <StatusBadge stockQty={stockQuantity} />
+                                        </td>
+                                        <td style={{ padding: "8px 8px", color: t.cellText, fontSize: 12, maxWidth: 120, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                                            {sku.quantity}
+                                        </td>
+                                        <td style={{ padding: "8px 8px", color: t.cellText, fontSize: 12 }}>
+                                            {isAdmin(session?.user_entity || {})
+                                                ? formatCurrency(Number(sku.revenue))
+                                                : "********"}
+                                        </td>
+                                    </tr>
+                                );
+                            })}
+                        </tbody>
+                    </table>
+                )}
+            </div>
+        </div>
     )
 }
 
-export default ShopifySkusTable;
+export default ShopifySkusTable

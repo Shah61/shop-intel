@@ -1,6 +1,7 @@
 "use client"
 
 import { useMemo, useState } from "react"
+import { useTheme } from "next-themes"
 import {
     TrendingUp,
     BarChart3,
@@ -18,22 +19,12 @@ import {
     LineChart,
     XAxis,
     YAxis,
-    ResponsiveContainer,
     Tooltip
 } from "recharts"
 
 import {
-    Card,
-    CardContent,
-    CardDescription,
-    CardHeader,
-    CardTitle,
-} from "@/components/ui/card"
-import {
     ChartConfig,
     ChartContainer,
-    ChartTooltip,
-    ChartTooltipContent,
 } from "@/components/ui/chart"
 import {
     DropdownMenu,
@@ -41,16 +32,7 @@ import {
     DropdownMenuItem,
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import {
-    Tabs,
-    TabsList,
-    TabsTrigger
-} from "@/components/ui/tabs"
-import { Button } from "@/components/ui/button"
-import { shopifyOrdersHistoricalDataQuery } from "../../../tanstack/mock-shopify-tanstack"
-import { useShopeeConversionRateHistoricalData } from "../../../tanstack/mock-shopee-tanstack"
-import { useSession } from "@/src/core/lib/dummy-session-provider"
-import { isAdmin } from "@/src/core/constant/helper"
+import { capitalizeFirstLetter, formatCurrencyToShort } from "@/src/core/constant/helper"
 
 // Monthly data for the entire year of 2024
 const monthlyData2024 = [
@@ -80,125 +62,133 @@ const dataPeriods = {
 }
 
 
-
-
 const chartConfig = {
     visitors: {
         label: "Visitors",
-        color: "#FF6B35", // Bright coral orange - more visible
+        color: "#FF6B35",
     },
     orders: {
         label: "Orders",
-        color: "#FF8C42", // Warm orange - lighter variant
+        color: "#FF8C42",
     },
     conversion: {
         label: "Conversion",
-        color: "#D2691E", // Darker orange-brown for contrast
+        color: "#D2691E",
     },
     revenues: {
         label: "Revenues",
-        color: "#FF4500", // Bold red-orange for emphasis
+        color: "#FF4500",
     },
 } satisfies ChartConfig
+
+const CustomTooltipContent = ({ active, payload, label }: any) => {
+    if (!active || !payload) return null;
+
+    return (
+        <div className="rounded-lg border bg-background p-2 shadow-sm w-[200px]">
+            <div className="grid grid-cols-[1fr_auto] gap-2">
+                <div className="flex flex-col">
+                    <span className="text-[0.70rem] uppercase text-muted-foreground">
+                        {label}
+                    </span>
+                </div>
+            </div>
+            <div className="mt-2 flex flex-col gap-1">
+                {payload.map((entry: any, index: number) => (
+                    <div
+                        key={`item-${index}`}
+                        className="flex items-center justify-between gap-4"
+                    >
+                        <div className="flex items-center gap-1">
+                            <span
+                                className="h-2 w-2 rounded-full"
+                                style={{ backgroundColor: entry.color }}
+                            />
+                            <span className="text-muted-foreground">
+                                {capitalizeFirstLetter(entry.name)}
+                            </span>
+                        </div>
+                        <span className="font-bold text-foreground">
+                            {entry.name.includes('revenue') ? 'RM ' : ''}
+                            {formatCurrencyToShort(entry.value)}
+                        </span>
+                    </div>
+                ))}
+            </div>
+        </div>
+    );
+};
 
 export function ShopeeConversionCharts() {
     const [chartType, setChartType] = useState("bar")
     const [quarter, setQuarter] = useState("Q1")
     const [year, setYear] = useState(new Date().getFullYear())
+    const { resolvedTheme } = useTheme()
+    const isDark = resolvedTheme === "dark"
 
     const years = [2023, 2024, 2025]
 
-    const { data: session } = useSession()
-    const isUserAdmin = isAdmin(session?.user_entity || {})
-
-
-
-    // Generate dynamic dummy data based on quarter and year
-    const generateDynamicData = (year: number, quarter: string) => {
-        const quarterMonths = {
-            "Q1": [0, 1, 2], // Jan, Feb, Mar
-            "Q2": [3, 4, 5], // Apr, May, Jun
-            "Q3": [6, 7, 8], // Jul, Aug, Sep
-            "Q4": [9, 10, 11] // Oct, Nov, Dec
-        };
-        
-        const months = quarterMonths[quarter as keyof typeof quarterMonths] || [0, 1, 2];
-        const data: any[] = [];
-        
-        // Different base values for different quarters and years
-        const yearMultiplier = year === 2023 ? 0.8 : year === 2025 ? 1.3 : 1.0;
-        const quarterMultipliers = {
-            "Q1": { visitors: 1.0, orders: 1.0, conversion: 1.0, revenue: 1.0 }, // Normal
-            "Q2": { visitors: 1.2, orders: 1.1, conversion: 0.95, revenue: 1.1 }, // Growth
-            "Q3": { visitors: 1.4, orders: 1.3, conversion: 0.9, revenue: 1.3 }, // Peak season
-            "Q4": { visitors: 1.6, orders: 1.5, conversion: 0.85, revenue: 1.5 } // Holiday season
-        };
-        
-        const multipliers = quarterMultipliers[quarter as keyof typeof quarterMultipliers] || quarterMultipliers.Q1;
-        
-        months.forEach((monthIndex, monthIdx) => {
-            const monthName = new Date(year, monthIndex, 1).toLocaleDateString('en-US', { month: 'long' });
-            const daysInMonth = new Date(year, monthIndex + 1, 0).getDate();
-            
-            // Generate data for each day of the month
-            for (let day = 1; day <= Math.min(daysInMonth, 10); day++) { // Limit to 10 days per month for performance
-                const date = `${year}-${String(monthIndex + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
-                
-                // Add some randomness and trends
-                const dayVariation = 0.8 + (Math.sin(day / 3) * 0.4); // Daily variation
-                const monthTrend = 1 + (monthIdx * 0.1); // Growing trend through quarter
-                
-                const baseVisitors = 2500 * yearMultiplier * multipliers.visitors * dayVariation * monthTrend;
-                const baseOrders = 120 * yearMultiplier * multipliers.orders * dayVariation * monthTrend;
-                const baseConversion = 0.048 * multipliers.conversion * (0.9 + Math.random() * 0.2);
-                const baseRevenue = 6000 * yearMultiplier * multipliers.revenue * dayVariation * monthTrend;
-                
-                data.push({
-                    date,
-                    total_visitors: Math.round(baseVisitors + (Math.random() - 0.5) * 500),
-                    total_orders: Math.round(baseOrders + (Math.random() - 0.5) * 30),
-                    conversion_rate: Math.round(baseConversion * 1000) / 1000,
-                    total_revenues: Math.round(baseRevenue + (Math.random() - 0.5) * 1000)
-                });
+    const t = useMemo(() => {
+        if (isDark) {
+            return {
+                cardBg: "linear-gradient(135deg, rgba(26, 34, 44, 0.9), rgba(35, 45, 56, 0.85))",
+                cardBorder: "1px solid rgba(var(--preset-primary-rgb), 0.12)",
+                glowColor: "rgba(var(--preset-primary-rgb), 0.08)",
+                title: "#fff",
+                subtitle: "#7a6a9a",
+                pillBg: "rgba(var(--preset-primary-rgb), 0.12)",
+                pillActive: "rgba(var(--preset-primary-rgb), 0.6)",
+                pillText: "var(--preset-lighter)",
+                pillActiveText: "#fff",
+                btnBg: "rgba(var(--preset-primary-rgb), 0.1)",
+                btnText: "var(--preset-lighter)",
             }
-        });
-        
-        return data;
-    };
-    
-    const data = generateDynamicData(year, quarter);
+        }
+        return {
+            cardBg: "linear-gradient(135deg, rgba(250, 247, 255, 0.95), rgba(243, 237, 255, 0.85))",
+            cardBorder: "1px solid rgba(var(--preset-primary-rgb), 0.1)",
+            glowColor: "rgba(var(--preset-primary-rgb), 0.05)",
+            title: "#1a1025",
+            subtitle: "#8b7aa0",
+            pillBg: "rgba(var(--preset-primary-rgb), 0.08)",
+            pillActive: "rgba(var(--preset-primary-rgb), 0.85)",
+            pillText: "var(--preset-primary)",
+            pillActiveText: "#fff",
+            btnBg: "rgba(var(--preset-primary-rgb), 0.06)",
+            btnText: "var(--preset-primary)",
+        }
+    }, [isDark])
+
     const isLoading = false;
 
-    // Format and filter data by quarter
-    const getQuarterMonths = (q: string) => {
-        switch (q) {
-            case "Q1": return [0, 1, 2];
-            case "Q2": return [3, 4, 5];
-            case "Q3": return [6, 7, 8];
-            case "Q4": return [9, 10, 11];
-            default: return [0, 1, 2];
-        }
-    }
-
     const formattedData = useMemo(() => {
-        if (!data) return [];
+        const quarterMonths: Record<string, number[]> = {
+            Q1: [0, 1, 2], Q2: [3, 4, 5], Q3: [6, 7, 8], Q4: [9, 10, 11],
+        }
+        const months = quarterMonths[quarter] || [0, 1, 2]
+        const ym = year === 2023 ? 0.8 : year === 2025 ? 1.3 : 1.0
 
-        return data
-            .filter(item => {
-                const itemDate = new Date(item.date);
-                const monthIndex = itemDate.getMonth();
-                return getQuarterMonths(quarter).includes(monthIndex);
-            })
-            .map(item => ({
-                date: new Date(item.date).toLocaleDateString('en-US', { month: 'short' }),
-                visitors: item.total_visitors,
-                orders: item.total_orders,
-                conversion: Math.round(item.conversion_rate * 100), // Convert to percentage
-                revenues: Math.round(item.total_revenues || 0) // Add revenues data
-            }));
-    }, [data, quarter]);
+        return months.map((mi) => {
+            const label = new Date(year, mi, 15).toLocaleDateString("en-US", { month: "short" })
+            const seed = mi + year * 0.001
+            return {
+                date: label,
+                visitors: Math.round((2500 + Math.sin(seed) * 800) * ym),
+                orders: Math.round((130 + Math.sin(seed * 2) * 40) * ym),
+                conversion: Math.round((4.8 + Math.sin(seed * 3) * 1.2) * 10) / 10,
+                revenues: Math.round((6000 + Math.sin(seed * 1.5) * 2000) * ym),
+            }
+        })
+    }, [quarter, year]);
 
-    const chartTypes = {
+    const chartTypeButtons = [
+        { value: "line", label: "Line", icon: <LineChartIcon size={14} /> },
+        { value: "area", label: "Area", icon: <TrendingUp size={14} /> },
+        { value: "bar", label: "Bar", icon: <BarChart3 size={14} /> },
+        { value: "stackedArea", label: "Stacked", icon: <PieChartIcon size={14} /> },
+    ]
+
+    const chartTypes: Record<string, string> = {
         line: "Line Chart",
         area: "Area Chart",
         bar: "Bar Chart",
@@ -234,7 +224,7 @@ export function ShopeeConversionCharts() {
                             tick={{ fill: "hsl(var(--muted-foreground))" }}
                         />
                         <Tooltip
-                            content={<ChartTooltipContent indicator="dot" />}
+                            content={<CustomTooltipContent />}
                             cursor={{ stroke: "hsl(var(--muted))", strokeWidth: 1, strokeDasharray: "3 3" }}
                         />
                         <Line
@@ -317,7 +307,7 @@ export function ShopeeConversionCharts() {
                             tick={{ fill: "hsl(var(--muted-foreground))" }}
                         />
                         <Tooltip
-                            content={<ChartTooltipContent indicator="dot" />}
+                            content={<CustomTooltipContent />}
                             cursor={{ stroke: "hsl(var(--muted))", strokeWidth: 1, strokeDasharray: "3 3" }}
                         />
                         <Area
@@ -382,7 +372,7 @@ export function ShopeeConversionCharts() {
                             tick={{ fill: "hsl(var(--muted-foreground))" }}
                         />
                         <Tooltip
-                            content={<ChartTooltipContent indicator="dot" />}
+                            content={<CustomTooltipContent />}
                             cursor={{ fill: "hsl(var(--muted))", opacity: 0.1 }}
                         />
                         <Bar
@@ -439,7 +429,7 @@ export function ShopeeConversionCharts() {
                             tick={{ fill: "hsl(var(--muted-foreground))" }}
                         />
                         <Tooltip
-                            content={<ChartTooltipContent indicator="dot" />}
+                            content={<CustomTooltipContent />}
                             cursor={{ stroke: "hsl(var(--muted))", strokeWidth: 1, strokeDasharray: "3 3" }}
                         />
                         <Area
@@ -489,128 +479,162 @@ export function ShopeeConversionCharts() {
         }
     }
 
-    // Create options for custom tooltip
-    const customTooltip = ({ active, payload, label }: { active: boolean, payload: any, label: string }) => {
-        if (active && payload && payload.length) {
-            return (
-                <div className="bg-white rounded-lg shadow-md p-3 border border-gray-100">
-                    <p className="font-medium text-base mb-1">{label}</p>
-                    {payload.map((entry: any, index: number) => (
-                        <div key={`item-${index}`} className="flex items-center gap-2 py-0.5">
-                            <div
-                                className="w-3 h-3 rounded-sm"
-                                style={{ backgroundColor: entry.color }}
-                            />
-                            <span className="text-gray-600">{entry.name}</span>
-                            <span className="font-semibold ml-auto">{entry.value}</span>
-                        </div>
-                    ))}
-                </div>
-            );
-        }
-        return null;
-    };
-
     return (
-        <Card className="shadow-sm relative">
+        <div
+            style={{
+                background: t.cardBg,
+                borderRadius: 20,
+                border: t.cardBorder,
+                padding: "22px 26px",
+                display: "flex",
+                flexDirection: "column",
+                gap: 16,
+                fontFamily: "'Outfit', sans-serif",
+                position: "relative",
+                overflow: "hidden",
+                backdropFilter: "blur(20px)",
+                WebkitBackdropFilter: "blur(20px)",
+            }}
+        >
+            <div
+                style={{
+                    position: "absolute",
+                    top: -60,
+                    right: -60,
+                    width: 180,
+                    height: 180,
+                    background: `radial-gradient(circle, ${t.glowColor} 0%, transparent 70%)`,
+                    pointerEvents: "none",
+                }}
+            />
+
             {isLoading && (
-                <div className="absolute inset-0 bg-background/50 backdrop-blur-[2px] z-10 flex items-center justify-center">
-                    <div className="flex flex-col items-center gap-3">
-                        <div className="flex gap-1">
-                            <div className="w-2 h-2 rounded-full bg-primary/60 animate-bounce" style={{ animationDelay: '0ms' }} />
-                            <div className="w-2 h-2 rounded-full bg-primary/60 animate-bounce" style={{ animationDelay: '150ms' }} />
-                            <div className="w-2 h-2 rounded-full bg-primary/60 animate-bounce" style={{ animationDelay: '300ms' }} />
+                <div
+                    style={{
+                        position: "absolute",
+                        inset: 0,
+                        background: isDark ? "rgba(26, 34, 44, 0.75)" : "rgba(250, 247, 255, 0.6)",
+                        backdropFilter: "blur(2px)",
+                        zIndex: 10,
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        borderRadius: 20,
+                    }}
+                >
+                    <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 10 }}>
+                        <div style={{ display: "flex", gap: 4 }}>
+                            {[0, 150, 300].map((delay) => (
+                                <div
+                                    key={delay}
+                                    style={{
+                                        width: 8,
+                                        height: 8,
+                                        borderRadius: "50%",
+                                        background: "rgba(var(--preset-primary-rgb), 0.6)",
+                                        animation: "bounce 1s infinite",
+                                        animationDelay: `${delay}ms`,
+                                    }}
+                                />
+                            ))}
                         </div>
-                        <p className="text-sm text-muted-foreground">Loading chart data...</p>
+                        <span style={{ fontSize: 13, color: t.subtitle }}>Loading chart data...</span>
                     </div>
                 </div>
             )}
-            <CardHeader className="pb-3">
-                <div className="flex flex-col md:flex-row md:items-center justify-between gap-2">
-                    <div>
-                        <CardTitle className="text-lg font-bold">Shopee Conversion Metrics</CardTitle>
-                        <CardDescription className="text-sm text-muted-foreground">
-                            {chartType === "line" ? "Line" :
-                                chartType === "area" ? "Area" :
-                                    chartType === "bar" ? "Bar" : "Stacked Area"} Chart showing visitors, orders, conversion rates, and revenues
-                        </CardDescription>
-                    </div>
-                    <div className="flex flex-wrap gap-2">
-                        {/* Quarter selector */}
-                        <DropdownMenu>
-                            <DropdownMenuTrigger asChild>
-                                <Button variant="outline" size="sm" className="h-8">
-                                    {quarter}
-                                    <ChevronDown className="ml-2 h-4 w-4 text-muted-foreground" />
-                                </Button>
-                            </DropdownMenuTrigger>
-                            <DropdownMenuContent align="end">
-                                {["Q1", "Q2", "Q3", "Q4"].map((q) => (
-                                    <DropdownMenuItem key={q} onClick={() => setQuarter(q)}>
-                                        {q}
-                                    </DropdownMenuItem>
-                                ))}
-                            </DropdownMenuContent>
-                        </DropdownMenu>
 
-                        {/* Year selector */}
-                        <DropdownMenu>
-                            <DropdownMenuTrigger asChild>
-                                <Button variant="outline" size="sm" className="h-8">
-                                    {year}
-                                    <ChevronDown className="ml-2 h-4 w-4 text-muted-foreground" />
-                                </Button>
-                            </DropdownMenuTrigger>
-                            <DropdownMenuContent align="end">
-                                {years.map((y) => (
-                                    <DropdownMenuItem key={y} onClick={() => setYear(y)}>
-                                        {y}
-                                    </DropdownMenuItem>
-                                ))}
-                            </DropdownMenuContent>
-                        </DropdownMenu>
+            <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", flexWrap: "wrap", gap: 12 }}>
+                <div>
+                    <h2 style={{ fontSize: 18, fontWeight: 700, color: t.title, margin: 0, letterSpacing: "-0.3px", lineHeight: 1.2 }}>
+                        Shopee Conversion Metrics
+                    </h2>
+                    <p style={{ fontSize: 12, color: t.subtitle, margin: "4px 0 0 0" }}>
+                        {chartTypes[chartType]} showing visitors, orders, conversion rates, and revenues
+                    </p>
+                </div>
 
-                        {/* Mobile chart selector */}
-                        <DropdownMenu>
-                            <DropdownMenuTrigger asChild>
-                                <Button variant="outline" size="icon" className="h-8 w-8">
-                                    {chartType === 'line' && <LineChartIcon className="h-4 w-4" />}
-                                    {chartType === 'area' && <TrendingUp className="h-4 w-4" />}
-                                    {chartType === 'bar' && <BarChart3 className="h-4 w-4" />}
-                                    {chartType === 'stackedArea' && <PieChartIcon className="h-4 w-4" />}
-                                </Button>
-                            </DropdownMenuTrigger>
-                            <DropdownMenuContent align="end">
-                                <DropdownMenuItem onClick={() => setChartType("line")}>
-                                    <LineChartIcon className="h-4 w-4 mr-2" />
-                                    Line Chart
-                                </DropdownMenuItem>
-                                <DropdownMenuItem onClick={() => setChartType("area")}>
-                                    <TrendingUp className="h-4 w-4 mr-2" />
-                                    Area Chart
-                                </DropdownMenuItem>
-                                <DropdownMenuItem onClick={() => setChartType("bar")}>
-                                    <BarChart3 className="h-4 w-4 mr-2" />
-                                    Bar Chart
-                                </DropdownMenuItem>
-                                <DropdownMenuItem onClick={() => setChartType("stackedArea")}>
-                                    <PieChartIcon className="h-4 w-4 mr-2" />
-                                    Stacked Area
-                                </DropdownMenuItem>
-                            </DropdownMenuContent>
-                        </DropdownMenu>
+                <div style={{ display: "flex", alignItems: "center", gap: 6, flexWrap: "wrap" }}>
+                    <div
+                        className="hidden md:flex"
+                        style={{ background: t.pillBg, borderRadius: 10, padding: 3, gap: 2 }}
+                    >
+                        {chartTypeButtons.map((btn) => (
+                            <button
+                                key={btn.value}
+                                type="button"
+                                onClick={() => setChartType(btn.value)}
+                                style={{
+                                    display: "flex",
+                                    alignItems: "center",
+                                    gap: 4,
+                                    fontSize: 12,
+                                    fontWeight: 600,
+                                    padding: "5px 10px",
+                                    borderRadius: 8,
+                                    border: "none",
+                                    cursor: "pointer",
+                                    transition: "all 0.15s ease",
+                                    color: chartType === btn.value ? t.pillActiveText : t.pillText,
+                                    background: chartType === btn.value ? t.pillActive : "transparent",
+                                    boxShadow: chartType === btn.value ? "0 1px 4px rgba(var(--preset-primary-rgb), 0.25)" : "none",
+                                }}
+                            >
+                                {btn.icon}
+                                {btn.label}
+                            </button>
+                        ))}
                     </div>
+
+                    <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                            <button type="button" style={{ display: "flex", alignItems: "center", gap: 4, fontSize: 12, fontWeight: 600, padding: "5px 10px", borderRadius: 8, border: t.cardBorder, cursor: "pointer", color: t.btnText, background: t.btnBg }}>
+                                {quarter}
+                                <ChevronDown size={14} />
+                            </button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end">
+                            {["Q1", "Q2", "Q3", "Q4"].map((q) => (
+                                <DropdownMenuItem key={q} onClick={() => setQuarter(q)}>{q}</DropdownMenuItem>
+                            ))}
+                        </DropdownMenuContent>
+                    </DropdownMenu>
+
+                    <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                            <button type="button" style={{ display: "flex", alignItems: "center", gap: 4, fontSize: 12, fontWeight: 600, padding: "5px 10px", borderRadius: 8, border: t.cardBorder, cursor: "pointer", color: t.btnText, background: t.btnBg }}>
+                                {year}
+                                <ChevronDown size={14} />
+                            </button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end">
+                            {years.map((y) => (
+                                <DropdownMenuItem key={y} onClick={() => setYear(y)}>{y}</DropdownMenuItem>
+                            ))}
+                        </DropdownMenuContent>
+                    </DropdownMenu>
+
+                    <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                            <button type="button" className="md:hidden" style={{ display: "flex", alignItems: "center", justifyContent: "center", width: 32, height: 32, borderRadius: 8, border: t.cardBorder, cursor: "pointer", color: t.btnText, background: t.btnBg }}>
+                                {chartType === 'line' && <LineChartIcon size={16} />}
+                                {chartType === 'area' && <TrendingUp size={16} />}
+                                {chartType === 'bar' && <BarChart3 size={16} />}
+                                {chartType === 'stackedArea' && <PieChartIcon size={16} />}
+                            </button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end">
+                            <DropdownMenuItem onClick={() => setChartType("line")}><LineChartIcon className="h-4 w-4 mr-2" /> Line</DropdownMenuItem>
+                            <DropdownMenuItem onClick={() => setChartType("area")}><TrendingUp className="h-4 w-4 mr-2" /> Area</DropdownMenuItem>
+                            <DropdownMenuItem onClick={() => setChartType("bar")}><BarChart3 className="h-4 w-4 mr-2" /> Bar</DropdownMenuItem>
+                            <DropdownMenuItem onClick={() => setChartType("stackedArea")}><PieChartIcon className="h-4 w-4 mr-2" /> Stacked</DropdownMenuItem>
+                        </DropdownMenuContent>
+                    </DropdownMenu>
                 </div>
-            </CardHeader>
-            <CardContent>
-                <div className="h-[350px] w-full">
-                    <ChartContainer config={chartConfig} className="h-[350px] w-full">
-                        <ResponsiveContainer width="100%" height="100%">
-                            {renderChart()}
-                        </ResponsiveContainer>
-                    </ChartContainer>
-                </div>
-            </CardContent>
-        </Card>
+            </div>
+
+            <ChartContainer config={chartConfig} className="h-[350px] w-full">
+                {renderChart()}
+            </ChartContainer>
+        </div>
     )
 }

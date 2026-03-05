@@ -1,27 +1,11 @@
 "use client"
-import {
-    Card,
-    CardHeader,
-    CardTitle,
-    CardDescription,
-    CardContent
-} from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import {
-    Table,
-    TableHeader,
-    TableBody,
-    TableRow,
-    TableCell,
-    TableHead,
-    TableFooter
-} from "@/components/ui/table";
-import { Badge } from "@/components/ui/badge";
-import { formatCurrency, isAdmin } from "@/src/core/constant/helper";
-import { ArrowRightIcon } from "lucide-react";
-import { useRouter } from "next/navigation";
-import { ShopeeSku } from "@/src/features/sales/data/model/shopee-entity";
-import { useSession } from "@/src/core/lib/dummy-session-provider";
+
+import { useMemo } from "react"
+import { useTheme } from "next-themes"
+import { formatCurrency, isAdmin } from "@/src/core/constant/helper"
+import { ArrowRightIcon } from "lucide-react"
+import { ShopeeSku } from "@/src/features/sales/data/model/shopee-entity"
+import { useSession } from "@/src/core/lib/dummy-session-provider"
 
 const ShopeeSkusTable = ({
     skus,
@@ -32,155 +16,193 @@ const ShopeeSkusTable = ({
     onSelectTap: () => void,
     selectedTab: string
 }) => {
-    const router = useRouter();
-    const { data: session } = useSession();
+    const { resolvedTheme } = useTheme()
+    const { data: session } = useSession()
 
-    const getColorPercentage = (percentage: number) => {
-        if (percentage <= 20) {
-            return "#10b981"; // green
-        }
-        return "#8b5cf6"; // purple
-    }
+    const t = useMemo(() => {
+        const isDark = resolvedTheme === "dark"
+        return isDark
+            ? {
+                cardBg: "linear-gradient(135deg, rgba(26, 34, 44, 0.9), rgba(35, 45, 56, 0.85))",
+                cardBorder: "1px solid rgba(var(--preset-primary-rgb), 0.12)",
+                glowColor: "rgba(var(--preset-primary-rgb), 0.08)",
+                title: "#fff",
+                subtitle: "#7a6a9a",
+                headerText: "#7a6a9a",
+                cellText: "#b8a9d4",
+                cellBold: "#fff",
+                rowHover: "rgba(var(--preset-primary-rgb), 0.08)",
+                divider: "rgba(var(--preset-primary-rgb), 0.12)",
+                btnText: "#fff",
+                btnBg: "rgba(var(--preset-primary-rgb), 0.15)",
+            }
+            : {
+                cardBg: "linear-gradient(135deg, rgba(250, 247, 255, 0.95), rgba(243, 237, 255, 0.85))",
+                cardBorder: "1px solid rgba(var(--preset-primary-rgb), 0.1)",
+                glowColor: "rgba(var(--preset-primary-rgb), 0.05)",
+                title: "#1a1025",
+                subtitle: "#8b7aa0",
+                headerText: "#8b7aa0",
+                cellText: "#5a4a70",
+                cellBold: "#1a1025",
+                rowHover: "rgba(var(--preset-primary-rgb), 0.06)",
+                divider: "rgba(var(--preset-primary-rgb), 0.12)",
+                btnText: "#1a1025",
+                btnBg: "rgba(var(--preset-primary-rgb), 0.1)",
+            }
+    }, [resolvedTheme])
 
     const getStockStatus = (stockQuantity: number) => {
-        return stockQuantity > 0 ? (
-            <Badge variant="default" className="bg-green-500 text-white">In Stock</Badge>
-        ) : (
-            <Badge variant="destructive" className="text-white">Out of Stock</Badge>
-        );
-    };
+        const isInStock = stockQuantity > 0
+        const gradient = isInStock
+            ? "linear-gradient(135deg, #10b981, #34d399)"
+            : "linear-gradient(135deg, #ef4444, #f87171)"
+        const shadow = isInStock
+            ? "0 2px 8px rgba(16, 185, 129, 0.35)"
+            : "0 2px 8px rgba(239, 68, 68, 0.35)"
+        const label = isInStock ? "In Stock" : "Out of Stock"
+        return (
+            <span
+                style={{
+                    display: "inline-flex",
+                    alignItems: "center",
+                    gap: 6,
+                    padding: "4px 12px",
+                    borderRadius: 8,
+                    background: gradient,
+                    boxShadow: shadow,
+                    fontSize: 11,
+                    fontWeight: 700,
+                    textTransform: "uppercase",
+                    letterSpacing: "0.04em",
+                    color: "#fff",
+                    position: "relative",
+                    overflow: "hidden",
+                }}
+            >
+                <span
+                    style={{
+                        position: "absolute",
+                        inset: 0,
+                        background: "linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.3) 50%, transparent 100%)",
+                        animation: "shimmer 2s infinite",
+                    }}
+                />
+                {label}
+            </span>
+        )
+    }
+
+    const displaySkus = selectedTab === "skus" ? skus : skus.slice(0, 5)
 
     return (
-        <Card className="hover:shadow-lg transition-shadow h-full w-full">
-            <CardHeader>
-                <CardTitle className="flex items-center justify-between">
-                    <div className="flex flex-col items-start">
-                        <p className="text-lg font-bold">Top Performing SKUs</p>
-                        <p className="text-sm text-muted-foreground font-normal">Here is the top performing SKUs</p>
+        <>
+            <style>{`
+                @keyframes shimmer {
+                    0% { transform: translateX(-100%); }
+                    100% { transform: translateX(100%); }
+                }
+            `}</style>
+            <div
+                style={{
+                    background: t.cardBg,
+                    borderRadius: 20,
+                    border: t.cardBorder,
+                    padding: "22px 26px",
+                    display: "flex",
+                    flexDirection: "column",
+                    gap: 16,
+                    fontFamily: "'Outfit', sans-serif",
+                    position: "relative",
+                    overflow: "hidden",
+                    backdropFilter: "blur(20px)",
+                    WebkitBackdropFilter: "blur(20px)",
+                }}
+            >
+                <div style={{ position: "absolute", top: -60, right: -60, width: 180, height: 180, background: `radial-gradient(circle, ${t.glowColor} 0%, transparent 70%)`, pointerEvents: "none" }} />
+                <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: 12 }}>
+                    <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
+                        <h3 style={{ fontSize: 18, fontWeight: 700, color: t.title }}>Top Performing SKUs</h3>
+                        <p style={{ fontSize: 14, color: t.subtitle }}>Best sellers by revenue</p>
                     </div>
-
                     {selectedTab !== "skus" && (
-                        <Button variant="ghost" size="sm" onClick={onSelectTap}>
+                        <button
+                            type="button"
+                            onClick={onSelectTap}
+                            style={{
+                                display: "flex",
+                                alignItems: "center",
+                                gap: 6,
+                                padding: "8px 14px",
+                                borderRadius: 10,
+                                border: "none",
+                                background: t.btnBg,
+                                color: t.btnText,
+                                fontSize: 14,
+                                cursor: "pointer",
+                            }}
+                        >
                             <span className="hidden md:inline-block">View All</span>
-                            <ArrowRightIcon className="h-4 w-4" />
-                        </Button>
+                            <ArrowRightIcon style={{ width: 16, height: 16 }} />
+                        </button>
                     )}
-                </CardTitle>
-            </CardHeader>
-            <CardContent>
-                <Table>
-                    <TableHeader>
-                        <TableRow>
-                            {selectedTab === "skus" ? (
-                                <>
-                                    <TableHead>Image</TableHead>
-                                    <TableHead>SKU</TableHead>
-                                    <TableHead>Quantity</TableHead>
-                                    <TableHead>Revenue</TableHead>
-                                    <TableHead>Views</TableHead>
-                                    {/* <TableHead>Conversion Rate</TableHead> */}
-                                    <TableHead>Stock</TableHead>
-                                    <TableHead>Status</TableHead>
-                                </>
-                            ) : (
-                                <>
-                                    <TableHead>SKU</TableHead>
-                                    <TableHead>Quantity</TableHead>
-                                    <TableHead>Revenue</TableHead>
-                                    <TableHead>Views</TableHead>
-                                    {/* <TableHead>Conversion Rate</TableHead> */}
-                                    <TableHead>Stock</TableHead>
-                                    <TableHead>Status</TableHead>
-                                </>
-                            )}
-                        </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                        {selectedTab === "skus" ? (
-                            skus.map((sku: ShopeeSku) => {
-                                const stockQuantity = sku.stocks < 0 ? 0 : sku.stocks;
+                </div>
+                <div style={{ overflowX: "auto" }}>
+                    <table style={{ width: "100%", borderCollapse: "collapse" }}>
+                        <thead>
+                            <tr>
+                                {selectedTab === "skus" && (
+                                    <th style={{ textAlign: "left", padding: "12px 16px", fontSize: 11, fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.05em", color: t.headerText }}>Image</th>
+                                )}
+                                <th style={{ textAlign: "left", padding: "12px 16px", fontSize: 11, fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.05em", color: t.headerText }}>SKU</th>
+                                <th style={{ textAlign: "left", padding: "12px 16px", fontSize: 11, fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.05em", color: t.headerText }}>Quantity</th>
+                                <th style={{ textAlign: "left", padding: "12px 16px", fontSize: 11, fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.05em", color: t.headerText }}>Revenue</th>
+                                <th style={{ textAlign: "left", padding: "12px 16px", fontSize: 11, fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.05em", color: t.headerText }}>Views</th>
+                                <th style={{ textAlign: "left", padding: "12px 16px", fontSize: 11, fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.05em", color: t.headerText }}>Stock</th>
+                                <th style={{ textAlign: "left", padding: "12px 16px", fontSize: 11, fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.05em", color: t.headerText }}>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {displaySkus.map((sku: ShopeeSku) => {
+                                const stockQuantity = sku.stocks < 0 ? 0 : sku.stocks
                                 return (
-                                    <TableRow key={sku.sku}>
-                                        <TableCell>
-                                            {sku.image && (
-                                                <img
-                                                    src={sku.image}
-                                                    alt={sku.sku}
-                                                    className="w-16 h-16 object-cover rounded"
-                                                />
-                                            )}
-                                        </TableCell>
-                                        <TableCell className="font-medium">{sku.sku}</TableCell>
-                                        <TableCell className="max-w-[120px] truncate">{sku.quantity}</TableCell>
-                                        <TableCell>
-                                            {isAdmin(session?.user_entity || {}) ? (
-                                                <p>{formatCurrency(Number(sku.revenue))}</p>
-                                            ) : (
-                                                <p>********</p>
-                                            )}
-                                        </TableCell>
-                                        <TableCell>
-                                            <Badge className="ml-2 font-medium px-2.5 py-1 text-xs rounded-md">
-                                                {sku.views}
-                                            </Badge>
-                                        </TableCell>
-                                        {/* <TableCell>
-                                            <Badge
-                                                className="ml-2 font-medium px-2.5 py-1 text-xs rounded-md"
-                                                style={{
-                                                    backgroundColor: `${getColorPercentage(Number(sku.conversion_rate))}20`,
-                                                    color: getColorPercentage(Number(sku.conversion_rate))
-                                                }}
-                                            >
-                                                {sku.conversion_rate}%
-                                            </Badge>
-                                        </TableCell> */}
-                                        <TableCell>{stockQuantity}</TableCell>
-                                        <TableCell>{getStockStatus(stockQuantity)}</TableCell>
-                                    </TableRow>
-                                );
-                            })
-                        ) : (
-                            skus.slice(0, 5).map((sku: ShopeeSku) => {
-                                const stockQuantity = sku.stocks < 0 ? 0 : sku.stocks;
-                                return (
-                                    <TableRow key={sku.sku}>
-                                        <TableCell className="font-medium">{sku.sku}</TableCell>
-                                        <TableCell className="max-w-[120px] truncate">{sku.quantity}</TableCell>
-                                        <TableCell>
-                                            {isAdmin(session?.user_entity || {}) ? (
-                                                <p>{formatCurrency(sku.revenue)}</p>
-                                            ) : (
-                                                <p>********</p>
-                                            )}
-                                        </TableCell>
-                                        <TableCell>
-                                            <Badge className="ml-2 font-medium px-2.5 py-1 text-xs rounded-md">
-                                                {sku.views}
-                                            </Badge>
-                                        </TableCell>
-                                        {/* <TableCell>
-                                            <Badge
-                                                className="ml-2 font-medium px-2.5 py-1 text-xs rounded-md"
-                                                style={{
-                                                    backgroundColor: `${getColorPercentage(Number(sku.conversion_rate))}20`,
-                                                    color: getColorPercentage(Number(sku.conversion_rate))
-                                                }}
-                                            >
-                                                {sku.conversion_rate}%
-                                            </Badge>
-                                        </TableCell> */}
-                                        <TableCell>{stockQuantity}</TableCell>
-                                        <TableCell>{getStockStatus(stockQuantity)}</TableCell>
-                                    </TableRow>
-                                );
-                            })
-                        )}
-                    </TableBody>
-                </Table>
-            </CardContent>
-        </Card>
+                                    <tr
+                                        key={sku.sku}
+                                        style={{
+                                            borderBottom: `1px solid ${t.divider}`,
+                                            transition: "background 0.15s ease",
+                                        }}
+                                        onMouseEnter={(e) => { e.currentTarget.style.background = t.rowHover }}
+                                        onMouseLeave={(e) => { e.currentTarget.style.background = "transparent" }}
+                                    >
+                                        {selectedTab === "skus" && (
+                                            <td style={{ padding: "14px 16px" }}>
+                                                {sku.image && (
+                                                    <img
+                                                        src={sku.image}
+                                                        alt={sku.sku}
+                                                        style={{ width: 64, height: 64, objectFit: "cover", borderRadius: 8 }}
+                                                    />
+                                                )}
+                                            </td>
+                                        )}
+                                        <td style={{ padding: "14px 16px", fontSize: 14, fontWeight: 500, color: t.cellBold }}>{sku.sku}</td>
+                                        <td style={{ padding: "14px 16px", fontSize: 14, color: t.cellText, maxWidth: 120, overflow: "hidden", textOverflow: "ellipsis" }}>{sku.quantity}</td>
+                                        <td style={{ padding: "14px 16px", fontSize: 14, color: t.cellText }}>
+                                            {isAdmin(session?.user_entity || {}) ? formatCurrency(Number(sku.revenue)) : "********"}
+                                        </td>
+                                        <td style={{ padding: "14px 16px", fontSize: 14, color: t.cellText }}>{sku.views}</td>
+                                        <td style={{ padding: "14px 16px", fontSize: 14, color: t.cellText }}>{stockQuantity}</td>
+                                        <td style={{ padding: "14px 16px" }}>{getStockStatus(stockQuantity)}</td>
+                                    </tr>
+                                )
+                            })}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </>
     )
 }
 
-export default ShopeeSkusTable;
+export default ShopeeSkusTable

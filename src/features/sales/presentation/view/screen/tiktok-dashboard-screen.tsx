@@ -1,204 +1,244 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
+import { useTheme } from "next-themes";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import {
-    Package,
-    ShoppingCart,
-    Percent,
-} from "lucide-react";
-import DataCard from "@/src/core/shared/view/components/data-card";
+import { Package, ShoppingCart, Percent } from "lucide-react";
+import { Skeleton } from "@/components/ui/skeleton";
 import { TiktokConversionCharts } from "../components/tiktok/tiktok-conversion-charts";
 import TiktokConversionTable from "../components/tiktok/tiktok-conversion-table";
-import { tiktokConversionRateQuery, tiktokDashboardQuery, tiktokSkuListQuery, tiktokSkusQuery } from "../../tanstack/mock-tiktok-tanstack";
-import { formatCurrency, formatDateToYYYYMMDD, getDataDescription, isAdmin, isDevelopmentMode } from "@/src/core/constant/helper";
+import {
+    tiktokConversionRateQuery,
+    tiktokDashboardQuery,
+    tiktokSkuListQuery,
+} from "../../tanstack/mock-tiktok-tanstack";
+import { formatCurrency } from "@/src/core/constant/helper";
 import TiktokSkusTable from "../components/tiktok/tiktok-skus-table";
 import { useSession } from "@/src/core/lib/dummy-session-provider";
 import { AnalysisTimeFrame } from "../../../data/model/shopify-entity";
-import { Calendar as CalendarIcon } from "lucide-react";
-import { Calendar } from "@/components/ui/calendar";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { format } from "date-fns";
-import { Button } from "@/components/ui/button";
+import DateRangePickerPro, {
+    type DateRange,
+    type Timeframe,
+} from "@/components/ui/date-range-picker-pro";
+import { startOfMonth, endOfMonth } from "date-fns";
 
-interface DatePickerProps {
-    date: Date | undefined;
-    onSelect: (date: Date | undefined) => void;
-    placeholder: string;
+interface TiktokMetricCardProps {
+    icon: React.ReactNode;
+    label: string;
+    value: string | number;
+    subtitle: string;
+    isLoading: boolean;
 }
 
-const DatePicker = ({ date, onSelect, placeholder }: DatePickerProps) => {
+function TiktokMetricCard({ icon, label, value, subtitle, isLoading }: TiktokMetricCardProps) {
+    const { resolvedTheme } = useTheme();
+    const isDark = resolvedTheme === "dark";
+
+    const t = useMemo(() => {
+        if (isDark) {
+            return {
+                cardBg:
+                    "linear-gradient(135deg, rgba(26, 34, 44, 0.9), rgba(35, 45, 56, 0.85))",
+                cardBorder: "1px solid rgba(var(--preset-primary-rgb), 0.12)",
+                glow: "rgba(var(--preset-primary-rgb), 0.08)",
+                iconBg: "linear-gradient(135deg, var(--preset-primary), var(--preset-lighter))",
+                title: "#fafafa",
+                subtitle: "#a1a1aa",
+                amount: "#fff",
+            };
+        }
+        return {
+            cardBg:
+                "linear-gradient(135deg, rgba(250, 247, 255, 0.95), rgba(243, 237, 255, 0.85))",
+            cardBorder: "1px solid rgba(var(--preset-primary-rgb), 0.1)",
+            glow: "rgba(var(--preset-primary-rgb), 0.05)",
+            iconBg: "linear-gradient(135deg, var(--preset-primary), var(--preset-lighter))",
+            title: "#18181b",
+            subtitle: "#71717a",
+            amount: "#18181b",
+        };
+    }, [isDark]);
+
     return (
-        <Popover>
-            <PopoverTrigger asChild>
-                <Button
-                    variant="outline"
-                    className="w-[200px] justify-start text-left font-normal"
+        <div
+            style={{
+                background: t.cardBg,
+                borderRadius: 20,
+                border: t.cardBorder,
+                padding: "20px 22px",
+                display: "flex",
+                flexDirection: "column",
+                gap: 14,
+                fontFamily: "'Outfit', sans-serif",
+                position: "relative",
+                overflow: "hidden",
+                backdropFilter: "blur(20px)",
+                WebkitBackdropFilter: "blur(20px)",
+            }}
+        >
+            <div
+                style={{
+                    position: "absolute",
+                    top: -40,
+                    right: -40,
+                    width: 120,
+                    height: 120,
+                    background: `radial-gradient(circle, ${t.glow} 0%, transparent 70%)`,
+                    pointerEvents: "none",
+                }}
+            />
+
+            <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+                <div
+                    style={{
+                        width: 38,
+                        height: 38,
+                        borderRadius: "50%",
+                        background: t.iconBg,
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        flexShrink: 0,
+                        boxShadow: `0 2px 12px ${t.glow}`,
+                    }}
                 >
-                    <CalendarIcon className="mr-2 h-4 w-4" />
-                    {date ? format(date, "PPP") : <span>{placeholder}</span>}
-                </Button>
-            </PopoverTrigger>
-            <PopoverContent className="w-auto p-0" align="start">
-                <Calendar
-                    mode="single"
-                    selected={date}
-                    onSelect={onSelect}
-                    initialFocus
-                />
-            </PopoverContent>
-        </Popover>
+                    <div style={{ color: "#fff", display: "flex" }}>{icon}</div>
+                </div>
+                <div style={{ display: "flex", flexDirection: "column", gap: 2 }}>
+                    <span style={{ fontSize: 14, fontWeight: 600, color: t.title }}>
+                        {label}
+                    </span>
+                    <span style={{ fontSize: 11, color: t.subtitle }}>{subtitle}</span>
+                </div>
+            </div>
+
+            {isLoading ? (
+                <Skeleton style={{ height: 32, width: 120 }} />
+            ) : (
+                <p
+                    style={{
+                        fontSize: 28,
+                        fontWeight: 700,
+                        color: t.amount,
+                        margin: 0,
+                        letterSpacing: "-0.5px",
+                        lineHeight: 1,
+                    }}
+                >
+                    {value}
+                </p>
+            )}
+        </div>
     );
-};
+}
 
 const TikTokDashboardScreen = () => {
     const [activeTab, setActiveTab] = useState("overview");
-    const [timeframe, setTimeframe] = useState('daily');
-    const [startDate, setStartDate] = useState<Date>();
-    const [endDate, setEndDate] = useState<Date>();
+    const [timeframe, setTimeframe] = useState<Timeframe>("daily");
+    const [dateRange, setDateRange] = useState<DateRange>(() => {
+        const now = new Date();
+        return { from: startOfMonth(now), to: endOfMonth(now) };
+    });
 
     const { data: session } = useSession();
-    const { data: tiktokMetadata, refetch: refetchTiktokMetadata, isLoading: tiktokMetadataLoading } = tiktokDashboardQuery(timeframe);
+    const {
+        data: tiktokMetadata,
+        refetch: refetchTiktokMetadata,
+        isLoading: tiktokMetadataLoading,
+    } = tiktokDashboardQuery(timeframe);
     const {
         data: tiktokConversionRate,
         isLoading: tiktokConversionRateLoading,
-        isError: tiktokConversionRateError
     } = tiktokConversionRateQuery();
-
-    const {
-        data: tiktokSkus,
-        isLoading: tiktokSkusLoading,
-        isError: tiktokSkusError
-    } = tiktokSkuListQuery();
+    const { data: tiktokSkus } = tiktokSkuListQuery();
 
     useEffect(() => {
         refetchTiktokMetadata();
     }, [timeframe, refetchTiktokMetadata]);
 
-    console.log('Tiktok Conversion Rate', tiktokConversionRate);
-
-
-
-    // Financial Overview Data
     const financialMetrics = [
         {
-            title: "Products",
+            label: "Products",
             value: tiktokMetadata?.products || 0,
-            change: "-2.1%",
-            trending: "down",
-            icon: <Package className="h-5 w-5 text-pink-500" />,
-            description: getDataDescription(timeframe)
+            subtitle: "Total listed",
+            icon: <Package className="h-4 w-4" />,
         },
         {
-            title: "Total Sales",
+            label: "Total Sales",
             value: formatCurrency(Number(tiktokMetadata?.revenue || 0)),
-            change: "+12.5%",
-            trending: "up",
-            icon: <ShoppingCart className="h-5 w-5 text-pink-500" />,
-            description: getDataDescription(timeframe)
+            subtitle: "Revenue",
+            icon: <ShoppingCart className="h-4 w-4" />,
         },
         {
-            title: "Orders",
+            label: "Orders",
             value: tiktokMetadata?.orders || 0,
-            change: "-2.8%",
-            trending: "down",
-            icon: <Percent className="h-5 w-5 text-pink-500" />,
-            description: getDataDescription(timeframe)
+            subtitle: "Total orders",
+            icon: <Package className="h-4 w-4" />,
         },
         {
-            title: "Conversion Rate",
+            label: "Conversion Rate",
             value: `${tiktokMetadata?.conversion_rate || 0}%`,
-            change: "+0.5%",
-            trending: "up",
-            icon: <Percent className="h-5 w-5 text-pink-500" />,
-            description: getDataDescription(timeframe)
-        }
+            subtitle: "Visitor to buyer",
+            icon: <Percent className="h-4 w-4" />,
+        },
     ];
 
-
-
-
+    const pageTitle = "TikTok Shop Financial Dashboard";
 
     return (
         <div className="flex flex-col items-start gap-4 w-full">
-            <div className="flex flex-col sm:flex-row w-full justify-between items-start sm:items-center space-y-2 sm:space-y-0">
+            <div className="flex flex-col lg:flex-row w-full justify-between items-start lg:items-center gap-4">
                 <div>
-                    <h2 className="text-2xl font-bold">TikTok Shop Financial Dashboard</h2>
+                    <h2 className="text-2xl font-bold">{pageTitle}</h2>
                     <p className="text-muted-foreground">
-                        {tiktokMetadataLoading ? 'Loading...' : `${timeframe.charAt(0).toUpperCase() + timeframe.slice(1)} metrics & performance analysis`}
+                        TikTok Shop metrics & performance analysis
                     </p>
                 </div>
 
-                <div className="flex items-center gap-2">
-                    <DatePicker
-                        date={startDate}
-                        onSelect={setStartDate}
-                        placeholder="Start date"
-                    />
-                    <DatePicker
-                        date={endDate}
-                        onSelect={setEndDate}
-                        placeholder="End date"
-                    />
-                </div>
+                <DateRangePickerPro
+                    value={dateRange}
+                    onChange={setDateRange}
+                    placeholder="Pick a date range"
+                    label=""
+                    timeframe={timeframe}
+                    onTimeframeChange={setTimeframe}
+                    className="min-w-[240px]"
+                />
             </div>
 
-            <div className="flex w-full justify-between items-center">
-                <Tabs value={activeTab} onValueChange={setActiveTab} className="w-auto">
-                    <TabsList>
-                        <TabsTrigger value="overview">Overview</TabsTrigger>
-                        <TabsTrigger value="conversion">Conversion</TabsTrigger>
-                        <TabsTrigger value="skus">SKUs</TabsTrigger>
-                    </TabsList>
-                </Tabs>
-
-                {/* <Tabs value={timeframe} onValueChange={setTimeframe} className="w-fit">
-                    <TabsList>
-                        <TabsTrigger value="daily">Daily</TabsTrigger>
-                        <TabsTrigger value="weekly">Weekly</TabsTrigger>
-                        <TabsTrigger value="monthly">Monthly</TabsTrigger>
-                        <TabsTrigger value="yearly">Yearly</TabsTrigger>
-                    </TabsList>
-                </Tabs> */}
-                {
-                    activeTab == 'overview' && (
-                        <Tabs value={timeframe} onValueChange={(value: string) => setTimeframe(value as AnalysisTimeFrame)} className="w-fit">
-                            <TabsList>
-                                <TabsTrigger value={AnalysisTimeFrame.DAILY}>Daily</TabsTrigger>
-                                <TabsTrigger value={AnalysisTimeFrame.WEEKLY}>Weekly</TabsTrigger>
-                                <TabsTrigger value={AnalysisTimeFrame.MONTHLY}>Monthly</TabsTrigger>
-                                <TabsTrigger value={AnalysisTimeFrame.YEARLY}>Yearly</TabsTrigger>
-                            </TabsList>
-                        </Tabs>
-                    )
-                }
-            </div>
+            <Tabs
+                value={activeTab}
+                onValueChange={setActiveTab}
+                className="w-auto"
+            >
+                <TabsList>
+                    <TabsTrigger value="overview">Overview</TabsTrigger>
+                    <TabsTrigger value="conversion">Conversion</TabsTrigger>
+                    <TabsTrigger value="skus">SKUs</TabsTrigger>
+                </TabsList>
+            </Tabs>
 
             {activeTab === "overview" && (
                 <div className="space-y-4 w-full">
-                    {/* Financial Overview Cards */}
-                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                        {tiktokMetadataLoading ? (
-                            // Loading skeletons for the cards
-                            Array(4).fill(0).map((_, index) => (
-                                <div key={index} className="rounded-lg border p-4 flex flex-col space-y-3">
-                                    <div className="h-5 w-1/3 bg-gray-200 animate-pulse rounded"></div>
-                                    <div className="h-8 w-1/2 bg-gray-200 animate-pulse rounded"></div>
-                                    <div className="h-4 w-1/4 bg-gray-200 animate-pulse rounded"></div>
-                                </div>
-                            ))
-                        ) : (
-                            financialMetrics.map((metric, index) => (
-                                <DataCard key={index}
-                                    icon={metric.icon}
-                                    title={metric.title}
-                                    value={metric.value as any}
-                                    trending={metric.trending as any}
-                                    change={metric.change}
-                                    description={metric.description}
-                                />
-                            ))
-                        )}
+                    <div
+                        style={{
+                            display: "grid",
+                            gridTemplateColumns: "repeat(4, 1fr)",
+                            gap: 16,
+                            width: "100%",
+                        }}
+                        className="!grid-cols-1 sm:!grid-cols-2 lg:!grid-cols-4"
+                    >
+                        {financialMetrics.map((m, i) => (
+                            <TiktokMetricCard
+                                key={i}
+                                icon={m.icon}
+                                label={m.label}
+                                value={m.value}
+                                subtitle={m.subtitle}
+                                isLoading={tiktokMetadataLoading}
+                            />
+                        ))}
                     </div>
 
                     <div className="grid grid-cols-1 lg:grid-cols-8 gap-4 w-full h-full">
@@ -209,16 +249,16 @@ const TikTokDashboardScreen = () => {
                             <TiktokConversionTable
                                 conversionData={tiktokConversionRate || []}
                                 isLimited
-                                onViewAll={() => {
-                                    setActiveTab('conversion');
-                                }}
+                                onViewAll={() => setActiveTab("conversion")}
                             />
                         </div>
                     </div>
 
-                    <TiktokSkusTable skus={tiktokSkus || []} onSelectTap={() => {
-                        setActiveTab("skus")
-                    }} selectedTab={activeTab} />
+                    <TiktokSkusTable
+                        skus={tiktokSkus || []}
+                        onSelectTap={() => setActiveTab("skus")}
+                        selectedTab={activeTab}
+                    />
                 </div>
             )}
 
@@ -227,18 +267,18 @@ const TikTokDashboardScreen = () => {
                     <TiktokConversionTable
                         conversionData={tiktokConversionRate || []}
                         isLimited={false}
-                        onViewAll={() => {
-                            setActiveTab('conversion');
-                        }}
+                        onViewAll={() => setActiveTab("conversion")}
                     />
                 </div>
             )}
 
             {activeTab === "skus" && (
                 <div className="space-y-4 w-full">
-                    <TiktokSkusTable skus={tiktokSkus || []} onSelectTap={() => {
-                        setActiveTab("skus")
-                    }} selectedTab={activeTab} />
+                    <TiktokSkusTable
+                        skus={tiktokSkus || []}
+                        onSelectTap={() => setActiveTab("skus")}
+                        selectedTab={activeTab}
+                    />
                 </div>
             )}
         </div>

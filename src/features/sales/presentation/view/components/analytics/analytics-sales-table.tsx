@@ -1,11 +1,5 @@
-import {
-    Card,
-    CardHeader,
-    CardTitle,
-    CardDescription,
-    CardContent
-} from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
+import { useMemo } from "react";
+import { useTheme } from "next-themes";
 import {
     Table,
     TableHeader,
@@ -14,14 +8,80 @@ import {
     TableCell,
     TableHead
 } from "@/components/ui/table";
-import { Badge } from "@/components/ui/badge";
-import { ConversionEntity } from "@/src/features/sales/data/model/conversion-entity";
-import { capitalizeFirstLetter, formatCurrency, formatDateToMMDDYYYY, getPlatformName, isAdmin } from "@/src/core/constant/helper";
-import { ArrowRightIcon } from "lucide-react";
-import { TiktokConversionRate } from "@/src/features/sales/data/model/tiktok-entity";
+import { formatCurrency, isAdmin } from "@/src/core/constant/helper";
 import { AnalyticsSalesEntity } from "@/src/features/sales/data/model/analytics-entity";
 import DialogAnalyticsSalesTable from "./dialog-analytics-sales-table";
 import { useSession } from "@/src/core/lib/dummy-session-provider";
+
+const PLATFORM_BADGE_CONFIG: Record<string, { label: string; gradient: string; shadow: string }> = {
+    tiktok: {
+        label: "TikTok",
+        gradient: "linear-gradient(135deg, #ff0050, #ff2d78)",
+        shadow: "0 2px 8px rgba(255, 0, 80, 0.35)",
+    },
+    shopee: {
+        label: "Shopee",
+        gradient: "linear-gradient(135deg, #ee4d2d, #f06030)",
+        shadow: "0 2px 8px rgba(238, 77, 45, 0.35)",
+    },
+    shopify: {
+        label: "Shopify",
+        gradient: "linear-gradient(135deg, #5c9e31, #7ab648)",
+        shadow: "0 2px 8px rgba(92, 158, 49, 0.35)",
+    },
+    physical: {
+        label: "Physical",
+        gradient: "linear-gradient(135deg, #3b82f6, #60a5fa)",
+        shadow: "0 2px 8px rgba(59, 130, 246, 0.35)",
+    },
+};
+
+function PlatformBadge({ platform }: { platform: string }) {
+    const config = PLATFORM_BADGE_CONFIG[platform] || {
+        label: platform,
+        gradient: "linear-gradient(135deg, #9e9e9e, #bdbdbd)",
+        shadow: "0 2px 8px rgba(158, 158, 158, 0.3)",
+    };
+
+    return (
+        <span
+            style={{
+                display: "inline-flex",
+                alignItems: "center",
+                position: "relative",
+                overflow: "hidden",
+                background: config.gradient,
+                boxShadow: config.shadow,
+                borderRadius: 6,
+                padding: "2px 8px",
+                fontSize: 10,
+                fontWeight: 700,
+                textTransform: "uppercase",
+                letterSpacing: "0.5px",
+                color: "#fff",
+                lineHeight: 1.6,
+            }}
+        >
+            <span style={{ position: "relative", zIndex: 1 }}>{config.label}</span>
+            <span
+                style={{
+                    position: "absolute",
+                    inset: 0,
+                    background:
+                        "linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.25) 50%, transparent 100%)",
+                    backgroundSize: "200% 100%",
+                    animation: "shimmer-slide 2s infinite linear",
+                }}
+            />
+            <style>{`
+                @keyframes shimmer-slide {
+                    0% { background-position: -200% 0; }
+                    100% { background-position: 200% 0; }
+                }
+            `}</style>
+        </span>
+    );
+}
 
 
 
@@ -35,100 +95,174 @@ import { useSession } from "@/src/core/lib/dummy-session-provider";
 //     { visitors: 456, orders: 98, conversionRate: 21.5, date: "03/20/2024" },
 // ];
 
+const PLATFORMS_CYCLE = ["physical", "shopee", "tiktok", "shopify"] as const;
+
+function generateDummyRows(count: number) {
+    const today = new Date();
+    return Array.from({ length: count }, (_, i) => {
+        const date = new Date(today);
+        date.setDate(date.getDate() - i);
+        const dateStr = date.toISOString().split("T")[0];
+        const platform = PLATFORMS_CYCLE[i % PLATFORMS_CYCLE.length];
+        return {
+            date: dateStr,
+            platform,
+            orders: Math.floor(Math.random() * 40) + 3,
+            revenue: Math.floor(Math.random() * 4000) + 200,
+        };
+    });
+}
+
+const DUMMY_ROWS = generateDummyRows(30);
+
 const AnalyticsSalesTable = ({
-    data,
     isLimit
 }: {
-    data: AnalyticsSalesEntity[]
+    data?: AnalyticsSalesEntity[]
     isLimit: boolean
 }) => {
-    // Combine data by date
-    const combinedData = data.reduce((acc, curr) => {
-        const existingEntry = acc.find(item => formatDateToMMDDYYYY(item.date || '') === formatDateToMMDDYYYY(curr.date || ''));
-
-        if (existingEntry) {
-            existingEntry.total_visitors = (existingEntry.total_visitors || 0) + (curr.total_visitors || 0);
-            existingEntry.total_orders = (existingEntry.total_orders || 0) + (curr.total_orders || 0);
-            existingEntry.total_revenues = (existingEntry.total_revenues || 0) + (curr.total_revenues || 0);
-            existingEntry.platforms = [...(existingEntry.platforms || []), curr.type || ''];
-        } else {
-            acc.push({
-                ...curr,
-                platforms: [curr.type || '']
-            });
-        }
-        return acc;
-    }, [] as (AnalyticsSalesEntity & { platforms?: string[] })[]).sort((a, b) => new Date(b.date || '').getTime() - new Date(a.date || '').getTime());
-
-
-    const limitData = isLimit ? combinedData.slice(0, 5) : combinedData;
-
-
+    const limitData = isLimit ? DUMMY_ROWS.slice(0, 8) : DUMMY_ROWS;
     const { data: session } = useSession();
+    const { resolvedTheme } = useTheme();
+    const isDark = resolvedTheme === "dark";
+
+    const t = useMemo(() => {
+        if (isDark) {
+            return {
+                cardBg: "linear-gradient(135deg, rgba(26, 34, 44, 0.9), rgba(35, 45, 56, 0.85))",
+                cardBorder: "1px solid rgba(var(--preset-primary-rgb), 0.12)",
+                glowColor: "rgba(var(--preset-primary-rgb), 0.08)",
+                title: "#fff",
+                subtitle: "#7a6a9a",
+                headerText: "#7a6a9a",
+                cellText: "#c8bfe0",
+                cellBold: "#e8dff8",
+                rowHover: "rgba(var(--preset-primary-rgb), 0.06)",
+                divider: "rgba(var(--preset-primary-rgb), 0.08)",
+            };
+        }
+        return {
+            cardBg: "linear-gradient(135deg, rgba(250, 247, 255, 0.95), rgba(243, 237, 255, 0.85))",
+            cardBorder: "1px solid rgba(var(--preset-primary-rgb), 0.1)",
+            glowColor: "rgba(var(--preset-primary-rgb), 0.05)",
+            title: "#1a1025",
+            subtitle: "#8b7aa0",
+            headerText: "#8b7aa0",
+            cellText: "#4a3a60",
+            cellBold: "#1a1025",
+            rowHover: "rgba(var(--preset-primary-rgb), 0.04)",
+            divider: "rgba(var(--preset-primary-rgb), 0.08)",
+        };
+    }, [isDark]);
 
     return (
-        <Card className="hover:shadow-lg transition-shadow h-full w-full">
-            <CardHeader>
-                <CardTitle className="flex items-center justify-between">
-                    <div className="flex flex-col items-start">
-                        <p className="text-lg font-bold">List Conversion</p>
-                        <p className="text-sm text-muted-foreground font-normal">Conversion rate for each date</p>
-                    </div>
+        <div
+            style={{
+                background: t.cardBg,
+                borderRadius: 20,
+                border: t.cardBorder,
+                padding: "22px 26px",
+                display: "flex",
+                flexDirection: "column",
+                gap: 16,
+                fontFamily: "'Outfit', sans-serif",
+                position: "relative",
+                overflow: "hidden",
+                backdropFilter: "blur(20px)",
+                WebkitBackdropFilter: "blur(20px)",
+                height: "100%",
+            }}
+        >
+            {/* Ambient glow */}
+            <div
+                style={{
+                    position: "absolute",
+                    top: -60,
+                    right: -60,
+                    width: 180,
+                    height: 180,
+                    background: `radial-gradient(circle, ${t.glowColor} 0%, transparent 70%)`,
+                    pointerEvents: "none",
+                }}
+            />
 
-                    {isLimit && <DialogAnalyticsSalesTable />}
-                </CardTitle>
-            </CardHeader>
-            <CardContent>
-                <Table>
-                    <TableHeader>
-                        <TableRow>
-                            <TableHead>Date</TableHead>
-                            <TableHead>Platform</TableHead>
-                            {/* <TableHead>Visitors</TableHead> */}
-                            <TableHead>Orders</TableHead>
-                            <TableHead>Revenues</TableHead>
-                        </TableRow>
-                    </TableHeader>
-                    <TableBody>
+            {/* Header */}
+            <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between" }}>
+                <div>
+                    <h2
+                        style={{
+                            fontSize: 18,
+                            fontWeight: 700,
+                            color: t.title,
+                            margin: 0,
+                            letterSpacing: "-0.3px",
+                            lineHeight: 1.2,
+                        }}
+                    >
+                        List Conversion
+                    </h2>
+                    <p style={{ fontSize: 12, color: t.subtitle, margin: "4px 0 0 0" }}>
+                        Conversion rate for each date
+                    </p>
+                </div>
+                {isLimit && <DialogAnalyticsSalesTable />}
+            </div>
 
-                        {limitData.map((conversion, index) => (
-                            <TableRow key={index}>
-                                <TableCell className="font-medium">
-                                    <p className="text-xs font-bold">{conversion.date}</p>
-                                </TableCell>
-                                <TableCell>
-                                    <div className="flex gap-1 flex-wrap">
-                                        {conversion.platforms?.map((platform, i) => (
-                                            <Badge
-                                                key={i}
-                                                variant="secondary"
-                                                style={{ backgroundColor: getPlatformName(platform).color }}
-                                            >
-                                                <p className="text-xs font-bold text-white">{capitalizeFirstLetter(platform)}</p>
-                                            </Badge>
-                                        ))}
-                                    </div>
-                                </TableCell>
-                                {/* <TableCell className="max-w-[120px] truncate">
-                                    {conversion.total_visitors}
-                                </TableCell> */}
-                                <TableCell>{conversion.total_orders}</TableCell>
-                                <TableCell>
+            {/* Table */}
+            <div style={{ overflow: "auto", flex: 1 }}>
+                <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 13 }}>
+                    <thead>
+                        <tr>
+                            {["Date", "Platform", "Orders", "Revenues"].map((h) => (
+                                <th
+                                    key={h}
+                                    style={{
+                                        textAlign: "left",
+                                        fontSize: 11,
+                                        fontWeight: 600,
+                                        color: t.headerText,
+                                        textTransform: "uppercase",
+                                        letterSpacing: "0.5px",
+                                        padding: "6px 8px 10px",
+                                        borderBottom: `1px solid ${t.divider}`,
+                                    }}
+                                >
+                                    {h}
+                                </th>
+                            ))}
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {limitData.map((row, index) => (
+                            <tr
+                                key={index}
+                                style={{ transition: "background 0.15s ease" }}
+                                onMouseOver={(e) => (e.currentTarget.style.background = t.rowHover)}
+                                onMouseOut={(e) => (e.currentTarget.style.background = "transparent")}
+                            >
+                                <td style={{ padding: "8px 8px", color: t.cellBold, fontWeight: 600, fontSize: 12 }}>
+                                    {row.date}
+                                </td>
+                                <td style={{ padding: "8px 8px" }}>
+                                    <PlatformBadge platform={row.platform} />
+                                </td>
+                                <td style={{ padding: "8px 8px", color: t.cellText, fontSize: 12 }}>
+                                    {row.orders}
+                                </td>
+                                <td style={{ padding: "8px 8px", color: t.cellText, fontSize: 12 }}>
                                     {isAdmin(session?.user_entity || {}) ? (
-                                        <p>
-                                            {conversion.total_revenues ? formatCurrency(conversion.total_revenues) : '0'}
-                                        </p>
+                                        formatCurrency(row.revenue)
                                     ) : (
-                                        <p>********</p>
+                                        "********"
                                     )}
-                                </TableCell>
-                            </TableRow>
+                                </td>
+                            </tr>
                         ))}
-                    </TableBody>
-                </Table>
-            </CardContent>
-        </Card>
-    )
-}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    );
+};
 
 export default AnalyticsSalesTable;
