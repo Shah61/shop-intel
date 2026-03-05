@@ -3,10 +3,10 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '@/components/ui/select';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
-import { ScrollArea } from '@/components/ui/scroll-area';
+
+
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { TrendingUp, TrendingDown, Eye, Heart, MessageCircle, Sparkles, Info, Zap, Play, ArrowUpDown, ArrowUp, ArrowDown, Video, Image as ImageIcon } from 'lucide-react';
+import { TrendingUp, TrendingDown, Eye, Heart, MessageCircle, Sparkles, Zap, Play, ArrowUpDown, ArrowUp, ArrowDown, Video } from 'lucide-react';
 import TrendBarChart from './trend-bar-chart';
 import { useTopContents } from '../../tanstack/trend-tanstack';
 import { TopContentsParams, TopContentsItem } from '../../../data/model/trend-model';
@@ -188,313 +188,247 @@ const SocialTrendAnalysis: React.FC<SocialTrendAnalysisProps> = ({ onChannelClic
   };
 
      return (
-     <div className="flex flex-col h-full">
-       {/* Header and Filters - Fixed at top */}
-       <div className="flex-shrink-0 p-6 border-b border-slate-200/30 dark:border-white/10 bg-gradient-to-r from-white/50 to-slate-50/50 dark:from-black/50 dark:to-black/50 backdrop-blur-sm">
-         <div className="flex flex-col">
-           <div className="flex items-center justify-between">
-           </div>
+     <div className="flex flex-col gap-5 w-full">
+       {/* Filter Controls */}
+       <div className="flex flex-wrap items-center gap-3">
+         <Select value={selectedPlatform} onValueChange={setSelectedPlatform}>
+           <SelectTrigger className="w-48 rounded-xl border border-slate-200/60 dark:border-white/[0.08]">
+             <SelectValue placeholder="Select Platform" />
+           </SelectTrigger>
+           <SelectContent className="rounded-xl">
+             {platforms.map((platform) => (
+               <SelectItem key={platform.value} value={platform.value}>
+                 <div className="flex items-center gap-2">
+                   {(platform as any).icon && (platform as any).isEmoji ? (
+                     <span className="text-sm">{(platform as any).icon}</span>
+                   ) : (platform as any).icon && !(platform as any).isEmoji ? (
+                     <img src={(platform as any).icon} alt={platform.label} className="w-4 h-4 object-contain" />
+                   ) : null}
+                   {platform.label}
+                 </div>
+               </SelectItem>
+             ))}
+           </SelectContent>
+         </Select>
 
-           {/* Filter Controls */}
-           <div className="flex flex-wrap gap-4">
-             <Select value={selectedPlatform} onValueChange={setSelectedPlatform}>
-               <SelectTrigger className="w-48 rounded-xl border border-pink-200/50 dark:border-white/20 focus:border-pink-400">
-                 <SelectValue placeholder="Select Platform" />
-               </SelectTrigger>
-               <SelectContent className="rounded-xl">
-                 {platforms.map((platform) => (
-                   <SelectItem key={platform.value} value={platform.value}>
-                     <div className="flex items-center gap-2">
-                       {(platform as any).icon && (platform as any).isEmoji ? (
-                         <span className="text-sm">{(platform as any).icon}</span>
-                       ) : (platform as any).icon && !(platform as any).isEmoji ? (
-                         <img 
-                           src={(platform as any).icon} 
-                           alt={platform.label}
-                           className="w-4 h-4 object-contain"
-                         />
-                       ) : null}
-                       {platform.label}
-                     </div>
-                   </SelectItem>
-                 ))}
-               </SelectContent>
-             </Select>
+         <Select value={selectedCountry} onValueChange={setSelectedCountry}>
+           <SelectTrigger className="w-48 rounded-xl border border-slate-200/60 dark:border-white/[0.08]">
+             <SelectValue placeholder="Select Country" />
+           </SelectTrigger>
+           <SelectContent className="rounded-xl">
+             {countries.map((country) => (
+               <SelectItem key={country.value} value={country.value}>
+                 {country.label}
+               </SelectItem>
+             ))}
+           </SelectContent>
+         </Select>
 
-             <Select value={selectedCountry} onValueChange={setSelectedCountry}>
-               <SelectTrigger className="w-48 rounded-xl border border-pink-200/50 dark:border-white/20 focus:border-pink-400">
-                 <SelectValue placeholder="Select Country" />
-               </SelectTrigger>
-               <SelectContent className="rounded-xl">
-                 {countries.map((country) => (
-                   <SelectItem key={country.value} value={country.value}>
-                     <div className="flex items-center gap-2">
-                       {country.label}
-                     </div>
-                   </SelectItem>
-                 ))}
-               </SelectContent>
-             </Select>
-
-             <div className="flex gap-2">
-               {metrics.map((metric) => {
-                 const IconComponent = metric.icon;
-                 return (
-                   <Button
-                     key={metric.value}
-                     variant={selectedMetric === metric.value ? "default" : "outline"}
-                     size="sm"
-                     onClick={() => setSelectedMetric(metric.value)}
-                     className={`rounded-xl transition-all border ${
-                       selectedMetric === metric.value 
-                         ? 'bg-gradient-to-r from-pink-600 to-purple-600 hover:from-pink-700 hover:to-purple-700 text-white border-transparent' 
-                         : 'border-pink-200/50 hover:border-pink-400 hover:bg-pink-50 dark:hover:bg-pink-900/20 dark:border-white/20'
-                     }`}
-                   >
-                     <IconComponent className="h-3 w-3 mr-1" />
-                     {metric.label}
-                   </Button>
-                 );
-               })}
-             </div>
-           </div>
+         <div className="flex gap-1.5">
+           {metrics.map((metric) => {
+             const IconComponent = metric.icon;
+             const isActive = selectedMetric === metric.value;
+             return (
+               <Button
+                 key={metric.value}
+                 variant={isActive ? "default" : "outline"}
+                 size="sm"
+                 onClick={() => setSelectedMetric(metric.value)}
+                 className="rounded-xl transition-all border"
+                 style={isActive ? {
+                   background: `linear-gradient(135deg, var(--preset-primary), var(--preset-lighter))`,
+                   color: '#fff',
+                   borderColor: 'transparent',
+                 } : {
+                   borderColor: `rgba(var(--preset-primary-rgb), 0.15)`,
+                 }}
+               >
+                 <IconComponent className="h-3 w-3 mr-1" />
+                 {metric.label}
+               </Button>
+             );
+           })}
          </div>
        </div>
 
-       {/* Scrollable Content Area */}
-       <ScrollArea className="flex-1 min-h-0">
-         <div className="p-6 space-y-6">
-           {/* Top Channels Bar Chart */}
-           <TrendBarChart
-             selectedMetric={selectedMetric}
-             selectedChannel={selectedChannel}
-             metrics={metrics}
-             onChannelSelect={(channelId: string) => {
-               setSelectedChannel(channelId);
-               if (onChannelClick) {
-                 onChannelClick(channelId);
-               }
-             }}
-             platform={selectedPlatform !== 'all' ? selectedPlatform.toUpperCase() as "INSTAGRAM" | "TIKTOK" | "YOUTUBE" : undefined}
-             region={selectedCountry !== 'all' ? selectedCountry.toUpperCase() : undefined}
-           />
+       {/* Top Channels Bar Chart */}
+       <TrendBarChart
+         selectedMetric={selectedMetric}
+         selectedChannel={selectedChannel}
+         metrics={metrics}
+         onChannelSelect={(channelId: string) => {
+           setSelectedChannel(channelId);
+           if (onChannelClick) onChannelClick(channelId);
+         }}
+         platform={selectedPlatform !== 'all' ? selectedPlatform.toUpperCase() as "INSTAGRAM" | "TIKTOK" | "YOUTUBE" : undefined}
+         region={selectedCountry !== 'all' ? selectedCountry.toUpperCase() : undefined}
+       />
 
-           {/* Top 10 Trending Videos */}
-           <Card className="bg-gradient-to-br from-white to-orange-50/30 dark:from-black dark:to-orange-950/20 border border-orange-200/50 dark:border-white/20">
-             <CardHeader className="pb-4">
-               <CardTitle className="text-lg font-semibold flex items-center gap-2">
-                 <Zap className="h-5 w-5 text-orange-600" />
-                 Top Trending Videos
-                 {videosData?.data?.contents?.total && (
-                   <Badge variant="secondary" className="ml-2">
-                     {videosData.data.contents.total.toLocaleString()} total
-                   </Badge>
-                 )}
-               </CardTitle>
-               <p className="text-sm text-slate-600 dark:text-slate-400">
-                 Click on any video to explore content • Real-time trending data
-               </p>
-             </CardHeader>
-             <CardContent>
-               {isLoading ? (
-                 <div className="flex items-center justify-center h-32">
-                   <div className="text-gray-500">Loading trending videos...</div>
-                 </div>
-               ) : error ? (
-                 <div className="flex items-center justify-center h-32">
-                   <div className="text-red-500">Error loading videos</div>
-                 </div>
-               ) : (
-                  <Table className="min-w-full">
-                    <TableHeader>
-                      <TableRow>
-                        <TableHead className="text-left text-sm font-semibold">
-                          #
-                        </TableHead>
-                        <TableHead className="text-left text-sm font-semibold">
-                          <button 
-                            onClick={() => handleSort('title')} 
-                            className="flex items-center gap-1 hover:text-orange-600 transition-colors"
-                          >
-                            Video {getSortIcon('title')}
-                          </button>
-                        </TableHead>
-                        <TableHead className="text-left text-sm font-semibold">
-                          <button 
-                            onClick={() => handleSort('channel')} 
-                            className="flex items-center gap-1 hover:text-orange-600 transition-colors"
-                          >
-                            Channel {getSortIcon('channel')}
-                          </button>
-                        </TableHead>
-                        <TableHead className="text-right text-sm font-semibold">
-                          <button 
-                            onClick={() => handleSort('views')} 
-                            className="flex items-center gap-1 hover:text-orange-600 transition-colors ml-auto"
-                          >
-                            <Eye className="h-3 w-3" />
-                            Views {getSortIcon('views')}
-                          </button>
-                        </TableHead>
-                        <TableHead className="text-right text-sm font-semibold">
-                          <button 
-                            onClick={() => handleSort('likes')} 
-                            className="flex items-center gap-1 hover:text-orange-600 transition-colors ml-auto"
-                          >
-                            <Heart className="h-3 w-3" />
-                            Likes {getSortIcon('likes')}
-                          </button>
-                        </TableHead>
-                        <TableHead className="text-right text-sm font-semibold">
-                          <button 
-                            onClick={() => handleSort('comments')} 
-                            className="flex items-center gap-1 hover:text-orange-600 transition-colors ml-auto"
-                          >
-                            <MessageCircle className="h-3 w-3" />
-                            Comments {getSortIcon('comments')}
-                          </button>
-                        </TableHead>
-                        <TableHead className="text-right text-sm font-semibold">
-                          <button 
-                            onClick={() => handleSort('24h_change_views')} 
-                            className="flex items-center gap-1 hover:text-orange-600 transition-colors ml-auto"
-                          >
-                            24h Views {getSortIcon('24h_change_views')}
-                          </button>
-                        </TableHead>
-                        <TableHead className="text-right text-sm font-semibold">
-                          <button 
-                            onClick={() => handleSort('24h_change_likes')} 
-                            className="flex items-center gap-1 hover:text-orange-600 transition-colors ml-auto"
-                          >
-                            24h Likes {getSortIcon('24h_change_likes')}
-                          </button>
-                        </TableHead>
-                        <TableHead className="text-right text-sm font-semibold">
-                          <button 
-                            onClick={() => handleSort('engagement')} 
-                            className="flex items-center gap-1 hover:text-orange-600 transition-colors ml-auto"
-                          >
-                            <Sparkles className="h-3 w-3" />
-                            Engagement {getSortIcon('engagement')}
-                          </button>
-                        </TableHead>
-                      </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                      {sortedVideos.slice(0, 20).map((video, index) => (
-                        <TableRow 
-                          key={video.id} 
-                          className="hover:bg-orange-50 dark:hover:bg-orange-950/20 cursor-pointer transition-colors"
-                          onClick={() => window.open(video.video_url, '_blank')}
+       {/* Trending Videos Table */}
+       <Card className="bg-white dark:bg-white/[0.02] border border-slate-200/60 dark:border-white/[0.06] shadow-sm">
+         <CardHeader className="pb-4">
+           <CardTitle className="text-lg font-semibold flex items-center gap-2">
+             <div className="w-7 h-7 rounded-lg flex items-center justify-center" style={{ background: `rgba(var(--preset-primary-rgb), 0.1)` }}>
+               <Zap className="h-4 w-4" style={{ color: `var(--preset-primary)` }} />
+             </div>
+             Top Trending Videos
+             {videosData?.data?.contents?.total && (
+               <Badge variant="secondary" className="ml-2 font-medium">
+                 {videosData.data.contents.total.toLocaleString()} total
+               </Badge>
+             )}
+           </CardTitle>
+           <p className="text-sm text-muted-foreground">
+             Click on any video to explore content · Real-time trending data
+           </p>
+         </CardHeader>
+         <CardContent>
+           {isLoading ? (
+             <div className="flex items-center justify-center h-32">
+               <div className="text-muted-foreground">Loading trending videos...</div>
+             </div>
+           ) : error ? (
+             <div className="flex items-center justify-center h-32">
+               <div className="text-red-500">Error loading videos</div>
+             </div>
+           ) : (
+              <Table className="min-w-full">
+                <TableHeader>
+                  <TableRow>
+                    <TableHead className="text-left text-sm font-semibold">#</TableHead>
+                    <TableHead className="text-left text-sm font-semibold">
+                      <button onClick={() => handleSort('title')} className="flex items-center gap-1 hover:opacity-70 transition-opacity">
+                        Video {getSortIcon('title')}
+                      </button>
+                    </TableHead>
+                    <TableHead className="text-left text-sm font-semibold">
+                      <button onClick={() => handleSort('channel')} className="flex items-center gap-1 hover:opacity-70 transition-opacity">
+                        Channel {getSortIcon('channel')}
+                      </button>
+                    </TableHead>
+                    <TableHead className="text-right text-sm font-semibold">
+                      <button onClick={() => handleSort('views')} className="flex items-center gap-1 hover:opacity-70 transition-opacity ml-auto">
+                        <Eye className="h-3 w-3" /> Views {getSortIcon('views')}
+                      </button>
+                    </TableHead>
+                    <TableHead className="text-right text-sm font-semibold">
+                      <button onClick={() => handleSort('likes')} className="flex items-center gap-1 hover:opacity-70 transition-opacity ml-auto">
+                        <Heart className="h-3 w-3" /> Likes {getSortIcon('likes')}
+                      </button>
+                    </TableHead>
+                    <TableHead className="text-right text-sm font-semibold">
+                      <button onClick={() => handleSort('comments')} className="flex items-center gap-1 hover:opacity-70 transition-opacity ml-auto">
+                        <MessageCircle className="h-3 w-3" /> Comments {getSortIcon('comments')}
+                      </button>
+                    </TableHead>
+                    <TableHead className="text-right text-sm font-semibold">
+                      <button onClick={() => handleSort('24h_change_views')} className="flex items-center gap-1 hover:opacity-70 transition-opacity ml-auto">
+                        24h Views {getSortIcon('24h_change_views')}
+                      </button>
+                    </TableHead>
+                    <TableHead className="text-right text-sm font-semibold">
+                      <button onClick={() => handleSort('24h_change_likes')} className="flex items-center gap-1 hover:opacity-70 transition-opacity ml-auto">
+                        24h Likes {getSortIcon('24h_change_likes')}
+                      </button>
+                    </TableHead>
+                    <TableHead className="text-right text-sm font-semibold">
+                      <button onClick={() => handleSort('engagement')} className="flex items-center gap-1 hover:opacity-70 transition-opacity ml-auto">
+                        <Sparkles className="h-3 w-3" /> Engagement {getSortIcon('engagement')}
+                      </button>
+                    </TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {sortedVideos.slice(0, 20).map((video, index) => (
+                    <TableRow
+                      key={video.id}
+                      className="cursor-pointer transition-colors"
+                      style={{ '--tw-hover-bg': `rgba(var(--preset-primary-rgb), 0.04)` } as React.CSSProperties}
+                      onClick={() => window.open(video.video_url, '_blank')}
+                    >
+                      <TableCell className="w-12">
+                        <div
+                          className="text-sm font-bold w-6 h-6 rounded-full flex items-center justify-center"
+                          style={{ background: `rgba(var(--preset-primary-rgb), 0.1)`, color: `var(--preset-primary)` }}
                         >
-                          <TableCell className="w-12">
-                            <div className="text-sm font-bold text-orange-600 bg-orange-100 dark:bg-orange-900 w-6 h-6 rounded-full flex items-center justify-center">
-                              {index + 1}
+                          {index + 1}
+                        </div>
+                      </TableCell>
+                      <TableCell className="max-w-xs">
+                        <div className="flex items-center gap-3">
+                          <div className="relative flex-shrink-0 w-16 h-10">
+                            <img
+                              src={video.thumbnails.find(t => t.type === 'HIGH')?.url || video.thumbnails[0]?.url}
+                              alt={video.title}
+                              className="w-full h-full object-cover rounded"
+                              onError={handleImageError}
+                            />
+                            <div className="fallback-icon absolute inset-0 bg-slate-200 dark:bg-slate-700 rounded flex items-center justify-center" style={{display: 'none'}}>
+                              <Video className="h-4 w-4 text-slate-500" />
                             </div>
-                          </TableCell>
-                          <TableCell className="max-w-xs">
-                            <div className="flex items-center gap-3">
-                              <div className="relative flex-shrink-0 w-16 h-10">
-                                <img 
-                                  src={video.thumbnails.find(t => t.type === 'HIGH')?.url || video.thumbnails[0]?.url}
-                                  alt={video.title}
-                                  className="w-full h-full object-cover rounded"
-                                  onError={handleImageError}
-                                />
-                                <div className="fallback-icon absolute inset-0 bg-slate-200 dark:bg-slate-700 rounded flex items-center justify-center" style={{display: 'none'}}>
-                                  <Video className="h-4 w-4 text-slate-500" />
-                                </div>
-                                <div className="absolute inset-0 flex items-center justify-center">
-                                  <Play className="h-3 w-3 text-white opacity-80" fill="white" />
-                                </div>
-                              </div>
-                              <div className="min-w-0 flex-1">
-                                <h4 className="text-sm font-medium text-slate-900 dark:text-slate-100 line-clamp-2 leading-tight">
-                                  {video.title}
-                                </h4>
-                              </div>
+                            <div className="absolute inset-0 flex items-center justify-center">
+                              <Play className="h-3 w-3 text-white opacity-80" fill="white" />
                             </div>
-                          </TableCell>
-                          <TableCell>
-                            <div className="flex items-center gap-2">
-                              <img 
-                                src={video.channel.image_url}
-                                alt={video.channel.name}
-                                className="w-6 h-6 rounded-full"
-                                onError={(e) => {
-                                  const target = e.target as HTMLImageElement;
-                                  target.style.display = 'none';
-                                  const parent = target.parentElement;
-                                  if (parent) {
-                                    const fallback = document.createElement('div');
-                                    fallback.className = 'w-6 h-6 rounded-full bg-slate-300 dark:bg-slate-600 flex items-center justify-center';
-                                    fallback.innerHTML = `<span class="text-xs font-bold">${video.channel.name.charAt(0).toUpperCase()}</span>`;
-                                    parent.insertBefore(fallback, target);
-                                  }
-                                }}
-                              />
-                              <div>
-                                <div className="text-sm font-medium">{formatTextToTitleCase(video.channel.name)}</div>
-                                <div className="text-xs text-slate-500 flex items-center gap-1">
-                                  <span>{formatTextToTitleCase(video.channel.platform)}</span>
-                                  {video.channel.region && (
-                                    <>
-                                      <span>•</span>
-                                      <span>{formatTextToTitleCase(video.channel.region)}</span>
-                                    </>
-                                  )}
-                                </div>
-                              </div>
+                          </div>
+                          <div className="min-w-0 flex-1">
+                            <h4 className="text-sm font-medium text-slate-900 dark:text-slate-100 line-clamp-2 leading-tight">
+                              {video.title}
+                            </h4>
+                          </div>
+                        </div>
+                      </TableCell>
+                      <TableCell>
+                        <div className="flex items-center gap-2">
+                          <img
+                            src={video.channel.image_url}
+                            alt={video.channel.name}
+                            className="w-6 h-6 rounded-full"
+                            onError={(e) => {
+                              const target = e.target as HTMLImageElement;
+                              target.style.display = 'none';
+                              const parent = target.parentElement;
+                              if (parent) {
+                                const fallback = document.createElement('div');
+                                fallback.className = 'w-6 h-6 rounded-full bg-slate-300 dark:bg-slate-600 flex items-center justify-center';
+                                fallback.innerHTML = `<span class="text-xs font-bold">${video.channel.name.charAt(0).toUpperCase()}</span>`;
+                                parent.insertBefore(fallback, target);
+                              }
+                            }}
+                          />
+                          <div>
+                            <div className="text-sm font-medium">{formatTextToTitleCase(video.channel.name)}</div>
+                            <div className="text-xs text-muted-foreground flex items-center gap-1">
+                              <span>{formatTextToTitleCase(video.channel.platform)}</span>
+                              {video.channel.region && (<><span>·</span><span>{formatTextToTitleCase(video.channel.region)}</span></>)}
                             </div>
-                          </TableCell>
-                          <TableCell className="text-right text-sm">
-                            {formatNumber(video.metadata.views)}
-                          </TableCell>
-                          <TableCell className="text-right text-sm">
-                            {formatNumber(video.metadata.likes)}
-                          </TableCell>
-                          <TableCell className="text-right text-sm">
-                            {formatNumber(video.metadata.comments)}
-                          </TableCell>
-                          <TableCell className="text-right text-sm">
-                            <div className={`flex items-center gap-1 justify-end ${
-                              video.metadata["24h_change_views"] > 0 ? 'text-green-600' : 
-                              video.metadata["24h_change_views"] < 0 ? 'text-red-600' : 'text-slate-500'
-                            }`}>
-                              {video.metadata["24h_change_views"] > 0 ? (
-                                <TrendingUp className="h-3 w-3" />
-                              ) : video.metadata["24h_change_views"] < 0 ? (
-                                <TrendingDown className="h-3 w-3" />
-                              ) : null}
-                              {video.metadata["24h_change_views"] !== 0 ? formatNumber(Math.abs(video.metadata["24h_change_views"])) : '0'}
-                            </div>
-                          </TableCell>
-                          <TableCell className="text-right text-sm">
-                            <div className={`flex items-center gap-1 justify-end ${
-                              video.metadata["24h_change_likes"] > 0 ? 'text-green-600' : 
-                              video.metadata["24h_change_likes"] < 0 ? 'text-red-600' : 'text-slate-500'
-                            }`}>
-                              {video.metadata["24h_change_likes"] > 0 ? (
-                                <TrendingUp className="h-3 w-3" />
-                              ) : video.metadata["24h_change_likes"] < 0 ? (
-                                <TrendingDown className="h-3 w-3" />
-                              ) : null}
-                              {video.metadata["24h_change_likes"] !== 0 ? formatNumber(Math.abs(video.metadata["24h_change_likes"])) : '0'}
-                            </div>
-                          </TableCell>
-                          <TableCell className="text-right text-sm font-medium text-orange-600">
-                            {video.metadata.views > 0 ? (video.metadata.likes / video.metadata.views * 100).toFixed(1) : '0.0'}%
-                          </TableCell>
-                        </TableRow>
-                      ))}
-                    </TableBody>
-                  </Table>
-               )}
-             </CardContent>
-           </Card>
-         </div>
-       </ScrollArea>
+                          </div>
+                        </div>
+                      </TableCell>
+                      <TableCell className="text-right text-sm">{formatNumber(video.metadata.views)}</TableCell>
+                      <TableCell className="text-right text-sm">{formatNumber(video.metadata.likes)}</TableCell>
+                      <TableCell className="text-right text-sm">{formatNumber(video.metadata.comments)}</TableCell>
+                      <TableCell className="text-right text-sm">
+                        <div className={`flex items-center gap-1 justify-end ${video.metadata["24h_change_views"] > 0 ? 'text-green-600' : video.metadata["24h_change_views"] < 0 ? 'text-red-600' : 'text-slate-500'}`}>
+                          {video.metadata["24h_change_views"] > 0 ? <TrendingUp className="h-3 w-3" /> : video.metadata["24h_change_views"] < 0 ? <TrendingDown className="h-3 w-3" /> : null}
+                          {video.metadata["24h_change_views"] !== 0 ? formatNumber(Math.abs(video.metadata["24h_change_views"])) : '0'}
+                        </div>
+                      </TableCell>
+                      <TableCell className="text-right text-sm">
+                        <div className={`flex items-center gap-1 justify-end ${video.metadata["24h_change_likes"] > 0 ? 'text-green-600' : video.metadata["24h_change_likes"] < 0 ? 'text-red-600' : 'text-slate-500'}`}>
+                          {video.metadata["24h_change_likes"] > 0 ? <TrendingUp className="h-3 w-3" /> : video.metadata["24h_change_likes"] < 0 ? <TrendingDown className="h-3 w-3" /> : null}
+                          {video.metadata["24h_change_likes"] !== 0 ? formatNumber(Math.abs(video.metadata["24h_change_likes"])) : '0'}
+                        </div>
+                      </TableCell>
+                      <TableCell className="text-right text-sm font-medium" style={{ color: `var(--preset-primary)` }}>
+                        {video.metadata.views > 0 ? (video.metadata.likes / video.metadata.views * 100).toFixed(1) : '0.0'}%
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+           )}
+         </CardContent>
+       </Card>
      </div>
    );
 };

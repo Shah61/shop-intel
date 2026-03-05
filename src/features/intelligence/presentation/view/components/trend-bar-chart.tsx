@@ -197,15 +197,24 @@ const TrendBarChart: React.FC<TrendBarChartProps> = ({
   };
 
   return (
-    <Card className="bg-gradient-to-br from-white to-pink-50/30 dark:from-black dark:to-pink-950/20 border border-pink-200/50 dark:border-white/20">
+    <Card className="bg-white dark:bg-white/[0.02] border border-slate-200/60 dark:border-white/[0.06] shadow-sm">
       <CardHeader className="pb-4">
         <div className="flex items-center justify-between">
           <CardTitle className="text-lg font-semibold flex items-center gap-2">
-            <TrendingUp className="h-5 w-5 text-pink-600" />
+            <div className="w-7 h-7 rounded-lg flex items-center justify-center" style={{ background: `rgba(var(--preset-primary-rgb), 0.1)` }}>
+              <TrendingUp className="h-4 w-4" style={{ color: `var(--preset-primary)` }} />
+            </div>
             Top 20 Channels by {metrics.find(m => m.value === selectedMetric)?.label}
           </CardTitle>
           {selectedChannel && (
-            <div className="text-sm font-medium text-pink-600 bg-pink-50 dark:bg-pink-950/20 px-3 py-1 rounded-lg border border-pink-200/50 dark:border-white/20">
+            <div
+              className="text-sm font-medium px-3 py-1 rounded-lg border"
+              style={{
+                color: `var(--preset-primary)`,
+                background: `rgba(var(--preset-primary-rgb), 0.06)`,
+                borderColor: `rgba(var(--preset-primary-rgb), 0.15)`,
+              }}
+            >
               Selected: {channels.find((c: Channel) => c.id === selectedChannel)?.name}
             </div>
           )}

@@ -65,7 +65,7 @@ export default function LayoutDrawer({ open, onClose }: Props) {
     const [rtl, setRtl] = useState(() => getStored("layout-rtl", false))
     const [compact, setCompact] = useState(() => getStored("layout-compact", false))
     const [navLayout, setNavLayout] = useState<NavLayout>(() => getStored("layout-nav", "vertical"))
-    const [navColor, setNavColor] = useState<NavColor>(() => getStored("layout-nav-color", "integrate"))
+    const [navColor, setNavColor] = useState<NavColor>(() => getStored("layout-nav-color", "apparent"))
     const [preset, setPreset] = useState<PresetColor>(() => getStored("layout-preset", "purple"))
     const [fontFamily, setFontFamily] = useState<FontFamily>(() => getStored("layout-font", "Public Sans"))
     const [fontSize, setFontSize] = useState(() => getStored("layout-font-size", 16))
@@ -129,7 +129,7 @@ export default function LayoutDrawer({ open, onClose }: Props) {
         dispatchLayoutChange()
     }, [navColor, persist])
 
-    const bg = isDark ? "#1a1025" : "#ffffff"
+    const bg = isDark ? "#131820" : "#ffffff"
     const cardBg = isDark ? "linear-gradient(135deg, rgba(26, 34, 44, 0.9), rgba(35, 45, 56, 0.85))" : "rgba(0,0,0,0.03)"
     const border = isDark ? "rgba(124,58,237,0.12)" : "rgba(0,0,0,0.08)"
     const textPrimary = isDark ? "#e5e7eb" : "#111827"

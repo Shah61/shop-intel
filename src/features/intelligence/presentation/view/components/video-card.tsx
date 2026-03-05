@@ -26,7 +26,6 @@ const VideoCard: React.FC<VideoCardProps> = ({ content, isSelected }) => {
     const date = new Date(dateString);
     const now = new Date();
     const diffInHours = Math.floor((now.getTime() - date.getTime()) / (1000 * 60 * 60));
-    
     if (diffInHours < 24) return `${diffInHours} hours ago`;
     const diffInDays = Math.floor(diffInHours / 24);
     if (diffInDays < 30) return `${diffInDays} days ago`;
@@ -35,76 +34,60 @@ const VideoCard: React.FC<VideoCardProps> = ({ content, isSelected }) => {
   };
 
   return (
-    <Card 
-      key={content.id} 
-      className={`group hover:shadow-xl transition-all duration-300 border-0 overflow-hidden ${
-        isSelected 
-          ? 'bg-blue-50/80 dark:bg-blue-950/20 ring-2 ring-blue-200 dark:ring-blue-800' 
-          : 'bg-white/80 dark:bg-black/80'
-      }`}
+    <Card
+      className={`group hover:shadow-md transition-all duration-300 overflow-hidden ${
+        isSelected
+          ? 'ring-2 bg-white dark:bg-white/[0.02]'
+          : 'bg-white dark:bg-white/[0.02]'
+      } border border-slate-200/60 dark:border-white/[0.06] shadow-sm`}
+      style={isSelected ? { '--tw-ring-color': `rgba(var(--preset-primary-rgb), 0.3)` } as React.CSSProperties : undefined}
     >
       <div className="relative">
-        <img 
-          src={content.thumbnails[0]?.url || '/images/skin care thumbnail.avif'} 
-          alt={content.title} 
-          className="w-full h-40 object-cover group-hover:scale-105 transition-transform duration-300" 
-          onError={(e) => {
-            e.currentTarget.src = '/images/skin care thumbnail.avif';
-          }}
+        <img
+          src={content.thumbnails[0]?.url || '/images/skin care thumbnail.avif'}
+          alt={content.title}
+          className="w-full h-40 object-cover group-hover:scale-105 transition-transform duration-300"
+          onError={(e) => { e.currentTarget.src = '/images/skin care thumbnail.avif'; }}
         />
-        <div className="absolute inset-0 bg-black/20 group-hover:bg-black/10 transition-all duration-300" />
-        
+        <div className="absolute inset-0 bg-black/10 group-hover:bg-black/5 transition-all duration-300" />
+
         {/* Duration */}
-        <div className="absolute bottom-2 right-2 bg-black/70 text-white text-xs px-2 py-1 rounded">
+        <div className="absolute bottom-2 right-2 bg-black/70 text-white text-xs px-2 py-0.5 rounded-md font-medium">
           {formatDuration(content.metadata.video_length)}
         </div>
-        
-        {/* Platform Icon */}
+
+        {/* Platform */}
         <div className="absolute top-2 left-2 rounded-full p-0">
           {content.channel.platform === 'INSTAGRAM' && (
-            <img 
-              src="/images/instargram.png" 
-              alt="Instagram"
-              className="w-12 h-12 object-contain"
-            />
+            <img src="/images/instargram.png" alt="Instagram" className="w-10 h-10 object-contain" />
           )}
           {content.channel.platform === 'TIKTOK' && (
-            <img 
-              src="/images/tiktok2.png" 
-              alt="TikTok"
-              className="w-12 h-12 object-contain"
-            />
+            <img src="/images/tiktok2.png" alt="TikTok" className="w-10 h-10 object-contain" />
           )}
           {content.channel.platform === 'YOUTUBE' && (
-            <img 
-              src="/images/youtube.png" 
-              alt="YouTube"
-              className="w-12 h-12 object-contain"
-            />
+            <img src="/images/youtube.png" alt="YouTube" className="w-10 h-10 object-contain" />
           )}
         </div>
 
-
-
-        {/* Play Button Overlay */}
+        {/* Play overlay */}
         <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-          <a 
-            href={content.video_url} 
-            target="_blank" 
+          <a
+            href={content.video_url}
+            target="_blank"
             rel="noopener noreferrer"
-            className="bg-white/90 dark:bg-black/80 rounded-full p-3 shadow-lg hover:bg-white dark:hover:bg-black transition-colors"
+            className="bg-white/90 dark:bg-slate-800/90 rounded-full p-2.5 shadow-lg hover:bg-white dark:hover:bg-slate-800 transition-colors"
           >
-            <Play className="h-6 w-6 text-purple-600" />
+            <Play className="h-5 w-5" style={{ color: `var(--preset-primary)` }} />
           </a>
         </div>
       </div>
 
       <CardContent className="p-4 space-y-3">
-        <h3 className="font-semibold text-sm line-clamp-2 group-hover:text-purple-600 transition-colors">
+        <h3 className="font-semibold text-sm text-slate-900 dark:text-slate-100 line-clamp-2">
           {content.title}
         </h3>
-        
-        <div className="flex items-center gap-4 text-xs text-slate-600 dark:text-slate-400">
+
+        <div className="flex items-center gap-4 text-xs text-muted-foreground">
           <span className="flex items-center gap-1">
             <Eye className="h-3 w-3" />
             {formatNumber(content.metadata.views)}
@@ -120,18 +103,24 @@ const VideoCard: React.FC<VideoCardProps> = ({ content, isSelected }) => {
         </div>
 
         {content.summarizer_description !== '-' && content.summarizer_description && (
-          <div className="bg-gradient-to-r from-purple-50 to-blue-50 dark:from-purple-950/30 dark:to-blue-950/30 p-3 rounded-lg border border-purple-200/50 dark:border-white/20">
-            <div className="flex items-center gap-2 mb-2">
-              <Sparkles className="h-3 w-3 text-purple-600" />
-              <span className="text-xs font-medium text-purple-700 dark:text-purple-300">AI Summary</span>
+          <div
+            className="p-3 rounded-lg border"
+            style={{
+              background: `rgba(var(--preset-primary-rgb), 0.04)`,
+              borderColor: `rgba(var(--preset-primary-rgb), 0.12)`,
+            }}
+          >
+            <div className="flex items-center gap-1.5 mb-1.5">
+              <Sparkles className="h-3 w-3" style={{ color: `var(--preset-primary)` }} />
+              <span className="text-xs font-medium" style={{ color: `var(--preset-primary)` }}>AI Summary</span>
             </div>
-            <p className="text-xs text-slate-700 dark:text-slate-300 leading-relaxed">
+            <p className="text-xs text-muted-foreground leading-relaxed">
               {content.summarizer_description}
             </p>
           </div>
         )}
 
-        <div className="flex items-center justify-between text-xs text-slate-500">
+        <div className="flex items-center justify-between text-xs text-muted-foreground">
           <span>@{content.channel.name}</span>
           <span>{getTimeAgo(content.created_at)}</span>
         </div>
@@ -140,4 +129,4 @@ const VideoCard: React.FC<VideoCardProps> = ({ content, isSelected }) => {
   );
 };
 
-export default VideoCard; 
+export default VideoCard;

@@ -10,7 +10,7 @@ import {
     RotateCcw,
     BarChart3
 } from 'lucide-react';
-import { format, subDays } from 'date-fns';
+import { format } from 'date-fns';
 
 type SortOption = 'rank' | 'popularity' | 'title' | 'artist' | 'duration';
 type ViewMode = 'grid' | 'list' | 'chart';
@@ -56,8 +56,6 @@ const MusicFilters: React.FC<MusicFiltersProps> = ({
     setSearchQuery,
     sortBy,
     setSortBy,
-    showFilters,
-    setShowFilters,
     onRefresh,
     isLoading,
     viewMode,
@@ -77,13 +75,13 @@ const MusicFilters: React.FC<MusicFiltersProps> = ({
 
     const hasActiveFilters = selectedRegion !== 'GLOBAL' || searchQuery !== '' || sortBy !== 'rank';
 
-        return (
+    return (
         <div className="flex items-center gap-3 flex-wrap justify-end">
-            {/* Region Selector */}
-            <div className="flex items-center gap-2">
-                <span className="text-xs text-slate-600 dark:text-slate-400 font-medium">Region:</span>
+            {/* Region */}
+            <div className="flex items-center gap-1.5">
+                <span className="text-xs text-muted-foreground font-medium">Region:</span>
                 <Select value={selectedRegion} onValueChange={setSelectedRegion}>
-                    <SelectTrigger className="w-32 h-8 text-xs bg-white dark:bg-black border-slate-300 dark:border-slate-600 hover:bg-slate-50 dark:hover:bg-slate-900 transition-all">
+                    <SelectTrigger className="w-32 h-8 text-xs border-slate-200 dark:border-white/[0.1] bg-white dark:bg-white/[0.02]">
                         <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
@@ -96,17 +94,13 @@ const MusicFilters: React.FC<MusicFiltersProps> = ({
                 </Select>
             </div>
 
-            {/* Single Date Selection */}
-            <div className="flex items-center gap-2">
-                <span className="text-xs text-slate-600 dark:text-slate-400 font-medium">Date:</span>
+            {/* Date */}
+            <div className="flex items-center gap-1.5">
+                <span className="text-xs text-muted-foreground font-medium">Date:</span>
                 <Popover>
                     <PopoverTrigger asChild>
-                        <Button 
-                            variant="outline" 
-                            size="sm" 
-                            className="h-8 text-xs bg-white dark:bg-black border-slate-300 dark:border-slate-600 hover:bg-slate-50 dark:hover:bg-slate-900 transition-all"
-                        >
-                            <CalendarIcon className="w-3 h-3 mr-1" />
+                        <Button variant="outline" size="sm" className="h-8 text-xs border-slate-200 dark:border-white/[0.1] bg-white dark:bg-white/[0.02]">
+                            <CalendarIcon className="w-3 h-3 mr-1" style={{ color: `var(--preset-primary)` }} />
                             {format(endDate, 'MMM dd, yyyy')}
                         </Button>
                     </PopoverTrigger>
@@ -117,7 +111,7 @@ const MusicFilters: React.FC<MusicFiltersProps> = ({
                             onSelect={(date) => {
                                 if (date) {
                                     setEndDate(date);
-                                    setStartDate(date); // Set both start and end to same date
+                                    setStartDate(date);
                                 }
                             }}
                             initialFocus
@@ -126,11 +120,11 @@ const MusicFilters: React.FC<MusicFiltersProps> = ({
                 </Popover>
             </div>
 
-            {/* Sort Selector */}
-            <div className="flex items-center gap-2">
-                <span className="text-xs text-slate-600 dark:text-slate-400 font-medium">Sort:</span>
+            {/* Sort */}
+            <div className="flex items-center gap-1.5">
+                <span className="text-xs text-muted-foreground font-medium">Sort:</span>
                 <Select value={sortBy} onValueChange={(value: SortOption) => setSortBy(value)}>
-                    <SelectTrigger className="w-24 h-8 text-xs bg-white dark:bg-black border-slate-300 dark:border-slate-600 hover:bg-slate-50 dark:hover:bg-slate-900 transition-all">
+                    <SelectTrigger className="w-24 h-8 text-xs border-slate-200 dark:border-white/[0.1] bg-white dark:bg-white/[0.02]">
                         <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
@@ -142,74 +136,58 @@ const MusicFilters: React.FC<MusicFiltersProps> = ({
                 </Select>
             </div>
 
-            {/* View Mode Selector */}
-            <div className="flex items-center gap-2">
-                <span className="text-xs text-slate-600 dark:text-slate-400 font-medium">View:</span>
+            {/* View Mode */}
+            <div className="flex items-center gap-1.5">
+                <span className="text-xs text-muted-foreground font-medium">View:</span>
                 <div className="flex items-center gap-1">
-                    <Button
-                        variant={viewMode === 'grid' ? 'default' : 'ghost'}
-                        size="sm"
-                        onClick={() => setViewMode('grid')}
-                        className={`h-8 w-8 p-0 ${
-                            viewMode === 'grid' 
-                                ? 'bg-black dark:bg-white text-white dark:text-black' 
-                                : 'bg-white dark:bg-black text-black dark:text-white border border-slate-300 dark:border-slate-600 hover:bg-slate-50 dark:hover:bg-slate-900'
-                        }`}
-                    >
-                        <div className="grid grid-cols-2 gap-0.5 w-3 h-3">
-                            <div className="bg-current rounded-[1px]"></div>
-                            <div className="bg-current rounded-[1px]"></div>
-                            <div className="bg-current rounded-[1px]"></div>
-                            <div className="bg-current rounded-[1px]"></div>
-                        </div>
-                    </Button>
-                    <Button
-                        variant={viewMode === 'list' ? 'default' : 'ghost'}
-                        size="sm"
-                        onClick={() => setViewMode('list')}
-                        className={`h-8 w-8 p-0 ${
-                            viewMode === 'list' 
-                                ? 'bg-black dark:bg-white text-white dark:text-black' 
-                                : 'bg-white dark:bg-black text-black dark:text-white border border-slate-300 dark:border-slate-600 hover:bg-slate-50 dark:hover:bg-slate-900'
-                        }`}
-                    >
-                        <div className="space-y-0.5 w-3 h-3">
-                            <div className="bg-current h-0.5 rounded-full"></div>
-                            <div className="bg-current h-0.5 rounded-full"></div>
-                            <div className="bg-current h-0.5 rounded-full"></div>
-                        </div>
-                    </Button>
-                    <Button
-                        variant={viewMode === 'chart' ? 'default' : 'ghost'}
-                        size="sm"
-                        onClick={() => setViewMode('chart')}
-                        className={`h-8 w-8 p-0 ${
-                            viewMode === 'chart' 
-                                ? 'bg-black dark:bg-white text-white dark:text-black' 
-                                : 'bg-white dark:bg-black text-black dark:text-white border border-slate-300 dark:border-slate-600 hover:bg-slate-50 dark:hover:bg-slate-900'
-                        }`}
-                    >
-                        <BarChart3 className="w-3 h-3" />
-                    </Button>
+                    {[
+                        { mode: 'grid' as ViewMode, icon: (
+                            <div className="grid grid-cols-2 gap-0.5 w-3 h-3">
+                                <div className="bg-current rounded-[1px]" /><div className="bg-current rounded-[1px]" />
+                                <div className="bg-current rounded-[1px]" /><div className="bg-current rounded-[1px]" />
+                            </div>
+                        )},
+                        { mode: 'list' as ViewMode, icon: (
+                            <div className="space-y-0.5 w-3 h-3">
+                                <div className="bg-current h-0.5 rounded-full" />
+                                <div className="bg-current h-0.5 rounded-full" />
+                                <div className="bg-current h-0.5 rounded-full" />
+                            </div>
+                        )},
+                        { mode: 'chart' as ViewMode, icon: <BarChart3 className="w-3 h-3" /> },
+                    ].map(({ mode, icon }) => (
+                        <Button
+                            key={mode}
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => setViewMode(mode)}
+                            className="h-8 w-8 p-0 border transition-all"
+                            style={viewMode === mode ? {
+                                background: `linear-gradient(135deg, var(--preset-primary), var(--preset-lighter))`,
+                                color: '#fff',
+                                borderColor: 'transparent',
+                            } : {
+                                background: `rgba(var(--preset-primary-rgb), 0.04)`,
+                                color: `var(--preset-primary)`,
+                                borderColor: `rgba(var(--preset-primary-rgb), 0.12)`,
+                            }}
+                        >
+                            {icon}
+                        </Button>
+                    ))}
                 </div>
             </div>
 
             {/* Song Count */}
-            <div className="text-xs text-slate-600 dark:text-slate-400">
+            <span className="text-xs text-muted-foreground">
                 {filteredSongs} of {totalSongs} songs
-            </div>
-            
-            {/* Action Buttons */}
+            </span>
+
+            {/* Actions */}
             <div className="flex items-center gap-1">
                 {hasActiveFilters && (
-                    <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={resetFilters}
-                        className="h-8 px-3 text-xs text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800"
-                    >
-                        <RotateCcw className="w-3 h-3 mr-1" />
-                        Reset
+                    <Button variant="ghost" size="sm" onClick={resetFilters} className="h-8 px-2.5 text-xs text-muted-foreground hover:text-slate-700 dark:hover:text-slate-200">
+                        <RotateCcw className="w-3 h-3 mr-1" /> Reset
                     </Button>
                 )}
                 <Button
@@ -217,7 +195,7 @@ const MusicFilters: React.FC<MusicFiltersProps> = ({
                     size="sm"
                     onClick={onRefresh}
                     disabled={isLoading}
-                    className="h-8 px-3 text-xs text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800"
+                    className="h-8 px-2.5 text-xs text-muted-foreground hover:text-slate-700 dark:hover:text-slate-200"
                 >
                     {isLoading ? (
                         <div className="animate-spin w-3 h-3 border-2 border-current border-t-transparent rounded-full mr-1" />
@@ -231,4 +209,4 @@ const MusicFilters: React.FC<MusicFiltersProps> = ({
     );
 };
 
-export default MusicFilters; 
+export default MusicFilters;

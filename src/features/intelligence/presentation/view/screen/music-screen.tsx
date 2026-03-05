@@ -75,12 +75,10 @@ const MusicScreen: React.FC = () => {
 
     if (isLoading) {
         return (
-            <div className="flex flex-col h-full bg-white dark:bg-black">
-                <div className="flex-1 flex items-center justify-center">
-                    <div className="text-center space-y-4">
-                        <Loader2 className="w-12 h-12 animate-spin text-black dark:text-white mx-auto" />
-                        <p className="text-slate-600 dark:text-slate-400">Loading music trends...</p>
-                    </div>
+            <div className="flex items-center justify-center py-20">
+                <div className="text-center space-y-3">
+                    <Loader2 className="w-8 h-8 animate-spin mx-auto" style={{ color: `var(--preset-primary)` }} />
+                    <p className="text-muted-foreground text-sm">Loading music trends...</p>
                 </div>
             </div>
         );
@@ -88,125 +86,100 @@ const MusicScreen: React.FC = () => {
 
     if (error) {
         return (
-            <div className="flex flex-col h-full bg-white dark:bg-black">
-                <div className="flex-1 flex items-center justify-center text-center p-6">
-                    <div className="space-y-4">
-                        <div className="w-16 h-16 bg-slate-100 dark:bg-slate-800 rounded-full flex items-center justify-center mx-auto">
-                            <Music className="w-8 h-8 text-black dark:text-white" />
-                        </div>
-                        <div>
-                            <p className="text-black dark:text-white mb-2 font-semibold">Unable to load music trends</p>
-                            <p className="text-xs text-slate-600 dark:text-slate-400">Please try again later</p>
-                            <Button onClick={handleRefresh} className="mt-4 bg-black dark:bg-white text-white dark:text-black hover:bg-slate-800 dark:hover:bg-slate-200" size="sm">
-                                <Music className="w-4 h-4 mr-2" />
-                                Retry
-                            </Button>
-                        </div>
+            <div className="flex items-center justify-center py-20 text-center">
+                <div className="space-y-3">
+                    <div className="w-14 h-14 rounded-2xl flex items-center justify-center mx-auto" style={{ background: `rgba(var(--preset-primary-rgb), 0.1)` }}>
+                        <Music className="w-6 h-6" style={{ color: `var(--preset-primary)` }} />
                     </div>
+                    <p className="text-slate-900 dark:text-slate-100 font-semibold">Unable to load music trends</p>
+                    <p className="text-xs text-muted-foreground">Please try again later</p>
+                    <Button onClick={handleRefresh} size="sm" className="mt-2 text-white" style={{ background: `linear-gradient(135deg, var(--preset-primary), var(--preset-lighter))` }}>
+                        <Music className="w-3.5 h-3.5 mr-1.5" /> Retry
+                    </Button>
                 </div>
             </div>
         );
     }
 
     return (
-        <div className="flex flex-col h-full bg-white dark:bg-black">
-            {/* Header with Title and Filters in Same Row */}
-            <div className="bg-white dark:bg-black">
-                <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 p-4">
-                    {/* Title Section */}
-                    <div className="flex items-center gap-4">
-                        <div className="flex items-center gap-3">
-                            <div className="w-10 h-10 bg-gradient-to-br from-purple-500 to-pink-500 rounded-lg flex items-center justify-center">
-                                <Music className="w-5 h-5 text-white" />
-                            </div>
-                            <div>
-                                <h1 className="text-xl font-bold text-black dark:text-white">Music Trends Dashboard</h1>
-                                <p className="text-sm text-slate-600 dark:text-slate-400">
-                                    {musicTrendData?.count || 0} trending songs • {selectedRegion}
-                                </p>
-                            </div>
-                        </div>
+        <div className="flex flex-col gap-5 w-full">
+            {/* Header */}
+            <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+                <div className="flex items-center gap-3">
+                    <div className="w-9 h-9 rounded-xl flex items-center justify-center shadow-md" style={{ background: `linear-gradient(135deg, var(--preset-primary), var(--preset-lighter))` }}>
+                        <Music className="w-4 h-4 text-white" />
                     </div>
-
-                    {/* Filters on the Right */}
-                    <div className="flex-shrink-0">
-                        <MusicFilters
-                            selectedRegion={selectedRegion}
-                            setSelectedRegion={setSelectedRegion}
-                            startDate={startDate}
-                            setStartDate={setStartDate}
-                            endDate={endDate}
-                            setEndDate={setEndDate}
-                            searchQuery={searchQuery}
-                            setSearchQuery={setSearchQuery}
-                            sortBy={sortBy}
-                            setSortBy={setSortBy}
-                            showFilters={showFilters}
-                            setShowFilters={setShowFilters}
-                            onRefresh={handleRefresh}
-                            isLoading={isLoading}
-                            viewMode={viewMode}
-                            setViewMode={setViewMode}
-                            totalSongs={musicTrendData?.count || 0}
-                            filteredSongs={filteredAndSortedSongs.length}
-                        />
+                    <div>
+                        <h2 className="text-lg font-bold text-slate-900 dark:text-slate-100">Music Trends Dashboard</h2>
+                        <p className="text-xs text-muted-foreground">
+                            {musicTrendData?.count || 0} trending songs · {selectedRegion}
+                        </p>
                     </div>
                 </div>
-
-                {/* Stats Cards */}
-                <div className="px-4 pb-4">
-                    <MusicStats
-                        filteredAndSortedSongs={filteredAndSortedSongs}
-                        getLatestPopularityScore={getLatestPopularityScore}
+                <div className="flex-shrink-0">
+                    <MusicFilters
                         selectedRegion={selectedRegion}
+                        setSelectedRegion={setSelectedRegion}
                         startDate={startDate}
+                        setStartDate={setStartDate}
                         endDate={endDate}
-                        totalCount={musicTrendData?.count || 0}
+                        setEndDate={setEndDate}
+                        searchQuery={searchQuery}
+                        setSearchQuery={setSearchQuery}
+                        sortBy={sortBy}
+                        setSortBy={setSortBy}
+                        showFilters={showFilters}
+                        setShowFilters={setShowFilters}
+                        onRefresh={handleRefresh}
+                        isLoading={isLoading}
+                        viewMode={viewMode}
+                        setViewMode={setViewMode}
+                        totalSongs={musicTrendData?.count || 0}
+                        filteredSongs={filteredAndSortedSongs.length}
                     />
                 </div>
             </div>
 
+            {/* Stats */}
+            <MusicStats
+                filteredAndSortedSongs={filteredAndSortedSongs}
+                getLatestPopularityScore={getLatestPopularityScore}
+                selectedRegion={selectedRegion}
+                startDate={startDate}
+                endDate={endDate}
+                totalCount={musicTrendData?.count || 0}
+            />
 
+            {/* Content */}
+            {viewMode === 'chart' ? (
+                <MusicCharts
+                    filteredAndSortedSongs={filteredAndSortedSongs}
+                    getLatestPopularityScore={getLatestPopularityScore}
+                />
+            ) : (
+                <MusicCard
+                    filteredAndSortedSongs={filteredAndSortedSongs}
+                    getLatestPopularityScore={getLatestPopularityScore}
+                    viewMode={viewMode}
+                    searchQuery={searchQuery}
+                    setSearchQuery={setSearchQuery}
+                    isLoading={isLoading}
+                />
+            )}
 
-            {/* Content Area */}
-            <div className="flex-1 overflow-auto">
-                <div className="p-4 pb-8">
-                    {viewMode === 'chart' ? (
-                        <MusicCharts
-                            filteredAndSortedSongs={filteredAndSortedSongs}
-                            getLatestPopularityScore={getLatestPopularityScore}
-                        />
-                    ) : (
-                        <MusicCard
-                            filteredAndSortedSongs={filteredAndSortedSongs}
-                            getLatestPopularityScore={getLatestPopularityScore}
-                            viewMode={viewMode}
-                            searchQuery={searchQuery}
-                            setSearchQuery={setSearchQuery}
-                            isLoading={isLoading}
-                        />
-                    )}
-                    
-                    {filteredAndSortedSongs.length === 0 && !isLoading && (
-                        <div className="text-center py-12">
-                            <Music className="w-16 h-16 text-slate-400 dark:text-slate-500 mx-auto mb-4" />
-                            <p className="text-slate-600 dark:text-slate-400">
-                                {searchQuery ? 'No songs match your search' : 'No music trends available'}
-                            </p>
-                            {searchQuery && (
-                                <Button 
-                                    variant="outline" 
-                                    size="sm" 
-                                    onClick={() => setSearchQuery('')}
-                                    className="mt-2 bg-white dark:bg-black text-black dark:text-white border-slate-300 dark:border-slate-600 hover:bg-slate-50 dark:hover:bg-slate-900"
-                                >
-                                    Clear search
-                                </Button>
-                            )}
-                        </div>
+            {filteredAndSortedSongs.length === 0 && !isLoading && (
+                <div className="text-center py-12">
+                    <Music className="w-12 h-12 mx-auto mb-3" style={{ color: `rgba(var(--preset-primary-rgb), 0.3)` }} />
+                    <p className="text-muted-foreground">
+                        {searchQuery ? 'No songs match your search' : 'No music trends available'}
+                    </p>
+                    {searchQuery && (
+                        <Button variant="outline" size="sm" onClick={() => setSearchQuery('')} className="mt-2">
+                            Clear search
+                        </Button>
                     )}
                 </div>
-            </div>
+            )}
         </div>
     );
 };

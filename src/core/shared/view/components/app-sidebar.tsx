@@ -262,7 +262,7 @@ export default function AppSidebar() {
     const [showProfilePopover, setShowProfilePopover] = useState(false)
     const [layoutDrawerOpen, setLayoutDrawerOpen] = useState(false)
     const [layoutPreset, setLayoutPreset] = useState<PresetColor>(() => getStored("layout-preset", "purple"))
-    const [layoutNavColor, setLayoutNavColor] = useState<NavColor>(() => getStored("layout-nav-color", "integrate"))
+    const [layoutNavColor, setLayoutNavColor] = useState<NavColor>(() => getStored("layout-nav-color", "apparent"))
     const [layoutNavLayout, setLayoutNavLayout] = useState<NavLayout>(() => getStored("layout-nav", "vertical"))
     const profileRef = useRef<HTMLDivElement>(null)
     const [profilePopoverPos, setProfilePopoverPos] = useState({ top: 0, left: 0 })
@@ -288,7 +288,7 @@ export default function AppSidebar() {
                     activeChildBg: "rgba(255, 255, 255, 0.12)",
                     childText: "rgba(255, 255, 255, 0.6)",
                     dashLine: "rgba(255, 255, 255, 0.2)",
-                    popoverBg: "#1a1025",
+                    popoverBg: "#131820",
                     popoverShadow: `0 0 2px rgba(${pcRgb},0.2), 0 16px 32px -4px rgba(0,0,0,0.5)`,
                     toggleBg: "rgba(255, 255, 255, 0.1)",
                     toggleBorder: "rgba(255, 255, 255, 0.15)",
@@ -317,7 +317,7 @@ export default function AppSidebar() {
                 activeChildBg: `rgba(${pcRgb}, 0.1)`,
                 childText: "#9ca3af",
                 dashLine: `rgba(${pcRgb}, 0.2)`,
-                popoverBg: "#1a1025",
+                popoverBg: "#131820",
                 popoverShadow: `0 0 2px rgba(${pcRgb},0.2), 0 16px 32px -4px rgba(0,0,0,0.5)`,
                 toggleBg: `rgba(${pcRgb}, 0.1)`,
                 toggleBorder: `rgba(${pcRgb}, 0.15)`,
@@ -524,7 +524,7 @@ export default function AppSidebar() {
     useEffect(() => {
         const handler = () => {
             setLayoutPreset(getStored("layout-preset", "purple"))
-            setLayoutNavColor(getStored("layout-nav-color", "integrate"))
+            setLayoutNavColor(getStored("layout-nav-color", "apparent"))
             setLayoutNavLayout(getStored("layout-nav", "vertical"))
         }
         window.addEventListener("layout-settings-changed", handler)
@@ -1427,7 +1427,7 @@ export default function AppSidebar() {
                     <div
                         onClick={(e) => e.stopPropagation()}
                         style={{
-                            background: isDark ? "#1a1025" : "#fff",
+                            background: isDark ? "#131820" : "#fff",
                             borderRadius: 20,
                             padding: "28px 24px 20px",
                             width: "90%",

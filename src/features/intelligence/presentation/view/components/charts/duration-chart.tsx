@@ -16,16 +16,16 @@ interface DurationChartProps {
 const DurationChart: React.FC<DurationChartProps> = ({ data }) => {
     if (!data.length) {
         return (
-            <Card>
+            <Card className="bg-white dark:bg-white/[0.02] border border-slate-200/60 dark:border-white/[0.06] shadow-sm">
                 <CardHeader>
-                    <CardTitle className="flex items-center gap-2">
-                        <BarChart3 className="w-5 h-5" />
+                    <CardTitle className="flex items-center gap-2 text-base">
+                        <BarChart3 className="w-4 h-4" style={{ color: `var(--preset-primary)` }} />
                         Duration Distribution
                     </CardTitle>
                 </CardHeader>
                 <CardContent>
                     <div className="h-80 flex items-center justify-center">
-                        <p className="text-slate-500 dark:text-slate-400">No data available</p>
+                        <p className="text-muted-foreground">No data available</p>
                     </div>
                 </CardContent>
             </Card>
@@ -33,10 +33,10 @@ const DurationChart: React.FC<DurationChartProps> = ({ data }) => {
     }
 
     return (
-        <Card>
+        <Card className="bg-white dark:bg-white/[0.02] border border-slate-200/60 dark:border-white/[0.06] shadow-sm">
             <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                    <BarChart3 className="w-5 h-5" />
+                <CardTitle className="flex items-center gap-2 text-base">
+                    <BarChart3 className="w-4 h-4" style={{ color: `var(--preset-primary)` }} />
                     Duration Distribution
                 </CardTitle>
             </CardHeader>
@@ -46,24 +46,17 @@ const DurationChart: React.FC<DurationChartProps> = ({ data }) => {
                         <BarChart data={data} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
                             <defs>
                                 <linearGradient id="durationGradient" x1="0" y1="0" x2="0" y2="1">
-                                    <stop offset="0%" stopColor="#10B981" stopOpacity={1}/>
-                                    <stop offset="100%" stopColor="#06B6D4" stopOpacity={0.8}/>
+                                    <stop offset="0%" stopColor="var(--preset-primary)" stopOpacity={0.9}/>
+                                    <stop offset="100%" stopColor="var(--preset-lighter)" stopOpacity={0.6}/>
                                 </linearGradient>
                             </defs>
                             <XAxis dataKey="name" />
                             <YAxis />
-                            <Tooltip 
-                                formatter={(value, name) => [
-                                    `${value} songs`,
-                                    'Count'
-                                ]}
+                            <Tooltip
+                                formatter={(value) => [`${value} songs`, 'Count']}
                                 labelFormatter={(label) => `Duration: ${label}`}
                             />
-                            <Bar 
-                                dataKey="value" 
-                                fill="url(#durationGradient)"
-                                radius={[4, 4, 0, 0]}
-                            />
+                            <Bar dataKey="value" fill="url(#durationGradient)" radius={[4, 4, 0, 0]} />
                         </BarChart>
                     </ResponsiveContainer>
                 </div>
@@ -72,4 +65,4 @@ const DurationChart: React.FC<DurationChartProps> = ({ data }) => {
     );
 };
 
-export default DurationChart; 
+export default DurationChart;
