@@ -511,15 +511,6 @@ const MarketingScreen = () => {
 
     return (
         <div className="flex flex-col items-start gap-6 w-full max-w-none">
-            {/* Header */}
-            <div className="flex flex-col sm:flex-row w-full justify-between items-start sm:items-center space-y-2 sm:space-y-0">
-                <div>
-                    <h2 className="text-2xl font-bold mt-8">Marketing Analytics Dashboard</h2>
-                    <p className="text-muted-foreground">
-                        {isLoading ? 'Loading...' : `Campaign metrics & performance analysis`}
-                    </p>
-                </div>
-            </div>
 
             {/* Date Range & Create Button */}
             <Card className="w-full p-4">

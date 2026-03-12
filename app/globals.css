@@ -168,9 +168,13 @@
 
 /* Shared iPad rules (768px–1366px) */
 @media (min-width: 768px) and (max-width: 1366px) {
+  .main-content {
+    overflow: hidden !important;
+  }
+
   /* --- Dynamic viewport-fill layout --- */
   .overview-dashboard {
-    height: calc(100dvh - var(--ipad-pad) * 2) !important;
+    height: calc(100dvh - var(--dash-top) - var(--dash-bot)) !important;
     display: flex !important;
     flex-direction: column !important;
   }
@@ -216,11 +220,12 @@
   }
 }
 
-/* iPad portrait (768px–1024px) */
+/* iPad portrait (768px–1024px) — mobile bottom nav visible */
 @media (min-width: 768px) and (max-width: 1024px) {
   .main-content {
-    --ipad-pad: 12px;
-    padding: 12px !important;
+    --dash-top: 12px;
+    --dash-bot: 76px;
+    padding: 12px 12px 76px !important;
   }
   .overview-dashboard {
     gap: 5px !important;
@@ -295,10 +300,11 @@
   }
 }
 
-/* iPad landscape (1024px–1366px) */
+/* iPad landscape (1024px–1366px) — desktop sidebar visible, no bottom nav */
 @media (min-width: 1024px) and (max-width: 1366px) {
   .main-content {
-    --ipad-pad: 14px;
+    --dash-top: 14px;
+    --dash-bot: 14px;
     padding: 14px !important;
   }
   .overview-dashboard {

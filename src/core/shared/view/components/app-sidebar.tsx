@@ -529,6 +529,16 @@ export default function AppSidebar() {
         if (layoutNavLayout === "mini") setCollapsed(true)
     }, [layoutNavLayout])
 
+    useEffect(() => {
+        const mq = window.matchMedia("(min-width:1024px) and (max-width:1366px)")
+        const apply = (e: MediaQueryList | MediaQueryListEvent) => {
+            if (e.matches) setCollapsed(true)
+        }
+        apply(mq)
+        mq.addEventListener("change", apply)
+        return () => mq.removeEventListener("change", apply)
+    }, [])
+
     /* ─── Collapsed popover logic ─── */
     const openRAF = useRef<number | null>(null)
     const switchTimeout = useRef<ReturnType<typeof setTimeout> | null>(null)
