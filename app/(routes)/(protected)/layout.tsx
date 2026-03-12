@@ -31,7 +31,7 @@ const ProtectedLayout = ({ children }: { children: React.ReactNode }) => {
     }
 
     return (
-        <div className="flex h-screen overflow-hidden">
+        <div className="protected-layout-root flex h-screen overflow-hidden">
             <AppSidebar />
             <main className="main-content flex-1 overflow-y-auto overflow-x-hidden p-4 sm:p-6 lg:p-8 pb-24 lg:pb-8">
                 {children}

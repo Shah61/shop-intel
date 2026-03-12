@@ -168,6 +168,10 @@
 
 /* Shared iPad rules (768px–1366px) */
 @media (min-width: 768px) and (max-width: 1366px) {
+  .protected-layout-root {
+    height: 100dvh !important;
+  }
+
   .main-content {
     overflow: hidden !important;
   }
