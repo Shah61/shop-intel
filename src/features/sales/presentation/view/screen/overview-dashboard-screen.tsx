@@ -203,7 +203,7 @@ export const OverviewDashboardScreen = () => {
             </div>
 
             <div className="overview-bottom-grid grid grid-cols-1 lg:grid-cols-8 gap-4 w-full">
-                <div className="overview-chart-wrapper md:col-span-5">
+            <div className="overview-chart-wrapper lg:col-span-5">
                     <SalesOverviewChart
                         data={salesData || []}
                         selectedYear={selectedYear}
@@ -215,7 +215,7 @@ export const OverviewDashboardScreen = () => {
                     />
                 </div>
 
-                <div className="overview-table-wrapper md:col-span-3">
+                <div className="overview-table-wrapper lg:col-span-3">
                     <AnalyticsSalesTable data={salesByPlatform || []} isLimit={true} />
                 </div>
             </div>

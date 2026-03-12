@@ -275,7 +275,6 @@ export default function AppSidebar() {
     const isDark = resolvedTheme === "dark"
 
     const [collapsed, setCollapsed] = useState(false)
-    const [isTabletSidebar, setIsTabletSidebar] = useState(false)
     const [openMenus, setOpenMenus] = useState<Record<string, boolean>>({})
     const [activePopover, setActivePopover] = useState<string | null>(null)
     const [popoverOpen, setPopoverOpen] = useState(false)
@@ -533,9 +532,7 @@ export default function AppSidebar() {
     useEffect(() => {
         const mq = window.matchMedia("(min-width:1024px) and (max-width:1366px)")
         const apply = (e: MediaQueryList | MediaQueryListEvent) => {
-            const matches = e.matches
-            setIsTabletSidebar(matches)
-            if (matches) setCollapsed(true)
+            if (e.matches) setCollapsed(true)
         }
         apply(mq)
         mq.addEventListener("change", apply)
@@ -626,11 +623,9 @@ export default function AppSidebar() {
                     display: "flex",
                     alignItems: "center",
                     justifyContent: collapsed ? "center" : "space-between",
-                    padding: collapsed
-                        ? isTabletSidebar ? "14px 0" : "20px 0"
-                        : isTabletSidebar ? "14px 14px" : "20px 18px",
+                    padding: collapsed ? "20px 0" : "20px 18px",
                     transition: "padding 0.35s cubic-bezier(0.4, 0, 0.2, 1)",
-                    gap: isTabletSidebar ? 8 : 10,
+                    gap: 10,
                 }}
             >
                 <div style={{ display: "flex", alignItems: "center", gap: 10, overflow: "hidden" }}>
@@ -686,29 +681,25 @@ export default function AppSidebar() {
             <div
                 style={{
                     flex: 1,
-                    overflowY: isTabletSidebar ? "hidden" : "auto",
+                    overflowY: "auto",
                     overflowX: "hidden",
-                    padding: collapsed
-                        ? isTabletSidebar ? "8px 6px" : "12px 8px"
-                        : isTabletSidebar ? "8px 10px" : "12px 14px",
+                    padding: collapsed ? "12px 8px" : "12px 14px",
                     transition: "padding 0.35s cubic-bezier(0.4, 0, 0.2, 1)",
                 }}
             >
                 {/* Section: MENU */}
                 <p
                     style={{
-                        fontSize: 9,
+                        fontSize: 10,
                         fontWeight: 700,
                         color: t.sectionLabel,
                         textTransform: "uppercase",
                         letterSpacing: "0.1em",
-                        padding: collapsed
-                            ? isTabletSidebar ? "8px 0 4px" : "12px 0 6px"
-                            : isTabletSidebar ? "8px 6px 4px" : "12px 10px 6px",
+                        padding: collapsed ? "12px 0 6px" : "12px 10px 6px",
                         margin: 0,
                         textAlign: collapsed ? "center" : "left",
                         opacity: collapsed ? 0 : 1,
-                        maxHeight: collapsed ? 0 : 28,
+                        maxHeight: collapsed ? 0 : 36,
                         overflow: "hidden",
                         transition: "opacity 0.25s ease, max-height 0.35s ease",
                     }}
@@ -744,21 +735,19 @@ export default function AppSidebar() {
                                     flexDirection: collapsed ? "column" : "row",
                                     alignItems: "center",
                                     justifyContent: collapsed ? "center" : "flex-start",
-                                    gap: collapsed ? 2 : isTabletSidebar ? 8 : 12,
-                                    padding: collapsed
-                                        ? isTabletSidebar ? "8px 0" : "12px 0"
-                                        : isTabletSidebar ? "8px 10px" : "10px 12px",
+                                    gap: collapsed ? 2 : 12,
+                                    padding: collapsed ? "12px 0" : "10px 12px",
                                     border: "none",
                                     background: isActive ? t.activeBg : hasChildren && isOpen && !collapsed ? t.hoverBg : "transparent",
                                     borderRadius: 10,
                                     cursor: "pointer",
                                     color: isActive ? t.activeText : t.itemText,
-                                    fontSize: collapsed ? 10 : isTabletSidebar ? 13 : 14,
+                                    fontSize: collapsed ? 10 : 14,
                                     fontWeight: isActive ? 600 : 500,
                                     transition: "background 0.2s ease, color 0.2s ease",
                                     position: "relative",
-                                    minHeight: collapsed ? "auto" : isTabletSidebar ? 36 : 42,
-                                    marginBottom: isTabletSidebar ? 1 : 2,
+                                    minHeight: collapsed ? "auto" : 42,
+                                    marginBottom: 2,
                                 }}
                                 onMouseOver={(e) => {
                                     if (!isActive) e.currentTarget.style.background = t.hoverBg
@@ -819,14 +808,8 @@ export default function AppSidebar() {
             </div>
 
             {/* Bottom section */}
-            <div
-                style={{
-                    padding: collapsed
-                        ? isTabletSidebar ? "8px 6px 10px" : "12px 8px 16px"
-                        : isTabletSidebar ? "8px 10px 12px" : "12px 14px 16px",
-                }}
-            >
-                <div style={{ height: 1, background: t.divider, marginBottom: isTabletSidebar ? 8 : 12 }} />
+            <div style={{ padding: collapsed ? "12px 8px 16px" : "12px 14px 16px" }}>
+                <div style={{ height: 1, background: t.divider, marginBottom: 12 }} />
 
                 {collapsed ? (
                     <div ref={profileRef} style={{ display: "flex", justifyContent: "center", padding: "6px 0" }}>
@@ -859,7 +842,7 @@ export default function AppSidebar() {
                                     background: isDark
                                         ? `linear-gradient(135deg, rgba(${pcRgb},0.28) 0%, rgba(${pcRgb},0.18) 40%, rgba(${pcRgb},0.1) 100%)`
                                         : `linear-gradient(135deg, ${pc.pastel} 0%, rgba(${pcRgb},0.08) 100%)`,
-                                    padding: isTabletSidebar ? 12 : 16,
+                                    padding: 16,
                                     border: isDark ? "none" : `1px solid rgba(${pcRgb},0.12)`,
                                     position: "relative" as const,
                                 }}
@@ -873,47 +856,20 @@ export default function AppSidebar() {
                                     borderRadius: 16,
                                 }} />
                                 {/* User row */}
-                                <div
-                                    style={{
-                                        display: "flex",
-                                        alignItems: "center",
-                                        gap: isTabletSidebar ? 8 : 10,
-                                        marginBottom: isTabletSidebar ? 8 : 12,
-                                        position: "relative",
-                                    }}
-                                >
+                                <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 12, position: "relative" }}>
                                     <img
                                         src="/Icon.png"
                                         alt="user"
-                                        style={{ width: isTabletSidebar ? 38 : 44, height: isTabletSidebar ? 38 : 44, borderRadius: 12, objectFit: "cover", flexShrink: 0 }}
+                                        style={{ width: 44, height: 44, borderRadius: 12, objectFit: "cover", flexShrink: 0 }}
                                     />
                                     <div style={{ overflow: "hidden", flex: 1 }}>
                                         <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
-                                            <p
-                                                style={{
-                                                    fontSize: isTabletSidebar ? 13 : 14,
-                                                    fontWeight: 700,
-                                                    color: cardTextPrimary,
-                                                    margin: 0,
-                                                    whiteSpace: "nowrap",
-                                                    overflow: "hidden",
-                                                    textOverflow: "ellipsis",
-                                                }}
-                                            >
+                                            <p style={{ fontSize: 14, fontWeight: 700, color: cardTextPrimary, margin: 0, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
                                                 {session?.user?.name || "Shop Intel"}
                                             </p>
                                             <RoleBadge accent={t.accent} accentLighter={t.accentLighter} />
                                         </div>
-                                        <p
-                                            style={{
-                                                fontSize: 11,
-                                                color: cardTextSecondary,
-                                                margin: 0,
-                                                whiteSpace: "nowrap",
-                                                overflow: "hidden",
-                                                textOverflow: "ellipsis",
-                                            }}
-                                        >
+                                        <p style={{ fontSize: 11, color: cardTextSecondary, margin: 0, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
                                             {session?.user_entity?.email || "admin@shopintel.com"}
                                         </p>
                                     </div>
@@ -924,12 +880,12 @@ export default function AppSidebar() {
                                     onClick={() => setLayoutDrawerOpen(true)}
                                     style={{
                                         width: "100%",
-                                        padding: isTabletSidebar ? "6px 0" : "8px 0",
+                                        padding: "8px 0",
                                         borderRadius: 10,
                                         background: cardBtnBg,
                                         border: "none",
                                         color: cardBtnText,
-                                        fontSize: isTabletSidebar ? 12 : 13,
+                                        fontSize: 13,
                                         fontWeight: 600,
                                         cursor: "pointer",
                                         fontFamily: "inherit",
@@ -952,7 +908,7 @@ export default function AppSidebar() {
                                     onClick={() => setTheme(isDark ? "light" : "dark")}
                                     style={{
                                         width: "100%",
-                                        padding: isTabletSidebar ? "6px 10px" : "8px 12px",
+                                        padding: "8px 12px",
                                         borderRadius: 10,
                                         background: cardBtnBg,
                                         display: "flex",
@@ -967,13 +923,7 @@ export default function AppSidebar() {
                                 >
                                     <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
                                         {isDark ? <Moon size={15} color={cardBtnText} /> : <Sun size={15} color={cardBtnText} />}
-                                        <span
-                                            style={{
-                                                color: cardBtnText,
-                                                fontSize: isTabletSidebar ? 12 : 13,
-                                                fontWeight: 600,
-                                            }}
-                                        >
+                                        <span style={{ color: cardBtnText, fontSize: 13, fontWeight: 600 }}>
                                             {isDark ? "Dark Mode" : "Light Mode"}
                                         </span>
                                     </div>
@@ -1048,7 +998,7 @@ export default function AppSidebar() {
                 style={{
                     width: sidebarWidth,
                     minHeight: "100vh",
-                    height: "100vh",
+                    height: "100%",
                     background: t.sidebarBg,
                     borderRight: `1px solid ${t.sidebarBorder}`,
                     flexDirection: "column",
