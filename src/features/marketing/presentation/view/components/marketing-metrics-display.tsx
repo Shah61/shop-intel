@@ -63,7 +63,10 @@ const MetricItem = ({ icon, label, value, change, changeLabel }: MetricItemProps
 
     return (
         <div className="text-center p-2 rounded-lg bg-muted/20 border border-muted">
-            <div className="flex items-center justify-center mb-1 text-pink-500">
+            <div
+                className="flex items-center justify-center mb-1"
+                style={{ color: "var(--preset-lighter)" }}
+            >
                 {icon}
             </div>
             <div className="text-xs font-medium text-muted-foreground mb-1">{label}</div>
@@ -71,14 +74,23 @@ const MetricItem = ({ icon, label, value, change, changeLabel }: MetricItemProps
             {changeValue !== null && (
                 <div className="flex items-center justify-center gap-1 mt-1">
                     {changeValue > 0 ? (
-                        <TrendingUp className="h-3 w-3 text-green-500" />
+                        <TrendingUp className="h-3 w-3 text-emerald-500" />
                     ) : changeValue < 0 ? (
-                        <TrendingDown className="h-3 w-3 text-red-500" />
+                        <TrendingDown className="h-3 w-3 text-destructive" />
                     ) : (
-                        <Minus className="h-3 w-3 text-gray-400" />
+                        <Minus className="h-3 w-3 text-muted-foreground" />
                     )}
-                    <span className={`text-xs ${changeValue > 0 ? "text-green-600" : changeValue < 0 ? "text-red-600" : "text-gray-500"}`}>
-                        {changeValue > 0 ? "+" : ""}{changeValue}
+                    <span
+                        className={`text-xs ${
+                            changeValue > 0
+                                ? "text-emerald-500"
+                                : changeValue < 0
+                                  ? "text-destructive"
+                                  : "text-muted-foreground"
+                        }`}
+                    >
+                        {changeValue > 0 ? "+" : ""}
+                        {changeValue}
                     </span>
                 </div>
             )}
@@ -221,7 +233,8 @@ export const MarketingMetricsDisplay = ({ link }: MarketingMetricsDisplayProps) 
                                 href={link.link} 
                                 target="_blank" 
                                 rel="noopener noreferrer"
-                                className="text-xs text-pink-600 hover:text-pink-700 flex items-center gap-1"
+                                className="text-xs flex items-center gap-1"
+                                style={{ color: "var(--preset-primary)" }}
                             >
                                 <ExternalLink className="h-3 w-3" />
                                 View Link
@@ -255,7 +268,8 @@ export const MarketingMetricsDisplay = ({ link }: MarketingMetricsDisplayProps) 
                             href={link.link} 
                             target="_blank" 
                             rel="noopener noreferrer"
-                            className="text-xs text-pink-600 hover:text-pink-700 flex items-center gap-1"
+                            className="text-xs flex items-center gap-1"
+                            style={{ color: "var(--preset-primary)" }}
                         >
                             <ExternalLink className="h-3 w-3" />
                             View Link

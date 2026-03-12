@@ -61,7 +61,7 @@ export const MarketingItemForm = ({
                             onClick={() => onRemove(index)}
                             variant="ghost" 
                             size="sm"
-                            className="text-red-500 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300 hover:bg-red-50 dark:hover:bg-red-950/20"
+                            className="text-destructive hover:text-destructive bg-transparent hover:bg-destructive/10"
                         >
                             <Trash2 className="h-4 w-4" />
                         </Button>

@@ -105,12 +105,13 @@ function AnimatedCollapse({ isOpen, children }: { isOpen: boolean; children: Rea
     )
 }
 
-/* ─── Staggered child item ─── */
+/* ─── Staggered child item (vertical timeline) ─── */
 function ChildItem({
     child,
     iconSrc,
     index,
     isOpen,
+    isLast,
     active,
     onClick,
     t,
@@ -119,6 +120,7 @@ function ChildItem({
     iconSrc?: string
     index: number
     isOpen: boolean
+    isLast: boolean
     active: boolean
     onClick: () => void
     t: Record<string, string>
@@ -133,6 +135,8 @@ function ChildItem({
         setVisible(false)
     }, [isOpen, index])
 
+    const lineColor = t.dashLine
+
     return (
         <button
             onClick={onClick}
@@ -141,7 +145,7 @@ function ChildItem({
                 display: "flex",
                 alignItems: "center",
                 gap: 8,
-                padding: "9px 12px 9px 48px",
+                padding: "9px 12px 9px 50px",
                 border: "none",
                 background: active ? t.activeChildBg : "transparent",
                 cursor: "pointer",
@@ -168,19 +172,38 @@ function ChildItem({
                 }
             }}
         >
+            {/* Curved L-branch: vertical from top → curves → horizontal to content */}
             <span
                 style={{
                     position: "absolute",
-                    left: 30,
-                    top: "50%",
+                    left: 32,
+                    top: 0,
                     width: 12,
-                    height: 0,
-                    borderBottom: `1px dashed ${t.dashLine}`,
-                    transform: "translateY(-50%)",
+                    height: "50%",
+                    borderLeft: `1.5px solid ${lineColor}`,
+                    borderBottom: `1.5px solid ${lineColor}`,
+                    borderBottomLeftRadius: 8,
                     opacity: visible ? 1 : 0,
                     transition: "opacity 0.35s ease 0.05s",
+                    pointerEvents: "none",
                 }}
             />
+            {/* Vertical line continuation below the branch (all items except last) */}
+            {!isLast && (
+                <span
+                    style={{
+                        position: "absolute",
+                        left: 32,
+                        top: "50%",
+                        bottom: 0,
+                        width: 0,
+                        borderLeft: `1.5px solid ${lineColor}`,
+                        opacity: visible ? 1 : 0,
+                        transition: "opacity 0.35s ease 0.05s",
+                        pointerEvents: "none",
+                    }}
+                />
+            )}
             {iconSrc && (
                 <img src={iconSrc} alt="" style={{ width: 20, height: 20, borderRadius: 4, objectFit: "contain", flexShrink: 0 }} />
             )}
@@ -383,7 +406,6 @@ export default function AppSidebar() {
                 { id: "tiktok", label: "TikTok", path: "/sales?tab=tiktok", iconSrc: "/images/tiktok2.png" },
                 { id: "shopee", label: "Shopee", path: "/sales?tab=shopee", iconSrc: "/images/shopee.png" },
                 { id: "shopify", label: "Shopify", path: "/sales?tab=shopify", iconSrc: "/images/shopify.png" },
-                { id: "facebook", label: "Facebook", path: "/sales?tab=facebook", iconSrc: "/images/facebook.png" },
                 { id: "woocommerce", label: "WooCommerce", path: "/sales?tab=woocommerce", iconSrc: "/images/woocommerce.png" },
             ],
         },
@@ -762,6 +784,7 @@ export default function AppSidebar() {
                                             iconSrc={child.iconSrc}
                                             index={i}
                                             isOpen={!!isOpen}
+                                            isLast={i === item.children!.length - 1}
                                             active={isChildActive(child)}
                                             onClick={() => navigateTo(child.path)}
                                             t={t}

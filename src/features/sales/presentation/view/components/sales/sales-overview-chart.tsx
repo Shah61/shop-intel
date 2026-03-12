@@ -508,6 +508,7 @@ export function SalesOverviewChart({
 
     return (
         <div
+            className="sales-chart-card"
             style={{
                 background: t.cardBg,
                 borderRadius: 20,
@@ -738,8 +739,8 @@ export function SalesOverviewChart({
             </div>
 
             {/* Chart */}
-            <div style={{ height: 350, width: "100%" }}>
-                <ChartContainer config={chartConfig} className="h-[350px] w-full">
+            <div className="sales-chart-container" style={{ height: 350, width: "100%" }}>
+                <ChartContainer config={chartConfig} className="sales-chart-inner h-[350px] w-full">
                     <ResponsiveContainer width="100%" height="100%">
                         {renderChart()}
                     </ResponsiveContainer>

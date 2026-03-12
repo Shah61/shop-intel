@@ -135,11 +135,11 @@ export const OverviewDashboardScreen = () => {
     })();
 
     return (
-        <div className="flex flex-col gap-4 w-full">
+        <div className="overview-dashboard flex flex-col gap-4 w-full">
 
-            <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between w-full gap-4">
+            <div className="overview-header flex flex-col lg:flex-row items-start lg:items-center justify-between w-full gap-4">
                 <div>
-                    <h2 className="text-2xl font-bold">{greetingTitle}</h2>
+                    <h2 className="overview-greeting text-2xl font-bold">{greetingTitle}</h2>
                     <p className="text-muted-foreground">Here’s your sales performance at a glance</p>
                 </div>
 
@@ -169,7 +169,7 @@ export const OverviewDashboardScreen = () => {
                     gap: 16,
                     width: "100%",
                 }}
-                className="!grid-cols-1 sm:!grid-cols-2 lg:!grid-cols-4"
+                className="overview-platform-grid !grid-cols-1 sm:!grid-cols-2 lg:!grid-cols-4"
             >
                 {isLoading
                     ? Array(4)
@@ -202,8 +202,8 @@ export const OverviewDashboardScreen = () => {
                       ))}
             </div>
 
-            <div className="grid grid-cols-1 lg:grid-cols-8 gap-4 w-full">
-                <div className="md:col-span-5">
+            <div className="overview-bottom-grid grid grid-cols-1 lg:grid-cols-8 gap-4 w-full">
+                <div className="overview-chart-wrapper md:col-span-5">
                     <SalesOverviewChart
                         data={salesData || []}
                         selectedYear={selectedYear}
@@ -215,7 +215,7 @@ export const OverviewDashboardScreen = () => {
                     />
                 </div>
 
-                <div className="md:col-span-3">
+                <div className="overview-table-wrapper md:col-span-3">
                     <AnalyticsSalesTable data={salesByPlatform || []} isLimit={true} />
                 </div>
             </div>

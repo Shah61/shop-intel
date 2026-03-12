@@ -5,7 +5,6 @@ import TikTokDashboardScreen from "@/src/features/sales/presentation/view/screen
 import ShopeeDashboardScreen from "@/src/features/sales/presentation/view/screen/shopee-dashboard-screen";
 import ShopifyDashboardScreen from "@/src/features/sales/presentation/view/screen/shopify-dashboard-screen";
 import OverviewDashboardScreen from "@/src/features/sales/presentation/view/screen/overview-dashboard-screen";
-import FacebookMarketingDashboard from "./facebook/page";
 import WooCommerceDashboard from "./woocommerce/page";
 import { Suspense } from "react";
 
@@ -20,8 +19,6 @@ function SalesContent() {
             return <ShopeeDashboardScreen />;
         case "shopify":
             return <ShopifyDashboardScreen />;
-        case "facebook":
-            return <FacebookMarketingDashboard />;
         case "woocommerce":
             return <WooCommerceDashboard />;
         default:

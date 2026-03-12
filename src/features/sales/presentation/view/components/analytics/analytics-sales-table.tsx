@@ -121,7 +121,7 @@ const AnalyticsSalesTable = ({
     data?: AnalyticsSalesEntity[]
     isLimit: boolean
 }) => {
-    const limitData = isLimit ? DUMMY_ROWS.slice(0, 8) : DUMMY_ROWS;
+    const limitData = isLimit ? DUMMY_ROWS.slice(0, 14) : DUMMY_ROWS;
     const { data: session } = useSession();
     const { resolvedTheme } = useTheme();
     const isDark = resolvedTheme === "dark";
@@ -157,6 +157,7 @@ const AnalyticsSalesTable = ({
 
     return (
         <div
+            className="analytics-table-card"
             style={{
                 background: t.cardBg,
                 borderRadius: 20,
@@ -209,8 +210,8 @@ const AnalyticsSalesTable = ({
             </div>
 
             {/* Table */}
-            <div style={{ overflow: "auto", flex: 1 }}>
-                <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 13 }}>
+            <div className="analytics-table-scroll" style={{ overflow: "auto", flex: 1 }}>
+                <table className="analytics-table" style={{ width: "100%", borderCollapse: "collapse", fontSize: 13 }}>
                     <thead>
                         <tr>
                             {["Date", "Platform", "Orders", "Revenues"].map((h) => (

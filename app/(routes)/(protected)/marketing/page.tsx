@@ -21,7 +21,12 @@ function MarketingContent() {
         <div className="space-y-4 sm:space-y-6">
             <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 sm:gap-0">
                 <div>
-                    <h1 className="text-xl sm:text-2xl md:text-3xl font-bold bg-gradient-to-r from-purple-600 to-purple-800 bg-clip-text text-transparent pt-4 sm:pt-6 md:pt-10">
+                    <h1
+                        className="text-xl sm:text-2xl md:text-3xl font-bold bg-clip-text text-transparent pt-4 sm:pt-6 md:pt-10"
+                        style={{
+                            backgroundImage: "linear-gradient(90deg, var(--preset-primary), var(--preset-lighter))",
+                        }}
+                    >
                         {heading}
                     </h1>
                     <p className="text-xs sm:text-sm text-muted-foreground mt-1">{sub}</p>

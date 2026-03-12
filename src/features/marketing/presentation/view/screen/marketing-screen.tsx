@@ -296,15 +296,16 @@ const MarketingScreen = () => {
     };
 
     const getPlatformColor = (platform: string) => {
-        const colors = {
-            FACEBOOK: 'bg-blue-500',
-            INSTAGRAM: 'bg-pink-500',
-            TIKTOK: 'bg-purple-500',
-            YOUTUBE: 'bg-red-500',
-            GOOGLE: 'bg-green-500',
-            OTHER: 'bg-gray-500'
-        };
-        return colors[platform as keyof typeof colors] || colors.OTHER;
+        const base = "bg-muted/40"
+        const map: Record<string, string> = {
+            FACEBOOK: "bg-primary/15",
+            INSTAGRAM: "bg-primary/15",
+            TIKTOK: "bg-primary/15",
+            YOUTUBE: "bg-primary/20",
+            GOOGLE: "bg-primary/15",
+            OTHER: base,
+        }
+        return map[platform] || base
     };
 
     const getStatusBadge = (item: MarketingItem) => {
@@ -313,11 +314,28 @@ const MarketingScreen = () => {
         const endDate = new Date(item.end_date);
 
         if (now < startDate) {
-            return <Badge variant="secondary" className="text-xs"><Clock className="w-3 h-3 mr-1" />Upcoming</Badge>;
+            return (
+                <Badge variant="secondary" className="text-xs">
+                    <Clock className="w-3 h-3 mr-1" />
+                    Upcoming
+                </Badge>
+            );
         } else if (now >= startDate && now <= endDate) {
-            return <Badge className="text-xs bg-pink-500"><Activity className="w-3 h-3 mr-1" />Active</Badge>;
+            return (
+                <Badge
+                    className="text-xs border border-[rgba(var(--preset-primary-rgb),0.4)] bg-[rgba(var(--preset-primary-rgb),0.08)] text-[var(--preset-primary)]"
+                >
+                    <Activity className="w-3 h-3 mr-1" />
+                    Active
+                </Badge>
+            );
         } else {
-            return <Badge variant="outline" className="text-xs"><CheckCircle className="w-3 h-3 mr-1" />Completed</Badge>;
+            return (
+                <Badge variant="outline" className="text-xs">
+                    <CheckCircle className="w-3 h-3 mr-1" />
+                    Completed
+                </Badge>
+            );
         }
     };
 
@@ -345,7 +363,7 @@ const MarketingScreen = () => {
             value: `RM${analytics.totalCost.toLocaleString()}`,
             change: "+12.5%",
             trending: "up",
-            icon: <DollarSign className="h-5 w-5 text-pink-500" />,
+            icon: <DollarSign className="h-5 w-5" style={{ color: "var(--preset-lighter)" }} />,
             description: "Total marketing investment"
         },
         {
@@ -353,7 +371,7 @@ const MarketingScreen = () => {
             value: analytics.totalItems,
             change: "+8.2%",
             trending: "up",
-            icon: <Package className="h-5 w-5 text-pink-500" />,
+            icon: <Package className="h-5 w-5" style={{ color: "var(--preset-lighter)" }} />,
             description: "Active marketing items"
         },
         {
@@ -361,7 +379,7 @@ const MarketingScreen = () => {
             value: analytics.activeItems,
             change: "-2.1%",
             trending: "down",
-            icon: <Activity className="h-5 w-5 text-pink-500" />,
+            icon: <Activity className="h-5 w-5" style={{ color: "var(--preset-lighter)" }} />,
             description: "Currently running"
         },
         {
@@ -369,7 +387,7 @@ const MarketingScreen = () => {
             value: `RM${analytics.avgCostPerItem.toFixed(0)}`,
             change: "+5.3%",
             trending: "up",
-            icon: <TrendingUp className="h-5 w-5 text-pink-500" />,
+            icon: <TrendingUp className="h-5 w-5" style={{ color: "var(--preset-lighter)" }} />,
             description: "Per campaign item"
         }
     ];
@@ -391,7 +409,7 @@ const MarketingScreen = () => {
         <div className="w-full space-y-6 md:space-y-0 md:flex md:items-end md:gap-8">
             <div className="flex-1 space-y-4">
                 <div className="flex items-center gap-2">
-                    <Filter className="h-4 w-4 text-pink-500" />
+                    <Filter className="h-4 w-4" style={{ color: "var(--preset-lighter)" }} />
                     <Label className="text-sm font-medium">Filter Marketing Data</Label>
                 </div>
                 
@@ -553,9 +571,9 @@ const MarketingScreen = () => {
                     {/* Marketing Campaigns List */}
                     <Card className="w-full">
                         <CardHeader className="border-b border-border">
-                            <CardTitle className="flex items-center justify-between">
+                    <CardTitle className="flex items-center justify-between">
                                 <div className="flex items-center gap-2">
-                                <Target className="h-5 w-5 text-pink-500" />
+                                <Target className="h-5 w-5" style={{ color: "var(--preset-lighter)" }} />
                                 Marketing Campaigns ({groupedMarketingItems.reduce((total, month) => total + month.campaigns.length, 0)})
                                 </div>
                                 <div className="flex items-center gap-3">
@@ -592,7 +610,7 @@ const MarketingScreen = () => {
                                             {/* Month Header with Toggle */}
                                             <div className="flex items-center justify-between mb-3">
                                                 <div className="flex items-center gap-3">
-                                                    <h2 className="text-xl font-bold text-slate-800 dark:text-slate-200">
+                                                    <h2 className="text-xl font-bold text-foreground">
                                                         {monthGroup.month}
                                                     </h2>
                                                     <Badge variant="secondary" className="text-xs">
@@ -607,7 +625,7 @@ const MarketingScreen = () => {
                                                         variant="ghost"
                                                         size="sm"
                                                         onClick={() => toggleMonthExpansion(monthGroup.monthKey)}
-                                                        className="flex items-center gap-2 text-pink-600 hover:text-pink-700 hover:bg-pink-50"
+                                                        className="flex items-center gap-2 text-[var(--preset-primary)] hover:text-[var(--preset-primary)]/90 hover:bg-[rgba(var(--preset-primary-rgb),0.08)]"
                                                     >
                                                         {isMonthExpanded(monthGroup.monthKey) ? (
                                                             <>
@@ -633,13 +651,13 @@ const MarketingScreen = () => {
                                             <div className="mb-4">
                                                 <div className="flex items-center justify-between mb-3">
                                                     <div>
-                                                        <h3 className="text-xl font-bold text-pink-600">{campaignGroup.campaign.name}</h3>
+                                                        <h3 className="text-xl font-bold text-[var(--preset-primary)]">{campaignGroup.campaign.name}</h3>
                                                         <p className="text-sm text-muted-foreground">
                                                             Campaign ID: {campaignGroup.campaign.id.slice(0, 8)}
                                                         </p>
                                                     </div>
                                                     <div className="text-right">
-                                                        <div className="text-2xl font-bold text-pink-600">
+                                                        <div className="text-2xl font-bold text-[var(--preset-primary)]">
                                                             RM{getCampaignTotalCost(campaignGroup.items).toLocaleString()}
                                                         </div>
                                                         <div className="text-sm text-muted-foreground">
@@ -672,7 +690,7 @@ const MarketingScreen = () => {
                                                 <h4 className="text-lg font-semibold text-muted-foreground">Marketing Items</h4>
                                                 <div className="grid gap-3">
                                                     {campaignGroup.items.map((item: MarketingItem) => (
-                                                        <Card key={item.id} className="border-l-4 border-l-pink-500">
+                                                        <Card key={item.id} className="border-l-4 border-l-[var(--preset-primary)]">
                                                             <CardContent className="p-3">
                                                                 <div className="flex items-start justify-between mb-3">
                                                                     <div className="flex-1">
@@ -691,7 +709,7 @@ const MarketingScreen = () => {
                                                                     </div>
                                                                     <div className="flex items-start gap-6">
                                                                         <div className="text-right">
-                                                                            <div className="text-xl font-bold text-pink-600">
+                                                                            <div className="text-xl font-bold text-[var(--preset-primary)]">
                                                                                 RM{item.cost.toLocaleString()}
                                                                             </div>
                                                                             <div className="text-sm text-muted-foreground">
@@ -703,7 +721,7 @@ const MarketingScreen = () => {
                                                                                 variant="ghost"
                                                                                 size="sm"
                                                                                 onClick={() => handleEditItem(item)}
-                                                                                className="text-gray-500 hover:text-gray-700 hover:bg-gray-50"
+                                                                                className="text-muted-foreground hover:text-foreground hover:bg-muted/20"
                                                                             >
                                                                                 <Edit className="h-4 w-4" />
                                                                             </Button>
@@ -712,7 +730,7 @@ const MarketingScreen = () => {
                                                                                 size="sm"
                                                                                 onClick={() => handleDeleteMarketingItem(item.id)}
                                                                                 disabled={deleteMarketingItemMutation.isPending}
-                                                                                className="text-red-500 hover:text-red-700 hover:bg-red-50"
+                                                                                className="text-destructive hover:text-destructive bg-transparent hover:bg-destructive/10"
                                                                             >
                                                                                 <Trash2 className="h-4 w-4" />
                                                                             </Button>
@@ -746,7 +764,7 @@ const MarketingScreen = () => {
                                                                                         href={link.link} 
                                                                                         target="_blank" 
                                                                                         rel="noopener noreferrer"
-                                                                                        className="inline-flex items-center gap-1.5 text-xs px-2 py-1 bg-pink-50 text-pink-600 hover:bg-pink-100 hover:text-pink-700 rounded-md font-medium transition-colors"
+                                                                                        className="inline-flex items-center gap-1.5 text-xs px-2 py-1 bg-[rgba(var(--preset-primary-rgb),0.08)] text-[var(--preset-primary)] hover:bg-[rgba(var(--preset-primary-rgb),0.16)] hover:text-[var(--preset-primary)] rounded-md font-medium transition-colors"
                                                                                         title={link.link}
                                                                                     >
                                                                                         <ExternalLink className="h-3 w-3" />

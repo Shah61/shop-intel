@@ -289,14 +289,14 @@ export const MarketingDialog = ({ isOpen, onOpenChange, isLoading }: MarketingDi
                 <AlertDialogContent className="max-w-md">
                     <AlertDialogHeader>
                         <div className="flex items-center gap-3">
-                            <div className="flex-shrink-0 w-10 h-10 bg-red-100 rounded-full flex items-center justify-center">
-                                <AlertTriangle className="h-5 w-5 text-red-600" />
+                            <div className="flex-shrink-0 w-10 h-10 rounded-full flex items-center justify-center bg-destructive/10">
+                                <AlertTriangle className="h-5 w-5 text-destructive" />
                             </div>
                             <div className="flex-1">
-                                <AlertDialogTitle className="text-lg font-semibold text-red-900">
+                                <AlertDialogTitle className="text-lg font-semibold text-destructive">
                                     Validation Required
                                 </AlertDialogTitle>
-                                <AlertDialogDescription className="text-sm text-red-700 mt-1">
+                                <AlertDialogDescription className="text-sm mt-1 text-muted-foreground">
                                     Please fix the following issues before proceeding:
                                 </AlertDialogDescription>
                             </div>
@@ -306,9 +306,12 @@ export const MarketingDialog = ({ isOpen, onOpenChange, isLoading }: MarketingDi
                     <div className="max-h-60 overflow-y-auto">
                         <div className="space-y-2">
                             {validationErrors.map((error, index) => (
-                                <div key={index} className="flex items-start gap-2 p-3 bg-red-50 rounded-lg border border-red-200">
-                                    <X className="h-4 w-4 text-red-500 mt-0.5 flex-shrink-0" />
-                                    <span className="text-sm text-red-800">{error}</span>
+                                <div
+                                    key={index}
+                                    className="flex items-start gap-2 p-3 rounded-lg border border-destructive/30 bg-destructive/5"
+                                >
+                                    <X className="h-4 w-4 text-destructive mt-0.5 flex-shrink-0" />
+                                    <span className="text-sm text-foreground">{error}</span>
                                 </div>
                             ))}
                         </div>
@@ -317,7 +320,7 @@ export const MarketingDialog = ({ isOpen, onOpenChange, isLoading }: MarketingDi
                     <AlertDialogFooter>
                         <AlertDialogAction 
                             onClick={() => setShowValidationDialog(false)}
-                            className="bg-red-600 hover:bg-red-700 text-white"
+                            className="bg-destructive hover:bg-destructive/90 text-destructive-foreground"
                         >
                             Got it, I'll fix these
                         </AlertDialogAction>

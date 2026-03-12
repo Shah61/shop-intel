@@ -89,19 +89,25 @@ export function MarketingChart({ startDate, endDate, platform }: MarketingChartP
       margin: { top: 5, right: 30, left: 20, bottom: 5 }
     };
 
+    const axisColor = "hsl(var(--muted-foreground))"
+    const tooltipBg = "hsl(var(--background))"
+    const tooltipBorder = "hsl(var(--border))"
+    const seriesColor = "var(--preset-primary)"
+    const seriesFill = "rgba(var(--preset-primary-rgb),0.3)"
+
     switch (chartType) {
       case 'area':
         return (
           <AreaChart {...commonProps}>
             <XAxis 
               dataKey="date" 
-              stroke="#888888" 
+              stroke={axisColor} 
               fontSize={12} 
               tickLine={false} 
               axisLine={false} 
             />
             <YAxis 
-              stroke="#888888" 
+              stroke={axisColor} 
               fontSize={12} 
               tickLine={false} 
               axisLine={false} 
@@ -109,8 +115,8 @@ export function MarketingChart({ startDate, endDate, platform }: MarketingChartP
             />
             <Tooltip 
               contentStyle={{ 
-                background: "white", 
-                border: "1px solid #e5e5e5",
+                background: tooltipBg, 
+                border: `1px solid ${tooltipBorder}`,
                 borderRadius: "6px",
                 boxShadow: "0 2px 4px rgba(0,0,0,0.1)"
               }}
@@ -125,8 +131,8 @@ export function MarketingChart({ startDate, endDate, platform }: MarketingChartP
             <Area 
               type="monotone" 
               dataKey="spend" 
-              stroke="rgba(236, 72, 153, 1)" 
-              fill="rgba(236, 72, 153, 0.3)"
+              stroke={seriesColor}
+              fill={seriesFill}
               strokeWidth={2}
             />
           </AreaChart>
@@ -138,13 +144,13 @@ export function MarketingChart({ startDate, endDate, platform }: MarketingChartP
           <LineChart {...commonProps}>
             <XAxis 
               dataKey="date" 
-              stroke="#888888" 
+              stroke={axisColor} 
               fontSize={12} 
               tickLine={false} 
               axisLine={false} 
             />
             <YAxis 
-              stroke="#888888" 
+              stroke={axisColor} 
               fontSize={12} 
               tickLine={false} 
               axisLine={false} 
@@ -152,8 +158,8 @@ export function MarketingChart({ startDate, endDate, platform }: MarketingChartP
             />
             <Tooltip 
               contentStyle={{ 
-                background: "white", 
-                border: "1px solid #e5e5e5",
+                background: tooltipBg, 
+                border: `1px solid ${tooltipBorder}`,
                 borderRadius: "6px",
                 boxShadow: "0 2px 4px rgba(0,0,0,0.1)"
               }}
@@ -168,9 +174,9 @@ export function MarketingChart({ startDate, endDate, platform }: MarketingChartP
             <Line 
               type="monotone" 
               dataKey="spend" 
-              stroke="rgba(236, 72, 153, 1)" 
+              stroke={seriesColor}
               strokeWidth={3}
-              dot={{ fill: "rgba(236, 72, 153, 1)", strokeWidth: 2, r: 4 }}
+              dot={{ fill: seriesColor, strokeWidth: 2, r: 4 }}
             />
           </LineChart>
         );

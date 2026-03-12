@@ -200,7 +200,7 @@ const AddMarketingItemDialog = ({marketingId }: AddMarketingItemDialogProps) => 
                 <DialogContent className="sm:max-w-4xl max-h-[90vh] overflow-y-auto bg-background border-border">
                     <DialogHeader>
                         <DialogTitle className="flex items-center gap-2 text-foreground">
-                            <Plus className="h-5 w-5 text-pink-500 dark:text-pink-400" />
+                            <Plus className="h-5 w-5" style={{ color: "var(--preset-lighter)" }} />
                             Add Marketing Items
                         </DialogTitle>
                         <DialogDescription className="text-muted-foreground">
@@ -229,7 +229,7 @@ const AddMarketingItemDialog = ({marketingId }: AddMarketingItemDialogProps) => 
                                                 variant="ghost"
                                                 size="sm"
                                                 onClick={() => removeItem(itemIndex)}
-                                                className="text-red-500 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300 hover:bg-red-50 dark:hover:bg-red-950/20"
+                                                className="text-destructive hover:text-destructive bg-transparent hover:bg-destructive/10"
                                             >
                                                 <Trash2 className="h-4 w-4" />
                                             </Button>
@@ -348,7 +348,7 @@ const AddMarketingItemDialog = ({marketingId }: AddMarketingItemDialogProps) => 
                                                         onClick={() => removeLink(itemIndex, linkIndex)}
                                                         variant="ghost"
                                                         size="sm"
-                                                        className="text-red-500 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300 hover:bg-red-50 dark:hover:bg-red-950/20 h-9"
+                                                        className="text-destructive hover:text-destructive bg-transparent hover:bg-destructive/10 h-9"
                                                     >
                                                         <Trash2 className="h-4 w-4" />
                                                     </Button>

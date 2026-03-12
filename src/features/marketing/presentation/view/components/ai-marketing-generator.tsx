@@ -202,8 +202,8 @@ function DrawingCanvas({
     const accent = getComputedStyle(document.documentElement).getPropertyValue("--preset-primary").trim() || "#7c3aed"
     const cardBg = isDark ? "linear-gradient(135deg, rgba(26, 34, 44, 0.9), rgba(35, 45, 56, 0.85))" : "rgba(0,0,0,0.02)"
     const borderColor = isDark ? "rgba(255,255,255,0.08)" : "rgba(0,0,0,0.08)"
-    const textPrimary = isDark ? "#e5e7eb" : "#111827"
-    const textSecondary = isDark ? "#9ca3af" : "#6b7280"
+    const textPrimary = isDark ? "hsl(var(--foreground))" : "hsl(var(--foreground))"
+    const textSecondary = "hsl(var(--muted-foreground))"
 
     const toolbarButtons = (size: "sm" | "lg") => {
         const s = size === "lg"
@@ -559,8 +559,8 @@ export default function AIMarketingGenerator() {
     const accent = typeof window !== "undefined" ? (getComputedStyle(document.documentElement).getPropertyValue("--preset-primary").trim() || "#7c3aed") : "#7c3aed"
     const cardBg = isDark ? "linear-gradient(135deg, rgba(26, 34, 44, 0.9), rgba(35, 45, 56, 0.85))" : "rgba(0,0,0,0.02)"
     const borderColor = isDark ? "rgba(255,255,255,0.08)" : "rgba(0,0,0,0.08)"
-    const textPrimary = isDark ? "#e5e7eb" : "#111827"
-    const textSecondary = isDark ? "#9ca3af" : "#6b7280"
+    const textPrimary = isDark ? "hsl(var(--foreground))" : "hsl(var(--foreground))"
+    const textSecondary = "hsl(var(--muted-foreground))"
     const surfaceBg = isDark ? "#0f0a18" : "#f8f9fb"
 
     const addPanel = () => {

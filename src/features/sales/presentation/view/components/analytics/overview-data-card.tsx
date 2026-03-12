@@ -134,6 +134,7 @@ const OverviewDataCard = ({
 
     return (
         <div
+            className="overview-data-card"
             style={{
                 background: t.cardBg,
                 borderRadius: 16,
@@ -169,6 +170,7 @@ const OverviewDataCard = ({
                 }}
             >
                 <div
+                    className="platform-icon"
                     style={{
                         width: 38,
                         height: 38,
@@ -212,6 +214,7 @@ const OverviewDataCard = ({
                     />
                 ) : (
                     <p
+                        className="platform-sales-amount"
                         style={{
                             fontSize: 24,
                             fontWeight: 700,
@@ -311,6 +314,7 @@ const OverviewDataCard = ({
 
             {/* Expand/collapse toggle */}
             <button
+                className="platform-expand-btn"
                 onClick={() => onExpandToggle?.()}
                 style={{
                     display: "flex",

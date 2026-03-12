@@ -103,6 +103,7 @@ const TotalCumulativeCard = ({
 
     return (
         <div
+            className="total-cumulative-card"
             style={{
                 background: t.cardBg,
                 borderRadius: 20,
@@ -134,6 +135,7 @@ const TotalCumulativeCard = ({
             {/* 1. Header */}
             <div>
                 <h2
+                    className="cumulative-title"
                     style={{
                         fontSize: 26,
                         fontWeight: 700,
@@ -187,21 +189,23 @@ const TotalCumulativeCard = ({
 
                 {/* Bars */}
                 <div style={{ display: "flex", gap: 0, alignItems: "flex-end" }}>
-                    <div
-                        style={{
-                            display: "flex",
-                            flex: 1,
-                            gap: 2,
-                            height: 34,
-                            borderRadius: 18,
-                            overflow: "hidden",
-                            background: t.barBg,
-                        }}
-                    >
+                        <div
+                            className="cumulative-bar"
+                            style={{
+                                display: "flex",
+                                flex: 1,
+                                gap: 2,
+                                height: 34,
+                                borderRadius: 18,
+                                overflow: "hidden",
+                                background: t.barBg,
+                            }}
+                        >
                         {isLoading
                             ? Array.from({ length: 5 }).map((_, i) => (
                                   <Skeleton
                                       key={i}
+                                      className="cumulative-bar-skeleton"
                                       style={{
                                           height: "100%",
                                           flex: 1,
@@ -298,7 +302,7 @@ const TotalCumulativeCard = ({
             </div>
 
             {/* 3. Bottom — total amount only */}
-            <div style={{ marginTop: 2 }}>
+            <div className="cumulative-bottom" style={{ marginTop: 2 }}>
                 <p
                     style={{
                         fontSize: 11,
@@ -315,6 +319,7 @@ const TotalCumulativeCard = ({
                     <Skeleton style={{ height: 38, width: 200 }} />
                 ) : (
                     <p
+                        className="cumulative-amount"
                         style={{
                             fontSize: 34,
                             fontWeight: 700,

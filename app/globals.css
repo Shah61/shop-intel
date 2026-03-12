@@ -160,6 +160,220 @@
   }
 }
 
+/* ═══════════════════════════════════════════════════════════
+   iPad compact layout — fits overview dashboard without scroll.
+   Uses viewport-height flex-grow so the bottom row always fills
+   remaining space regardless of exact iPad resolution.
+   ═══════════════════════════════════════════════════════════ */
+
+/* Shared iPad rules (768px–1366px) */
+@media (min-width: 768px) and (max-width: 1366px) {
+  /* --- Dynamic viewport-fill layout --- */
+  .overview-dashboard {
+    height: calc(100dvh - var(--ipad-pad) * 2) !important;
+    display: flex !important;
+    flex-direction: column !important;
+  }
+  .overview-bottom-grid {
+    flex: 1 !important;
+    min-height: 0 !important;
+  }
+  .overview-chart-wrapper,
+  .overview-table-wrapper {
+    display: flex !important;
+    flex-direction: column !important;
+    min-height: 0 !important;
+  }
+  .sales-chart-card,
+  .analytics-table-card {
+    flex: 1 !important;
+    min-height: 0 !important;
+  }
+  .sales-chart-container {
+    flex: 1 !important;
+    height: auto !important;
+    min-height: 0 !important;
+  }
+  .sales-chart-inner {
+    height: 100% !important;
+  }
+  .analytics-table-scroll {
+    flex: 1 !important;
+    min-height: 0 !important;
+    overflow-y: auto !important;
+  }
+
+  /* --- Shared compact styling --- */
+  .cumulative-bottom {
+    margin-top: 0 !important;
+  }
+  .platform-expand-btn {
+    font-size: 10px !important;
+  }
+  .overview-data-card .platform-icon svg {
+    width: 14px !important;
+    height: 14px !important;
+  }
+}
+
+/* iPad portrait (768px–1024px) */
+@media (min-width: 768px) and (max-width: 1024px) {
+  .main-content {
+    --ipad-pad: 12px;
+    padding: 12px !important;
+  }
+  .overview-dashboard {
+    gap: 5px !important;
+  }
+  .overview-header {
+    gap: 4px !important;
+  }
+  .overview-greeting {
+    font-size: 1.05rem !important;
+  }
+  .overview-header p {
+    font-size: 0.7rem !important;
+  }
+
+  .total-cumulative-card {
+    padding: 8px 12px !important;
+    gap: 4px !important;
+    border-radius: 12px !important;
+  }
+  .cumulative-title {
+    font-size: 14px !important;
+  }
+  .cumulative-bar {
+    height: 20px !important;
+  }
+  .cumulative-amount {
+    font-size: 18px !important;
+  }
+
+  .overview-platform-grid {
+    gap: 6px !important;
+  }
+  .overview-data-card {
+    padding: 8px 10px 0 10px !important;
+    gap: 4px !important;
+    border-radius: 10px !important;
+  }
+  .platform-icon {
+    width: 26px !important;
+    height: 26px !important;
+  }
+  .platform-sales-amount {
+    font-size: 15px !important;
+    margin-top: 1px !important;
+  }
+  .platform-expand-btn {
+    padding: 3px 0 !important;
+  }
+
+  .overview-bottom-grid {
+    gap: 5px !important;
+  }
+  .sales-chart-card {
+    padding: 8px 12px !important;
+    gap: 6px !important;
+    border-radius: 12px !important;
+  }
+  .analytics-table-card {
+    padding: 8px 12px !important;
+    gap: 4px !important;
+    border-radius: 12px !important;
+  }
+  .analytics-table {
+    font-size: 11px !important;
+  }
+  .analytics-table td {
+    padding: 3px 5px !important;
+  }
+  .analytics-table th {
+    padding: 3px 5px 5px !important;
+    font-size: 9px !important;
+  }
+}
+
+/* iPad landscape (1024px–1366px) */
+@media (min-width: 1024px) and (max-width: 1366px) {
+  .main-content {
+    --ipad-pad: 14px;
+    padding: 14px !important;
+  }
+  .overview-dashboard {
+    gap: 8px !important;
+  }
+  .overview-header {
+    gap: 6px !important;
+  }
+  .overview-greeting {
+    font-size: 1.2rem !important;
+  }
+  .overview-header p {
+    font-size: 0.78rem !important;
+  }
+
+  .total-cumulative-card {
+    padding: 10px 16px !important;
+    gap: 6px !important;
+    border-radius: 14px !important;
+  }
+  .cumulative-title {
+    font-size: 17px !important;
+  }
+  .cumulative-bar {
+    height: 24px !important;
+  }
+  .cumulative-amount {
+    font-size: 22px !important;
+  }
+
+  .overview-platform-grid {
+    gap: 8px !important;
+  }
+  .overview-data-card {
+    padding: 10px 12px 0 12px !important;
+    gap: 6px !important;
+    border-radius: 12px !important;
+  }
+  .platform-icon {
+    width: 28px !important;
+    height: 28px !important;
+  }
+  .platform-sales-amount {
+    font-size: 17px !important;
+    margin-top: 2px !important;
+  }
+  .platform-expand-btn {
+    padding: 4px 0 !important;
+  }
+
+  .overview-bottom-grid {
+    gap: 8px !important;
+  }
+  .sales-chart-card {
+    padding: 10px 14px !important;
+    gap: 8px !important;
+    border-radius: 14px !important;
+  }
+  .analytics-table-card {
+    padding: 10px 14px !important;
+    gap: 6px !important;
+    border-radius: 14px !important;
+  }
+  .analytics-table {
+    font-size: 12px !important;
+  }
+  .analytics-table td {
+    padding: 4px 6px !important;
+  }
+  .analytics-table th {
+    padding: 4px 6px 6px !important;
+    font-size: 10px !important;
+  }
+}
+
 @theme inline {
   @keyframes shine {
   0% {
