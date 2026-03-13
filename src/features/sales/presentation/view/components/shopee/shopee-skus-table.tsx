@@ -66,29 +66,30 @@ const ShopeeSkusTable = ({
                 style={{
                     display: "inline-flex",
                     alignItems: "center",
-                    gap: 6,
-                    padding: "4px 12px",
-                    borderRadius: 8,
-                    background: gradient,
-                    boxShadow: shadow,
-                    fontSize: 11,
-                    fontWeight: 700,
-                    textTransform: "uppercase",
-                    letterSpacing: "0.04em",
-                    color: "#fff",
                     position: "relative",
                     overflow: "hidden",
+                    background: gradient,
+                    boxShadow: shadow,
+                    borderRadius: 6,
+                    padding: "2px 8px",
+                    fontSize: 10,
+                    fontWeight: 700,
+                    textTransform: "uppercase",
+                    letterSpacing: "0.5px",
+                    color: "#fff",
+                    lineHeight: 1.6,
                 }}
             >
+                <span style={{ position: "relative", zIndex: 1 }}>{label}</span>
                 <span
                     style={{
                         position: "absolute",
                         inset: 0,
-                        background: "linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.3) 50%, transparent 100%)",
-                        animation: "shimmer 2s infinite",
+                        background: "linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.25) 50%, transparent 100%)",
+                        backgroundSize: "200% 100%",
+                        animation: "shimmer-slide 2s infinite linear",
                     }}
                 />
-                {label}
             </span>
         )
     }
@@ -98,9 +99,9 @@ const ShopeeSkusTable = ({
     return (
         <>
             <style>{`
-                @keyframes shimmer {
-                    0% { transform: translateX(-100%); }
-                    100% { transform: translateX(100%); }
+                @keyframes shimmer-slide {
+                    0% { background-position: -200% 0; }
+                    100% { background-position: 200% 0; }
                 }
             `}</style>
             <div
@@ -120,10 +121,14 @@ const ShopeeSkusTable = ({
                 }}
             >
                 <div style={{ position: "absolute", top: -60, right: -60, width: 180, height: 180, background: `radial-gradient(circle, ${t.glowColor} 0%, transparent 70%)`, pointerEvents: "none" }} />
-                <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: 12 }}>
-                    <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
-                        <h3 style={{ fontSize: 18, fontWeight: 700, color: t.title }}>Top Performing SKUs</h3>
-                        <p style={{ fontSize: 14, color: t.subtitle }}>Best sellers by revenue</p>
+                <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between" }}>
+                    <div>
+                        <h2 style={{ fontSize: 18, fontWeight: 700, color: t.title, margin: 0, letterSpacing: "-0.3px", lineHeight: 1.2 }}>
+                            Top Performing SKUs
+                        </h2>
+                        <p style={{ fontSize: 12, color: t.subtitle, margin: "4px 0 0 0" }}>
+                            Best sellers by revenue
+                        </p>
                     </div>
                     {selectedTab !== "skus" && (
                         <button
@@ -132,34 +137,35 @@ const ShopeeSkusTable = ({
                             style={{
                                 display: "flex",
                                 alignItems: "center",
-                                gap: 6,
-                                padding: "8px 14px",
-                                borderRadius: 10,
+                                gap: 4,
+                                fontSize: 12,
+                                fontWeight: 600,
+                                padding: "5px 10px",
+                                borderRadius: 8,
                                 border: "none",
+                                cursor: "pointer",
                                 background: t.btnBg,
                                 color: t.btnText,
-                                fontSize: 14,
-                                cursor: "pointer",
                             }}
                         >
-                            <span className="hidden md:inline-block">View All</span>
-                            <ArrowRightIcon style={{ width: 16, height: 16 }} />
+                            View All
+                            <ArrowRightIcon size={14} />
                         </button>
                     )}
                 </div>
-                <div style={{ overflowX: "auto" }}>
-                    <table style={{ width: "100%", borderCollapse: "collapse" }}>
+                <div style={{ overflow: "auto" }}>
+                    <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 13 }}>
                         <thead>
                             <tr>
                                 {selectedTab === "skus" && (
-                                    <th style={{ textAlign: "left", padding: "12px 16px", fontSize: 11, fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.05em", color: t.headerText }}>Image</th>
+                                    <th style={{ textAlign: "left", fontSize: 11, fontWeight: 600, color: t.headerText, textTransform: "uppercase", letterSpacing: "0.5px", padding: "6px 8px 10px", borderBottom: `1px solid ${t.divider}` }}>Image</th>
                                 )}
-                                <th style={{ textAlign: "left", padding: "12px 16px", fontSize: 11, fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.05em", color: t.headerText }}>SKU</th>
-                                <th style={{ textAlign: "left", padding: "12px 16px", fontSize: 11, fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.05em", color: t.headerText }}>Quantity</th>
-                                <th style={{ textAlign: "left", padding: "12px 16px", fontSize: 11, fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.05em", color: t.headerText }}>Revenue</th>
-                                <th style={{ textAlign: "left", padding: "12px 16px", fontSize: 11, fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.05em", color: t.headerText }}>Views</th>
-                                <th style={{ textAlign: "left", padding: "12px 16px", fontSize: 11, fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.05em", color: t.headerText }}>Stock</th>
-                                <th style={{ textAlign: "left", padding: "12px 16px", fontSize: 11, fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.05em", color: t.headerText }}>Status</th>
+                                <th style={{ textAlign: "left", fontSize: 11, fontWeight: 600, color: t.headerText, textTransform: "uppercase", letterSpacing: "0.5px", padding: "6px 8px 10px", borderBottom: `1px solid ${t.divider}` }}>SKU</th>
+                                <th style={{ textAlign: "left", fontSize: 11, fontWeight: 600, color: t.headerText, textTransform: "uppercase", letterSpacing: "0.5px", padding: "6px 8px 10px", borderBottom: `1px solid ${t.divider}` }}>Quantity</th>
+                                <th style={{ textAlign: "left", fontSize: 11, fontWeight: 600, color: t.headerText, textTransform: "uppercase", letterSpacing: "0.5px", padding: "6px 8px 10px", borderBottom: `1px solid ${t.divider}` }}>Revenue</th>
+                                <th style={{ textAlign: "left", fontSize: 11, fontWeight: 600, color: t.headerText, textTransform: "uppercase", letterSpacing: "0.5px", padding: "6px 8px 10px", borderBottom: `1px solid ${t.divider}` }}>Views</th>
+                                <th style={{ textAlign: "left", fontSize: 11, fontWeight: 600, color: t.headerText, textTransform: "uppercase", letterSpacing: "0.5px", padding: "6px 8px 10px", borderBottom: `1px solid ${t.divider}` }}>Stock</th>
+                                <th style={{ textAlign: "left", fontSize: 11, fontWeight: 600, color: t.headerText, textTransform: "uppercase", letterSpacing: "0.5px", padding: "6px 8px 10px", borderBottom: `1px solid ${t.divider}` }}>Status</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -168,32 +174,29 @@ const ShopeeSkusTable = ({
                                 return (
                                     <tr
                                         key={sku.sku}
-                                        style={{
-                                            borderBottom: `1px solid ${t.divider}`,
-                                            transition: "background 0.15s ease",
-                                        }}
+                                        style={{ transition: "background 0.15s ease" }}
                                         onMouseEnter={(e) => { e.currentTarget.style.background = t.rowHover }}
                                         onMouseLeave={(e) => { e.currentTarget.style.background = "transparent" }}
                                     >
                                         {selectedTab === "skus" && (
-                                            <td style={{ padding: "14px 16px" }}>
+                                            <td style={{ padding: "8px 8px" }}>
                                                 {sku.image && (
                                                     <img
                                                         src={sku.image}
                                                         alt={sku.sku}
-                                                        style={{ width: 64, height: 64, objectFit: "cover", borderRadius: 8 }}
+                                                        style={{ width: 48, height: 48, objectFit: "cover", borderRadius: 8 }}
                                                     />
                                                 )}
                                             </td>
                                         )}
-                                        <td style={{ padding: "14px 16px", fontSize: 14, fontWeight: 500, color: t.cellBold }}>{sku.sku}</td>
-                                        <td style={{ padding: "14px 16px", fontSize: 14, color: t.cellText, maxWidth: 120, overflow: "hidden", textOverflow: "ellipsis" }}>{sku.quantity}</td>
-                                        <td style={{ padding: "14px 16px", fontSize: 14, color: t.cellText }}>
+                                        <td style={{ padding: "8px 8px", color: t.cellBold, fontWeight: 600, fontSize: 12 }}>{sku.sku}</td>
+                                        <td style={{ padding: "8px 8px", color: t.cellText, fontSize: 12, maxWidth: 120, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{sku.quantity}</td>
+                                        <td style={{ padding: "8px 8px", color: t.cellText, fontSize: 12 }}>
                                             {isAdmin(session?.user_entity || {}) ? formatCurrency(Number(sku.revenue)) : "********"}
                                         </td>
-                                        <td style={{ padding: "14px 16px", fontSize: 14, color: t.cellText }}>{sku.views}</td>
-                                        <td style={{ padding: "14px 16px", fontSize: 14, color: t.cellText }}>{stockQuantity}</td>
-                                        <td style={{ padding: "14px 16px" }}>{getStockStatus(stockQuantity)}</td>
+                                        <td style={{ padding: "8px 8px", color: t.cellText, fontSize: 12 }}>{sku.views}</td>
+                                        <td style={{ padding: "8px 8px", color: t.cellText, fontSize: 12 }}>{stockQuantity}</td>
+                                        <td style={{ padding: "8px 8px" }}>{getStockStatus(stockQuantity)}</td>
                                     </tr>
                                 )
                             })}

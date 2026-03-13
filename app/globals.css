@@ -172,11 +172,9 @@
     height: 100dvh !important;
   }
 
-  .main-content {
-    overflow: hidden !important;
-  }
+  /* Only overview dashboard fits one screen; other pages scroll via main overflow-y-auto */
 
-  /* --- Dynamic viewport-fill layout --- */
+  /* --- Dynamic viewport-fill layout (Overview only) --- */
   .overview-dashboard {
     height: calc(100dvh - var(--dash-top) - var(--dash-bot)) !important;
     display: flex !important;
@@ -222,6 +220,108 @@
     width: 14px !important;
     height: 14px !important;
   }
+
+  /* Sidebar profile card: nudge above on iPad so full card (incl. Sign Out) is visible */
+  .sidebar-bottom-section {
+    margin-bottom: 60px !important;
+  }
+
+  /* Platform dashboards (TikTok, Shopee, Shopify): fill viewport, SKUs at top, compact fit */
+  .platform-dashboard-screen {
+    height: 100% !important;
+    min-height: 0 !important;
+    gap: 6px !important;
+  }
+  .platform-dashboard-header {
+    gap: 6px !important;
+    flex-shrink: 0 !important;
+  }
+  .platform-dashboard-header h2 {
+    font-size: 1.1rem !important;
+  }
+  .platform-dashboard-header p {
+    font-size: 0.7rem !important;
+  }
+  .platform-dashboard-tabs-list {
+    border: 1px solid rgba(var(--preset-primary-rgb), 0.2) !important;
+    background: hsl(var(--muted) / 0.6) !important;
+  }
+  .platform-dashboard-tabs-trigger {
+    color: hsl(var(--muted-foreground)) !important;
+  }
+  .platform-dashboard-tabs-trigger[data-state="active"] {
+    background: var(--preset-primary) !important;
+    color: white !important;
+  }
+  .platform-dashboard-overview {
+    flex: 1 !important;
+    min-height: 0 !important;
+    gap: 5px !important;
+  }
+  .platform-dashboard-skus {
+    order: -1 !important;
+    flex-shrink: 0 !important;
+  }
+  .platform-dashboard-sku-table > div {
+    padding: 10px 12px !important;
+    gap: 8px !important;
+    border-radius: 12px !important;
+    max-height: 200px !important;
+    display: flex !important;
+    flex-direction: column !important;
+  }
+  .platform-dashboard-sku-table > div > div:last-child {
+    overflow: auto !important;
+    min-height: 0 !important;
+  }
+  .platform-dashboard-sku-table h2,
+  .platform-dashboard-sku-table h3 {
+    font-size: 14px !important;
+  }
+  .platform-dashboard-sku-table p {
+    font-size: 10px !important;
+    margin-top: 2px !important;
+  }
+  .platform-dashboard-sku-table table {
+    font-size: 11px !important;
+  }
+  .platform-dashboard-sku-table th,
+  .platform-dashboard-sku-table td {
+    padding: 4px 6px !important;
+  }
+  .platform-dashboard-sku-table th {
+    font-size: 9px !important;
+  }
+  .platform-dashboard-sku-table img {
+    width: 32px !important;
+    height: 32px !important;
+  }
+  .platform-dashboard-metrics {
+    order: 0 !important;
+    gap: 6px !important;
+  }
+  .platform-dashboard-charts {
+    order: 1 !important;
+    flex: 1 !important;
+    min-height: 0 !important;
+    gap: 6px !important;
+  }
+  .platform-dashboard-charts > div:first-child {
+    min-height: 0 !important;
+    overflow: hidden !important;
+  }
+  .platform-dashboard-charts > div:last-child {
+    min-height: 0 !important;
+    overflow: auto !important;
+  }
+  .platform-dashboard-overview .platform-dashboard-metrics {
+    grid-template-columns: repeat(4, 1fr) !important;
+  }
+}
+
+/* Intelligence route: no padding so AI assistant is edge-to-edge */
+.main-content.main-content--intelligence {
+  padding: 0 !important;
 }
 
 /* iPad portrait (768px–1024px) — mobile bottom nav visible */
@@ -230,6 +330,9 @@
     --dash-top: 12px;
     --dash-bot: 76px;
     padding: 12px 12px 76px !important;
+  }
+  .main-content.main-content--intelligence {
+    padding: 0 !important;
   }
   .overview-dashboard {
     gap: 5px !important;
@@ -311,6 +414,9 @@
     --dash-bot: 14px;
     padding: 14px !important;
   }
+  .main-content.main-content--intelligence {
+    padding: 0 !important;
+  }
   .overview-dashboard {
     gap: 8px !important;
   }
@@ -381,6 +487,38 @@
   .analytics-table th {
     padding: 4px 6px 6px !important;
     font-size: 10px !important;
+  }
+}
+
+/* Laptops, desktops, big screens: Sales by Platform and List Conversion same height */
+@media (min-width: 1024px) {
+  .overview-bottom-grid {
+    align-items: stretch !important;
+  }
+  .overview-chart-wrapper,
+  .overview-table-wrapper {
+    display: flex !important;
+    flex-direction: column !important;
+    min-height: 0 !important;
+  }
+  .sales-chart-card,
+  .analytics-table-card {
+    flex: 1 !important;
+    min-height: 0 !important;
+    display: flex !important;
+    flex-direction: column !important;
+  }
+  .sales-chart-container {
+    flex: 1 !important;
+    min-height: 0 !important;
+  }
+  .sales-chart-inner {
+    height: 100% !important;
+  }
+  .analytics-table-scroll {
+    flex: 1 !important;
+    min-height: 0 !important;
+    overflow-y: auto !important;
   }
 }
 

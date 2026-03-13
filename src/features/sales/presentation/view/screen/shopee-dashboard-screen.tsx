@@ -166,37 +166,37 @@ const ShopeeDashboardScreen = () => {
     ];
 
     return (
-        <div className="flex flex-col items-start gap-4 w-full">
-            <div className="flex flex-col lg:flex-row w-full justify-between items-start lg:items-center gap-4">
+        <div className="platform-dashboard-screen flex flex-col items-start gap-4 w-full">
+            <div className="platform-dashboard-header flex flex-col lg:flex-row w-full justify-between items-start lg:items-center gap-3">
                 <div>
                     <h2 className="text-2xl font-bold">Shopee Financial Dashboard</h2>
                     <p className="text-muted-foreground">Shopee metrics & performance analysis</p>
                 </div>
-
-                <DateRangePickerPro
-                    value={dateRange}
-                    onChange={setDateRange}
-                    placeholder="Pick a date range"
-                    label=""
-                    timeframe={timeframe}
-                    onTimeframeChange={setTimeframe}
-                    className="min-w-[240px]"
-                />
+                <div className="flex flex-wrap items-center gap-3 w-full lg:w-auto">
+                    <DateRangePickerPro
+                        value={dateRange}
+                        onChange={setDateRange}
+                        placeholder="Pick a date range"
+                        label=""
+                        timeframe={timeframe}
+                        onTimeframeChange={setTimeframe}
+                        className="min-w-[200px]"
+                    />
+                    <Tabs value={activeTab} onValueChange={setActiveTab} className="platform-dashboard-tabs w-auto">
+                        <TabsList className="platform-dashboard-tabs-list h-8 rounded-lg bg-muted/80 p-0.5">
+                            <TabsTrigger value="overview" className="platform-dashboard-tabs-trigger rounded-md px-3 py-1.5 text-sm data-[state=active]:bg-[var(--preset-primary)] data-[state=active]:text-white data-[state=active]:shadow-sm">Overview</TabsTrigger>
+                            <TabsTrigger value="campaigns" className="platform-dashboard-tabs-trigger rounded-md px-3 py-1.5 text-sm data-[state=active]:bg-[var(--preset-primary)] data-[state=active]:text-white data-[state=active]:shadow-sm">Conversion</TabsTrigger>
+                            <TabsTrigger value="skus" className="platform-dashboard-tabs-trigger rounded-md px-3 py-1.5 text-sm data-[state=active]:bg-[var(--preset-primary)] data-[state=active]:text-white data-[state=active]:shadow-sm">SKUs</TabsTrigger>
+                        </TabsList>
+                    </Tabs>
+                </div>
             </div>
 
-            <Tabs value={activeTab} onValueChange={setActiveTab} className="w-auto">
-                <TabsList>
-                    <TabsTrigger value="overview">Overview</TabsTrigger>
-                    <TabsTrigger value="campaigns">Conversion</TabsTrigger>
-                    <TabsTrigger value="skus">SKUs</TabsTrigger>
-                </TabsList>
-            </Tabs>
-
             {activeTab === "overview" && (
-                <div className="space-y-4 w-full">
+                <div className="platform-dashboard-overview flex flex-col gap-4 w-full">
                     <div
-                        style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 16, width: "100%" }}
-                        className="!grid-cols-1 sm:!grid-cols-2 lg:!grid-cols-4"
+                        className="platform-dashboard-metrics grid w-full gap-4 !grid-cols-1 sm:!grid-cols-2 lg:!grid-cols-4"
+                        style={{ gridTemplateColumns: "repeat(4, 1fr)" }}
                     >
                         {financialMetrics.map((m, i) => (
                             <ShopeeMetricCard
@@ -209,12 +209,11 @@ const ShopeeDashboardScreen = () => {
                             />
                         ))}
                     </div>
-
-                    <div className="grid grid-cols-1 lg:grid-cols-8 gap-4 w-full h-full">
-                        <div className="md:col-span-5 col-span-6 h-full w-full">
+                    <div className="platform-dashboard-charts grid grid-cols-1 lg:grid-cols-8 gap-4 w-full h-full">
+                        <div className="lg:col-span-5 h-full w-full">
                             <ShopeeConversionCharts />
                         </div>
-                        <div className="md:col-span-3 col-span-6 h-full w-full">
+                        <div className="lg:col-span-3 h-full w-full">
                             <ShopeeConversionTable
                                 onLoadMore={decrementDateRange}
                                 conversionRate={conversionRate || []}
@@ -223,12 +222,15 @@ const ShopeeDashboardScreen = () => {
                             />
                         </div>
                     </div>
-
-                    <ShopeeSkusTable
-                        skus={skus || []}
-                        onSelectTap={() => setActiveTab("skus")}
-                        selectedTab={activeTab}
-                    />
+                    <div className="platform-dashboard-skus">
+                        <div className="platform-dashboard-sku-table">
+                            <ShopeeSkusTable
+                                skus={skus || []}
+                                onSelectTap={() => setActiveTab("skus")}
+                                selectedTab={activeTab}
+                            />
+                        </div>
+                    </div>
                 </div>
             )}
 

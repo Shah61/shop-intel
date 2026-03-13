@@ -1,203 +1,459 @@
 "use client"
 
-import React, { useState, useRef, useEffect } from 'react';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { ScrollArea } from '@/components/ui/scroll-area';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Card, CardContent } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { 
-    Bot, 
-    User, 
-    Sparkles, 
-    MessageCircle, 
-    ArrowUp,
-    MessageSquare
+import React, { useState, useRef, useEffect, useCallback } from 'react';
+import {
+    Bot, User, ArrowUp, Plus, Search, Clock,
+    MoreHorizontal, Trash2, Edit3, History,
+    Paperclip, Mic, Sparkles, MessageSquare, TrendingUp,
+    BarChart2, DollarSign, ShoppingCart, Zap, HelpCircle,
 } from 'lucide-react';
-import ChatHistory from './chat-history';
-import { Category, Chat, Message } from '../../../data/model/ai-model';
-import { useCreateChatAssistant, useCreateRoom } from '../../tanstack/ai-tanstack';
-import Markdown from '../../../../../components/ui/markdown';
+import {
+    DropdownMenu, DropdownMenuContent,
+    DropdownMenuItem, DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { useGetRoomHistory, useDeleteRoom, useGetChatHistory, useCreateChatAssistant, useCreateRoom } from '../../tanstack/ai-tanstack';
+import { Category, Chat, Room, Message } from '../../../data/model/ai-model';
+import { useToast } from '@/hooks/use-toast';
 import { useSession } from "@/src/core/lib/dummy-session-provider";
+import { useTheme } from 'next-themes';
+import Markdown from '../../../../../components/ui/markdown';
 
+// ─── Suggested Actions ────────────────────────────────────────────────────────
+const ACTIONS = [
+    { icon: <BarChart2 className="w-3.5 h-3.5" />, label: "Audit finances",   prompt: "Perform a financial audit of my business performance" },
+    { icon: <ShoppingCart className="w-3.5 h-3.5" />, label: "Boost sales",   prompt: "Suggest sales strategy based on sales performance and dynamic pricing" },
+    { icon: <DollarSign className="w-3.5 h-3.5" />, label: "Tax planning",    prompt: "Assist me with tax management and planning strategies" },
+    { icon: <TrendingUp className="w-3.5 h-3.5" />, label: "Optimize spend",  prompt: "Give me advice on how to spend and what needs to be optimized" },
+    { icon: <Zap className="w-3.5 h-3.5" />, label: "Demand forecast",        prompt: "Help with demand forecasting for my products" },
+    { icon: <HelpCircle className="w-3.5 h-3.5" />, label: "Find waste",      prompt: "Help me categorize my expenses and detect waste in my spending" },
+];
+
+// ─── Typing Dots ──────────────────────────────────────────────────────────────
+const TypingDots = () => (
+    <span className="inline-flex items-center gap-1 px-1 py-2">
+        {[0,1,2].map(i => (
+            <span key={i}
+                className="w-1.5 h-1.5 rounded-full animate-bounce opacity-60"
+                style={{ background: 'var(--preset-primary)', animationDelay: `${i * 0.18}s`, animationDuration: '0.8s' }}
+            />
+        ))}
+    </span>
+);
+
+// ─── Aurora BG (uses layout preset) ────────────────────────────────────────────
+const Aurora = () => (
+    <div className="pointer-events-none absolute inset-0 overflow-hidden">
+        <div className="absolute top-[-8%] left-[10%] w-[60vw] h-[55vh] rounded-full opacity-[0.12]
+            blur-[90px] animate-aurora-1"
+            style={{ background: 'radial-gradient(ellipse at center, var(--preset-primary) 0%, transparent 70%)' }} />
+        <div className="absolute top-[5%] right-[5%] w-[40vw] h-[40vh] rounded-full opacity-[0.08]
+            blur-[100px] animate-aurora-2"
+            style={{ background: 'radial-gradient(ellipse at center, var(--preset-lighter) 0%, transparent 70%)' }} />
+        <div className="absolute top-[25%] left-[35%] w-[28vw] h-[28vh] rounded-full opacity-[0.06]
+            blur-[70px] animate-aurora-3"
+            style={{ background: 'radial-gradient(ellipse at center, var(--preset-primary) 0%, transparent 70%)' }} />
+    </div>
+);
+
+// ─── Message Bubble (uses layout preset + theme vars) ───────────────────────────
+const Bubble = ({ msg }: { msg: Message }) => {
+    const isUser = msg.sender === 'user';
+    return (
+        <div className={`flex gap-3 ${isUser ? 'justify-end' : 'justify-start'} animate-in fade-in slide-in-from-bottom-2 duration-300`}>
+            {!isUser && (
+                <div className="w-7 h-7 rounded-full flex-shrink-0 mt-0.5 flex items-center justify-center shadow-lg"
+                    style={{ background: 'var(--preset-primary)', boxShadow: '0 4px 14px rgba(var(--preset-primary-rgb, 124, 58, 237), 0.25)' }}>
+                    <Sparkles className="w-3.5 h-3.5 text-white" />
+                </div>
+            )}
+            <div className={`max-w-[75%] flex flex-col ${isUser ? 'items-end' : 'items-start'}`}>
+                <div
+                    className={`px-4 py-2.5 rounded-2xl text-sm leading-relaxed rounded-tr-sm ${isUser ? 'border' : ''}`}
+                    style={isUser
+                        ? { background: 'var(--ai-bubble-user-bg)', color: 'var(--ai-bubble-user-text)', borderColor: 'var(--ai-border)' }
+                        : { color: 'var(--ai-bubble-ai-text)' }
+                    }
+                >
+                    {isUser
+                        ? <p>{msg.content}</p>
+                        : msg.content
+                            ? <Markdown content={msg.content}
+                                className="prose prose-invert prose-sm max-w-none [&_p]:leading-relaxed [&_code]:text-[var(--preset-lighter)] [&_code]:bg-white/10 [&_code]:px-1.5 [&_code]:py-0.5 [&_code]:rounded [&_pre]:bg-[#161e2a] [&_pre]:border [&_pre]:border-white/[0.06] [&_pre]:rounded-xl ai-bubble-markdown" />
+                            : <TypingDots />
+                    }
+                </div>
+                <span className="text-[10px] mt-1.5 px-1" style={{ color: 'var(--ai-bubble-time)' }}>
+                    {msg.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                </span>
+            </div>
+            {isUser && (
+                <div className="w-7 h-7 rounded-full flex-shrink-0 mt-0.5 flex items-center justify-center border" style={{ background: 'var(--ai-avatar-user-bg)', borderColor: 'var(--ai-border)', color: 'var(--ai-muted)' }}>
+                    <User className="w-3.5 h-3.5" />
+                </div>
+            )}
+        </div>
+    );
+};
+
+// ─── History dropdown (replaces sidebar) ───────────────────────────────────────
+interface HistoryDropdownProps {
+    selectedChatId: string | null;
+    setSelectedChatId: (id: string | null) => void;
+    onNewChat: () => void;
+    userId: string;
+    chatHistoryResponse: any;
+    onSelectRoom: (roomId: string, chats: Chat[]) => void;
+    isLight?: boolean;
+}
+
+const LIGHT_DROPDOWN = {
+    panel: '#f4f4f5',
+    border: 'rgba(0,0,0,0.08)',
+    text: '#18181b',
+    muted: '#71717a',
+    inputBg: 'rgba(0,0,0,0.04)',
+};
+
+const DARK_DROPDOWN = {
+    panel: '#151d27',
+    border: 'rgba(255,255,255,0.08)',
+    text: 'rgba(255,255,255,0.9)',
+    muted: 'rgba(255,255,255,0.45)',
+    inputBg: 'rgba(255,255,255,0.06)',
+};
+
+const HistoryDropdown: React.FC<HistoryDropdownProps> = ({
+    selectedChatId, setSelectedChatId, onNewChat, userId,
+    chatHistoryResponse, onSelectRoom, isLight
+}) => {
+    const [search, setSearch] = useState('');
+    const { toast } = useToast();
+    const prevKey = useRef('');
+    const { data: roomsRes, isLoading, refetch } = useGetRoomHistory(Category.ASSISTANT, userId);
+    const deleteRoom = useDeleteRoom(selectedChatId ?? '');
+
+    useEffect(() => {
+        if (!selectedChatId || !chatHistoryResponse?.data) return;
+        const chats = chatHistoryResponse.data.chats || [];
+        const key = `${selectedChatId}-${chats.length}`;
+        if (key === prevKey.current) return;
+        prevKey.current = key;
+        onSelectRoom(selectedChatId, chats);
+    }, [selectedChatId, chatHistoryResponse, onSelectRoom]);
+
+    const rooms: Room[] = (roomsRes?.data?.rooms || []).filter((r: Room) =>
+        r.name.toLowerCase().includes(search.toLowerCase())
+    );
+
+    const handleDelete = async (id: string, e: React.MouseEvent) => {
+        e.stopPropagation();
+        try {
+            await deleteRoom.mutateAsync();
+            if (id === selectedChatId) { setSelectedChatId(null); onNewChat(); }
+            refetch();
+            toast({ title: "Deleted", duration: 2000 });
+        } catch {
+            toast({ title: "Error", variant: "destructive", duration: 2000 });
+        }
+    };
+
+    return (
+        <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+                <button
+                    type="button"
+                    className="h-8 w-8 flex items-center justify-center rounded-xl transition-all hover:opacity-80"
+                    style={{ color: 'var(--ai-muted)' }}
+                >
+                    <History className="w-4 h-4" />
+                </button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent
+                align="start"
+                sideOffset={8}
+                className={`min-w-[280px] max-h-[min(70vh,400px)] overflow-hidden flex flex-col rounded-xl border shadow-xl p-0 ${!isLight ? 'ai-history-dropdown-dark' : ''}`}
+                style={isLight ? { background: LIGHT_DROPDOWN.panel, borderColor: LIGHT_DROPDOWN.border } : { background: DARK_DROPDOWN.panel, borderColor: DARK_DROPDOWN.border }}
+            >
+                <div className="p-3 border-b flex items-center justify-between gap-2" style={{ borderColor: isLight ? LIGHT_DROPDOWN.border : DARK_DROPDOWN.border }}>
+                    <span className="text-[10px] font-semibold uppercase tracking-widest" style={{ color: isLight ? LIGHT_DROPDOWN.muted : DARK_DROPDOWN.muted }}>Chat history</span>
+                    <button
+                        type="button"
+                        onClick={onNewChat}
+                        className="h-7 w-7 flex items-center justify-center rounded-lg transition-all hover:opacity-80"
+                        style={{ color: isLight ? LIGHT_DROPDOWN.muted : DARK_DROPDOWN.muted }}
+                    >
+                        <Plus className="w-3.5 h-3.5" />
+                    </button>
+                </div>
+                <div className="p-2">
+                    <div className="relative">
+                        <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 w-3 h-3" style={{ color: isLight ? LIGHT_DROPDOWN.muted : DARK_DROPDOWN.muted }} />
+                        <input
+                            value={search}
+                            onChange={e => setSearch(e.target.value)}
+                            placeholder="Search…"
+                            className="w-full pl-7 pr-3 py-1.5 text-[11px] rounded-lg focus:outline-none transition-all"
+                            style={{ background: isLight ? LIGHT_DROPDOWN.inputBg : DARK_DROPDOWN.inputBg, border: `1px solid ${isLight ? LIGHT_DROPDOWN.border : DARK_DROPDOWN.border}`, color: isLight ? LIGHT_DROPDOWN.text : DARK_DROPDOWN.text }}
+                        />
+                    </div>
+                </div>
+                <div className="flex-1 overflow-y-auto px-2 pb-2 space-y-0.5 min-h-0">
+                    {isLoading && [1,2,3,4].map(i => (
+                        <div key={i} className="h-10 rounded-xl animate-pulse mb-1" style={{ background: isLight ? LIGHT_DROPDOWN.inputBg : DARK_DROPDOWN.inputBg }} />
+                    ))}
+                    {!isLoading && rooms.length === 0 && (
+                        <div className="flex flex-col items-center justify-center py-8 gap-2">
+                            <MessageSquare className="w-5 h-5" style={{ color: isLight ? LIGHT_DROPDOWN.muted : DARK_DROPDOWN.muted }} />
+                            <p className="text-[11px]" style={{ color: isLight ? LIGHT_DROPDOWN.muted : DARK_DROPDOWN.muted }}>{search ? 'Nothing found' : 'No chats yet'}</p>
+                        </div>
+                    )}
+                    {!isLoading && rooms.map((room: Room) => (
+                        <div
+                            key={room.id}
+                            onClick={() => setSelectedChatId(room.id)}
+                            className="history-room-row flex items-center gap-2.5 px-2.5 py-2 rounded-xl cursor-pointer group transition-all duration-150 border border-transparent"
+                            style={selectedChatId === room.id
+                                ? { background: 'rgba(var(--preset-primary-rgb, 124, 58, 237), 0.12)', borderColor: 'rgba(var(--preset-primary-rgb, 124, 58, 237), 0.25)' }
+                                : isLight ? { borderColor: 'transparent' } : { borderColor: 'transparent' }
+                            }
+                        >
+                            <div className="w-6 h-6 rounded-lg flex items-center justify-center flex-shrink-0" style={{ background: isLight ? LIGHT_DROPDOWN.inputBg : DARK_DROPDOWN.inputBg }}>
+                                <Bot className="w-3 h-3" style={{ color: isLight ? LIGHT_DROPDOWN.muted : DARK_DROPDOWN.muted }} />
+                            </div>
+                            <div className="flex-1 min-w-0">
+                                <p className="text-[11px] font-medium truncate leading-tight" style={{ color: isLight ? LIGHT_DROPDOWN.text : DARK_DROPDOWN.text }}>{room.name}</p>
+                                <p className="text-[9px] flex items-center gap-1 mt-0.5" style={{ color: isLight ? LIGHT_DROPDOWN.muted : DARK_DROPDOWN.muted }}>
+                                    <Clock className="w-2 h-2" />
+                                    {new Date(room.updated_at).toLocaleDateString(undefined, { month: 'short', day: 'numeric' })}
+                                </p>
+                            </div>
+                            <DropdownMenu>
+                                <DropdownMenuTrigger asChild>
+                                    <button type="button" onClick={e => e.stopPropagation()}
+                                        className="opacity-0 group-hover:opacity-100 w-5 h-5 flex items-center justify-center rounded-md transition-all"
+                                        style={{ color: isLight ? LIGHT_DROPDOWN.muted : DARK_DROPDOWN.muted }}
+                                    >
+                                        <MoreHorizontal className="w-3 h-3" />
+                                    </button>
+                                </DropdownMenuTrigger>
+                                <DropdownMenuContent align="end" className="rounded-xl min-w-[130px] border shadow-xl" style={isLight ? { background: LIGHT_DROPDOWN.panel, borderColor: LIGHT_DROPDOWN.border } : { background: DARK_DROPDOWN.panel, borderColor: DARK_DROPDOWN.border }}>
+                                    <DropdownMenuItem className="text-[11px] rounded-lg cursor-pointer gap-2" style={{ color: isLight ? LIGHT_DROPDOWN.text : DARK_DROPDOWN.text }}>
+                                        <Edit3 className="w-3 h-3" /> Rename
+                                    </DropdownMenuItem>
+                                    <DropdownMenuItem
+                                        onClick={e => handleDelete(room.id, e)}
+                                        disabled={deleteRoom.isPending}
+                                        className="text-[11px] text-red-400/80 hover:text-red-300 rounded-lg cursor-pointer gap-2"
+                                    >
+                                        <Trash2 className="w-3 h-3" />
+                                        {deleteRoom.isPending ? 'Deleting…' : 'Delete'}
+                                    </DropdownMenuItem>
+                                </DropdownMenuContent>
+                            </DropdownMenu>
+                        </div>
+                    ))}
+                </div>
+            </DropdownMenuContent>
+        </DropdownMenu>
+    );
+};
+
+// ─── Input Box ────────────────────────────────────────────────────────────────
+interface InputBoxProps {
+    value: string;
+    onChange: (v: string) => void;
+    onSend: (v: string) => void;
+    disabled: boolean;
+    isCentered: boolean;
+}
+
+const InputBox: React.FC<InputBoxProps> = ({ value, onChange, onSend, disabled, isCentered }) => {
+    const ref = useRef<HTMLTextAreaElement>(null);
+
+    useEffect(() => {
+        if (ref.current) {
+            ref.current.style.height = 'auto';
+            ref.current.style.height = `${Math.min(ref.current.scrollHeight, 160)}px`;
+        }
+    }, [value]);
+
+    useEffect(() => {
+        if (!disabled && ref.current) ref.current.focus();
+    }, [disabled]);
+
+    return (
+        <div className={`w-full transition-all duration-500 ease-out ${isCentered ? 'max-w-2xl' : 'max-w-3xl'}`}>
+            <div
+                className="relative rounded-2xl border transition-all duration-300 ai-input-field"
+                style={{
+                    background: 'var(--ai-input-field-bg)',
+                    borderColor: value ? 'rgba(var(--preset-primary-rgb, 124, 58, 237), 0.35)' : 'var(--ai-input-field-border)',
+                    boxShadow: isCentered
+                        ? '0 20px 80px rgba(0,0,0,0.5), 0 0 80px rgba(var(--preset-primary-rgb, 124, 58, 237), 0.06)'
+                        : '0 8px 40px rgba(0,0,0,0.4)',
+                }}
+            >
+                {/* Placeholder for centered mode */}
+                {isCentered && !value && (
+                    <div className="absolute left-4 top-[18px] text-sm pointer-events-none select-none" style={{ color: 'var(--ai-input-field-placeholder)' }}>
+                        Ask me anything about your business…
+                    </div>
+                )}
+
+                <textarea
+                    ref={ref}
+                    value={value}
+                    onChange={e => onChange(e.target.value)}
+                    placeholder={!isCentered ? "Continue the conversation…" : ""}
+                    rows={1}
+                    disabled={disabled}
+                    onKeyDown={e => {
+                        if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); onSend(value); }
+                    }}
+                    className="w-full bg-transparent px-4 pt-4 pb-2 text-sm resize-none focus:outline-none leading-relaxed min-h-[58px] max-h-[160px]"
+                    style={{ color: 'var(--ai-input-field-text)' }}
+                />
+
+                {/* Bottom toolbar */}
+                <div className="flex items-center justify-between px-3 pb-3">
+                    <div className="flex items-center gap-1.5">
+                        <button className="h-7 w-7 flex items-center justify-center rounded-xl transition-all hover:opacity-80"
+                            style={{ color: 'var(--ai-muted)' }}>
+                            <Paperclip className="w-3.5 h-3.5" />
+                        </button>
+                        <button className="h-7 w-7 flex items-center justify-center rounded-xl transition-all hover:opacity-80"
+                            style={{ color: 'var(--ai-muted)' }}>
+                            <Mic className="w-3.5 h-3.5" />
+                        </button>
+                    </div>
+                    <button
+                        onClick={() => onSend(value)}
+                        disabled={!value.trim() || disabled}
+                        className="h-8 w-8 flex items-center justify-center rounded-xl transition-all duration-200"
+                        style={value.trim() && !disabled
+                            ? { background: 'var(--preset-primary)', color: '#fff', boxShadow: '0 4px 20px rgba(var(--preset-primary-rgb, 124, 58, 237), 0.35)' }
+                            : { background: 'var(--ai-input-bg)', color: 'var(--ai-muted)', cursor: 'not-allowed' }
+                        }
+                    >
+                        <ArrowUp className="w-4 h-4" />
+                    </button>
+                </div>
+            </div>
+            <p className="text-[10px] text-center mt-2" style={{ color: 'var(--ai-muted)' }}>
+                AI may make mistakes · Verify important information
+            </p>
+        </div>
+    );
+};
+
+// ─── Main Component ───────────────────────────────────────────────────────────
 const AIAssistant: React.FC = () => {
+    const { resolvedTheme } = useTheme();
     const [messages, setMessages] = useState<Message[]>([]);
     const [currentRoomId, setCurrentRoomId] = useState<string | null>(null);
     const [inputValue, setInputValue] = useState('');
     const [isTyping, setIsTyping] = useState(false);
-    const scrollAreaRef = useRef<HTMLDivElement>(null);
-    const inputRef = useRef<HTMLInputElement>(null);
-    const prevChatsRef = useRef<string>('');
+    const [selectedChatId, setSelectedChatId] = useState<string | null>(null);
+    const [hasStarted, setHasStarted] = useState(false);
+
+    const messagesEndRef = useRef<HTMLDivElement>(null);
     const { data: session } = useSession();
-    const user_id = session?.user_entity?.id;
+    const user_id = session?.user_entity?.id ?? 'demo-user-id';
+    const userName = session?.user_entity?.name ?? 'there';
 
-    const createChatAssistantMutation = useCreateChatAssistant();
-    const createRoomMutation = useCreateRoom();
-
-    const suggestedPrompts = [
-        "Help me categorize my expenses and detect waste in my spending",
-        "Give me advice on how to spend and what needs to be optimized",
-        "Assist me with tax management and planning strategies",
-        "Perform a financial audit of my business performance",
-        "Help with demand forecasting for my products",
-        "Suggest sales strategy based on sales performance and dynamic pricing"
-    ];
-
-
+    const createChat = useCreateChatAssistant();
+    const createRoom = useCreateRoom();
+    const { data: chatHistoryResponse } = useGetChatHistory(selectedChatId ?? '');
 
     useEffect(() => {
-        if (scrollAreaRef.current) {
-            scrollAreaRef.current.scrollTop = scrollAreaRef.current.scrollHeight;
+        if (messages.length > 0) {
+            messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
         }
     }, [messages]);
 
-    const handleSelectChat = (roomId: string, chats: Chat[]) => {
-        // Don't update if we're already showing these messages
-        const chatKey = `${roomId}-${JSON.stringify(chats)}`;
-        if (chatKey === prevChatsRef.current) {
-            return;
-        }
-        prevChatsRef.current = chatKey;
-
+    const handleSelectRoom = useCallback((roomId: string, chats: Chat[]) => {
         setCurrentRoomId(roomId);
-        
-        if (chats && Array.isArray(chats) && chats.length > 0) {
-            const formattedMessages: Message[] = chats.map(chat => ({
-                id: chat.id,
-                content: chat.message || '', // Ensure content is never undefined
-                sender: chat.role === 'USER' ? 'user' : 'ai' as const,
-                timestamp: new Date(chat.created_at),
-            }));
-            
-            setMessages(formattedMessages);
-        } else {
-            setMessages([]);
-        }
+        setHasStarted(chats.length > 0);
+        setMessages(chats.length > 0
+            ? chats.map(c => ({
+                id: c.id,
+                content: c.message || '',
+                sender: c.role === 'USER' ? 'user' as const : 'ai' as const,
+                timestamp: new Date(c.created_at),
+            }))
+            : []
+        );
+    }, []);
+
+    const handleNewChat = () => {
+        setCurrentRoomId(null);
+        setSelectedChatId(null);
+        setMessages([]);
+        setInputValue('');
+        setIsTyping(false);
+        setHasStarted(false);
     };
 
-    // Add effect to monitor messages state
-    useEffect(() => {
-        // console.log('AIAssistant - Messages updated:', messages);
-    }, [messages]);
+    const handleSend = async (content: string) => {
+        if (!content.trim() || isTyping) return;
 
-    const handleSendMessage = async (content: string) => {
-        if (!content.trim()) return;
+        setHasStarted(true); // triggers layout transition
 
-        const userMessage: Message = {
+        const userMsg: Message = {
             id: Date.now().toString(),
             content: content.trim(),
             sender: 'user',
             timestamp: new Date(),
         };
-
-        setMessages(prev => [...prev, userMessage]);
+        setMessages(prev => [...prev, userMsg]);
         setInputValue('');
         setIsTyping(true);
 
-        // Create a temporary message for the AI response
-        const tempAiMessageId = (Date.now() + 1).toString();
-        const tempAiMessage: Message = {
-            id: tempAiMessageId,
-            content: '',
-            sender: 'ai',
-            timestamp: new Date(),
-        };
-        setMessages(prev => [...prev, tempAiMessage]);
+        const tempId = (Date.now() + 1).toString();
+        setMessages(prev => [...prev, { id: tempId, content: '', sender: 'ai', timestamp: new Date() }]);
 
         try {
             let roomId = currentRoomId;
-            
-            // If no room exists, create one first
             if (!roomId) {
-                if (!user_id) {
-                    throw new Error('User ID is required to create a room');
-                }
-                const roomData = await createRoomMutation.mutateAsync({
-                    category: Category.ASSISTANT,
-                    user_id: user_id
-                });
-                roomId = roomData.data.rooms.id;
+                const r = await createRoom.mutateAsync({ category: Category.ASSISTANT, user_id });
+                roomId = r.data.rooms.id;
                 setCurrentRoomId(roomId);
             }
-
-            // Use the createChatAssistant service to get streaming response
-            if (!roomId) {
-                throw new Error('Failed to get or create room ID');
-            }
-            
-            const response = await createChatAssistantMutation.mutateAsync({
-                room_id: roomId,
+            const response = await createChat.mutateAsync({
+                room_id: roomId!,
                 message: content.trim(),
-                role: 'USER'
+                role: 'USER',
             });
-            
             const reader = response.body?.getReader();
-            if (!reader) {
-                throw new Error('Failed to get response reader');
-            }
+            if (!reader) throw new Error('No reader');
 
-            let accumulatedContent = '';
-            let actualMessageId = tempAiMessageId;
-
+            let acc = '', actualId = tempId;
             while (true) {
                 const { done, value } = await reader.read();
                 if (done) break;
-
-                // Convert the chunk to text
                 const chunk = new TextDecoder().decode(value);
-                const lines = chunk.split('\n').filter((line: string) => line.trim());
-
-                for (const line of lines) {
+                for (const line of chunk.split('\n').filter(l => l.trim())) {
                     try {
-                        // Remove any potential "data: " prefix and clean the line
-                        let jsonStr = line.replace(/^data:\s*/, '').trim();
-                        if (!jsonStr || jsonStr === '[DONE]') continue;
-
-                        const data = JSON.parse(jsonStr);
-                        // console.log('Streaming data:', data); // Debug log
-                        
-                        switch (data.type) {
-                            case 'chat_created':
-                                // Update the message ID with the one from the server
-                                actualMessageId = data.data.chat.id;
-                                setMessages(prev => prev.map(msg => 
-                                    msg.id === tempAiMessageId 
-                                        ? { ...msg, id: actualMessageId }
-                                        : msg
-                                ));
-                                break;
-
-                            case 'ai_response_chunk':
-                                if (data.content) {
-                                    accumulatedContent += data.content;
-                                    // Update the AI message content with accumulated chunks in real-time
-                                    setMessages(prev => prev.map(msg => 
-                                        msg.id === actualMessageId 
-                                            ? { ...msg, content: accumulatedContent }
-                                            : msg
-                                    ));
-                                }
-                                break;
-
-                            case 'response_complete':
-                                // Mark as complete
-                                setIsTyping(false);
-                                break;
+                        const json = line.replace(/^data:\s*/, '').trim();
+                        if (!json || json === '[DONE]') continue;
+                        const data = JSON.parse(json);
+                        if (data.type === 'chat_created') {
+                            actualId = data.data.chat.id;
+                            setMessages(prev => prev.map(m => m.id === tempId ? { ...m, id: actualId } : m));
+                        } else if (data.type === 'ai_response_chunk' && data.content) {
+                            acc += data.content;
+                            setMessages(prev => prev.map(m => m.id === actualId ? { ...m, content: acc } : m));
+                        } else if (data.type === 'response_complete') {
+                            setIsTyping(false);
                         }
-                    } catch (error) {
-                        // Log parsing errors but continue processing
-                        // console.debug('Error parsing line:', line, error);
-                    }
+                    } catch {}
                 }
             }
-        } catch (error) {
-            // console.error('Error sending message:', error);
-            // Remove the temporary message and add error message
-            setMessages(prev => prev.filter(msg => msg.id !== tempAiMessageId));
+        } catch {
+            setMessages(prev => prev.filter(m => m.id !== tempId));
             setMessages(prev => [...prev, {
                 id: Date.now().toString(),
-                content: 'Sorry, there was an error processing your request. Please try again.',
+                content: 'Something went wrong. Please try again.',
                 sender: 'ai',
                 timestamp: new Date(),
             }]);
@@ -206,254 +462,204 @@ const AIAssistant: React.FC = () => {
         }
     };
 
-    const generateAIResponse = (userInput: string): string => {
-        const input = userInput.toLowerCase();
-        
-        if (input.includes('routine')) {
-            return "Great question about Clothing Brands! Here's a personalized routine I recommend:\n\n🌅 **Morning:**\n1. Gentle cleanser\n2. Vitamin C serum\n3. Moisturizer with SPF\n4. Sunscreen (SPF 30+)\n\n🌙 **Evening:**\n1. Double cleanse (oil + water-based)\n2. Treatment (retinol/acids)\n3. Moisturizer\n4. Face oil (optional)\n\nRemember to introduce new products gradually and always patch test first!";
-        }
-        
-        if (input.includes('retinol')) {
-            return "Retinol is an excellent anti-aging ingredient! Here's what you need to know:\n\n✨ **Benefits:**\n• Reduces fine lines and wrinkles\n• Improves skin texture and tone\n• Helps with acne and enlarged pores\n• Stimulates collagen production\n\n⚠️ **Usage Tips:**\n• Start with 0.25% concentration\n• Use only at night\n• Always wear SPF during the day\n• Expect some initial irritation\n\nWould you like specific product recommendations?";
-        }
-        
-        if (input.includes('acne') || input.includes('breakout')) {
-            return "For acne-prone skin, here's my recommended approach:\n\n🧴 **Key ingredients:**\n• Salicylic acid (BHA) for exfoliation\n• Benzoyl peroxide for bacteria\n• Niacinamide for oil control\n• Hyaluronic acid for hydration\n\n🚫 **Avoid:**\n• Over-cleansing (strips natural oils)\n• Heavy, comedogenic products\n• Picking or squeezing\n\n💡 **Pro tip:** Consistency is key! Stick to a routine for 6-8 weeks to see results.";
-        }
-        
-        if (input.includes('sensitive skin')) {
-            return "Sensitive skin needs extra gentle care:\n\n✅ **Safe ingredients:**\n• Ceramides for barrier repair\n• Hyaluronic acid for hydration\n• Centella asiatica for soothing\n• Colloidal oatmeal for calming\n\n❌ **Ingredients to avoid:**\n• Fragrances and essential oils\n• High concentrations of acids\n• Alcohol denat\n• Harsh physical scrubs\n\n🌿 **Always patch test new products and introduce one at a time!**";
-        }
-        
-        return "That's a great question! I'd be happy to help you with personalized Selling advice. Clothing is very individual, and the best approach depends on your specific skin type, concerns, and goals. Could you tell me more about your current routine or specific skin concerns? This will help me give you more targeted recommendations! 💫";
-    };
-
-    const handleSuggestedPrompt = (prompt: string) => {
-        handleSendMessage(prompt);
-    };
-
-
-
-    const handleNewChat = () => {
-        setCurrentRoomId(null);
-        setMessages([]);
-        setInputValue('');
-        setIsTyping(false);
-        prevChatsRef.current = '';
-    };
-
     return (
-        <div className="flex h-full bg-transparent">
-            {/* Chat History Sidebar */}
-            <div className="flex-shrink-0">
-                <ChatHistory 
-                    currentChatType={Category.ASSISTANT}
-                    onNewChat={handleNewChat}
-                    onSelectChat={handleSelectChat}
-                />
-            </div>
+        <>
+            <style>{`
+                .ai-assistant-root {
+                    --ai-bg: #131820;
+                    --ai-panel: #151d27;
+                    --ai-border: rgba(255,255,255,0.06);
+                    --ai-text: rgba(255,255,255,0.9);
+                    --ai-muted: rgba(255,255,255,0.4);
+                    --ai-input-bg: rgba(255,255,255,0.05);
+                    --ai-accent: var(--preset-primary, #7c3aed);
+                    --ai-accent-rgb: var(--preset-primary-rgb, 124, 58, 237);
+                    --ai-bubble-user-bg: #1b2436;
+                    --ai-bubble-user-text: rgba(255,255,255,0.85);
+                    --ai-bubble-ai-text: rgba(255,255,255,0.8);
+                    --ai-bubble-time: rgba(255,255,255,0.2);
+                    --ai-avatar-user-bg: rgba(255,255,255,0.06);
+                    --ai-welcome-gradient: linear-gradient(140deg, #ffffff 0%, var(--preset-lighter) 50%, var(--preset-primary) 100%);
+                    --ai-input-field-bg: #161e2c;
+                    --ai-input-field-border: rgba(255,255,255,0.07);
+                    --ai-input-field-text: rgba(255,255,255,0.85);
+                    --ai-input-field-placeholder: rgba(255,255,255,0.18);
+                }
+                .ai-assistant-root.light {
+                    --ai-bg: #ffffff;
+                    --ai-panel: #f4f4f5;
+                    --ai-border: rgba(0,0,0,0.08);
+                    --ai-text: #18181b;
+                    --ai-muted: #71717a;
+                    --ai-input-bg: rgba(0,0,0,0.04);
+                    --ai-bubble-user-bg: #f4f4f5;
+                    --ai-bubble-user-text: #18181b;
+                    --ai-bubble-ai-text: #18181b;
+                    --ai-bubble-time: #71717a;
+                    --ai-avatar-user-bg: #e4e4e7;
+                    --ai-welcome-gradient: linear-gradient(135deg, #18181b 0%, var(--preset-primary) 50%, var(--preset-lighter) 100%);
+                    --ai-input-field-bg: #e4e4e7;
+                    --ai-input-field-border: rgba(0,0,0,0.1);
+                    --ai-input-field-text: #18181b;
+                    --ai-input-field-placeholder: #71717a;
+                }
+                .ai-assistant-root.light .ai-bubble-markdown,
+                .ai-assistant-root.light .ai-bubble-markdown p,
+                .ai-assistant-root.light .ai-bubble-markdown li,
+                .ai-assistant-root.light .ai-bubble-markdown code { color: #18181b !important; }
+                .ai-assistant-root.light .ai-bubble-markdown pre { background: #e4e4e7 !important; border-color: rgba(0,0,0,0.1) !important; }
+                .ai-assistant-root.light .ai-scrollbar::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.15); }
+                .ai-assistant-root.light .ai-scrollbar::-webkit-scrollbar-thumb:hover { background: rgba(0,0,0,0.25); }
+                .history-dropdown-content[data-theme="light"] .history-room-row:hover { border-color: rgba(0,0,0,0.08) !important; }
+                .ai-welcome-title { background-repeat: no-repeat; background-color: transparent; background-size: 200% 100%; animation: ai-welcome-shine 5s ease-in-out infinite; }
+                @keyframes ai-welcome-shine {
+                    0%, 100% { background-position: 0% center; }
+                    50% { background-position: 100% center; }
+                }
+                @keyframes aurora1{0%,100%{transform:translate(0,0) scale(1)}50%{transform:translate(3%,4%) scale(1.08)}}
+                @keyframes aurora2{0%,100%{transform:translate(0,0) scale(1)}50%{transform:translate(-4%,3%) scale(1.06)}}
+                @keyframes aurora3{0%,100%{transform:translate(0,0) scale(1)}50%{transform:translate(2%,-3%) scale(1.1)}}
+                .animate-aurora-1{animation:aurora1 14s ease-in-out infinite}
+                .animate-aurora-2{animation:aurora2 18s ease-in-out infinite}
+                .animate-aurora-3{animation:aurora3 11s ease-in-out infinite}
+                .ai-scrollbar::-webkit-scrollbar{width:4px}
+                .ai-scrollbar::-webkit-scrollbar-track{background:transparent}
+                .ai-scrollbar::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.06);border-radius:99px}
+                .ai-scrollbar::-webkit-scrollbar-thumb:hover{background:rgba(255,255,255,0.12)}
+            `}</style>
 
-            {/* Main Chat Area */}
-            <div className="flex flex-col flex-1 min-w-0 overflow-hidden">
-                {/* Header */}
-                <div className="flex items-center gap-2 md:gap-4 p-2 sm:p-3 md:p-6 border-b border-slate-200/50 dark:border-white/[0.06] bg-white/60 dark:bg-white/[0.02] backdrop-blur-sm flex-shrink-0">
-                    <Button
-                        variant="ghost"
-                        size="icon"
-                        className="md:hidden h-8 w-8 text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-white/[0.06]"
-                        onClick={() => {
-                            if (typeof window !== 'undefined') {
-                                const event = new CustomEvent('toggleChatHistory');
-                                window.dispatchEvent(event);
-                            }
-                        }}
-                    >
-                        <MessageSquare className="h-4 w-4" />
-                    </Button>
-                    
-                    <div className="relative">
-                        <Avatar className="h-6 w-6 sm:h-8 sm:w-8 md:h-11 md:w-11 border-2 border-white dark:border-white/10 shadow-md">
-                            <AvatarImage src="/api/placeholder/48/48" alt="AI Assistant" />
-                            <AvatarFallback
-                                className="text-white text-sm md:text-lg font-bold"
-                                style={{ background: `linear-gradient(135deg, var(--preset-primary), var(--preset-lighter))` }}
+            <div className={`ai-assistant-root flex h-full overflow-hidden ${resolvedTheme === 'light' ? 'light' : ''}`} style={{ background: 'var(--ai-bg)', fontFamily: "'DM Sans', system-ui, sans-serif" }}>
+
+                {/* Main */}
+                <div className="flex-1 flex flex-col min-w-0 relative overflow-hidden">
+
+                    {/* Aurora (only on welcome) */}
+                    {!hasStarted && <Aurora />}
+
+                    {/* Topbar */}
+                    <header className="flex items-center justify-between px-4 py-3 flex-shrink-0 relative z-10">
+                        <div className="flex items-center gap-2">
+                            <HistoryDropdown
+                                selectedChatId={selectedChatId}
+                                setSelectedChatId={setSelectedChatId}
+                                onNewChat={handleNewChat}
+                                userId={user_id}
+                                chatHistoryResponse={chatHistoryResponse}
+                                onSelectRoom={handleSelectRoom}
+                                isLight={resolvedTheme === 'light'}
+                            />
+                            <button
+                                type="button"
+                                className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl transition-all hover:opacity-90"
+                                style={{ background: 'var(--ai-input-bg)', border: '1px solid var(--ai-border)' }}
                             >
-                                <Bot className="h-3 w-3 sm:h-4 sm:w-4 md:h-5 md:w-5" />
-                            </AvatarFallback>
-                        </Avatar>
-                        <div className="absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 sm:w-3 sm:h-3 bg-emerald-500 rounded-full border-2 border-white dark:border-black"></div>
-                    </div>
-                    <div className="flex-1 min-w-0">
-                        <h3 className="text-sm sm:text-lg md:text-xl font-bold text-slate-900 dark:text-slate-100 truncate">
-                            AI Assistant
-                        </h3>
-                        <p className="text-[10px] sm:text-xs md:text-sm font-medium text-muted-foreground flex items-center gap-1.5">
-                            <span className="w-1.5 h-1.5 bg-emerald-500 rounded-full"></span>
-                            <span className="hidden sm:inline">Online · </span>Clothing Expert
-                        </p>
-                    </div>
-                    <div className="flex-shrink-0">
-                        <Badge
-                            className="font-medium text-[8px] sm:text-[10px] md:text-xs px-1.5 sm:px-2 md:px-2.5 py-0.5 sm:py-1 border"
-                            style={{
-                                background: `rgba(var(--preset-primary-rgb), 0.08)`,
-                                color: `var(--preset-primary)`,
-                                borderColor: `rgba(var(--preset-primary-rgb), 0.2)`,
-                            }}
+                                
+                                <span className="text-xs font-medium" style={{ color: 'var(--ai-text)' }}>AI Assistant</span>
+                            </button>
+                        </div>
+
+                        <button
+                            type="button"
+                            onClick={handleNewChat}
+                            className="h-8 w-8 flex items-center justify-center rounded-xl transition-all hover:opacity-80"
+                            style={{ color: 'var(--ai-muted)' }}
                         >
-                            <Sparkles className="h-2 w-2 sm:h-2.5 sm:w-2.5 md:h-3 md:w-3 mr-0.5 sm:mr-1" />
-                            <span className="hidden sm:inline">AI </span>Powered
-                        </Badge>
-                    </div>
-                </div>
+                            <Plus className="w-4 h-4" />
+                        </button>
+                    </header>
 
-                {/* Welcome Message & Quick Actions */}
-                {messages.length === 0 && (
-                    <ScrollArea className="flex-1 min-h-0 overflow-hidden">
-                        <div className="p-3 sm:p-4 md:p-6 space-y-3 md:space-y-4">
-                        {/* Welcome Card */}
-                        <Card className="bg-white dark:bg-white/[0.03] border border-slate-200/60 dark:border-white/[0.06] shadow-sm">
-                            <CardContent className="p-4 md:p-5">
-                                <div className="flex items-start gap-3 md:gap-4">
-                                    <div
-                                        className="w-9 h-9 md:w-10 md:h-10 rounded-xl flex items-center justify-center shadow-md flex-shrink-0"
-                                        style={{ background: `linear-gradient(135deg, var(--preset-primary), var(--preset-lighter))` }}
-                                    >
-                                        <Sparkles className="w-4 h-4 md:w-5 md:h-5 text-white" />
+                    {/* ── WELCOME STATE — input centered ── */}
+                    {!hasStarted && (
+                        <div className="flex-1 flex flex-col items-center justify-center px-6 pb-6 relative z-10">
+
+                            {/* Greeting block */}
+                            <div className="text-center mb-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
+                                <div className="flex items-center justify-center gap-2 mb-4">
+                                    <div className="w-9 h-9 flex items-center justify-center">
+                                        <img src="/AssistantIcon.png" alt="" className="w-7 h-7 object-contain" />
                                     </div>
-                                    <div className="flex-1 min-w-0">
-                                        <h3 className="text-sm md:text-base font-bold text-slate-900 dark:text-slate-100 mb-1">
-                                            Welcome to AI Assistant
-                                        </h3>
-                                        <p className="text-xs text-muted-foreground leading-relaxed">
-                                            Your personal business expert powered by advanced AI. Get personalized routines, 
-                                            expense categorization, and strategic recommendations.
-                                        </p>
-                                    </div>
+                                    <span className="text-sm font-medium" style={{ color: 'var(--ai-muted)' }}>
+                                        Hi, {userName}
+                                    </span>
                                 </div>
-                            </CardContent>
-                        </Card>
 
-                        {/* Suggested Prompts */}
-                        <div className="space-y-2.5 md:space-y-3">
-                            <h4 className="text-xs font-semibold text-slate-700 dark:text-slate-300 flex items-center gap-2">
-                                <MessageCircle className="w-3.5 h-3.5" style={{ color: `var(--preset-primary)` }} />
-                                Try asking me
-                            </h4>
-                            <div className="grid gap-2">
-                                {suggestedPrompts.slice(0, 3).map((prompt, index) => (
-                                    <Button
-                                        key={index}
-                                        variant="ghost"
-                                        className="justify-start h-auto p-3 text-left bg-white dark:bg-white/[0.02] hover:bg-slate-50 dark:hover:bg-white/[0.04] border border-slate-200/60 dark:border-white/[0.06] rounded-xl transition-all duration-200 hover:shadow-sm"
-                                        onClick={() => handleSuggestedPrompt(prompt)}
+                                <h1 className="ai-welcome-title text-[42px] sm:text-[56px] font-bold tracking-tight leading-[1.1] mb-0 inline-block"
+                                    style={{
+                                        backgroundImage: 'var(--ai-welcome-gradient)',
+                                        WebkitBackgroundClip: 'text',
+                                        WebkitTextFillColor: 'transparent',
+                                        backgroundClip: 'text',
+                                    }}>
+                                    Where should<br />we start?
+                                </h1>
+                            </div>
+
+                            {/* Input — centered */}
+                            <div className="w-full flex justify-center animate-in fade-in slide-in-from-bottom-4 duration-700 delay-100">
+                                <InputBox
+                                    value={inputValue}
+                                    onChange={setInputValue}
+                                    onSend={handleSend}
+                                    disabled={isTyping}
+                                    isCentered={true}
+                                />
+                            </div>
+
+                            {/* Action pills */}
+                            <div className="flex flex-wrap gap-2 justify-center max-w-2xl mt-5 animate-in fade-in slide-in-from-bottom-4 duration-700 delay-200">
+                                {ACTIONS.map((a, i) => (
+                                    <button key={i} onClick={() => handleSend(a.prompt)}
+                                        className="flex items-center gap-2 px-3.5 py-2 rounded-full text-xs font-medium transition-all duration-200 group"
+                                        style={{
+                                            background: 'var(--ai-input-bg)',
+                                            border: '1px solid var(--ai-border)',
+                                            color: 'var(--ai-muted)',
+                                        }}
+                                        onMouseEnter={e => {
+                                            (e.currentTarget as HTMLElement).style.background = 'rgba(var(--preset-primary-rgb, 124, 58, 237), 0.12)';
+                                            (e.currentTarget as HTMLElement).style.borderColor = 'rgba(var(--preset-primary-rgb, 124, 58, 237), 0.3)';
+                                            (e.currentTarget as HTMLElement).style.color = 'var(--ai-text)';
+                                        }}
+                                        onMouseLeave={e => {
+                                            (e.currentTarget as HTMLElement).style.background = 'var(--ai-input-bg)';
+                                            (e.currentTarget as HTMLElement).style.borderColor = 'var(--ai-border)';
+                                            (e.currentTarget as HTMLElement).style.color = 'var(--ai-muted)';
+                                        }}
                                     >
-                                        <MessageCircle className="h-3.5 w-3.5 mr-2.5 flex-shrink-0" style={{ color: `rgba(var(--preset-primary-rgb), 0.5)` }} />
-                                        <span className="text-[11px] md:text-xs text-slate-600 dark:text-slate-400 leading-tight">{prompt}</span>
-                                    </Button>
+                                        <span style={{ color: 'var(--preset-primary)' }}>{a.icon}</span>
+                                        {a.label}
+                                    </button>
                                 ))}
                             </div>
                         </div>
-                        </div>
-                    </ScrollArea>
-                )}
+                    )}
 
-                {/* Messages */}
-                {messages.length > 0 && (
-                    <ScrollArea className="flex-1 p-3 md:p-6 overflow-hidden min-h-0" ref={scrollAreaRef}>
-                        <div className="space-y-4 md:space-y-6">
-                            {messages.map((message) => (
-                                    <div
-                                        key={message.id}
-                                        className={`flex gap-2 md:gap-3 ${message.sender === 'user' ? 'justify-end' : 'justify-start'}`}
-                                    >
-                                        {message.sender === 'ai' && (
-                                            <Avatar className="h-6 w-6 md:h-8 md:w-8 border border-slate-200 dark:border-white/10 shadow-sm flex-shrink-0">
-                                                <AvatarFallback
-                                                    className="text-white"
-                                                    style={{ background: `linear-gradient(135deg, var(--preset-primary), var(--preset-lighter))` }}
-                                                >
-                                                    <Bot className="h-3 w-3 md:h-4 md:w-4" />
-                                                </AvatarFallback>
-                                            </Avatar>
-                                        )}
-                                        
-                                        <div className={`max-w-[85%] md:max-w-[75%] ${message.sender === 'user' ? 'order-1' : ''}`}>
-                                            <Card className={`${
-                                                message.sender === 'user' 
-                                                    ? 'text-white border-transparent' 
-                                                    : 'bg-white dark:bg-white/[0.03] border-slate-200/60 dark:border-white/[0.06]'
-                                            } shadow-sm rounded-2xl overflow-hidden`}
-                                                style={message.sender === 'user' ? { background: `linear-gradient(135deg, var(--preset-primary), var(--preset-lighter))` } : undefined}
-                                            >
-                                                <CardContent className="p-3 md:p-4">
-                                                    {message.sender === 'user' ? (
-                                                        <div className="text-xs md:text-sm leading-relaxed">
-                                                            {message.content}
-                                                        </div>
-                                                    ) : (
-                                                        <Markdown content={message.content || ''} className="text-xs md:text-sm leading-relaxed" />
-                                                    )}
-                                                </CardContent>
-                                            </Card>
-                                            <p className={`text-[10px] md:text-xs text-muted-foreground mt-1.5 px-1 ${
-                                                message.sender === 'user' ? 'text-right' : 'text-left'
-                                            }`}>
-                                                {message.timestamp.toLocaleTimeString([], { 
-                                                    hour: '2-digit', 
-                                                    minute: '2-digit' 
-                                                })}
-                                            </p>
-                                        </div>
+                    {/* ── CHAT STATE — input at bottom ── */}
+                    {hasStarted && (
+                        <>
+                            <div className="flex-1 overflow-y-auto ai-scrollbar px-4 py-6 relative z-10">
+                                <div className="max-w-3xl mx-auto space-y-5">
+                                    {messages.map(msg => <Bubble key={msg.id} msg={msg} />)}
+                                    <div ref={messagesEndRef} />
+                                </div>
+                            </div>
 
-                                        {message.sender === 'user' && (
-                                            <Avatar className="h-6 w-6 md:h-8 md:w-8 border border-slate-200 dark:border-white/10 shadow-sm flex-shrink-0">
-                                                <AvatarFallback className="bg-slate-100 dark:bg-white/10 text-slate-600 dark:text-slate-300">
-                                                    <User className="h-3 w-3 md:h-4 md:w-4" />
-                                                </AvatarFallback>
-                                            </Avatar>
-                                        )}
-                                    </div>
-                            ))}
-                        </div>
-                    </ScrollArea>
-                )}
-
-                {/* Input */}
-                <div className="p-2.5 md:p-4 border-t border-slate-200/50 dark:border-white/[0.06] bg-white/60 dark:bg-white/[0.02] backdrop-blur-sm flex-shrink-0">
-                    <div className="flex gap-2 md:gap-3">
-                        <div className="relative flex-1">
-                            <Input
-                                ref={inputRef}
-                                value={inputValue}
-                                onChange={(e) => setInputValue(e.target.value)}
-                                placeholder="Ask me anything..."
-                                className="h-10 md:h-12 pl-3 md:pl-4 pr-4 text-sm bg-white dark:bg-white/[0.04] border border-slate-200/60 dark:border-white/[0.08] rounded-xl shadow-sm focus:ring-2 transition-all duration-200"
-                                style={{ '--tw-ring-color': `rgba(var(--preset-primary-rgb), 0.2)` } as React.CSSProperties}
-                                onKeyPress={(e) => {
-                                    if (e.key === 'Enter' && !e.shiftKey) {
-                                        e.preventDefault();
-                                        handleSendMessage(inputValue);
-                                    }
-                                }}
-                                disabled={isTyping}
-                            />
-                        </div>
-                        <Button 
-                            onClick={() => handleSendMessage(inputValue)}
-                            disabled={!inputValue.trim() || isTyping}
-                            className="h-10 w-10 md:h-12 md:w-12 text-white rounded-xl shadow-md transition-all duration-200 hover:shadow-lg hover:scale-105 disabled:opacity-50 disabled:hover:scale-100"
-                            style={{ background: `linear-gradient(135deg, var(--preset-primary), var(--preset-lighter))` }}
-                        >
-                            <ArrowUp className="h-4 w-4" />
-                        </Button>
-                    </div>
-                    <p className="text-[10px] md:text-xs text-muted-foreground mt-2 text-center">
-                        AI Assistant can make mistakes. Please verify important information.
-                    </p>
+                            {/* Bottom input — slides in */}
+                            <div className="flex-shrink-0 px-4 pb-4 pt-2 z-10 flex justify-center
+                                animate-in slide-in-from-bottom-6 fade-in duration-500">
+                                <InputBox
+                                    value={inputValue}
+                                    onChange={setInputValue}
+                                    onSend={handleSend}
+                                    disabled={isTyping}
+                                    isCentered={false}
+                                />
+                            </div>
+                        </>
+                    )}
                 </div>
             </div>
-        </div>
+        </>
     );
 };
 

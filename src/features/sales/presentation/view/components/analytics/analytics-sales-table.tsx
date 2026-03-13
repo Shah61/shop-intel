@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import { useMemo, useState, useEffect } from "react";
 import { useTheme } from "next-themes";
 import {
     Table,
@@ -115,13 +115,25 @@ function generateDummyRows(count: number) {
 
 const DUMMY_ROWS = generateDummyRows(30);
 
+const LIMIT_DESKTOP = 13;
+const LIMIT_MOBILE = 13; // one fewer row on phones/tablets so last entry is not shown
+
 const AnalyticsSalesTable = ({
     isLimit
 }: {
     data?: AnalyticsSalesEntity[]
     isLimit: boolean
 }) => {
-    const limitData = isLimit ? DUMMY_ROWS.slice(0, 14) : DUMMY_ROWS;
+    const [isNarrowViewport, setIsNarrowViewport] = useState(false);
+    useEffect(() => {
+        const mq = window.matchMedia("(max-width: 1024px)");
+        const set = () => setIsNarrowViewport(mq.matches);
+        set();
+        mq.addEventListener("change", set);
+        return () => mq.removeEventListener("change", set);
+    }, []);
+    const limit = isLimit ? (isNarrowViewport ? LIMIT_MOBILE : LIMIT_DESKTOP) : DUMMY_ROWS.length;
+    const limitData = isLimit ? DUMMY_ROWS.slice(0, limit) : DUMMY_ROWS;
     const { data: session } = useSession();
     const { resolvedTheme } = useTheme();
     const isDark = resolvedTheme === "dark";

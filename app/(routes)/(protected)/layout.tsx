@@ -2,12 +2,14 @@
 
 import AppSidebar from "@/src/core/shared/view/components/app-sidebar";
 import { useSession } from "@/src/core/lib/dummy-session-provider";
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 import { useEffect } from "react";
 
 const ProtectedLayout = ({ children }: { children: React.ReactNode }) => {
     const { status } = useSession();
     const router = useRouter();
+    const pathname = usePathname();
+    const isIntelligence = pathname?.startsWith("/intelligence");
 
     useEffect(() => {
         if (status === 'unauthenticated') {
@@ -33,7 +35,9 @@ const ProtectedLayout = ({ children }: { children: React.ReactNode }) => {
     return (
         <div className="protected-layout-root flex h-screen overflow-hidden">
             <AppSidebar />
-            <main className="main-content flex-1 overflow-y-auto overflow-x-hidden p-4 sm:p-6 lg:p-8 pb-24 lg:pb-8">
+            <main
+                className={`main-content flex-1 overflow-y-auto overflow-x-hidden ${isIntelligence ? "main-content--intelligence p-0" : "p-4 sm:p-6 lg:p-8 pb-24 lg:pb-8"}`}
+            >
                 {children}
             </main>
         </div>

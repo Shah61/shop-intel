@@ -29,7 +29,8 @@ import {
     Tooltip as RechartsTooltip,
     ResponsiveContainer,
     BarChart,
-    Bar
+    Bar,
+    Legend,
 } from "recharts";
 import DateRangePickerPro, { type DateRange, type Timeframe } from "@/components/ui/date-range-picker-pro";
 import { startOfMonth, endOfMonth } from "date-fns";
@@ -76,6 +77,23 @@ const performanceSummaryData = [
     { date: "2025-01-13", platform: "WooCommerce", type: "Revenue", amount: 7500, units: 75, currency: "MYR" },
     { date: "2025-01-13", platform: "Facebook", type: "Marketing Spend", amount: 2500, units: 0, currency: "MYR" }
 ];
+
+// Aggregated by date for Revenue vs Marketing Spend chart (both series in one chart)
+const revenueVsMarketingData = (() => {
+    const byDate: Record<string, { revenue: number; marketingSpend: number }> = {};
+    performanceSummaryData.forEach((row) => {
+        if (!byDate[row.date]) byDate[row.date] = { revenue: 0, marketingSpend: 0 };
+        if (row.type === "Revenue") byDate[row.date].revenue += row.amount;
+        if (row.type === "Marketing Spend") byDate[row.date].marketingSpend += row.amount;
+    });
+    return Object.entries(byDate)
+        .sort(([a], [b]) => a.localeCompare(b))
+        .map(([dateStr, v]) => ({
+            date: new Date(dateStr).toLocaleDateString("en-US", { month: "short", day: "numeric" }),
+            revenue: v.revenue,
+            marketingSpend: v.marketingSpend,
+        }));
+})();
 
 // Static data for top sellers
 const topSellersData = [
@@ -395,15 +413,18 @@ export default function WooCommerceDashboard() {
                         <Card className="border overflow-hidden" style={{ fontFamily: "'Outfit', sans-serif", borderColor: isDark ? "rgba(var(--preset-primary-rgb), 0.12)" : "rgba(var(--preset-primary-rgb), 0.1)" }}>
                             <CardHeader>
                                 <CardTitle style={{ color: tabTheme.title }}>Revenue vs Marketing Spend</CardTitle>
+                                <p className="text-sm mt-1" style={{ color: tabTheme.subtitle }}>Compare revenue and ad spend by date</p>
                             </CardHeader>
                             <CardContent>
                                 <ResponsiveContainer width="100%" height={300}>
-                                    <BarChart data={revenueTrendData.slice(-7)}>
-                                        <CartesianGrid strokeDasharray="3 3" />
-                                        <XAxis dataKey="date" />
-                                        <YAxis />
-                                        <RechartsTooltip />
-                                        <Bar dataKey="revenue" fill="var(--preset-primary)" name="Revenue" />
+                                    <BarChart data={revenueVsMarketingData} margin={{ top: 8, right: 8, left: 0, bottom: 0 }}>
+                                        <CartesianGrid strokeDasharray="3 3" stroke={isDark ? "rgba(255,255,255,0.06)" : "rgba(0,0,0,0.06)"} />
+                                        <XAxis dataKey="date" tick={{ fontSize: 12 }} style={{ fill: tabTheme.subtitle }} />
+                                        <YAxis tick={{ fontSize: 12 }} style={{ fill: tabTheme.subtitle }} tickFormatter={(v) => `RM ${(v / 1000).toFixed(0)}k`} />
+                                        <RechartsTooltip formatter={(value: number) => formatCurrency(value)} />
+                                        <Legend />
+                                        <Bar dataKey="revenue" name="Revenue" fill="var(--preset-primary)" radius={[4, 4, 0, 0]} />
+                                        <Bar dataKey="marketingSpend" name="Marketing Spend" fill={isDark ? "#3b82f6" : "#2563eb"} radius={[4, 4, 0, 0]} />
                                     </BarChart>
                                 </ResponsiveContainer>
                             </CardContent>

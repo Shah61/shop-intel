@@ -32,6 +32,44 @@ function hexToRgb(hex: string): string {
     return `${r}, ${g}, ${b}`
 }
 
+/* Sidebar nav: dark mode — grey + white on dark bg */
+const SIDEBAR_NAV_FIXED = {
+    sidebarBg: "#131920",
+    sectionLabel: "rgba(255, 255, 255, 0.5)",
+    itemText: "#a1a3a5",
+    childText: "#a1a3a5",
+    hoverText: "#ffffff",
+    hoverBg: "#2b3037",
+    activeText: "#ffffff",
+    activeBg: "#2b3037",
+    activeChildBg: "#2b3037",
+    dashLine: "rgba(255, 255, 255, 0.2)",
+    collapseIcon: "#a1a3a5",
+    collapseBg: "rgba(255, 255, 255, 0.1)",
+    collapseBorder: "rgba(255, 255, 255, 0.2)",
+    divider: "rgba(255, 255, 255, 0.08)",
+}
+
+/* Sidebar nav: light mode — white bg, unselected grey, selected black, no bold */
+const SIDEBAR_NAV_FIXED_LIGHT = {
+    sidebarBg: "#ffffff",
+    sectionLabel: "rgba(0, 0, 0, 0.45)",
+    itemText: "#71717a",
+    childText: "#71717a",
+    hoverText: "#18181b",
+    hoverBg: "#f4f4f5",
+    activeText: "#18181b",
+    activeBg: "#e4e4e7",
+    activeChildBg: "#e4e4e7",
+    dashLine: "rgba(0, 0, 0, 0.12)",
+    collapseIcon: "#71717a",
+    collapseBg: "rgba(0, 0, 0, 0.06)",
+    collapseBorder: "rgba(0, 0, 0, 0.12)",
+    divider: "rgba(0, 0, 0, 0.08)",
+    activeFontWeight: "400",
+    itemFontWeight: "400",
+}
+
 /* ─── Role shimmer badge ─── */
 function RoleBadge({ role = "STAFF", accent, accentLighter }: { role?: string; accent?: string; accentLighter?: string }) {
     const c1 = accent || "#7c3aed"
@@ -151,7 +189,7 @@ function ChildItem({
                 cursor: "pointer",
                 color: active ? t.activeText : t.childText,
                 fontSize: 13,
-                fontWeight: active ? 600 : 400,
+                fontWeight: active ? (Number((t as Record<string, string>).activeFontWeight) || 600) : (Number((t as Record<string, string>).itemFontWeight) || 400),
                 fontFamily: "'Outfit', -apple-system, sans-serif",
                 position: "relative",
                 opacity: visible ? 1 : 0,
@@ -297,9 +335,10 @@ export default function AppSidebar() {
     const isIntegrate = layoutNavColor === "integrate"
 
     const t = useMemo(() => {
+        let base: Record<string, string>
         if (isDark) {
             if (isIntegrate) {
-                return {
+                base = {
                     sidebarBg: "#131920",
                     sidebarBorder: `rgba(255, 255, 255, 0.1)`,
                     sectionLabel: "rgba(255, 255, 255, 0.4)",
@@ -327,66 +366,67 @@ export default function AppSidebar() {
                     accent: pc.primary,
                     accentLighter: pc.lighter,
                 }
+            } else {
+                base = {
+                    sidebarBg: "#131920",
+                    sidebarBorder: `rgba(${pcRgb}, 0.1)`,
+                    sectionLabel: "rgba(156, 163, 175, 0.5)",
+                    itemText: "#9ca3af",
+                    hoverText: "#d1d5db",
+                    hoverBg: `rgba(${pcRgb}, 0.08)`,
+                    activeText: pc.lighter,
+                    activeBg: `rgba(${pcRgb}, 0.12)`,
+                    activeChildBg: `rgba(${pcRgb}, 0.1)`,
+                    childText: "#9ca3af",
+                    dashLine: `rgba(${pcRgb}, 0.2)`,
+                    popoverBg: "#131820",
+                    popoverShadow: `0 0 2px rgba(${pcRgb},0.2), 0 16px 32px -4px rgba(0,0,0,0.5)`,
+                    toggleBg: `rgba(${pcRgb}, 0.1)`,
+                    toggleBorder: `rgba(${pcRgb}, 0.15)`,
+                    toggleKnob: pc.primary,
+                    collapseBg: `rgba(${pcRgb}, 0.1)`,
+                    collapseBorder: `rgba(${pcRgb}, 0.2)`,
+                    collapseIcon: pc.lighter,
+                    logoBg: pc.gradient,
+                    logoText: "#fff",
+                    divider: `rgba(${pcRgb}, 0.08)`,
+                    userText: "#d1d5db",
+                    userSub: "#9ca3af",
+                    accent: pc.primary,
+                    accentLighter: pc.lighter,
+                }
             }
-            return {
-                sidebarBg: "#131920",
-                sidebarBorder: `rgba(${pcRgb}, 0.1)`,
-                sectionLabel: "rgba(156, 163, 175, 0.5)",
-                itemText: "#9ca3af",
-                hoverText: "#d1d5db",
-                hoverBg: `rgba(${pcRgb}, 0.08)`,
-                activeText: pc.lighter,
-                activeBg: `rgba(${pcRgb}, 0.12)`,
-                activeChildBg: `rgba(${pcRgb}, 0.1)`,
-                childText: "#9ca3af",
-                dashLine: `rgba(${pcRgb}, 0.2)`,
-                popoverBg: "#131820",
-                popoverShadow: `0 0 2px rgba(${pcRgb},0.2), 0 16px 32px -4px rgba(0,0,0,0.5)`,
-                toggleBg: `rgba(${pcRgb}, 0.1)`,
-                toggleBorder: `rgba(${pcRgb}, 0.15)`,
+        } else {
+            base = {
+                sidebarBg: "#ffffff",
+                sidebarBorder: `rgba(${pcRgb}, 0.08)`,
+                sectionLabel: `rgba(${pcRgb}, 0.4)`,
+                itemText: "#5a4a70",
+                hoverText: "#1a1025",
+                hoverBg: `rgba(${pcRgb}, 0.06)`,
+                activeText: pc.primary,
+                activeBg: `rgba(${pcRgb}, 0.08)`,
+                activeChildBg: `rgba(${pcRgb}, 0.06)`,
+                childText: "#8b7aa0",
+                dashLine: `rgba(${pcRgb}, 0.18)`,
+                popoverBg: "#ffffff",
+                popoverShadow: "0 0 2px rgba(145,158,171,0.24), 0 16px 32px -4px rgba(145,158,171,0.24)",
+                toggleBg: `rgba(${pcRgb}, 0.06)`,
+                toggleBorder: `rgba(${pcRgb}, 0.12)`,
                 toggleKnob: pc.primary,
-                collapseBg: `rgba(${pcRgb}, 0.1)`,
-                collapseBorder: `rgba(${pcRgb}, 0.2)`,
-                collapseIcon: pc.lighter,
+                collapseBg: "#fff",
+                collapseBorder: `rgba(${pcRgb}, 0.15)`,
+                collapseIcon: pc.primary,
                 logoBg: pc.gradient,
                 logoText: "#fff",
-                divider: `rgba(${pcRgb}, 0.08)`,
-                userText: "#d1d5db",
-                userSub: "#9ca3af",
+                divider: `rgba(${pcRgb}, 0.06)`,
+                userText: "#1a1025",
+                userSub: "#8b7aa0",
                 accent: pc.primary,
                 accentLighter: pc.lighter,
             }
         }
-        // Light mode: always use a clean white sidebar background,
-        // regardless of the selected nav color preset.
-        return {
-            sidebarBg: "#ffffff",
-            sidebarBorder: `rgba(${pcRgb}, 0.08)`,
-            sectionLabel: `rgba(${pcRgb}, 0.4)`,
-            itemText: "#5a4a70",
-            hoverText: "#1a1025",
-            hoverBg: `rgba(${pcRgb}, 0.06)`,
-            activeText: pc.primary,
-            activeBg: `rgba(${pcRgb}, 0.08)`,
-            activeChildBg: `rgba(${pcRgb}, 0.06)`,
-            childText: "#8b7aa0",
-            dashLine: `rgba(${pcRgb}, 0.18)`,
-            popoverBg: "#ffffff",
-            popoverShadow: "0 0 2px rgba(145,158,171,0.24), 0 16px 32px -4px rgba(145,158,171,0.24)",
-            toggleBg: `rgba(${pcRgb}, 0.06)`,
-            toggleBorder: `rgba(${pcRgb}, 0.12)`,
-            toggleKnob: pc.primary,
-            collapseBg: "#fff",
-            collapseBorder: `rgba(${pcRgb}, 0.15)`,
-            collapseIcon: pc.primary,
-            logoBg: pc.gradient,
-            logoText: "#fff",
-            divider: `rgba(${pcRgb}, 0.06)`,
-            userText: "#1a1025",
-            userSub: "#8b7aa0",
-            accent: pc.primary,
-            accentLighter: pc.lighter,
-        }
+        return { ...base, ...(isDark ? SIDEBAR_NAV_FIXED : SIDEBAR_NAV_FIXED_LIGHT) } as typeof base
     }, [isDark, pc, pcRgb, isIntegrate])
 
     // Expose preset colors to CSS so Sales pages (Overview, TikTok, Shopee, Shopify, Facebook, WooCommerce) can use var(--preset-primary) etc.
@@ -634,7 +674,7 @@ export default function AppSidebar() {
                             style={{
                                 fontSize: 17,
                                 fontWeight: 700,
-                                color: isDark ? "#9ca3af" : t.userText,
+                                color: t.itemText,
                                 whiteSpace: "nowrap",
                                 letterSpacing: "-0.3px",
                             }}
@@ -743,7 +783,7 @@ export default function AppSidebar() {
                                     cursor: "pointer",
                                     color: isActive ? t.activeText : t.itemText,
                                     fontSize: collapsed ? 10 : 14,
-                                    fontWeight: isActive ? 600 : 500,
+                                    fontWeight: isActive ? (Number((t as Record<string, string>).activeFontWeight) || 600) : (Number((t as Record<string, string>).itemFontWeight) || 500),
                                     transition: "background 0.2s ease, color 0.2s ease",
                                     position: "relative",
                                     minHeight: collapsed ? "auto" : 42,
@@ -807,8 +847,15 @@ export default function AppSidebar() {
                 })}
             </div>
 
-            {/* Bottom section */}
-            <div style={{ padding: collapsed ? "12px 8px 16px" : "12px 14px 16px" }}>
+            {/* Bottom section — inside scroll so it’s reachable on short viewports (e.g. iPad/phone) */}
+            <div
+                className="sidebar-bottom-section"
+                style={{
+                    flexShrink: 0,
+                    padding: collapsed ? "12px 8px 16px" : "12px 14px 16px",
+                    paddingBottom: collapsed ? 16 : 20,
+                }}
+            >
                 <div style={{ height: 1, background: t.divider, marginBottom: 12 }} />
 
                 {collapsed ? (
@@ -1119,7 +1166,7 @@ export default function AppSidebar() {
                                             background: active ? t.activeBg : "transparent",
                                             color: active ? t.activeText : t.itemText,
                                             fontSize: 14,
-                                            fontWeight: active ? 600 : 500,
+                                            fontWeight: active ? (Number((t as Record<string, string>).activeFontWeight) || 600) : (Number((t as Record<string, string>).itemFontWeight) || 500),
                                             borderRadius: 10,
                                             cursor: "pointer",
                                             transition: "background 0.15s ease, color 0.15s ease",
@@ -1269,7 +1316,7 @@ export default function AppSidebar() {
                                 </div>
                                 <span style={{
                                     fontSize: 9,
-                                    fontWeight: isActive ? 700 : 500,
+                                    fontWeight: isActive ? (Number((t as Record<string, string>).activeFontWeight) || 700) : (Number((t as Record<string, string>).itemFontWeight) || 500),
                                     lineHeight: 1.1,
                                     whiteSpace: "nowrap",
                                     overflow: "hidden",
