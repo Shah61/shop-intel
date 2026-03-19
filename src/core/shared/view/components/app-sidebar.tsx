@@ -17,6 +17,7 @@ import {
     Settings,
     Sun,
     Moon,
+    GitBranch,
     ChevronDown,
     ChevronLeft,
     ChevronRight,
@@ -504,6 +505,7 @@ export default function AppSidebar() {
             ],
         },
         { id: "user-activity", label: "User Activity", icon: <Activity size={20} />, path: "/user-activity" },
+        { id: "branches", label: "Branches", icon: <GitBranch size={20} />, path: "/branches" },
         { id: "setting", label: "Settings", icon: <Settings size={20} />, path: "/setting" },
     ]
 
@@ -514,6 +516,7 @@ export default function AppSidebar() {
         inventory: "/inventory",
         physical: "/physical",
         affiliates: "/affiliates",
+        branches: "/branches",
     }
 
     const isItemActive = (item: MenuItem): boolean => {
