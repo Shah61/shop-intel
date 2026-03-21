@@ -72,6 +72,8 @@ export default {
 			animation: {
 				float: 'float 6s ease-in-out infinite',
 				ripple: 'ripple 2s linear infinite',
+				'competitor-shimmer': 'competitor-shimmer 2.5s ease-in-out infinite',
+				'competitor-shimmer-slow': 'competitor-shimmer 2s ease-in-out infinite',
 			},
 			keyframes: {
 				float: {
@@ -87,6 +89,14 @@ export default {
 						transform: 'translate(-50%, -50%) scale(1.2)',
 						opacity: '0',
 					},
+				},
+				'competitor-shimmer': {
+					'0%': { transform: 'translateX(-100%)' },
+					'100%': { transform: 'translateX(200%)' },
+				},
+				'competitor-trend-shine': {
+					'0%': { backgroundPosition: '280% center' },
+					'100%': { backgroundPosition: '-280% center' },
 				},
 			}
 		}
