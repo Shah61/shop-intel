@@ -541,7 +541,7 @@ const CompetitorIntelligence: React.FC = () => {
       {/* ═══════════════════════════════════════════════════════════════════ */}
       {/*  KPI STRIP                                                        */}
       {/* ═══════════════════════════════════════════════════════════════════ */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(148px,1fr))', gap: 10 }}>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(132px,1fr))', gap: 10 }}>
         {[
           { label: 'Competitors', value: summary.totalChannels, fmt: (v: number) => v.toString(), icon: <Users style={{ width: 14, height: 14 }} />, accent: 'var(--preset-primary)', delay: '0s' },
           { label: 'Videos Tracked', value: summary.totalVideos, fmt: (v: number) => v.toString(), icon: <Video style={{ width: 14, height: 14 }} />, accent: '#6366f1', delay: '.06s' },
@@ -550,14 +550,16 @@ const CompetitorIntelligence: React.FC = () => {
           { label: 'Avg Engagement', value: summary.avgEng * 100, fmt: (v: number) => `${v.toFixed(1)}%`, icon: <Sparkles style={{ width: 14, height: 14 }} />, accent: '#10b981', delay: '.24s' },
           { label: 'High Threat', value: summary.highThreat, fmt: (v: number) => v.toString(), icon: <AlertTriangle style={{ width: 14, height: 14 }} />, accent: '#ef4444', delay: '.30s' },
         ].map((k, i) => (
-          <div key={i} style={{ borderRadius: 13, border: '1px solid rgba(255,255,255,.07)', background: 'rgba(255,255,255,.03)', padding: '15px 17px', position: 'relative', overflow: 'hidden', animation: `ait-up .45s ease ${k.delay} both` }}>
+          <div key={i} style={{ borderRadius: 13, border: '1px solid rgba(255,255,255,.07)', background: 'rgba(255,255,255,.03)', padding: '11px 13px', position: 'relative', overflow: 'hidden', animation: `ait-up .45s ease ${k.delay} both` }}>
             <div style={{ position: 'absolute', top: '-40%', right: '-15%', width: 110, height: 110, borderRadius: '50%', background: `radial-gradient(circle,${k.accent}18,transparent 70%)`, pointerEvents: 'none' }} />
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 10 }}>
-              <div style={{ width: 30, height: 30, borderRadius: 8, background: `${k.accent}18`, display: 'flex', alignItems: 'center', justifyContent: 'center', color: k.accent }}>{k.icon}</div>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 8, marginBottom: 8 }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 8, minWidth: 0, flex: 1 }}>
+                <div style={{ width: 28, height: 28, borderRadius: 8, background: `${k.accent}18`, display: 'flex', alignItems: 'center', justifyContent: 'center', color: k.accent, flexShrink: 0 }}>{k.icon}</div>
+                <div style={{ fontSize: 9, color: 'rgba(255,255,255,.4)', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.05em', lineHeight: 1.25, minWidth: 0 }}>{k.label}</div>
+              </div>
               <PulseDot size={5} color={k.accent} />
             </div>
-            <div style={{ fontSize: 23, fontWeight: 800, letterSpacing: '-0.5px', lineHeight: 1, color: 'rgba(255,255,255,.92)', marginBottom: 4 }}><AnimNum value={k.value} format={k.fmt} /></div>
-            <div style={{ fontSize: 10, color: 'rgba(255,255,255,.38)', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.05em' }}>{k.label}</div>
+            <div style={{ fontSize: 22, fontWeight: 800, letterSpacing: '-0.5px', lineHeight: 1.1, color: 'rgba(255,255,255,.92)' }}><AnimNum value={k.value} format={k.fmt} /></div>
           </div>
         ))}
       </div>
