@@ -467,7 +467,7 @@ export default function AppSidebar() {
             children: [
                 { id: "personal", label: "Personal Marketing", path: "/marketing" },
                 { id: "facebook", label: "Facebook Marketing", path: "/marketing?tab=facebook", iconSrc: "/images/facebook.png" },
-                { id: "ai-generator", label: "AI Generator", path: "/marketing?tab=ai" },
+                { id: "ai-generator", label: "AI Storyboard", path: "/marketing?tab=ai" },
             ],
         },
         {
