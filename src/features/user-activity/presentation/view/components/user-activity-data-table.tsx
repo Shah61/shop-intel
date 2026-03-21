@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useRef, useEffect, useCallback } from "react";
 import {
     Table,
     TableBody,
@@ -55,7 +55,8 @@ import {
     TrendingUp,
     Settings,
     Layers,
-    AlertCircle
+    AlertCircle,
+    Loader2
 } from "lucide-react";
 import { EventEntity, EventFilterParams } from "../../../data/model/user-activity-entity";
 import { usePrefetchEvent, useEventByIdQuery } from "../../../data/user-activity-tanstack";
@@ -63,6 +64,10 @@ import { usePrefetchEvent, useEventByIdQuery } from "../../../data/user-activity
 interface EventsDataTableProps {
     events: EventEntity[];
     isLoading?: boolean;
+    isFetchingNextPage?: boolean;
+    hasNextPage?: boolean;
+    onLoadMore?: () => void;
+    totalCount?: number;
     filters: EventFilterParams;
     onFiltersChange: (filters: EventFilterParams) => void;
     onEventView?: (event: EventEntity) => void;
@@ -72,6 +77,10 @@ interface EventsDataTableProps {
 const UserActivityDataTable: React.FC<EventsDataTableProps> = ({
     events,
     isLoading = false,
+    isFetchingNextPage = false,
+    hasNextPage = false,
+    onLoadMore,
+    totalCount,
     filters,
     onFiltersChange,
     onEventView,
@@ -91,10 +100,29 @@ const UserActivityDataTable: React.FC<EventsDataTableProps> = ({
     const { prefetchEvent } = usePrefetchEvent();
     const { data: selectedEvent, isLoading: isEventLoading } = useEventByIdQuery(selectedEventId);
 
+    // ── Infinite scroll: observe a sentinel element at the bottom ──
+    const sentinelRef = useRef<HTMLDivElement>(null);
+
+    useEffect(() => {
+        if (!sentinelRef.current || !onLoadMore) return;
+
+        const observer = new IntersectionObserver(
+            (entries) => {
+                const entry = entries[0];
+                if (entry.isIntersecting && hasNextPage && !isFetchingNextPage) {
+                    onLoadMore();
+                }
+            },
+            { rootMargin: "200px" } // trigger 200px before reaching the bottom
+        );
+
+        observer.observe(sentinelRef.current);
+        return () => observer.disconnect();
+    }, [hasNextPage, isFetchingNextPage, onLoadMore]);
+
     const handleViewEvent = (event: EventEntity) => {
         setSelectedEventId(event.id);
         setIsDialogOpen(true);
-        // Also call the provided onEventView callback if exists
         onEventView?.(event);
     };
 
@@ -113,213 +141,99 @@ const UserActivityDataTable: React.FC<EventsDataTableProps> = ({
         });
     };
 
-    const getStatusColor = (status?: string) => {
-        switch (status) {
-            case 'active':
-                return 'bg-green-100 text-green-800 border-green-200';
-            case 'completed':
-                return 'bg-blue-100 text-blue-800 border-blue-200';
-            case 'cancelled':
-                return 'bg-red-100 text-red-800 border-red-200';
-            case 'pending':
-                return 'bg-yellow-100 text-yellow-800 border-yellow-200';
-            default:
-                return 'bg-gray-100 text-gray-800 border-gray-200';
-        }
-    };
-
     const getTypeColor = (type?: string, eventName?: string) => {
         const lowerType = type?.toLowerCase() || '';
         const lowerName = eventName?.toLowerCase() || '';
 
-        // Orders and Shopping
         if (lowerType === 'order' || lowerName.includes('order') || lowerName.includes('purchase') || lowerName.includes('checkout')) {
             return 'bg-blue-100 text-blue-800 border-blue-200';
         }
-        
-        // Categories
-        if (lowerType === 'category' || lowerType === 'categories' || lowerName.includes('category') || lowerName.includes('categories') || lowerName.includes('classification')) {
+        if (lowerType === 'category' || lowerType === 'categories' || lowerName.includes('category') || lowerName.includes('categories')) {
             return 'bg-green-100 text-green-800 border-green-200';
         }
-        
-        // Collections
-        if (lowerType === 'collection' || lowerType === 'collections' || lowerName.includes('collection') || lowerName.includes('collections') || lowerName.includes('group')) {
+        if (lowerType === 'collection' || lowerType === 'collections' || lowerName.includes('collection') || lowerName.includes('collections')) {
             return 'bg-purple-100 text-purple-800 border-purple-200';
         }
-        
-        // Discount
-        if (lowerType === 'discount' || lowerName.includes('discount') || lowerName.includes('coupon') || lowerName.includes('sale')) {
+        if (lowerType === 'discount' || lowerName.includes('discount') || lowerName.includes('coupon')) {
             return 'bg-red-100 text-red-800 border-red-200';
         }
-        
-        // Products
-        if (lowerType === 'product' || lowerName.includes('product') || lowerName.includes('inventory') || lowerName.includes('stock')) {
+        if (lowerType === 'product' || lowerName.includes('product') || lowerName.includes('inventory')) {
             return 'bg-indigo-100 text-indigo-800 border-indigo-200';
         }
-        
-        // Tags and Labels
-        if (lowerName.includes('tag') || lowerName.includes('label') || lowerName.includes('keyword')) {
+        if (lowerName.includes('tag') || lowerName.includes('label')) {
             return 'bg-yellow-100 text-yellow-800 border-yellow-200';
         }
-        
-        // Launches and Releases
-        if (lowerType === 'launch' || lowerName.includes('launch') || lowerName.includes('release') || lowerName.includes('debut')) {
+        if (lowerType === 'launch' || lowerName.includes('launch') || lowerName.includes('release')) {
             return 'bg-orange-100 text-orange-800 border-orange-200';
         }
-        
-        // Workshops and Training
-        if (lowerType === 'workshop' || lowerName.includes('workshop') || lowerName.includes('training') || lowerName.includes('tutorial')) {
+        if (lowerType === 'workshop' || lowerName.includes('workshop') || lowerName.includes('training')) {
             return 'bg-teal-100 text-teal-800 border-teal-200';
         }
-        
-        // Gifts and Rewards
-        if (lowerName.includes('gift') || lowerName.includes('reward') || lowerName.includes('bonus')) {
+        if (lowerName.includes('gift') || lowerName.includes('reward')) {
             return 'bg-red-100 text-red-800 border-red-200';
         }
-        
-        // Analytics and Tracking
-        if (lowerName.includes('analytics') || lowerName.includes('tracking') || lowerName.includes('metric') || lowerName.includes('report')) {
+        if (lowerName.includes('analytics') || lowerName.includes('tracking') || lowerName.includes('report')) {
             return 'bg-emerald-100 text-emerald-800 border-emerald-200';
         }
-        
-        // Campaign and Marketing
-        if (lowerName.includes('campaign') || lowerName.includes('marketing') || lowerName.includes('advertisement')) {
+        if (lowerName.includes('campaign') || lowerName.includes('marketing')) {
             return 'bg-purple-100 text-purple-800 border-purple-200';
         }
-        
-        // System and Configuration
-        if (lowerName.includes('system') || lowerName.includes('config') || lowerName.includes('setting') || lowerName.includes('admin')) {
+        if (lowerName.includes('system') || lowerName.includes('config') || lowerName.includes('setting')) {
             return 'bg-gray-100 text-gray-800 border-gray-200';
         }
-        
-        // Events and Activities
-        if (lowerName.includes('event') || lowerName.includes('activity') || lowerName.includes('action')) {
+        if (lowerName.includes('event') || lowerName.includes('activity')) {
             return 'bg-amber-100 text-amber-800 border-amber-200';
         }
-
-        // Default fallback
         return 'bg-slate-100 text-slate-800 border-slate-200';
     };
 
     const getEventIconAndBg = (event: EventEntity) => {
-        // Check event name for more specific categorization
         const eventName = event.name?.toLowerCase() || '';
         const eventType = event.type?.toLowerCase() || '';
 
-        // Orders and Shopping
-        if (eventType === 'order' || eventName.includes('order') || eventName.includes('purchase') || eventName.includes('checkout')) {
-            return {
-                icon: <ShoppingBag className="h-3 w-3 text-blue-600" />,
-                bgClass: 'bg-blue-100'
-            };
+        if (eventType === 'order' || eventName.includes('order') || eventName.includes('purchase')) {
+            return { icon: <ShoppingBag className="h-3 w-3 text-blue-600" />, bgClass: 'bg-blue-100' };
         }
-        
-        // Categories
-        if (eventType === 'category' || eventType === 'categories' || eventName.includes('category') || eventName.includes('categories') || eventName.includes('classification')) {
-            return {
-                icon: <FolderOpen className="h-3 w-3 text-green-600" />,
-                bgClass: 'bg-green-100'
-            };
+        if (eventType === 'category' || eventType === 'categories' || eventName.includes('category') || eventName.includes('categories')) {
+            return { icon: <FolderOpen className="h-3 w-3 text-green-600" />, bgClass: 'bg-green-100' };
         }
-        
-        // Collections
-        if (eventType === 'collection' || eventType === 'collections' || eventName.includes('collection') || eventName.includes('collections') || eventName.includes('group')) {
-            return {
-                icon: <Layers className="h-3 w-3 text-purple-600" />,
-                bgClass: 'bg-purple-100'
-            };
+        if (eventType === 'collection' || eventType === 'collections' || eventName.includes('collection')) {
+            return { icon: <Layers className="h-3 w-3 text-purple-600" />, bgClass: 'bg-purple-100' };
         }
-        
-        // Discount
-        if (eventType === 'discount' || eventName.includes('discount') || eventName.includes('coupon') || eventName.includes('sale')) {
-            return {
-                icon: <Tag className="h-3 w-3 text-red-600" />,
-                bgClass: 'bg-red-100'
-            };
+        if (eventType === 'discount' || eventName.includes('discount') || eventName.includes('coupon')) {
+            return { icon: <Tag className="h-3 w-3 text-red-600" />, bgClass: 'bg-red-100' };
         }
-        
-        // Products
-        if (eventType === 'product' || eventName.includes('product') || eventName.includes('inventory') || eventName.includes('stock')) {
-            return {
-                icon: <ShoppingBag className="h-3 w-3 text-indigo-600" />,
-                bgClass: 'bg-indigo-100'
-            };
+        if (eventType === 'product' || eventName.includes('product') || eventName.includes('inventory')) {
+            return { icon: <ShoppingBag className="h-3 w-3 text-indigo-600" />, bgClass: 'bg-indigo-100' };
         }
-        
-        // Tags and Labels
-        if (eventName.includes('tag') || eventName.includes('label') || eventName.includes('keyword')) {
-            return {
-                icon: <Tag className="h-3 w-3 text-yellow-600" />,
-                bgClass: 'bg-yellow-100'
-            };
+        if (eventName.includes('tag') || eventName.includes('label')) {
+            return { icon: <Tag className="h-3 w-3 text-yellow-600" />, bgClass: 'bg-yellow-100' };
         }
-        
-        // Launches and Releases
-        if (eventType === 'launch' || eventName.includes('launch') || eventName.includes('release') || eventName.includes('debut')) {
-            return {
-                icon: <Rocket className="h-3 w-3 text-orange-600" />,
-                bgClass: 'bg-orange-100'
-            };
+        if (eventType === 'launch' || eventName.includes('launch') || eventName.includes('release')) {
+            return { icon: <Rocket className="h-3 w-3 text-orange-600" />, bgClass: 'bg-orange-100' };
         }
-        
-        // Workshops and Training
-        if (eventType === 'workshop' || eventName.includes('workshop') || eventName.includes('training') || eventName.includes('tutorial')) {
-            return {
-                icon: <Wrench className="h-3 w-3 text-teal-600" />,
-                bgClass: 'bg-teal-100'
-            };
+        if (eventType === 'workshop' || eventName.includes('workshop') || eventName.includes('training')) {
+            return { icon: <Wrench className="h-3 w-3 text-teal-600" />, bgClass: 'bg-teal-100' };
         }
-        
-        // Gifts and Rewards
-        if (eventName.includes('gift') || eventName.includes('reward') || eventName.includes('bonus')) {
-            return {
-                icon: <Gift className="h-3 w-3 text-red-600" />,
-                bgClass: 'bg-red-100'
-            };
+        if (eventName.includes('gift') || eventName.includes('reward')) {
+            return { icon: <Gift className="h-3 w-3 text-red-600" />, bgClass: 'bg-red-100' };
         }
-        
-        // Analytics and Tracking
-        if (eventName.includes('analytics') || eventName.includes('tracking') || eventName.includes('metric') || eventName.includes('report')) {
-            return {
-                icon: <TrendingUp className="h-3 w-3 text-emerald-600" />,
-                bgClass: 'bg-emerald-100'
-            };
+        if (eventName.includes('analytics') || eventName.includes('tracking') || eventName.includes('report')) {
+            return { icon: <TrendingUp className="h-3 w-3 text-emerald-600" />, bgClass: 'bg-emerald-100' };
         }
-        
-        // Campaign and Marketing
-        if (eventName.includes('campaign') || eventName.includes('marketing') || eventName.includes('advertisement')) {
-            return {
-                icon: <Target className="h-3 w-3 text-purple-600" />,
-                bgClass: 'bg-purple-100'
-            };
+        if (eventName.includes('campaign') || eventName.includes('marketing')) {
+            return { icon: <Target className="h-3 w-3 text-purple-600" />, bgClass: 'bg-purple-100' };
         }
-        
-        // System and Configuration
-        if (eventName.includes('system') || eventName.includes('config') || eventName.includes('setting') || eventName.includes('admin')) {
-            return {
-                icon: <Settings className="h-3 w-3 text-gray-600" />,
-                bgClass: 'bg-gray-100'
-            };
+        if (eventName.includes('system') || eventName.includes('config') || eventName.includes('setting')) {
+            return { icon: <Settings className="h-3 w-3 text-gray-600" />, bgClass: 'bg-gray-100' };
         }
-        
-        // Events and Activities
-        if (eventName.includes('event') || eventName.includes('activity') || eventName.includes('action')) {
-            return {
-                icon: <Zap className="h-3 w-3 text-amber-600" />,
-                bgClass: 'bg-amber-100'
-            };
+        if (eventName.includes('event') || eventName.includes('activity')) {
+            return { icon: <Zap className="h-3 w-3 text-amber-600" />, bgClass: 'bg-amber-100' };
         }
-
-        // Default fallback
-        return {
-            icon: <Calendar className="h-3 w-3 text-slate-600" />,
-            bgClass: 'bg-slate-100'
-        };
+        return { icon: <Calendar className="h-3 w-3 text-slate-600" />, bgClass: 'bg-slate-100' };
     };
 
-    const getEventIcon = (event: EventEntity) => {
-        return getEventIconAndBg(event).icon;
-    };
+    const getEventIcon = (event: EventEntity) => getEventIconAndBg(event).icon;
 
     const getSortIcon = (column: keyof EventEntity) => {
         if (sortConfig.key !== column) {
@@ -351,26 +265,16 @@ const UserActivityDataTable: React.FC<EventsDataTableProps> = ({
         if (event.type) {
             return event.type.charAt(0).toUpperCase() + event.type.slice(1);
         }
-        // Infer type from event name if not explicitly set
         const eventName = event.name.toLowerCase();
-        if (eventName.includes('order')) {
-            return 'Order';
-        }
-        if (eventName.includes('category') || eventName.includes('categories')) {
-            return 'Categories';
-        }
-        if (eventName.includes('collection') || eventName.includes('collections')) {
-            return 'Collections';
-        }
-        if (eventName.includes('discount') || eventName.includes('coupon')) {
-            return 'Discount';
-        }
-        if (eventName.includes('product')) {
-            return 'Product';
-        }
+        if (eventName.includes('order')) return 'Order';
+        if (eventName.includes('category') || eventName.includes('categories')) return 'Categories';
+        if (eventName.includes('collection') || eventName.includes('collections')) return 'Collections';
+        if (eventName.includes('discount') || eventName.includes('coupon')) return 'Discount';
+        if (eventName.includes('product')) return 'Product';
         return 'Event';
     };
 
+    // ── Initial loading state ──
     if (isLoading) {
         return (
             <Card className={cn("p-6", className)}>
@@ -391,6 +295,7 @@ const UserActivityDataTable: React.FC<EventsDataTableProps> = ({
         );
     }
 
+    // ── Empty state ──
     if (events.length === 0) {
         return (
             <Card className={cn("p-12 text-center", className)}>
@@ -521,7 +426,6 @@ const UserActivityDataTable: React.FC<EventsDataTableProps> = ({
                                             <Eye className="mr-2 h-4 w-4" />
                                             View Details
                                         </DropdownMenuItem>
-
                                         <DropdownMenuItem
                                             onClick={(e) => {
                                                 e.stopPropagation();
@@ -540,7 +444,30 @@ const UserActivityDataTable: React.FC<EventsDataTableProps> = ({
                 </TableBody>
             </Table>
 
-            {/* Event Details Dialog */}
+            {/* ── Infinite scroll sentinel + loading indicator ── */}
+            <div ref={sentinelRef} className="px-4 py-3">
+                {isFetchingNextPage && (
+                    <div className="flex items-center justify-center gap-2 py-2">
+                        <Loader2 className="h-4 w-4 animate-spin text-muted-foreground" />
+                        <span className="text-xs text-muted-foreground">Loading more activities...</span>
+                    </div>
+                )}
+            </div>
+
+            {/* ── Bottom status bar ── */}
+            {totalCount !== undefined && (
+                <div className="border-t px-4 py-3 flex items-center justify-between">
+                    <p className="text-xs text-muted-foreground">
+                        Showing <span className="font-medium text-foreground">{events.length}</span> of{" "}
+                        <span className="font-medium text-foreground">{totalCount}</span> results
+                    </p>
+                    {!hasNextPage && events.length > 0 && (
+                        <p className="text-xs text-muted-foreground">All activities loaded</p>
+                    )}
+                </div>
+            )}
+
+            {/* Event Details Dialog (unchanged) */}
             <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
                 <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto">
                     <DialogHeader>
@@ -562,7 +489,6 @@ const UserActivityDataTable: React.FC<EventsDataTableProps> = ({
                         </div>
                     ) : selectedEvent ? (
                         <div className="space-y-6 p-4">
-                            {/* Event Header */}
                             <div className="space-y-2">
                                 <div className="flex items-center gap-2">
                                     <h3 className="text-lg font-semibold">{selectedEvent.name}</h3>
@@ -576,7 +502,6 @@ const UserActivityDataTable: React.FC<EventsDataTableProps> = ({
                                 <p className="text-sm text-muted-foreground">{selectedEvent.description}</p>
                             </div>
 
-                            {/* Event ID */}
                             <div className="space-y-2">
                                 <h4 className="text-sm font-medium">Event ID</h4>
                                 <div className="bg-muted p-2 rounded font-mono text-xs">
@@ -584,7 +509,6 @@ const UserActivityDataTable: React.FC<EventsDataTableProps> = ({
                                 </div>
                             </div>
 
-                            {/* Event Details Grid */}
                             <div className="grid grid-cols-2 gap-4">
                                 <div className="space-y-2">
                                     <h4 className="text-sm font-medium flex items-center gap-1">
@@ -613,7 +537,6 @@ const UserActivityDataTable: React.FC<EventsDataTableProps> = ({
                                 </div>
                             </div>
 
-                            {/* User Information */}
                             {selectedEvent.user && (
                                 <div className="space-y-2">
                                     <h4 className="text-sm font-medium flex items-center gap-1">
@@ -638,7 +561,6 @@ const UserActivityDataTable: React.FC<EventsDataTableProps> = ({
                                 </div>
                             )}
 
-                            {/* Additional Event Data */}
                             <div className="space-y-2">
                                 <h4 className="text-sm font-medium">Raw Event Data</h4>
                                 <div className="bg-muted p-3 rounded text-xs font-mono max-h-40 overflow-y-auto">
@@ -667,4 +589,4 @@ const UserActivityDataTable: React.FC<EventsDataTableProps> = ({
     );
 };
 
-export default UserActivityDataTable; 
+export default UserActivityDataTable;

@@ -34,15 +34,12 @@ const UserActivityFilters: React.FC<EventFiltersProps> = ({
     onFiltersChange,
     className
 }) => {
-    // Get default date range (3 days ago to today)
+    // Default window must cover mock activity dates (see user-activity-tanstack: up to ~29 days back)
     const getDefaultDateRange = () => {
         const today = new Date();
-        const threeDaysAgo = new Date();
-        threeDaysAgo.setDate(today.getDate() - 3);
-        return {
-            from: threeDaysAgo,
-            to: today
-        };
+        const from = new Date();
+        from.setDate(today.getDate() - 35);
+        return { from, to: today };
     };
 
     // Initialize with default date range if no dates are provided

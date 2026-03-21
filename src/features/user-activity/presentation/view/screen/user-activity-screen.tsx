@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useCallback } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -19,19 +19,18 @@ import {
     UsersIcon
 } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { useEventsQuery, useEventAnalyticsSummaryQuery } from "../../../data/user-activity-tanstack";
+import { useInfiniteEventsQuery, useEventAnalyticsSummaryQuery } from "../../../data/user-activity-tanstack";
 import { EventFilterParams, EventEntity } from "../../../data/model/user-activity-entity";
 import UserActivityFilters from "../components/user-activity-filters";
 import UserActivityDataTable from "../components/user-activity-data-table";
-import UserActivityPagination from "../components/user-activity-pagination";
 import { StaffDataTable } from "../../../../sales/presentation/view/components/physical/staff-data-table";
 import { useUsersQuery, useDeleteUserMutation } from "../../../../auth/presentation/tanstack/users-tanstack";
 import { UsersEntity } from "../../../../auth/data/model/users-entity";
 import toast from "react-hot-toast";
 
 const UserActivityScreen: React.FC = () => {
-    const [filters, setFilters] = useState<EventFilterParams>({
-        page: 1,
+    // Filters — note: `page` is no longer managed here, useInfiniteQuery handles it
+    const [filters, setFilters] = useState<Omit<EventFilterParams, 'page'>>({
         limit: 10,
         sort_by: 'created_at',
         sort_order: 'desc'
@@ -48,14 +47,26 @@ const UserActivityScreen: React.FC = () => {
         page: 1
     }), [filters.start_date, filters.end_date]);
 
-    // Queries
+    // ── Infinite scroll query (replaces useEventsQuery) ──
     const { 
-        data: eventsData, 
+        data: eventsPages, 
         isLoading: isLoadingEvents, 
         error: eventsError,
-        refetch: refetchEvents 
-    } = useEventsQuery(filters);
-    
+        refetch: refetchEvents,
+        fetchNextPage,
+        hasNextPage,
+        isFetchingNextPage,
+    } = useInfiniteEventsQuery(filters);
+
+    // Flatten all pages into a single events array
+    const allEvents = useMemo(() => {
+        if (!eventsPages?.pages) return [];
+        return eventsPages.pages.flatMap((page) => page.events);
+    }, [eventsPages]);
+
+    // Total count from the first page's metadata (same across all pages)
+    const totalCount = eventsPages?.pages?.[0]?.metadata?.total;
+
     const { 
         data: analyticsData, 
         isLoading: isLoadingAnalytics,
@@ -71,13 +82,14 @@ const UserActivityScreen: React.FC = () => {
 
     const deleteUserMutation = useDeleteUserMutation();
 
-    const handleFiltersChange = (newFilters: EventFilterParams) => {
-        setFilters(newFilters);
-    };
+    const handleFiltersChange = useCallback((newFilters: EventFilterParams) => {
+        // Strip `page` from filters — useInfiniteQuery manages pagination internally
+        const { page, ...rest } = newFilters;
+        setFilters(rest);
+    }, []);
 
     const handleEventView = (event: EventEntity) => {
         setSelectedEvent(event);
-        // Here you could open a modal or navigate to a detail page
         console.log('Viewing event:', event);
     };
 
@@ -88,6 +100,12 @@ const UserActivityScreen: React.FC = () => {
             refetchUsers();
         }
     };
+
+    const handleLoadMore = useCallback(() => {
+        if (hasNextPage && !isFetchingNextPage) {
+            fetchNextPage();
+        }
+    }, [hasNextPage, isFetchingNextPage, fetchNextPage]);
 
     const handleDeleteUser = async (id: string) => {
         try {
@@ -155,7 +173,6 @@ const UserActivityScreen: React.FC = () => {
                         <RefreshCw className={cn("h-4 w-4", (isLoadingEvents || isLoadingAnalytics || isLoadingUsers) && "animate-spin")} />
                         Refresh
                     </Button>
-
                 </div>
             </div>
 
@@ -164,50 +181,37 @@ const UserActivityScreen: React.FC = () => {
                 <StatsLoadingSkeleton />
             ) : (
                 <div className="grid gap-4 sm:gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
-                    {/* Total Events */}
                     <Card className="relative overflow-hidden">
                         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                            <CardTitle className="text-sm font-medium">
-                                Total Events
-                            </CardTitle>
+                            <CardTitle className="text-sm font-medium">Total Events</CardTitle>
                             <Calendar className="h-4 w-4 text-muted-foreground" />
                         </CardHeader>
                         <CardContent>
                             <div className="text-2xl font-bold text-blue-600">
                                 {analyticsData?.total_events || 0}
                             </div>
-                            <p className="text-xs text-muted-foreground">
-                                All tracked events
-                            </p>
+                            <p className="text-xs text-muted-foreground">All tracked events</p>
                             <div className="absolute top-0 right-0 w-2 h-full bg-gradient-to-b from-blue-500 to-blue-600" />
                         </CardContent>
                     </Card>
 
-                    {/* Total Users */}
                     <Card className="relative overflow-hidden">
                         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                            <CardTitle className="text-sm font-medium">
-                                Total Users
-                            </CardTitle>
+                            <CardTitle className="text-sm font-medium">Total Users</CardTitle>
                             <Users className="h-4 w-4 text-muted-foreground" />
                         </CardHeader>
                         <CardContent>
                             <div className="text-2xl font-bold text-green-600">
                                 {analyticsData?.total_users || 0}
                             </div>
-                            <p className="text-xs text-muted-foreground">
-                                Registered users
-                            </p>
+                            <p className="text-xs text-muted-foreground">Registered users</p>
                             <div className="absolute top-0 right-0 w-2 h-full bg-gradient-to-b from-green-500 to-green-600" />
                         </CardContent>
                     </Card>
 
-                    {/* Active Users */}
                     <Card className="relative overflow-hidden">
                         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                            <CardTitle className="text-sm font-medium">
-                                Active Users
-                            </CardTitle>
+                            <CardTitle className="text-sm font-medium">Active Users</CardTitle>
                             <UserCheck className="h-4 w-4 text-muted-foreground" />
                         </CardHeader>
                         <CardContent>
@@ -220,14 +224,12 @@ const UserActivityScreen: React.FC = () => {
                             <div className="absolute top-0 right-0 w-2 h-full bg-gradient-to-b from-purple-500 to-purple-600" />
                         </CardContent>
                     </Card>
-
-
                 </div>
             )}
 
             {/* Filters Section */}
             <UserActivityFilters 
-                filters={filters}
+                filters={filters as EventFilterParams}
                 onFiltersChange={handleFiltersChange}
             />
 
@@ -239,9 +241,9 @@ const UserActivityScreen: React.FC = () => {
                         <h2 className="text-xl font-semibold">
                             {showStaffTable ? "Staff Management" : `Activities ${hasActiveFilters ? "(Filtered)" : ""}`}
                         </h2>
-                        {!showStaffTable && eventsData?.metadata && (
+                        {!showStaffTable && totalCount !== undefined && (
                             <Badge variant="secondary">
-                                {eventsData.metadata.total} total
+                                {totalCount} total
                             </Badge>
                         )}
                         {showStaffTable && usersData && (
@@ -298,7 +300,6 @@ const UserActivityScreen: React.FC = () => {
 
                 {/* Content Tables */}
                 {showStaffTable ? (
-                    // Staff Data Table
                     <div className="space-y-4">
                         {isLoadingUsers ? (
                             <div className="space-y-4">
@@ -314,32 +315,21 @@ const UserActivityScreen: React.FC = () => {
                         )}
                     </div>
                 ) : (
-                    // Events Table
-                    <>
-                        <UserActivityDataTable
-                            events={eventsData?.events || []}
-                            isLoading={isLoadingEvents}
-                            filters={filters}
-                            onFiltersChange={handleFiltersChange}
-                            onEventView={handleEventView}
-                        />
-
-                        {/* Pagination */}
-                        {eventsData?.metadata && (
-                            <UserActivityPagination
-                                metadata={eventsData.metadata}
-                                filters={filters}
-                                onFiltersChange={handleFiltersChange}
-                            />
-                        )}
-                    </>
+                    <UserActivityDataTable
+                        events={allEvents}
+                        isLoading={isLoadingEvents}
+                        isFetchingNextPage={isFetchingNextPage}
+                        hasNextPage={hasNextPage ?? false}
+                        onLoadMore={handleLoadMore}
+                        totalCount={totalCount}
+                        filters={filters as EventFilterParams}
+                        onFiltersChange={handleFiltersChange}
+                        onEventView={handleEventView}
+                    />
                 )}
             </div>
-
-            {/* Quick Actions Footer */}
-
         </div>
     );
 };
 
-export default UserActivityScreen; 
+export default UserActivityScreen;

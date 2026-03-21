@@ -1,4 +1,4 @@
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient, useInfiniteQuery } from "@tanstack/react-query";
 import { 
     EventFilterParams, 
     EventEntity,
@@ -11,6 +11,18 @@ const USE_MOCK_DATA = true;
 
 // Simulate API delay
 const simulateDelay = (ms: number = 500) => new Promise(resolve => setTimeout(resolve, ms));
+
+const MOCK_ACTIVITY_COUNT = 40;
+
+/** Stable pseudo-random in [0, 1) from index — same i,salt → same value every load (no Math.random). */
+function det01(i: number, salt: number): number {
+    const x = Math.sin(i * 12.9898 + salt * 78.233) * 43758.5453;
+    return x - Math.floor(x);
+}
+
+function pick<T>(arr: T[], i: number, salt: number): T {
+    return arr[Math.min(arr.length - 1, Math.floor(det01(i, salt) * arr.length))];
+}
 
 // Generate mock events data
 const generateMockEvents = (): EventEntity[] => {
@@ -72,24 +84,29 @@ const generateMockEvents = (): EventEntity[] => {
     const events: EventEntity[] = [];
     const now = new Date();
 
-    for (let i = 0; i < 100; i++) {
-        const user = users[Math.floor(Math.random() * users.length)];
-        const eventType = eventTypes[Math.floor(Math.random() * eventTypes.length)];
-        const location = locations[Math.floor(Math.random() * locations.length)];
-        const status = statuses[Math.floor(Math.random() * statuses.length)];
+    for (let i = 0; i < MOCK_ACTIVITY_COUNT; i++) {
+        const user = pick(users, i, 0);
+        const eventType = pick(eventTypes, i, 1);
+        const location = pick(locations, i, 2);
+        const status = pick(statuses, i, 3);
         const eventNamesForType = eventNames[eventType];
-        const eventName = eventNamesForType[Math.floor(Math.random() * eventNamesForType.length)];
-        
+        const eventName = pick(eventNamesForType, i, 4);
+
         const eventDate = new Date(now);
-        eventDate.setDate(eventDate.getDate() - Math.floor(Math.random() * 30));
-        eventDate.setHours(Math.floor(Math.random() * 24), Math.floor(Math.random() * 60), 0, 0);
+        eventDate.setDate(eventDate.getDate() - Math.floor(det01(i, 5) * 30));
+        eventDate.setHours(
+            Math.floor(det01(i, 6) * 24),
+            Math.floor(det01(i, 7) * 60),
+            0,
+            0
+        );
 
         const startDate = new Date(eventDate);
         const endDate = new Date(eventDate);
-        endDate.setHours(endDate.getHours() + Math.floor(Math.random() * 5) + 1);
+        endDate.setHours(endDate.getHours() + Math.floor(det01(i, 8) * 5) + 1);
 
         events.push({
-            id: `event_${Date.now()}_${i}`,
+            id: `event_mock_${i}`,
             name: eventName,
             description: `${eventDescriptions[eventType]} - ${eventName} by ${user.name}`,
             user_id: user.id,
@@ -98,8 +115,8 @@ const generateMockEvents = (): EventEntity[] => {
             location,
             start_date: startDate.toISOString(),
             end_date: endDate.toISOString(),
-            attendees_count: Math.floor(Math.random() * 50) + 1,
-            max_attendees: Math.floor(Math.random() * 100) + 50,
+            attendees_count: Math.floor(det01(i, 9) * 50) + 1,
+            max_attendees: Math.floor(det01(i, 10) * 100) + 50,
             created_at: eventDate.toISOString(),
             updated_at: eventDate.toISOString(),
             user: {
@@ -279,6 +296,7 @@ export const eventKeys = {
     all: ['events'] as const,
     lists: () => [...eventKeys.all, 'list'] as const,
     list: (filters?: EventFilterParams) => [...eventKeys.lists(), filters] as const,
+    infinite: (filters?: Omit<EventFilterParams, 'page'>) => [...eventKeys.all, 'infinite', filters] as const,
     details: () => [...eventKeys.all, 'detail'] as const,
     detail: (id: string) => [...eventKeys.details(), id] as const,
     stats: () => [...eventKeys.all, 'stats'] as const,
@@ -291,12 +309,31 @@ export const eventKeys = {
     locations: () => [...eventKeys.all, 'locations'] as const,
 };
 
-// Queries
+// ── Original paginated query (kept for backward compatibility) ──
 export const useEventsQuery = (filters: EventFilterParams = {}) => {
     return useQuery({
         queryKey: eventKeys.list(filters),
         queryFn: () => getListEvents(filters),
-        staleTime: 30000, // 30 seconds
+        staleTime: 30000,
+        refetchOnWindowFocus: false,
+        retry: false,
+    });
+};
+
+// ── NEW: Infinite scroll query ──
+export const useInfiniteEventsQuery = (
+    filters: Omit<EventFilterParams, 'page'> = {}
+) => {
+    return useInfiniteQuery({
+        queryKey: eventKeys.infinite(filters),
+        queryFn: ({ pageParam = 1 }) =>
+            getListEvents({ ...filters, page: pageParam }),
+        initialPageParam: 1,
+        getNextPageParam: (lastPage) =>
+            lastPage.metadata.has_next
+                ? lastPage.metadata.page + 1
+                : undefined,
+        staleTime: 30000,
         refetchOnWindowFocus: false,
         retry: false,
     });
@@ -312,19 +349,16 @@ export const useEventByIdQuery = (id: string | null | undefined) => {
             try {
                 return await getEventById(id);
             } catch (error) {
-                // Return undefined instead of throwing for missing events
-                // This prevents the "Query data cannot be undefined" error
                 if (error instanceof Error && error.message.includes('not found')) {
                     return undefined;
                 }
                 throw error;
             }
         },
-        staleTime: 30000, // 30 seconds
+        staleTime: 30000,
         refetchOnWindowFocus: false,
         enabled: !!id && id.trim() !== '',
         retry: (failureCount, error) => {
-            // Don't retry for 404 or "not found" errors
             if (error instanceof Error && error.message.includes('not found')) {
                 return false;
             }
@@ -342,7 +376,7 @@ export const useEventAnalyticsSummaryQuery = (filters?: {
     return useQuery({
         queryKey: eventKeys.analyticsSummaryWithFilters(filters),
         queryFn: () => getEventAnalyticsSummary(filters),
-        staleTime: 30000, // 30 seconds
+        staleTime: 30000,
         refetchOnWindowFocus: false,
         retry: false,
     });
@@ -358,10 +392,9 @@ export const usePrefetchEvent = () => {
                 return;
             }
             
-            // Check if we already have this data cached
             const existingData = queryClient.getQueryData(eventKeys.detail(id));
             if (existingData) {
-                return; // Already cached, no need to prefetch
+                return;
             }
             
             queryClient.prefetchQuery({
@@ -370,7 +403,6 @@ export const usePrefetchEvent = () => {
                     try {
                         return await getEventById(id);
                     } catch (error) {
-                        // Don't throw errors in prefetch
                         console.warn(`Failed to prefetch event ${id}:`, error);
                         return undefined;
                     }
