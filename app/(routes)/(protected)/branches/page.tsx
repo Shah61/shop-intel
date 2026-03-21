@@ -667,7 +667,15 @@ const BranchesPage: React.FC = () => {
                   </Marker>
                 ))}
                 {popupBranch&&(
-                  <Popup longitude={popupBranch.lng} latitude={popupBranch.lat} anchor="bottom" offset={[0,-20] as [number,number]} closeOnClick={false} onClose={handlePopupClose} maxWidth="320px">
+                  <Popup
+                    longitude={popupBranch.lng}
+                    latitude={popupBranch.lat}
+                    anchor="top-left"
+                    offset={[14, -120] as [number, number]}
+                    closeOnClick={false}
+                    onClose={handlePopupClose}
+                    maxWidth="320px"
+                  >
                     <BranchPopupContent branch={popupBranch} rank={getRank(popupBranch.id)} onSelect={()=>handleViewDetail(popupBranch.id)} />
                   </Popup>
                 )}
