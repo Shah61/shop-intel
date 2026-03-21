@@ -34,7 +34,7 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { tiktokConversionRateHistoricalDataQuery } from "../../../tanstack/mock-tiktok-tanstack"
 import { useSession } from "@/src/core/lib/dummy-session-provider"
-import { capitalizeFirstLetter, formatCurrencyToShort, isAdmin } from "@/src/core/constant/helper"
+import { capitalizeFirstLetter, formatChartAxisDayNumber, formatCurrencyToShort, isAdmin } from "@/src/core/constant/helper"
 
 const chartConfig = {
     total_revenues: {
@@ -120,12 +120,17 @@ export function TiktokConversionCharts() {
         year: year.toString()
     });
 
-    const formattedData = conversionRateHistoricalData?.map((item: any) => ({
-        date: new Date(item.date || "").toLocaleDateString('en-US', { month: 'short' }),
-        total_revenues: item.total_revenues,
-        total_gross_revenues: item.total_gross_revenues,
-        total_orders: item.total_orders
-    })) || []
+    const formattedData = [...(conversionRateHistoricalData || [])]
+        .sort(
+            (a: any, b: any) =>
+                new Date(a.date || 0).getTime() - new Date(b.date || 0).getTime()
+        )
+        .map((item: any) => ({
+            date: formatChartAxisDayNumber(item.date),
+            total_revenues: item.total_revenues,
+            total_gross_revenues: item.total_gross_revenues,
+            total_orders: item.total_orders,
+        }))
 
     const t = useMemo(() => {
         if (isDark) {
@@ -176,9 +181,9 @@ export function TiktokConversionCharts() {
         switch (chartType) {
             case "line":
                 return (
-                    <LineChart data={formattedData} margin={{ top: 5, right: 10, left: 10, bottom: 5 }}>
+                    <LineChart data={formattedData} margin={{ top: 5, right: 10, left: 10, bottom: 40 }}>
                         <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="hsl(var(--border))" />
-                        <XAxis dataKey="date" tickLine={false} axisLine={false} tickMargin={8} tick={{ fill: "hsl(var(--muted-foreground))" }} tickFormatter={(v) => v.slice(0, 3)} />
+                        <XAxis dataKey="date" tickLine={false} axisLine={false} tickMargin={6} minTickGap={44} interval="preserveStartEnd" tick={{ fill: "hsl(var(--muted-foreground))", fontSize: 10, fontWeight: 500, style: { fontVariantNumeric: "tabular-nums" } }} />
                         <YAxis tickLine={false} axisLine={false} tickMargin={8} tick={{ fill: "hsl(var(--muted-foreground))" }} />
                         <Tooltip content={<CustomTooltipContent />} cursor={{ stroke: "hsl(var(--muted))", strokeWidth: 1, strokeDasharray: "3 3" }} />
                         <Line type="monotone" dataKey="total_revenues" stroke={chartConfig.total_revenues.color} strokeWidth={2} dot={{ r: 4, strokeWidth: 0, fill: chartConfig.total_revenues.color }} activeDot={{ r: 6, strokeWidth: 0 }} />
@@ -188,7 +193,7 @@ export function TiktokConversionCharts() {
                 )
             case "area":
                 return (
-                    <AreaChart data={formattedData} margin={{ top: 5, right: 10, left: 10, bottom: 5 }}>
+                    <AreaChart data={formattedData} margin={{ top: 5, right: 10, left: 10, bottom: 40 }}>
                         <defs>
                             <linearGradient id="colorTotalRevenues" x1="0" y1="0" x2="0" y2="1">
                                 <stop offset="5%" stopColor={chartConfig.total_revenues.color} stopOpacity={0.8} />
@@ -204,7 +209,7 @@ export function TiktokConversionCharts() {
                             </linearGradient>
                         </defs>
                         <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="hsl(var(--border))" />
-                        <XAxis dataKey="date" tickLine={false} axisLine={false} tickMargin={8} tick={{ fill: "hsl(var(--muted-foreground))" }} tickFormatter={(v) => v.slice(0, 3)} />
+                        <XAxis dataKey="date" tickLine={false} axisLine={false} tickMargin={6} minTickGap={44} interval="preserveStartEnd" tick={{ fill: "hsl(var(--muted-foreground))", fontSize: 10, fontWeight: 500, style: { fontVariantNumeric: "tabular-nums" } }} />
                         <YAxis tickLine={false} axisLine={false} tickMargin={8} tick={{ fill: "hsl(var(--muted-foreground))" }} />
                         <Tooltip content={<CustomTooltipContent />} cursor={{ stroke: "hsl(var(--muted))", strokeWidth: 1, strokeDasharray: "3 3" }} />
                         <Area type="monotone" dataKey="total_revenues" stroke={chartConfig.total_revenues.color} strokeWidth={2} fillOpacity={1} fill="url(#colorTotalRevenues)" />
@@ -216,7 +221,7 @@ export function TiktokConversionCharts() {
                 return (
                     <BarChart data={formattedData} margin={{ top: 5, right: 10, left: 10, bottom: 5 }}>
                         <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="hsl(var(--border))" />
-                        <XAxis dataKey="date" tickLine={false} axisLine={false} tickMargin={8} tick={{ fill: "hsl(var(--muted-foreground))" }} tickFormatter={(v) => v.slice(0, 3)} />
+                        <XAxis dataKey="date" tickLine={false} axisLine={false} tickMargin={6} minTickGap={44} interval="preserveStartEnd" tick={{ fill: "hsl(var(--muted-foreground))", fontSize: 10, fontWeight: 500, style: { fontVariantNumeric: "tabular-nums" } }} />
                         <YAxis tickLine={false} axisLine={false} tickMargin={8} tick={{ fill: "hsl(var(--muted-foreground))" }} />
                         <Tooltip content={<CustomTooltipContent />} cursor={{ fill: "hsl(var(--muted))", opacity: 0.1 }} />
                         <Bar dataKey="total_revenues" fill={chartConfig.total_revenues.color} radius={[4, 4, 0, 0]} maxBarSize={40} />
@@ -226,9 +231,9 @@ export function TiktokConversionCharts() {
                 )
             case "stackedArea":
                 return (
-                    <AreaChart data={formattedData} margin={{ top: 5, right: 10, left: 10, bottom: 5 }}>
+                    <AreaChart data={formattedData} margin={{ top: 5, right: 10, left: 10, bottom: 40 }}>
                         <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="hsl(var(--border))" />
-                        <XAxis dataKey="date" tickLine={false} axisLine={false} tickMargin={8} tick={{ fill: "hsl(var(--muted-foreground))" }} tickFormatter={(v) => v.slice(0, 3)} />
+                        <XAxis dataKey="date" tickLine={false} axisLine={false} tickMargin={6} minTickGap={44} interval="preserveStartEnd" tick={{ fill: "hsl(var(--muted-foreground))", fontSize: 10, fontWeight: 500, style: { fontVariantNumeric: "tabular-nums" } }} />
                         <YAxis tickLine={false} axisLine={false} tickMargin={8} tick={{ fill: "hsl(var(--muted-foreground))" }} />
                         <Tooltip content={<CustomTooltipContent />} cursor={{ stroke: "hsl(var(--muted))", strokeWidth: 1, strokeDasharray: "3 3" }} />
                         <Area dataKey="total_revenues" type="monotone" fill={chartConfig.total_revenues.color} fillOpacity={0.6} stroke={chartConfig.total_revenues.color} stackId="1" />

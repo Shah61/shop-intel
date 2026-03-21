@@ -34,7 +34,7 @@ import {
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { AnalyticsSalesEntity, AnalyticsType } from "@/src/features/sales/data/model/analytics-entity"
-import { capitalizeFirstLetter, formatCurrencyToShort } from "@/src/core/constant/helper"
+import { capitalizeFirstLetter, formatChartAxisDayNumber, formatCurrencyToShort } from "@/src/core/constant/helper"
 import { MediumLoader } from "@/components/ui/shop-intel-loader"
 
 const chartConfig = {
@@ -57,11 +57,70 @@ const chartConfig = {
 } satisfies ChartConfig
 
 interface TransformedData {
-    month: string;
+    dateKey: string;
+    dateLabel: string;
     tiktok: number;
     shopee: number;
     shopify: number;
     physical: number;
+}
+
+const SALES_PLATFORM_CHART_DAYS = 30;
+
+/** YYYY-MM-DD from API or ISO string, local calendar date */
+function normalizeDateKey(raw: string): string | null {
+    if (!raw) return null;
+    const d = new Date(raw);
+    if (Number.isNaN(d.getTime())) {
+        const m = raw.match(/^(\d{4}-\d{2}-\d{2})/);
+        return m ? m[1] : null;
+    }
+    const y = d.getFullYear();
+    const mo = String(d.getMonth() + 1).padStart(2, "0");
+    const day = String(d.getDate()).padStart(2, "0");
+    return `${y}-${mo}-${day}`;
+}
+
+function addCalendarDays(isoYmd: string, deltaDays: number): string {
+    const [y, m, d] = isoYmd.split("-").map(Number);
+    const dt = new Date(y, m - 1, d);
+    dt.setDate(dt.getDate() + deltaDays);
+    const yy = dt.getFullYear();
+    const mm = String(dt.getMonth() + 1).padStart(2, "0");
+    const dd = String(dt.getDate()).padStart(2, "0");
+    return `${yy}-${mm}-${dd}`;
+}
+
+function todayYmdLocal(): string {
+    const t = new Date();
+    const y = t.getFullYear();
+    const m = String(t.getMonth() + 1).padStart(2, "0");
+    const d = String(t.getDate()).padStart(2, "0");
+    return `${y}-${m}-${d}`;
+}
+
+/** Exactly `n` consecutive days ending at `endKey`, merging grouped rows; missing days are zero-filled. */
+function buildNDayWindow(
+    grouped: Record<string, TransformedData>,
+    endKey: string,
+    n: number
+): TransformedData[] {
+    const out: TransformedData[] = [];
+    for (let offset = -(n - 1); offset <= 0; offset++) {
+        const dateKey = addCalendarDays(endKey, offset);
+        const row = grouped[dateKey];
+        out.push(
+            row ?? {
+                dateKey,
+                dateLabel: formatChartAxisDayNumber(dateKey),
+                tiktok: 0,
+                shopee: 0,
+                shopify: 0,
+                physical: 0,
+            }
+        );
+    }
+    return out;
 }
 
 interface SalesOverviewChartProps {
@@ -77,12 +136,23 @@ interface SalesOverviewChartProps {
 const CustomTooltipContent = ({ active, payload, label }: any) => {
     if (!active || !payload) return null;
 
+    const row = payload[0]?.payload as TransformedData | undefined;
+    const title =
+        row?.dateKey != null
+            ? new Date(`${row.dateKey}T12:00:00`).toLocaleDateString("en-MY", {
+                  weekday: "short",
+                  day: "numeric",
+                  month: "long",
+                  year: "numeric",
+              })
+            : label;
+
     return (
         <div className="rounded-lg border bg-background p-2 shadow-sm w-[200px]">
             <div className="grid grid-cols-[1fr_auto] gap-2">
                 <div className="flex flex-col">
                     <span className="text-[0.70rem] uppercase text-muted-foreground">
-                        {label}
+                        {title}
                     </span>
                 </div>
                 <div className="flex flex-col"></div>
@@ -124,51 +194,45 @@ export function SalesOverviewChart({
     const [chartType, setChartType] = useState("bar")
     const [showControls, setShowControls] = useState(false)
 
-    // Transform API data into chart format
-    const transformData = (data: AnalyticsSalesEntity[]): TransformedData[] => {
-        // Group data by date
+    const chartData = useMemo(() => {
         const groupedByDate = data.reduce((acc, curr) => {
-            const date = curr.date || '';
-            if (!acc[date]) {
-                acc[date] = {
-                    month: new Date(date).toLocaleString('default', { month: 'long' }),
+            const nk = normalizeDateKey(curr.date || "");
+            if (!nk) return acc;
+            if (!acc[nk]) {
+                acc[nk] = {
+                    dateKey: nk,
+                    dateLabel: formatChartAxisDayNumber(nk),
                     tiktok: 0,
                     shopee: 0,
                     shopify: 0,
-                    physical: 0
+                    physical: 0,
                 };
             }
 
-            // Map revenues to respective platforms
-            if (curr.type && curr.total_revenues) {
+            if (curr.type && curr.total_revenues != null) {
                 switch (curr.type) {
                     case AnalyticsType.TIKTOK:
-                        acc[date].tiktok = curr.total_revenues;
+                        acc[nk].tiktok = curr.total_revenues;
                         break;
                     case AnalyticsType.SHOPEE:
-                        acc[date].shopee = curr.total_revenues;
+                        acc[nk].shopee = curr.total_revenues;
                         break;
                     case AnalyticsType.SHOPIFY:
-                        acc[date].shopify = curr.total_revenues;
+                        acc[nk].shopify = curr.total_revenues;
                         break;
                     case AnalyticsType.PHYSICAL:
-                        acc[date].physical = curr.total_revenues;
+                        acc[nk].physical = curr.total_revenues;
                         break;
                 }
             }
             return acc;
         }, {} as Record<string, TransformedData>);
 
-        // Convert to array and sort by date
-        return Object.values(groupedByDate)
-            .sort((a, b) => {
-                const monthA = new Date(Date.parse(a.month + " 1, 2024"));
-                const monthB = new Date(Date.parse(b.month + " 1, 2024"));
-                return monthA.getTime() - monthB.getTime();
-            });
-    };
+        const sortedKeys = Object.keys(groupedByDate).sort();
+        const endKey = sortedKeys.length > 0 ? sortedKeys[sortedKeys.length - 1]! : todayYmdLocal();
 
-    const chartData = transformData(data);
+        return buildNDayWindow(groupedByDate, endKey, SALES_PLATFORM_CHART_DAYS);
+    }, [data]);
 
     const chartTypes = {
         line: "Line Chart",
@@ -187,17 +251,23 @@ export function SalesOverviewChart({
                             top: 5,
                             right: 10,
                             left: 10,
-                            bottom: 5,
+                            bottom: 28,
                         }}
                     >
                         <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="hsl(var(--border))" />
                         <XAxis
-                            dataKey="month"
+                            dataKey="dateLabel"
+                            type="category"
+                            interval={0}
                             tickLine={false}
                             axisLine={false}
                             tickMargin={8}
-                            tick={{ fill: "hsl(var(--muted-foreground))" }}
-                            tickFormatter={(value) => value.slice(0, 3)}
+                            tick={{
+                                fill: "hsl(var(--muted-foreground))",
+                                fontSize: 9,
+                                fontWeight: 500,
+                                style: { fontVariantNumeric: "tabular-nums" },
+                            }}
                         />
                         <YAxis
                             tickLine={false}
@@ -252,7 +322,7 @@ export function SalesOverviewChart({
                             top: 5,
                             right: 10,
                             left: 10,
-                            bottom: 5,
+                            bottom: 40,
                         }}
                     >
                         <defs>
@@ -275,12 +345,18 @@ export function SalesOverviewChart({
                         </defs>
                         <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="hsl(var(--border))" />
                         <XAxis
-                            dataKey="month"
+                            dataKey="dateLabel"
+                            type="category"
+                            interval={0}
                             tickLine={false}
                             axisLine={false}
                             tickMargin={8}
-                            tick={{ fill: "hsl(var(--muted-foreground))" }}
-                            tickFormatter={(value) => value.slice(0, 3)}
+                            tick={{
+                                fill: "hsl(var(--muted-foreground))",
+                                fontSize: 9,
+                                fontWeight: 500,
+                                style: { fontVariantNumeric: "tabular-nums" },
+                            }}
                         />
                         <YAxis
                             tickLine={false}
@@ -335,17 +411,23 @@ export function SalesOverviewChart({
                             top: 5,
                             right: 10,
                             left: 10,
-                            bottom: 5,
+                            bottom: 36,
                         }}
                     >
                         <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="hsl(var(--border))" />
                         <XAxis
-                            dataKey="month"
+                            dataKey="dateLabel"
+                            type="category"
+                            interval={0}
                             tickLine={false}
                             axisLine={false}
                             tickMargin={8}
-                            tick={{ fill: "hsl(var(--muted-foreground))" }}
-                            tickFormatter={(value) => value.slice(0, 3)}
+                            tick={{
+                                fill: "hsl(var(--muted-foreground))",
+                                fontSize: 9,
+                                fontWeight: 500,
+                                style: { fontVariantNumeric: "tabular-nums" },
+                            }}
                         />
                         <YAxis
                             tickLine={false}
@@ -361,25 +443,25 @@ export function SalesOverviewChart({
                             dataKey="tiktok"
                             fill={chartConfig.tiktok.color}
                             radius={[4, 4, 0, 0]}
-                            maxBarSize={40}
+                            maxBarSize={22}
                         />
                         <Bar
                             dataKey="shopee"
                             fill={chartConfig.shopee.color}
                             radius={[4, 4, 0, 0]}
-                            maxBarSize={40}
+                            maxBarSize={22}
                         />
                         <Bar
                             dataKey="shopify"
                             fill={chartConfig.shopify.color}
                             radius={[4, 4, 0, 0]}
-                            maxBarSize={40}
+                            maxBarSize={22}
                         />
                         <Bar
                             dataKey="physical"
                             fill={chartConfig.physical.color}
                             radius={[4, 4, 0, 0]}
-                            maxBarSize={40}
+                            maxBarSize={22}
                         />
                     </BarChart>
                 )
@@ -392,17 +474,23 @@ export function SalesOverviewChart({
                             top: 5,
                             right: 10,
                             left: 10,
-                            bottom: 5,
+                            bottom: 28,
                         }}
                     >
                         <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="hsl(var(--border))" />
                         <XAxis
-                            dataKey="month"
+                            dataKey="dateLabel"
+                            type="category"
+                            interval={0}
                             tickLine={false}
                             axisLine={false}
                             tickMargin={8}
-                            tick={{ fill: "hsl(var(--muted-foreground))" }}
-                            tickFormatter={(value) => value.slice(0, 3)}
+                            tick={{
+                                fill: "hsl(var(--muted-foreground))",
+                                fontSize: 9,
+                                fontWeight: 500,
+                                style: { fontVariantNumeric: "tabular-nums" },
+                            }}
                         />
                         <YAxis
                             tickLine={false}
@@ -574,7 +662,7 @@ export function SalesOverviewChart({
                         Sales by Platform
                     </h2>
                     <p style={{ fontSize: 12, color: t.subtitle, margin: "4px 0 0 0" }}>
-                        {chartTypes[chartType as keyof typeof chartTypes]} showing sales from different channels
+                        Last {SALES_PLATFORM_CHART_DAYS} days (daily) — {chartTypes[chartType as keyof typeof chartTypes].toLowerCase()} across channels
                     </p>
                 </div>
 

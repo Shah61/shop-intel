@@ -32,7 +32,7 @@ import {
     DropdownMenuItem,
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import { capitalizeFirstLetter, formatCurrencyToShort } from "@/src/core/constant/helper"
+import { capitalizeFirstLetter, formatChartAxisDayNumber, formatCurrencyToShort } from "@/src/core/constant/helper"
 
 // Monthly data for the entire year of 2024
 const monthlyData2024 = [
@@ -169,7 +169,8 @@ export function ShopeeConversionCharts() {
         const ym = year === 2023 ? 0.8 : year === 2025 ? 1.3 : 1.0
 
         return months.map((mi) => {
-            const label = new Date(year, mi, 15).toLocaleDateString("en-US", { month: "short" })
+            const iso = `${year}-${String(mi + 1).padStart(2, "0")}-15`;
+            const label = formatChartAxisDayNumber(iso);
             const seed = mi + year * 0.001
             return {
                 date: label,
@@ -205,17 +206,23 @@ export function ShopeeConversionCharts() {
                             top: 5,
                             right: 10,
                             left: 10,
-                            bottom: 5,
+                            bottom: 28,
                         }}
                     >
                         <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="hsl(var(--border))" />
                         <XAxis
                             dataKey="date"
+                            type="category"
+                            interval={0}
                             tickLine={false}
                             axisLine={false}
                             tickMargin={8}
-                            tick={{ fill: "hsl(var(--muted-foreground))" }}
-                            tickFormatter={(value) => value.slice(0, 3)}
+                            tick={{
+                                fill: "hsl(var(--muted-foreground))",
+                                fontSize: 9,
+                                fontWeight: 500,
+                                style: { fontVariantNumeric: "tabular-nums" },
+                            }}
                         />
                         <YAxis
                             tickLine={false}
@@ -270,7 +277,7 @@ export function ShopeeConversionCharts() {
                             top: 5,
                             right: 10,
                             left: 10,
-                            bottom: 5,
+                            bottom: 28,
                         }}
                     >
                         <defs>
@@ -294,11 +301,17 @@ export function ShopeeConversionCharts() {
                         <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="hsl(var(--border))" />
                         <XAxis
                             dataKey="date"
+                            type="category"
+                            interval={0}
                             tickLine={false}
                             axisLine={false}
                             tickMargin={8}
-                            tick={{ fill: "hsl(var(--muted-foreground))" }}
-                            tickFormatter={(value) => value.slice(0, 3)}
+                            tick={{
+                                fill: "hsl(var(--muted-foreground))",
+                                fontSize: 9,
+                                fontWeight: 500,
+                                style: { fontVariantNumeric: "tabular-nums" },
+                            }}
                         />
                         <YAxis
                             tickLine={false}
@@ -353,17 +366,23 @@ export function ShopeeConversionCharts() {
                             top: 5,
                             right: 10,
                             left: 10,
-                            bottom: 5,
+                            bottom: 36,
                         }}
                     >
                         <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="hsl(var(--border))" />
                         <XAxis
                             dataKey="date"
+                            type="category"
+                            interval={0}
                             tickLine={false}
                             axisLine={false}
                             tickMargin={8}
-                            tick={{ fill: "hsl(var(--muted-foreground))" }}
-                            tickFormatter={(value) => value.slice(0, 3)}
+                            tick={{
+                                fill: "hsl(var(--muted-foreground))",
+                                fontSize: 9,
+                                fontWeight: 500,
+                                style: { fontVariantNumeric: "tabular-nums" },
+                            }}
                         />
                         <YAxis
                             tickLine={false}
@@ -410,17 +429,23 @@ export function ShopeeConversionCharts() {
                             top: 5,
                             right: 10,
                             left: 10,
-                            bottom: 5,
+                            bottom: 28,
                         }}
                     >
                         <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="hsl(var(--border))" />
                         <XAxis
                             dataKey="date"
+                            type="category"
+                            interval={0}
                             tickLine={false}
                             axisLine={false}
                             tickMargin={8}
-                            tick={{ fill: "hsl(var(--muted-foreground))" }}
-                            tickFormatter={(value) => value.slice(0, 3)}
+                            tick={{
+                                fill: "hsl(var(--muted-foreground))",
+                                fontSize: 9,
+                                fontWeight: 500,
+                                style: { fontVariantNumeric: "tabular-nums" },
+                            }}
                         />
                         <YAxis
                             tickLine={false}

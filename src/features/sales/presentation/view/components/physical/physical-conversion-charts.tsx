@@ -44,8 +44,7 @@ import { Button } from "@/components/ui/button"
 import { AnalyticsSalesEntity } from "@/src/features/sales/data/model/analytics-entity"
 import { usePhysicalOverviewHistoricalData } from "../../../tanstack/physical/overview-tanstack"
 import { PhysicalConversionEntity } from "@/src/features/sales/data/model/physical/conversion-entity"
-import { capitalizeFirstLetter } from "@/src/core/constant/helper"
-import { formatCurrencyToShort } from "@/src/core/constant/helper"
+import { capitalizeFirstLetter, formatChartAxisDayNumber, formatCurrencyToShort } from "@/src/core/constant/helper"
 
 const chartConfig = {
     revenue: {
@@ -113,12 +112,17 @@ export function PhysicalConversionCharts({ isAdmin = false }: PhysicalConversion
 
     const { data, isLoading, error } = usePhysicalOverviewHistoricalData({ quarter, year })
 
-    const formattedData = data?.data?.map((item: PhysicalConversionEntity) => ({
-        date: new Date(item.date || "").toLocaleDateString('en-US', { month: 'short' }),
-        revenue: item.total_revenues,
-        orders: item.total_orders,
-        conversion: item.total_conversions
-    })) || []
+    const formattedData = [...(data?.data || [])]
+        .sort(
+            (a, b) =>
+                new Date(a.date || 0).getTime() - new Date(b.date || 0).getTime()
+        )
+        .map((item: PhysicalConversionEntity) => ({
+            date: formatChartAxisDayNumber(item.date),
+            revenue: item.total_revenues,
+            orders: item.total_orders,
+            conversion: item.total_conversions,
+        }))
 
     if (isLoading) {
         return <div>Loading...</div>
@@ -138,16 +142,23 @@ export function PhysicalConversionCharts({ isAdmin = false }: PhysicalConversion
                             top: 5,
                             right: 10,
                             left: 10,
-                            bottom: 5,
+                            bottom: 28,
                         }}
                     >
                         <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="hsl(var(--border))" />
                         <XAxis
                             dataKey="date"
+                            type="category"
+                            interval={0}
                             tickLine={false}
                             axisLine={false}
                             tickMargin={8}
-                            tick={{ fill: "hsl(var(--muted-foreground))" }}
+                            tick={{
+                                fill: "hsl(var(--muted-foreground))",
+                                fontSize: 9,
+                                fontWeight: 500,
+                                style: { fontVariantNumeric: "tabular-nums" },
+                            }}
                         />
                         <YAxis
                             tickLine={false}
@@ -194,7 +205,7 @@ export function PhysicalConversionCharts({ isAdmin = false }: PhysicalConversion
                             top: 5,
                             right: 10,
                             left: 10,
-                            bottom: 5,
+                            bottom: 28,
                         }}
                     >
                         <defs>
@@ -214,10 +225,17 @@ export function PhysicalConversionCharts({ isAdmin = false }: PhysicalConversion
                         <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="hsl(var(--border))" />
                         <XAxis
                             dataKey="date"
+                            type="category"
+                            interval={0}
                             tickLine={false}
                             axisLine={false}
                             tickMargin={8}
-                            tick={{ fill: "hsl(var(--muted-foreground))" }}
+                            tick={{
+                                fill: "hsl(var(--muted-foreground))",
+                                fontSize: 9,
+                                fontWeight: 500,
+                                style: { fontVariantNumeric: "tabular-nums" },
+                            }}
                         />
                         <YAxis
                             tickLine={false}
@@ -264,16 +282,23 @@ export function PhysicalConversionCharts({ isAdmin = false }: PhysicalConversion
                             top: 5,
                             right: 10,
                             left: 10,
-                            bottom: 5,
+                            bottom: 36,
                         }}
                     >
                         <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="hsl(var(--border))" />
                         <XAxis
                             dataKey="date"
+                            type="category"
+                            interval={0}
                             tickLine={false}
                             axisLine={false}
                             tickMargin={8}
-                            tick={{ fill: "hsl(var(--muted-foreground))" }}
+                            tick={{
+                                fill: "hsl(var(--muted-foreground))",
+                                fontSize: 9,
+                                fontWeight: 500,
+                                style: { fontVariantNumeric: "tabular-nums" },
+                            }}
                         />
                         <YAxis
                             tickLine={false}
@@ -314,16 +339,23 @@ export function PhysicalConversionCharts({ isAdmin = false }: PhysicalConversion
                             top: 5,
                             right: 10,
                             left: 10,
-                            bottom: 5,
+                            bottom: 28,
                         }}
                     >
                         <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="hsl(var(--border))" />
                         <XAxis
                             dataKey="date"
+                            type="category"
+                            interval={0}
                             tickLine={false}
                             axisLine={false}
                             tickMargin={8}
-                            tick={{ fill: "hsl(var(--muted-foreground))" }}
+                            tick={{
+                                fill: "hsl(var(--muted-foreground))",
+                                fontSize: 9,
+                                fontWeight: 500,
+                                style: { fontVariantNumeric: "tabular-nums" },
+                            }}
                         />
                         <YAxis
                             tickLine={false}
@@ -370,11 +402,24 @@ export function PhysicalConversionCharts({ isAdmin = false }: PhysicalConversion
                             top: 5,
                             right: 10,
                             left: 10,
-                            bottom: 5,
+                            bottom: 28,
                         }}
                     >
                         <CartesianGrid strokeDasharray="3 3" vertical={false} />
-                        <XAxis dataKey="date" />
+                        <XAxis
+                            dataKey="date"
+                            type="category"
+                            interval={0}
+                            tickLine={false}
+                            axisLine={false}
+                            tickMargin={8}
+                            tick={{
+                                fill: "hsl(var(--muted-foreground))",
+                                fontSize: 9,
+                                fontWeight: 500,
+                                style: { fontVariantNumeric: "tabular-nums" },
+                            }}
+                        />
                         <YAxis />
                         <Area dataKey="revenue" />
                         <Area dataKey="orders" />

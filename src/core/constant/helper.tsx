@@ -48,6 +48,26 @@ export const formatDateToYYYYMMDD = (date: string) => {
     return `${day}/${month}/${year}`;
 }
 
+/** Chart x-axis: day + short month (e.g. "15 Jan") from ISO/API date strings. */
+export const formatChartAxisDayMonth = (dateInput: string | null | undefined): string => {
+    if (!dateInput) return "";
+    const d = new Date(dateInput);
+    if (Number.isNaN(d.getTime())) return String(dateInput);
+    return d.toLocaleDateString("en-MY", { day: "numeric", month: "short" });
+};
+
+/** Chart x-axis: day of month only (e.g. "20") — prefers YYYY-MM-DD to avoid TZ drift. */
+export const formatChartAxisDayNumber = (dateInput: string | null | undefined): string => {
+    if (!dateInput) return "";
+    const m = String(dateInput).trim().match(/^(\d{4})-(\d{2})-(\d{2})/);
+    if (m) {
+        return String(parseInt(m[3], 10));
+    }
+    const d = new Date(dateInput);
+    if (Number.isNaN(d.getTime())) return "";
+    return String(d.getDate());
+};
+
 //convert currency like 4000 into 4k , 4000000 into 4M
 export const formatCurrencyToShort = (value: number) => {
     if (value >= 1000000) {

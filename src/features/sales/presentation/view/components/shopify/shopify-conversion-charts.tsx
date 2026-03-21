@@ -33,7 +33,7 @@ import {
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { useConversionRateHistoricalData } from "../../../tanstack/mock-shopify-tanstack"
-import { capitalizeFirstLetter, formatCurrencyToShort } from "@/src/core/constant/helper"
+import { capitalizeFirstLetter, formatChartAxisDayNumber, formatCurrencyToShort } from "@/src/core/constant/helper"
 
 const chartConfig = {
     revenue: {
@@ -99,12 +99,18 @@ export function ShopifyConversionCharts() {
 
     const { data, isLoading } = useConversionRateHistoricalData(quarter, year.toString())
 
-    const formattedData = data?.map((item: any) => ({
-        date: new Date(item.date || "").toLocaleDateString('en-US', { month: 'short' }),
-        revenue: item.total_revenues,
-        orders: item.total_orders,
-        conversion: item.conversion_rate ?? item.total_conversions ?? 0
-    })) || []
+    const formattedData =
+        [...(data || [])]
+            .sort(
+                (a: any, b: any) =>
+                    new Date(a.date || 0).getTime() - new Date(b.date || 0).getTime()
+            )
+            .map((item: any) => ({
+                date: formatChartAxisDayNumber(item.date),
+                revenue: item.total_revenues,
+                orders: item.total_orders,
+                conversion: item.conversion_rate ?? item.total_conversions ?? 0,
+            })) || []
 
     const t = useMemo(() => {
         if (isDark) {
@@ -161,7 +167,7 @@ export function ShopifyConversionCharts() {
                             top: 5,
                             right: 10,
                             left: 10,
-                            bottom: 5,
+                            bottom: 40,
                         }}
                     >
                         <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="hsl(var(--border))" />
@@ -169,9 +175,15 @@ export function ShopifyConversionCharts() {
                             dataKey="date"
                             tickLine={false}
                             axisLine={false}
-                            tickMargin={8}
-                            tick={{ fill: "hsl(var(--muted-foreground))" }}
-                            tickFormatter={(value) => value.slice(0, 3)}
+                            tickMargin={6}
+                            minTickGap={44}
+                            interval="preserveStartEnd"
+                            tick={{
+                                fill: "hsl(var(--muted-foreground))",
+                                fontSize: 10,
+                                fontWeight: 500,
+                                style: { fontVariantNumeric: "tabular-nums" },
+                            }}
                         />
                         <YAxis
                             tickLine={false}
@@ -218,7 +230,7 @@ export function ShopifyConversionCharts() {
                             top: 5,
                             right: 10,
                             left: 10,
-                            bottom: 5,
+                            bottom: 40,
                         }}
                     >
                         <defs>
@@ -240,9 +252,15 @@ export function ShopifyConversionCharts() {
                             dataKey="date"
                             tickLine={false}
                             axisLine={false}
-                            tickMargin={8}
-                            tick={{ fill: "hsl(var(--muted-foreground))" }}
-                            tickFormatter={(value) => value.slice(0, 3)}
+                            tickMargin={6}
+                            minTickGap={44}
+                            interval="preserveStartEnd"
+                            tick={{
+                                fill: "hsl(var(--muted-foreground))",
+                                fontSize: 10,
+                                fontWeight: 500,
+                                style: { fontVariantNumeric: "tabular-nums" },
+                            }}
                         />
                         <YAxis
                             tickLine={false}
@@ -289,7 +307,7 @@ export function ShopifyConversionCharts() {
                             top: 5,
                             right: 10,
                             left: 10,
-                            bottom: 5,
+                            bottom: 48,
                         }}
                     >
                         <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="hsl(var(--border))" />
@@ -297,9 +315,15 @@ export function ShopifyConversionCharts() {
                             dataKey="date"
                             tickLine={false}
                             axisLine={false}
-                            tickMargin={8}
-                            tick={{ fill: "hsl(var(--muted-foreground))" }}
-                            tickFormatter={(value) => value.slice(0, 3)}
+                            tickMargin={6}
+                            minTickGap={44}
+                            interval="preserveStartEnd"
+                            tick={{
+                                fill: "hsl(var(--muted-foreground))",
+                                fontSize: 10,
+                                fontWeight: 500,
+                                style: { fontVariantNumeric: "tabular-nums" },
+                            }}
                         />
                         <YAxis
                             tickLine={false}
@@ -340,7 +364,7 @@ export function ShopifyConversionCharts() {
                             top: 5,
                             right: 10,
                             left: 10,
-                            bottom: 5,
+                            bottom: 40,
                         }}
                     >
                         <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="hsl(var(--border))" />
@@ -348,9 +372,15 @@ export function ShopifyConversionCharts() {
                             dataKey="date"
                             tickLine={false}
                             axisLine={false}
-                            tickMargin={8}
-                            tick={{ fill: "hsl(var(--muted-foreground))" }}
-                            tickFormatter={(value) => value.slice(0, 3)}
+                            tickMargin={6}
+                            minTickGap={44}
+                            interval="preserveStartEnd"
+                            tick={{
+                                fill: "hsl(var(--muted-foreground))",
+                                fontSize: 10,
+                                fontWeight: 500,
+                                style: { fontVariantNumeric: "tabular-nums" },
+                            }}
                         />
                         <YAxis
                             tickLine={false}
