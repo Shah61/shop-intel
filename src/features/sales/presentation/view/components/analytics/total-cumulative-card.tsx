@@ -1,5 +1,5 @@
-import { Skeleton } from "@/components/ui/skeleton";
 import { useMemo } from "react";
+import { SegmentedBarLoader, SmallLoader } from "@/components/ui/shop-intel-loader";
 import { useTheme } from "next-themes";
 
 interface TotalCumulativeCardProps {
@@ -201,19 +201,13 @@ const TotalCumulativeCard = ({
                                 background: t.barBg,
                             }}
                         >
-                        {isLoading
-                            ? Array.from({ length: 5 }).map((_, i) => (
-                                  <Skeleton
-                                      key={i}
-                                      className="cumulative-bar-skeleton"
-                                      style={{
-                                          height: "100%",
-                                          flex: 1,
-                                          borderRadius: 0,
-                                      }}
+                        {isLoading ? (
+                                  <SegmentedBarLoader
+                                      className="cumulative-bar-skeleton w-full"
+                                      style={{ background: t.barBg, height: "100%" }}
+                                      segmentBackgrounds={t.segmentGradients}
                                   />
-                              ))
-                            : segments.map((seg, i) => (
+                              ) : segments.map((seg, i) => (
                                   <div
                                       key={`bar-${i}`}
                                       style={{
@@ -316,7 +310,12 @@ const TotalCumulativeCard = ({
                     Total Revenue
                 </p>
                 {isLoading ? (
-                    <Skeleton style={{ height: 38, width: 200 }} />
+                    <div className="flex w-full justify-start">
+                        <SmallLoader
+                            label="Fetching revenue"
+                            className="!items-start !gap-1.5 !py-2"
+                        />
+                    </div>
                 ) : (
                     <p
                         className="cumulative-amount"

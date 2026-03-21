@@ -1,21 +1,19 @@
 "use client";
 
+import Image from "next/image";
 import { useTheme } from "next-themes";
 import { ChevronDown, ChevronUp } from "lucide-react";
-import { Skeleton } from "@/components/ui/skeleton";
 import { formatCurrency } from "@/src/core/constant/helper";
+import { SmallLoader, TinyLoader } from "@/components/ui/shop-intel-loader";
 
 interface OverviewDataCardProps {
     platform: string;
-    icon: React.ReactNode;
     dailySales: number;
     orderCount: number;
     averageOrderValue: number;
     isLoading: boolean;
     expanded?: boolean;
     onExpandToggle?: () => void;
-    glowColor?: string;
-    iconBg?: string;
 }
 
 const PLATFORM_CONFIG: Record<
@@ -23,10 +21,11 @@ const PLATFORM_CONFIG: Record<
     {
         label: string;
         shortLabel: string;
+        iconSrc: string;
         darkGlow: string;
         lightGlow: string;
-        darkIconBg: string;
-        lightIconBg: string;
+        darkIconWell: string;
+        lightIconWell: string;
         accentDark: string;
         accentLight: string;
     }
@@ -34,40 +33,44 @@ const PLATFORM_CONFIG: Record<
     tiktok: {
         label: "TikTok",
         shortLabel: "TikTok",
+        iconSrc: "/images/tiktok.png",
         darkGlow: "rgba(var(--preset-primary-rgb), 0.14)",
         lightGlow: "rgba(var(--preset-primary-rgb), 0.08)",
-        darkIconBg: "linear-gradient(135deg, var(--preset-primary), var(--preset-lighter))",
-        lightIconBg: "linear-gradient(135deg, var(--preset-primary), var(--preset-lighter))",
+        darkIconWell: "#ffffff",
+        lightIconWell: "rgba(255,255,255,0.98)",
         accentDark: "var(--preset-lighter)",
         accentLight: "var(--preset-primary)",
     },
     shopee: {
         label: "Shopee",
         shortLabel: "Shopee",
+        iconSrc: "/images/shopee.png",
         darkGlow: "rgba(var(--preset-primary-rgb), 0.14)",
         lightGlow: "rgba(var(--preset-primary-rgb), 0.08)",
-        darkIconBg: "linear-gradient(135deg, var(--preset-primary), var(--preset-lighter))",
-        lightIconBg: "linear-gradient(135deg, var(--preset-primary), var(--preset-lighter))",
+        darkIconWell: "#ffffff",
+        lightIconWell: "rgba(255,255,255,0.98)",
         accentDark: "var(--preset-lighter)",
         accentLight: "var(--preset-primary)",
     },
     shopify: {
         label: "Shopify",
         shortLabel: "Shopify",
+        iconSrc: "/images/shopify.png",
         darkGlow: "rgba(var(--preset-primary-rgb), 0.14)",
         lightGlow: "rgba(var(--preset-primary-rgb), 0.08)",
-        darkIconBg: "linear-gradient(135deg, var(--preset-primary), var(--preset-lighter))",
-        lightIconBg: "linear-gradient(135deg, var(--preset-primary), var(--preset-lighter))",
+        darkIconWell: "#ffffff",
+        lightIconWell: "rgba(255,255,255,0.98)",
         accentDark: "var(--preset-lighter)",
         accentLight: "var(--preset-primary)",
     },
     physical: {
         label: "Physical Store",
         shortLabel: "Physical",
+        iconSrc: "/images/physical_store.png",
         darkGlow: "rgba(var(--preset-primary-rgb), 0.14)",
         lightGlow: "rgba(var(--preset-primary-rgb), 0.08)",
-        darkIconBg: "linear-gradient(135deg, var(--preset-primary), var(--preset-lighter))",
-        lightIconBg: "linear-gradient(135deg, var(--preset-primary), var(--preset-lighter))",
+        darkIconWell: "#ffffff",
+        lightIconWell: "rgba(255,255,255,0.98)",
         accentDark: "var(--preset-primary)",
         accentLight: "var(--preset-primary)",
     },
@@ -75,7 +78,6 @@ const PLATFORM_CONFIG: Record<
 
 const OverviewDataCard = ({
     platform,
-    icon,
     dailySales,
     orderCount,
     averageOrderValue,
@@ -100,7 +102,7 @@ const OverviewDataCard = ({
               statValue: "hsl(var(--foreground))",
               divider: "rgba(var(--preset-primary-rgb), 0.1)",
               glow: config.darkGlow,
-              iconBg: config.darkIconBg,
+              iconWell: config.darkIconWell,
               badgeBg: "rgba(var(--preset-primary-rgb), 0.08)",
               badgeBorder: "rgba(var(--preset-primary-rgb), 0.15)",
               expandBtnBg: "rgba(var(--preset-primary-rgb), 0.06)",
@@ -121,7 +123,7 @@ const OverviewDataCard = ({
               statValue: "hsl(var(--foreground))",
               divider: "rgba(var(--preset-primary-rgb), 0.08)",
               glow: config.lightGlow,
-              iconBg: config.lightIconBg,
+              iconWell: config.lightIconWell,
               badgeBg: "rgba(var(--preset-primary-rgb), 0.04)",
               badgeBorder: "rgba(var(--preset-primary-rgb), 0.1)",
               expandBtnBg: "rgba(var(--preset-primary-rgb), 0.04)",
@@ -170,20 +172,28 @@ const OverviewDataCard = ({
                 }}
             >
                 <div
-                    className="platform-icon"
+                    className="platform-icon relative overflow-hidden"
                     style={{
-                        width: 38,
-                        height: 38,
-                        borderRadius: "50%",
-                        background: t.iconBg,
+                        width: 40,
+                        height: 40,
+                        borderRadius: 11,
+                        background: t.iconWell,
                         display: "flex",
                         alignItems: "center",
                         justifyContent: "center",
                         flexShrink: 0,
                         boxShadow: `0 2px 12px ${t.glow}`,
+                        border: `1px solid rgba(var(--preset-primary-rgb), ${isDark ? 0.12 : 0.08})`,
                     }}
                 >
-                    <div style={{ color: "#fff", display: "flex" }}>{icon}</div>
+                    <Image
+                        src={config.iconSrc}
+                        alt={`${config.label} logo`}
+                        width={40}
+                        height={40}
+                        className="h-[34px] w-[34px] object-contain"
+                        sizes="40px"
+                    />
                 </div>
                 <div style={{ display: "flex", flexDirection: "column", gap: 2 }}>
                     <span
@@ -209,9 +219,18 @@ const OverviewDataCard = ({
             {/* Sales amount */}
             <div>
                 {isLoading ? (
-                    <Skeleton
-                        style={{ height: 28, width: 120, marginTop: 6 }}
-                    />
+                    <div
+                        className="flex w-full items-center justify-center"
+                        style={{ minHeight: 108, paddingTop: 4, paddingBottom: 4 }}
+                    >
+                        <SmallLoader
+                            label="Fetching"
+                            size="large"
+                            labelColor={t.subtitle}
+                            centerPulseColor="rgba(var(--preset-primary-rgb), 0.38)"
+                            className="!py-0"
+                        />
+                    </div>
                 ) : (
                     <p
                         className="platform-sales-amount"
@@ -269,7 +288,9 @@ const OverviewDataCard = ({
                             Orders
                         </div>
                         {isLoading ? (
-                            <Skeleton style={{ height: 18, width: 50 }} />
+                            <div className="flex items-center gap-2 pt-0.5">
+                                <TinyLoader variant="bars" />
+                            </div>
                         ) : (
                             <div
                                 style={{
@@ -296,7 +317,9 @@ const OverviewDataCard = ({
                             Avg. Order
                         </div>
                         {isLoading ? (
-                            <Skeleton style={{ height: 18, width: 70 }} />
+                            <div className="flex items-center gap-2 pt-0.5">
+                                <TinyLoader variant="bars" />
+                            </div>
                         ) : (
                             <div
                                 style={{

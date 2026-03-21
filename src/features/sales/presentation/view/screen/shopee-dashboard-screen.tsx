@@ -4,7 +4,7 @@ import { useState, useEffect, useMemo } from "react";
 import { useTheme } from "next-themes";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { DollarSign, ShoppingBag, ShoppingCart, Percent } from "lucide-react";
-import { Skeleton } from "@/components/ui/skeleton";
+import { SmallLoader } from "@/components/ui/shop-intel-loader";
 import ShopeeConversionTable from "../components/shopee/shopee-conversion-table";
 import { ShopeeConversionCharts } from "../components/shopee/shopee-conversion-charts";
 import ShopeeSkusTable from "../components/shopee/shopee-skus-table";
@@ -100,7 +100,9 @@ function ShopeeMetricCard({ icon, label, value, subtitle, isLoading }: ShopeeMet
                 </div>
             </div>
             {isLoading ? (
-                <Skeleton style={{ height: 32, width: 120 }} />
+                <div className="flex w-full justify-start pt-0.5">
+                    <SmallLoader label="Fetching" className="!scale-[0.88] !items-start !gap-1 !py-2 origin-left" />
+                </div>
             ) : (
                 <p style={{ fontSize: 28, fontWeight: 700, color: t.amount, margin: 0, letterSpacing: "-0.5px", lineHeight: 1 }}>
                     {value}

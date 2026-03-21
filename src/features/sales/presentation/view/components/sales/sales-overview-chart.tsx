@@ -35,6 +35,7 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { AnalyticsSalesEntity, AnalyticsType } from "@/src/features/sales/data/model/analytics-entity"
 import { capitalizeFirstLetter, formatCurrencyToShort } from "@/src/core/constant/helper"
+import { MediumLoader } from "@/components/ui/shop-intel-loader"
 
 const chartConfig = {
     tiktok: {
@@ -543,8 +544,9 @@ export function SalesOverviewChart({
                     style={{
                         position: "absolute",
                         inset: 0,
-                        background: isDark ? "rgba(26, 34, 44, 0.75)" : "rgba(250, 247, 255, 0.6)",
-                        backdropFilter: "blur(2px)",
+                        background: isDark ? "rgba(26, 34, 44, 0.78)" : "rgba(250, 247, 255, 0.72)",
+                        backdropFilter: "blur(6px)",
+                        WebkitBackdropFilter: "blur(6px)",
                         zIndex: 10,
                         display: "flex",
                         alignItems: "center",
@@ -552,24 +554,7 @@ export function SalesOverviewChart({
                         borderRadius: 20,
                     }}
                 >
-                    <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 10 }}>
-                        <div style={{ display: "flex", gap: 4 }}>
-                            {[0, 150, 300].map((delay) => (
-                                <div
-                                    key={delay}
-                                    style={{
-                                        width: 8,
-                                        height: 8,
-                                        borderRadius: "50%",
-                                        background: "rgba(var(--preset-primary-rgb), 0.6)",
-                                        animation: "bounce 1s infinite",
-                                        animationDelay: `${delay}ms`,
-                                    }}
-                                />
-                            ))}
-                        </div>
-                        <span style={{ fontSize: 13, color: t.subtitle }}>Loading chart data...</span>
-                    </div>
+                    <MediumLoader label="Loading chart data" className="!py-4" />
                 </div>
             )}
 

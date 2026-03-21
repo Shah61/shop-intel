@@ -1,16 +1,13 @@
 "use client"
 
 import { SalesOverviewChart } from "../components/sales/sales-overview-chart";
-import { Video } from "lucide-react";
-import { ShoppingBag } from "lucide-react";
-import { Store } from "lucide-react";
+
 export interface PlatformMetrics {
     platform: string;
     dailySales: number;
     orderCount: number;
     averageOrderValue: number;
     conversionRate: number;
-    icon: React.ReactNode;
     trend: { percentage: number; direction: "up" | "down" };
 }
 
@@ -68,6 +65,8 @@ export const OverviewDashboardScreen = () => {
         error: salesByPlatformError
     } = useAnalysticsSales();
 
+    const overviewPlatformOrder = ["tiktok", "shopee", "shopify", "physical"] as const;
+
     // Platform-specific metrics
     const platformMetrics: (PlatformMetrics & { platformKey: string })[] = [
         {
@@ -77,7 +76,6 @@ export const OverviewDashboardScreen = () => {
             orderCount: data?.find(item => item.type === AnalyticsType.TIKTOK)?.total_orders || 0,
             averageOrderValue: Number(data?.find(item => item.type === AnalyticsType.TIKTOK)?.average_order_value) || 0,
             conversionRate: 4.2,
-            icon: <Video className="h-4 w-4" />,
             trend: {
                 percentage: 15.8,
                 direction: 'up'
@@ -90,7 +88,6 @@ export const OverviewDashboardScreen = () => {
             orderCount: data?.find(item => item.type === AnalyticsType.SHOPEE)?.total_orders || 0,
             averageOrderValue: Number(data?.find(item => item.type === AnalyticsType.SHOPEE)?.average_order_value) || 0,
             conversionRate: Number(data?.find(item => item.type === AnalyticsType.SHOPEE)?.conversion_rate) || 0,
-            icon: <ShoppingBag className="h-4 w-4" />,
             trend: {
                 percentage: 8.3,
                 direction: 'up'
@@ -103,7 +100,6 @@ export const OverviewDashboardScreen = () => {
             orderCount: data?.find(item => item.type === AnalyticsType.SHOPIFY)?.total_orders || 0,
             averageOrderValue: Number(data?.find(item => item.type === AnalyticsType.SHOPIFY)?.average_order_value) || 0,
             conversionRate: 2.9,
-            icon: <Store className="h-4 w-4" />,
             trend: {
                 percentage: 2.1,
                 direction: 'down'
@@ -116,7 +112,6 @@ export const OverviewDashboardScreen = () => {
             orderCount: data?.find(item => item.type === AnalyticsType.PHYSICAL)?.total_orders || 0,
             averageOrderValue: Number(data?.find(item => item.type === AnalyticsType.PHYSICAL)?.average_order_value) || 0,
             conversionRate: 2.9,
-            icon: <Store className="h-4 w-4" />,
             trend: {
                 percentage: 2.1,
                 direction: 'down'
@@ -172,13 +167,10 @@ export const OverviewDashboardScreen = () => {
                 className="overview-platform-grid !grid-cols-1 sm:!grid-cols-2 lg:!grid-cols-4"
             >
                 {isLoading
-                    ? Array(4)
-                          .fill(0)
-                          .map((_, index) => (
+                    ? overviewPlatformOrder.map((platformKey) => (
                               <OverviewDataCard
-                                  key={index}
-                                  platform="tiktok"
-                                  icon={<Video className="h-4 w-4" />}
+                                  key={platformKey}
+                                  platform={platformKey}
                                   dailySales={0}
                                   orderCount={0}
                                   averageOrderValue={0}
@@ -191,7 +183,6 @@ export const OverviewDashboardScreen = () => {
                           <OverviewDataCard
                               key={pm.platformKey}
                               platform={pm.platformKey}
-                              icon={pm.icon}
                               dailySales={pm.dailySales}
                               orderCount={pm.orderCount}
                               averageOrderValue={pm.averageOrderValue}
@@ -216,7 +207,11 @@ export const OverviewDashboardScreen = () => {
                 </div>
 
                 <div className="overview-table-wrapper lg:col-span-3">
-                    <AnalyticsSalesTable data={salesByPlatform || []} isLimit={true} />
+                    <AnalyticsSalesTable
+                        data={salesByPlatform || []}
+                        isLimit={true}
+                        isLoading={salesByPlatformLoading}
+                    />
                 </div>
             </div>
 

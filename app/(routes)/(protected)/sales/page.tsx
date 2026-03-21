@@ -7,6 +7,7 @@ import ShopifyDashboardScreen from "@/src/features/sales/presentation/view/scree
 import OverviewDashboardScreen from "@/src/features/sales/presentation/view/screen/overview-dashboard-screen";
 import WooCommerceDashboard from "./woocommerce/page";
 import { Suspense } from "react";
+import { FullLoader } from "@/components/ui/shop-intel-loader";
 
 function SalesContent() {
     const searchParams = useSearchParams();
@@ -28,11 +29,21 @@ function SalesContent() {
 
 export default function SalesPage() {
     return (
-        <Suspense fallback={
-            <div className="flex items-center justify-center min-h-[400px]">
-                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary" />
-            </div>
-        }>
+        <Suspense
+            fallback={
+                <div className="flex min-h-[min(70vh,520px)] w-full items-center justify-center rounded-2xl border border-border/40 bg-muted/20">
+                    <FullLoader
+                        messages={[
+                            "Syncing your channels",
+                            "Pulling latest sales data",
+                            "Crunching the numbers",
+                            "Almost there",
+                        ]}
+                        className="!py-10"
+                    />
+                </div>
+            }
+        >
             <SalesContent />
         </Suspense>
     );

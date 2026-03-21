@@ -12,6 +12,7 @@ import { formatCurrency, isAdmin } from "@/src/core/constant/helper";
 import { AnalyticsSalesEntity } from "@/src/features/sales/data/model/analytics-entity";
 import DialogAnalyticsSalesTable from "./dialog-analytics-sales-table";
 import { useSession } from "@/src/core/lib/dummy-session-provider";
+import { MediumLoader } from "@/components/ui/shop-intel-loader";
 
 const PLATFORM_BADGE_CONFIG: Record<string, { label: string; gradient: string; shadow: string }> = {
     tiktok: {
@@ -119,10 +120,12 @@ const LIMIT_DESKTOP = 13;
 const LIMIT_MOBILE = 13; // one fewer row on phones/tablets so last entry is not shown
 
 const AnalyticsSalesTable = ({
-    isLimit
+    isLimit,
+    isLoading = false,
 }: {
-    data?: AnalyticsSalesEntity[]
-    isLimit: boolean
+    data?: AnalyticsSalesEntity[];
+    isLimit: boolean;
+    isLoading?: boolean;
 }) => {
     const [isNarrowViewport, setIsNarrowViewport] = useState(false);
     useEffect(() => {
@@ -222,7 +225,22 @@ const AnalyticsSalesTable = ({
             </div>
 
             {/* Table */}
-            <div className="analytics-table-scroll" style={{ overflow: "auto", flex: 1 }}>
+            <div
+                className="analytics-table-scroll relative"
+                style={{ overflow: "auto", flex: 1, minHeight: isLoading ? 280 : undefined }}
+            >
+                {isLoading && (
+                    <div
+                        className="absolute inset-0 z-[5] flex items-center justify-center rounded-xl"
+                        style={{
+                            background: isDark ? "rgba(26, 34, 44, 0.72)" : "rgba(250, 247, 255, 0.75)",
+                            backdropFilter: "blur(5px)",
+                            WebkitBackdropFilter: "blur(5px)",
+                        }}
+                    >
+                        <MediumLoader label="Loading conversion data" className="!py-6" />
+                    </div>
+                )}
                 <table className="analytics-table" style={{ width: "100%", borderCollapse: "collapse", fontSize: 13 }}>
                     <thead>
                         <tr>

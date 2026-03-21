@@ -4,7 +4,7 @@ import { useState, useEffect, useMemo } from "react";
 import { useTheme } from "next-themes";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Package, ShoppingCart, Percent } from "lucide-react";
-import { Skeleton } from "@/components/ui/skeleton";
+import { SmallLoader } from "@/components/ui/shop-intel-loader";
 import { TiktokConversionCharts } from "../components/tiktok/tiktok-conversion-charts";
 import TiktokConversionTable from "../components/tiktok/tiktok-conversion-table";
 import {
@@ -113,7 +113,9 @@ function TiktokMetricCard({ icon, label, value, subtitle, isLoading }: TiktokMet
             </div>
 
             {isLoading ? (
-                <Skeleton style={{ height: 32, width: 120 }} />
+                <div className="flex w-full justify-start pt-0.5">
+                    <SmallLoader label="Fetching" className="!scale-[0.88] !items-start !gap-1 !py-2 origin-left" />
+                </div>
             ) : (
                 <p
                     style={{
