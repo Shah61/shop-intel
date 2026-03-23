@@ -20,26 +20,26 @@ import {
   PreviousEngagementMetrics
 } from '../model/competitor-model';
 
-// clothing brand names and data
+// Clothing / fashion brand mock data (Top Performing Videos & related charts)
 const clothingBrands = [
-  { name: "Godiva Official", uniqueId: "@godiva", source: "COMPETITOR" as const },
-  { name: "Lindt & Sprüngli", uniqueId: "@lindt_clothing", source: "COMPETITOR" as const },
-  { name: "Ferrero Rocher", uniqueId: "@ferrerorocher", source: "COMPETITOR" as const },
-  { name: "Toblerone", uniqueId: "@toblerone", source: "COMPETITOR" as const },
-  { name: "Ghirardelli Square", uniqueId: "@ghirardelli", source: "COMPETITOR" as const },
-  { name: "Hershey's", uniqueId: "@hersheys", source: "COMPETITOR" as const },
-  { name: "Cadbury UK", uniqueId: "@cadburyuk", source: "COMPETITOR" as const },
-  { name: "Milka", uniqueId: "@milka", source: "COMPETITOR" as const },
-  { name: "Valrhona", uniqueId: "@valrhona", source: "COMPETITOR" as const },
-  { name: "Green & Black's", uniqueId: "@greenandblacks", source: "COMPETITOR" as const },
-  { name: "clothingCraft Co", uniqueId: "@clothingcraft", source: "CREATOR" as const },
-  { name: "Artisan Cacao", uniqueId: "@artisancacao", source: "CREATOR" as const },
-  { name: "Bean to Bar Studio", uniqueId: "@beantobarstudio", source: "CREATOR" as const },
-  { name: "Sweet Alchemy", uniqueId: "@sweetalchemy", source: "CREATOR" as const },
-  { name: "Cocoa Craftsman", uniqueId: "@cocoacraftsman", source: "CREATOR" as const },
-  { name: "Shop-Intel clothing", uniqueId: "@Shop-Intelclothing", source: "Shop-Intel" as const },
-  { name: "Shop-Intel Confections", uniqueId: "@Shop-Intelconfections", source: "Shop-Intel" as const },
-  { name: "Shop-Intel Artisan", uniqueId: "@Shop-Intelartisan", source: "Shop-Intel" as const }
+  { name: 'Zara', uniqueId: '@zara', source: 'COMPETITOR' as const },
+  { name: 'H&M', uniqueId: '@hm', source: 'COMPETITOR' as const },
+  { name: 'Uniqlo', uniqueId: '@uniqlo', source: 'COMPETITOR' as const },
+  { name: 'Nike', uniqueId: '@nike', source: 'COMPETITOR' as const },
+  { name: 'Adidas', uniqueId: '@adidas', source: 'COMPETITOR' as const },
+  { name: "Levi's", uniqueId: '@levis', source: 'COMPETITOR' as const },
+  { name: 'COS', uniqueId: '@cosstores', source: 'COMPETITOR' as const },
+  { name: 'Mango', uniqueId: '@mango', source: 'COMPETITOR' as const },
+  { name: 'ASOS', uniqueId: '@asos', source: 'COMPETITOR' as const },
+  { name: 'Reformation', uniqueId: '@reformation', source: 'COMPETITOR' as const },
+  { name: 'Style Studio', uniqueId: '@stylestudio', source: 'CREATOR' as const },
+  { name: 'Wardrobe Edit', uniqueId: '@wardrobeedit', source: 'CREATOR' as const },
+  { name: 'Fit Check Daily', uniqueId: '@fitcheckdaily', source: 'CREATOR' as const },
+  { name: 'Thrift Flip Co', uniqueId: '@thriftflipco', source: 'CREATOR' as const },
+  { name: 'Capsule Closet', uniqueId: '@capsulecloset', source: 'CREATOR' as const },
+  { name: 'Shop-Intel Apparel', uniqueId: '@shopintel_apparel', source: 'Shop-Intel' as const },
+  { name: 'Shop-Intel Studio', uniqueId: '@shopintel_studio', source: 'Shop-Intel' as const },
+  { name: 'Shop-Intel Label', uniqueId: '@shopintel_label', source: 'Shop-Intel' as const },
 ];
 
 // Generate realistic engagement metrics
@@ -447,18 +447,18 @@ export const mockCompetitorContentData = (params: CompetitorContentParams): Comp
       updated_at: new Date().toISOString(),
       channel: {
         id: params.channel_id,
-        name: clothingBrands.find(b => b.uniqueId.includes('clothing'))?.name || "clothing Master",
-        platform: "TIKTOK",
-        region: "US",
-        unique_id: "@clothingmaster",
+        name: clothingBrands.find(b => b.source === 'Shop-Intel')?.name || 'Fashion Forward',
+        platform: 'TIKTOK',
+        region: 'US',
+        unique_id: '@shopintel_apparel',
         image_url: `https://picsum.photos/150/150?random=${index + 300}`,
         categories: [
           {
             category: {
-              name: "Food & Cooking"
-            }
-          }
-        ]
+              name: 'Fashion & Apparel',
+            },
+          },
+        ],
       }
     };
   });
