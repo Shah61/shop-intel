@@ -76,7 +76,6 @@ const getThreat = (c: Omit<AggChannel, 'tier' | 'threat'>): 'high' | 'medium' | 
 };
 
 const COLORS_GRADIENT = ['#6366f1', '#8b5cf6', '#a78bfa', '#c4b5fd', '#818cf8', '#7c3aed', '#6d28d9'];
-const THREAT_COLORS = { high: '#ef4444', medium: '#f59e0b', low: 'rgba(255,255,255,.25)' };
 const TIER_COLORS = { viral: '#10b981', active: '#f59e0b', low: 'rgba(255,255,255,.28)' };
 
 // Simulated time-series for demo (derived from real channel data)
@@ -159,15 +158,6 @@ const PulseDot: React.FC<{ color?: string; size?: number }> = ({ color = 'var(--
   </span>
 );
 
-const ThreatBadge: React.FC<{ level: 'high' | 'medium' | 'low' }> = ({ level }) => {
-  const m = { high: { c: '#ef4444', l: 'HIGH', bg: 'rgba(239,68,68,.12)' }, medium: { c: '#f59e0b', l: 'MED', bg: 'rgba(245,158,11,.12)' }, low: { c: 'rgba(255,255,255,.25)', l: 'LOW', bg: 'rgba(255,255,255,.04)' } }[level];
-  return (
-    <span style={{ display: 'inline-flex', alignItems: 'center', gap: 3, padding: '2px 7px', borderRadius: 5, background: m.bg, border: `1px solid ${m.c}44`, fontSize: 9, fontWeight: 800, color: m.c, letterSpacing: '.07em' }}>
-      {level === 'high' && <AlertTriangle style={{ width: 8, height: 8 }} />}{m.l}
-    </span>
-  );
-};
-
 const TierBadge: React.FC<{ tier: 'viral' | 'active' | 'low' }> = ({ tier }) => {
   const m = { viral: { c: '#10b981', l: 'VIRAL', bg: 'rgba(16,185,129,.12)', icon: <Flame style={{ width: 8, height: 8 }} /> }, active: { c: '#f59e0b', l: 'ACTIVE', bg: 'rgba(245,158,11,.12)', icon: <Activity style={{ width: 8, height: 8 }} /> }, low: { c: 'rgba(255,255,255,.25)', l: 'LOW', bg: 'rgba(255,255,255,.04)', icon: null } }[tier];
   return (
@@ -180,9 +170,9 @@ const TierBadge: React.FC<{ tier: 'viral' | 'active' | 'low' }> = ({ tier }) => 
 const PlatChip: React.FC<{ platform: string }> = ({ platform }) => {
   const icons: Record<string, string> = { INSTAGRAM: '/images/instargram.png', TIKTOK: '/images/tiktok2.png' };
   return (
-    <span style={{ display: 'inline-flex', alignItems: 'center', gap: 4, padding: '2px 7px', borderRadius: 6, background: 'rgba(255,255,255,.05)', border: '1px solid rgba(255,255,255,.08)', fontSize: 10, fontWeight: 700, color: 'rgba(255,255,255,.45)', textTransform: 'capitalize' }}>
-      {icons[platform] && <img src={icons[platform]} alt="" style={{ width: 11, height: 11, objectFit: 'contain' }} />}
-      {platform.toLowerCase()}
+    <span style={{ display: 'inline-flex', alignItems: 'center', gap: 3, padding: '1px 6px', borderRadius: 6, background: 'rgba(255,255,255,.05)', border: '1px solid rgba(255,255,255,.08)', fontSize: 9, fontWeight: 700, color: 'rgba(255,255,255,.45)', textTransform: 'capitalize', lineHeight: 1.1, minWidth: 0, maxWidth: '100%', flexShrink: 1 }}>
+      {icons[platform] && <img src={icons[platform]} alt="" style={{ width: 10, height: 10, objectFit: 'contain' }} />}
+      <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', maxWidth: 64 }}>{platform.toLowerCase()}</span>
     </span>
   );
 };
@@ -381,8 +371,7 @@ const CompetitorIntelligence: React.FC = () => {
     totalLikes: channels.reduce((s, c) => s + c.likes, 0),
     totalComments: channels.reduce((s, c) => s + c.comments, 0),
     avgEng: channels.length ? channels.reduce((s, c) => s + c.engagement, 0) / channels.length : 0,
-    highThreat: channels.filter(c => c.threat === 'high').length,
-    medThreat: channels.filter(c => c.threat === 'medium').length,
+    fastRising: channels.filter(c => c.engagement >= 0.08 && c.views24h > 100000).length,
     viral: channels.filter(c => c.tier === 'viral').length,
     avgViews: channels.length ? channels.reduce((s, c) => s + c.views, 0) / channels.length : 0,
     avgLikes: channels.length ? channels.reduce((s, c) => s + c.likes, 0) / channels.length : 0,
@@ -401,7 +390,7 @@ const CompetitorIntelligence: React.FC = () => {
   // ── CHART DATA ───────────────────────────────────────────────────────
   const barData = useMemo(() => sorted.slice(0, 10).map(c => ({ name: c.name.length > 11 ? c.name.slice(0, 11) + '…' : c.name, views24h: c.views24h, likes24h: c.likes24h, eng: +(c.engagement * 100).toFixed(2), fullName: c.name })), [sorted]);
   const engArea = useMemo(() => sorted.slice(0, 15).map((c, i) => ({ idx: i + 1, eng: +(c.engagement * 100).toFixed(2), name: c.name })), [sorted]);
-  const scatter = useMemo(() => channels.map(c => ({ x: c.views24h, y: +(c.engagement * 100).toFixed(2), z: c.videos * 10, name: c.name, threat: c.threat })), [channels]);
+  const scatter = useMemo(() => channels.map(c => ({ x: c.views24h, y: +(c.engagement * 100).toFixed(2), z: c.videos * 10, name: c.name })), [channels]);
   const platDist = useMemo(() => { const m: Record<string, number> = {}; channels.forEach(c => { m[c.platform] = (m[c.platform] || 0) + 1; }); return Object.entries(m).map(([k, v]) => ({ platform: k, count: v, pct: channels.length ? (v / channels.length) * 100 : 0 })); }, [channels]);
   const topVideos = useMemo(() => [...videos].sort((a, b) => (b.metadata?.['24h_change_views'] ?? 0) - (a.metadata?.['24h_change_views'] ?? 0)).slice(0, 12), [videos]);
   const timeSeries = useMemo(() => generateTimeSeries(channels, 7), [channels]);
@@ -504,11 +493,6 @@ const CompetitorIntelligence: React.FC = () => {
               <div style={{ display: 'flex', alignItems: 'center', gap: 7, marginTop: 3, flexWrap: 'wrap' }}>
                 <PulseDot size={6} />
                 <span style={{ fontSize: 10, color: 'rgba(255,255,255,.4)', fontWeight: 700, letterSpacing: '.07em', textTransform: 'uppercase' }}>Live Monitoring</span>
-                {summary.highThreat > 0 && (
-                  <span style={{ display: 'inline-flex', alignItems: 'center', gap: 3, padding: '1px 7px', borderRadius: 5, background: 'rgba(239,68,68,.12)', border: '1px solid rgba(239,68,68,.3)', fontSize: 10, fontWeight: 800, color: '#ef4444', letterSpacing: '.05em' }}>
-                    <AlertTriangle style={{ width: 9, height: 9 }} />{summary.highThreat} HIGH THREAT
-                  </span>
-                )}
                 <span style={{ fontSize: 10, color: 'rgba(255,255,255,.25)', fontWeight: 600 }}>·</span>
                 <span style={{ fontSize: 10, color: 'rgba(255,255,255,.3)', fontWeight: 600 }}>{summary.totalChannels} competitors · {summary.totalVideos} videos tracked</span>
               </div>
@@ -536,32 +520,6 @@ const CompetitorIntelligence: React.FC = () => {
             </SelectContent>
           </Select>
         </div>
-      </div>
-
-      {/* ═══════════════════════════════════════════════════════════════════ */}
-      {/*  KPI STRIP                                                        */}
-      {/* ═══════════════════════════════════════════════════════════════════ */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(132px,1fr))', gap: 10 }}>
-        {[
-          { label: 'Competitors', value: summary.totalChannels, fmt: (v: number) => v.toString(), icon: <Users style={{ width: 14, height: 14 }} />, accent: 'var(--preset-primary)', delay: '0s' },
-          { label: 'Videos Tracked', value: summary.totalVideos, fmt: (v: number) => v.toString(), icon: <Video style={{ width: 14, height: 14 }} />, accent: '#6366f1', delay: '.06s' },
-          { label: '24h View Surge', value: summary.totalViews24h, fmt, icon: <Flame style={{ width: 14, height: 14 }} />, accent: '#f59e0b', delay: '.12s' },
-          { label: '24h Like Surge', value: summary.totalLikes24h, fmt, icon: <Heart style={{ width: 14, height: 14 }} />, accent: '#ec4899', delay: '.18s' },
-          { label: 'Avg Engagement', value: summary.avgEng * 100, fmt: (v: number) => `${v.toFixed(1)}%`, icon: <Sparkles style={{ width: 14, height: 14 }} />, accent: '#10b981', delay: '.24s' },
-          { label: 'High Threat', value: summary.highThreat, fmt: (v: number) => v.toString(), icon: <AlertTriangle style={{ width: 14, height: 14 }} />, accent: '#ef4444', delay: '.30s' },
-        ].map((k, i) => (
-          <div key={i} style={{ borderRadius: 13, border: '1px solid rgba(255,255,255,.07)', background: 'rgba(255,255,255,.03)', padding: '11px 13px', position: 'relative', overflow: 'hidden', animation: `ait-up .45s ease ${k.delay} both` }}>
-            <div style={{ position: 'absolute', top: '-40%', right: '-15%', width: 110, height: 110, borderRadius: '50%', background: `radial-gradient(circle,${k.accent}18,transparent 70%)`, pointerEvents: 'none' }} />
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 8, marginBottom: 8 }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 8, minWidth: 0, flex: 1 }}>
-                <div style={{ width: 28, height: 28, borderRadius: 8, background: `${k.accent}18`, display: 'flex', alignItems: 'center', justifyContent: 'center', color: k.accent, flexShrink: 0 }}>{k.icon}</div>
-                <div style={{ fontSize: 9, color: 'rgba(255,255,255,.4)', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.05em', lineHeight: 1.25, minWidth: 0 }}>{k.label}</div>
-              </div>
-              <PulseDot size={5} color={k.accent} />
-            </div>
-            <div style={{ fontSize: 22, fontWeight: 800, letterSpacing: '-0.5px', lineHeight: 1.1, color: 'rgba(255,255,255,.92)' }}><AnimNum value={k.value} format={k.fmt} /></div>
-          </div>
-        ))}
       </div>
 
       {/* ═══════════════════════════════════════════════════════════════════ */}
@@ -605,7 +563,7 @@ const CompetitorIntelligence: React.FC = () => {
             </Panel>
 
             <Panel>
-              <PanelHeader title="Reach vs Engagement" subtitle="Bubble = post volume · Color = threat" icon={<Target style={{ width: 14, height: 14 }} />} iconColor="#10b981" />
+              <PanelHeader title="Reach vs Engagement" subtitle="Bubble = channel activity · Color = engagement tier" icon={<Target style={{ width: 14, height: 14 }} />} iconColor="#10b981" />
               <ResponsiveContainer width="100%" height={175}>
                 <ScatterChart margin={{ top: 0, right: 0, left: -22, bottom: 0 }}>
                   <CartesianGrid strokeDasharray="2 2" stroke="rgba(255,255,255,.04)" />
@@ -614,7 +572,7 @@ const CompetitorIntelligence: React.FC = () => {
                   <ZAxis dataKey="z" range={[40, 200]} />
                   <Tooltip content={<ChartTip />} cursor={{ strokeDasharray: '3 3', stroke: 'rgba(255,255,255,.12)' }} />
                   <Scatter data={scatter} name="Channel">
-                    {scatter.map((d, i) => <Cell key={i} fill={d.threat === 'high' ? '#ef4444' : d.threat === 'medium' ? '#f59e0b' : 'rgba(var(--preset-primary-rgb),.6)'} fillOpacity={0.8} />)}
+                    {scatter.map((d, i) => <Cell key={i} fill={d.y >= 8 ? '#10b981' : d.y >= 4 ? '#f59e0b' : 'rgba(var(--preset-primary-rgb),.6)'} fillOpacity={0.8} />)}
                   </Scatter>
                 </ScatterChart>
               </ResponsiveContainer>
@@ -722,7 +680,7 @@ const CompetitorIntelligence: React.FC = () => {
       {/*  TAB: CHANNELS                                                    */}
       {/* ═══════════════════════════════════════════════════════════════════ */}
       {ciTab === 'channels' && (
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 295px', gap: 13, alignItems: 'start' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 220px', gap: 13, alignItems: 'start' }}>
           {/* Table */}
           <div style={{ borderRadius: 13, border: '1px solid rgba(255,255,255,.07)', background: 'rgba(255,255,255,.03)', overflow: 'hidden' }}>
             <div style={{ padding: '13px 17px', borderBottom: '1px solid rgba(255,255,255,.07)', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 8 }}>
@@ -741,7 +699,7 @@ const CompetitorIntelligence: React.FC = () => {
                 </div>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
                   <Shield style={{ width: 11, height: 11, color: 'rgba(255,255,255,.3)' }} />
-                  <span style={{ fontSize: 11, color: 'rgba(255,255,255,.35)' }}>Sorted by <b style={{ color: 'rgba(255,255,255,.75)' }}>{{ videos: 'Posts', views: 'Views', likes: 'Likes', comments: 'Comments', views_24h: '24h Views', likes_24h: '24h Likes', engagement: 'Engagement' }[sortField]}</b></span>
+                  <span style={{ fontSize: 11, color: 'rgba(255,255,255,.35)' }}>Sorted by <b style={{ color: 'rgba(255,255,255,.75)' }}>{{ videos: 'Videos', views: 'Views', likes: 'Likes', comments: 'Comments', views_24h: '24h Views', likes_24h: '24h Likes', engagement: 'Engagement' }[sortField] || 'Engagement'}</b></span>
                 </div>
               </div>
             </div>
@@ -758,8 +716,6 @@ const CompetitorIntelligence: React.FC = () => {
                       {[
                         { l: '#', f: null, align: 'left', w: 44 },
                         { l: 'Channel', f: null, align: 'left', w: 185 },
-                        { l: 'Threat', f: null, align: 'left', w: 72 },
-                        { l: 'Posts', f: 'videos' as SortField, align: 'right', w: 60 },
                         { l: 'Views', f: 'views' as SortField, align: 'right', w: 80 },
                         { l: 'Likes', f: 'likes' as SortField, align: 'right', w: 80 },
                         { l: 'Comments', f: 'comments' as SortField, align: 'right', w: 90 },
@@ -808,8 +764,6 @@ const CompetitorIntelligence: React.FC = () => {
                               </div>
                             </div>
                           </td>
-                          <td style={{ padding: '10px 11px' }}><ThreatBadge level={ch.threat} /></td>
-                          <td style={{ padding: '10px 11px', textAlign: 'right', fontWeight: 700 }}>{ch.videos}</td>
                           <td style={{ padding: '10px 11px', textAlign: 'right', color: 'rgba(255,255,255,.65)' }}>{fmt(ch.views)}</td>
                           <td style={{ padding: '10px 11px', textAlign: 'right', color: 'rgba(255,255,255,.65)' }}>{fmt(ch.likes)}</td>
                           <td style={{ padding: '10px 11px', textAlign: 'right', color: 'rgba(255,255,255,.65)' }}>{fmt(ch.comments)}</td>
@@ -837,49 +791,34 @@ const CompetitorIntelligence: React.FC = () => {
           {/* Right rail */}
           <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
             {top && (
-              <Panel>
+              <Panel style={{ padding: '14px 14px' }}>
                 <PanelHeader title="Leader Spotlight" subtitle="" icon={<Crown style={{ width: 14, height: 14 }} />} iconColor="#f59e0b" />
-                <div style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '10px 12px', borderRadius: 10, background: 'rgba(var(--preset-primary-rgb),.07)', border: '1px solid rgba(var(--preset-primary-rgb),.15)', marginBottom: 12 }}>
-                  {top.avatar ? <img src={top.avatar} alt="" style={{ width: 37, height: 37, borderRadius: '50%', objectFit: 'cover', boxShadow: '0 0 0 2px rgba(var(--preset-primary-rgb),.4)' }} onError={e => { (e.target as HTMLImageElement).style.display = 'none'; }} /> : <div style={{ width: 37, height: 37, borderRadius: '50%', background: 'var(--preset-primary)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 15, fontWeight: 900, color: '#fff' }}>{top.name[0].toUpperCase()}</div>}
-                  <div>
-                    <div style={{ fontSize: 13, fontWeight: 800, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', maxWidth: 165 }}>{top.name}</div>
-                    <div style={{ display: 'flex', gap: 5, marginTop: 3 }}><PlatChip platform={top.platform} /><ThreatBadge level={top.threat} /></div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '8px 10px', borderRadius: 10, background: 'rgba(var(--preset-primary-rgb),.07)', border: '1px solid rgba(var(--preset-primary-rgb),.15)', marginBottom: 10 }}>
+                  {top.avatar ? <img src={top.avatar} alt="" style={{ width: 34, height: 34, borderRadius: '50%', objectFit: 'cover', boxShadow: '0 0 0 2px rgba(var(--preset-primary-rgb),.4)' }} onError={e => { (e.target as HTMLImageElement).style.display = 'none'; }} /> : <div style={{ width: 34, height: 34, borderRadius: '50%', background: 'var(--preset-primary)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 14, fontWeight: 900, color: '#fff' }}>{top.name[0].toUpperCase()}</div>}
+                  <div style={{ minWidth: 0, flex: 1 }}>
+                    <div style={{ fontSize: 12, fontWeight: 800, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', maxWidth: 150 }}>{top.name}</div>
+                    <div style={{ display: 'flex', gap: 4, marginTop: 3, flexWrap: 'wrap', alignItems: 'center' }}><PlatChip platform={top.platform} /><TierBadge tier={top.tier} /></div>
                   </div>
                 </div>
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 7 }}>
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 6 }}>
                   {[{ l: '24h Views', v: fmt(top.views24h), c: '#10b981' }, { l: '24h Likes', v: fmt(top.likes24h), c: '#ec4899' }, { l: 'Comments', v: fmt(top.comments), c: 'var(--preset-lighter)' }, { l: 'Posts', v: top.videos.toString(), c: '#f59e0b' }].map((m, i) => (
-                    <div key={i} style={{ borderRadius: 8, background: 'rgba(255,255,255,.03)', border: '1px solid rgba(255,255,255,.06)', padding: '9px 11px' }}>
-                      <div style={{ fontSize: 9, color: m.c, fontWeight: 800, textTransform: 'uppercase', letterSpacing: '.06em', marginBottom: 3 }}>{m.l}</div>
-                      <div style={{ fontSize: 16, fontWeight: 900, color: m.c }}>{m.v}</div>
+                    <div key={i} style={{ borderRadius: 8, background: 'rgba(255,255,255,.03)', border: '1px solid rgba(255,255,255,.06)', padding: '7px 8px' }}>
+                      <div style={{ fontSize: 8, color: m.c, fontWeight: 800, textTransform: 'uppercase', letterSpacing: '.05em', marginBottom: 2, lineHeight: 1.2 }}>{m.l}</div>
+                      <div style={{ fontSize: 14, fontWeight: 900, color: m.c, lineHeight: 1.1, wordBreak: 'break-word' }}>{m.v}</div>
                     </div>
                   ))}
                 </div>
               </Panel>
             )}
-            <Panel>
-              <div style={{ fontSize: 12, fontWeight: 800, marginBottom: 11 }}>Engagement Tiers</div>
+            <Panel style={{ padding: '14px 14px' }}>
+              <div style={{ fontSize: 11, fontWeight: 800, marginBottom: 9 }}>Engagement Tiers</div>
               {[{ label: 'Viral (>8%)', count: channels.filter(c => c.tier === 'viral').length, color: '#10b981' }, { label: 'Active (4–8%)', count: channels.filter(c => c.tier === 'active').length, color: '#f59e0b' }, { label: 'Low (<4%)', count: channels.filter(c => c.tier === 'low').length, color: 'rgba(255,255,255,.28)' }].map((t, i, arr) => (
-                <div key={i} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '7px 0', borderBottom: i < arr.length - 1 ? '1px solid rgba(255,255,255,.06)' : 'none' }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 7 }}>
+                <div key={i} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '6px 0', borderBottom: i < arr.length - 1 ? '1px solid rgba(255,255,255,.06)' : 'none' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
                     <div style={{ width: 7, height: 7, borderRadius: '50%', background: t.color, boxShadow: `0 0 5px ${t.color}88` }} />
-                    <span style={{ fontSize: 11, color: 'rgba(255,255,255,.42)', fontWeight: 600 }}>{t.label}</span>
+                    <span style={{ fontSize: 10, color: 'rgba(255,255,255,.42)', fontWeight: 600 }}>{t.label}</span>
                   </div>
-                  <span style={{ fontSize: 14, fontWeight: 900, color: t.color }}>{t.count}</span>
-                </div>
-              ))}
-            </Panel>
-            <Panel>
-              <div style={{ fontSize: 12, fontWeight: 800, marginBottom: 11 }}>Threat Assessment</div>
-              {[{ label: 'High Threat', count: summary.highThreat, color: '#ef4444', desc: 'High engagement + rapid growth' }, { label: 'Medium', count: summary.medThreat, color: '#f59e0b', desc: 'Moderate activity' }, { label: 'Low', count: channels.filter(c => c.threat === 'low').length, color: 'rgba(255,255,255,.28)', desc: 'Limited impact' }].map((t, i, arr) => (
-                <div key={i} style={{ display: 'flex', alignItems: 'flex-start', gap: 8, padding: '8px 0', borderBottom: i < arr.length - 1 ? '1px solid rgba(255,255,255,.06)' : 'none' }}>
-                  <AlertTriangle style={{ width: 12, height: 12, color: t.color, marginTop: 1, flexShrink: 0 }} />
-                  <div style={{ flex: 1 }}>
-                    <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                      <span style={{ fontSize: 11, fontWeight: 700, color: t.color }}>{t.label}</span>
-                      <span style={{ fontSize: 13, fontWeight: 900, color: t.color }}>{t.count}</span>
-                    </div>
-                    <div style={{ fontSize: 10, color: 'rgba(255,255,255,.25)', marginTop: 1 }}>{t.desc}</div>
-                  </div>
+                  <span style={{ fontSize: 12, fontWeight: 900, color: t.color }}>{t.count}</span>
                 </div>
               ))}
             </Panel>
@@ -957,9 +896,9 @@ const CompetitorIntelligence: React.FC = () => {
       {/*  TAB: SIGNALS                                                     */}
       {/* ═══════════════════════════════════════════════════════════════════ */}
       {ciTab === 'signals' && (
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 13, alignItems: 'start' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 13, alignItems: 'stretch', gridAutoRows: '1fr' }}>
           {/* Growth anomalies */}
-          <Panel>
+          <Panel style={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
             <PanelHeader title="Growth Anomalies" subtitle="Above-average 24h spikes" icon={<Zap style={{ width: 14, height: 14 }} />} iconColor="#f59e0b" />
             {sorted.filter(c => c.views24h > (summary.totalViews24h / Math.max(summary.totalChannels, 1)) * 1.4).slice(0, 6).map((ch, i) => (
               <div key={i} style={{ display: 'flex', alignItems: 'flex-start', gap: 10, padding: '11px', borderRadius: 10, border: '1px solid rgba(255,255,255,.07)', background: 'rgba(255,255,255,.02)', marginBottom: 8 }}>
@@ -969,7 +908,7 @@ const CompetitorIntelligence: React.FC = () => {
                     <span style={{ fontSize: 12, fontWeight: 700, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', maxWidth: 150 }}>{ch.name}</span>
                     <span style={{ fontSize: 12, fontWeight: 900, color: '#10b981', flexShrink: 0, marginLeft: 8 }}>+{fmt(ch.views24h)}</span>
                   </div>
-                  <div style={{ display: 'flex', gap: 5, marginTop: 4, marginBottom: 6 }}><PlatChip platform={ch.platform} /><ThreatBadge level={ch.threat} /></div>
+                  <div style={{ display: 'flex', gap: 5, marginTop: 4, marginBottom: 6 }}><PlatChip platform={ch.platform} /><TierBadge tier={ch.tier} /></div>
                   <MiniBar value={ch.views24h} max={maxV24} color="#ef4444" />
                 </div>
               </div>
@@ -978,7 +917,7 @@ const CompetitorIntelligence: React.FC = () => {
           </Panel>
 
           {/* Engagement leaders */}
-          <Panel>
+          <Panel style={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
             <PanelHeader title="Engagement Leaders" subtitle="Highest like-to-view ratio" icon={<Award style={{ width: 14, height: 14 }} />} iconColor="#10b981" />
             {[...channels].sort((a, b) => b.engagement - a.engagement).slice(0, 6).map((ch, i) => (
               <div key={i} style={{ display: 'flex', alignItems: 'flex-start', gap: 10, padding: '11px', borderRadius: 10, border: '1px solid rgba(255,255,255,.07)', background: 'rgba(255,255,255,.02)', marginBottom: 8 }}>
@@ -996,7 +935,7 @@ const CompetitorIntelligence: React.FC = () => {
           </Panel>
 
           {/* Most active */}
-          <Panel>
+          <Panel style={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
             <PanelHeader title="Most Active Posters" subtitle="Highest content volume" icon={<Clock style={{ width: 14, height: 14 }} />} iconColor="var(--preset-lighter)" />
             {[...channels].sort((a, b) => b.videos - a.videos).slice(0, 6).map((ch, i) => (
               <div key={i} style={{ display: 'flex', alignItems: 'flex-start', gap: 10, padding: '11px', borderRadius: 10, border: '1px solid rgba(255,255,255,.07)', background: 'rgba(255,255,255,.02)', marginBottom: 8 }}>
@@ -1014,7 +953,7 @@ const CompetitorIntelligence: React.FC = () => {
           </Panel>
 
           {/* Rising underdogs */}
-          <Panel>
+          <Panel style={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
             <PanelHeader title="Rising Underdogs" subtitle="Low followers but high velocity" icon={<TrendingUp style={{ width: 14, height: 14 }} />} iconColor="#8b5cf6" />
             {[...channels]
               .filter(c => c.views < summary.avgViews && c.views24h > (summary.totalViews24h / Math.max(summary.totalChannels, 1)) * 0.8)
@@ -1156,8 +1095,6 @@ const CompetitorIntelligence: React.FC = () => {
                     { metric: 'Comments', fn: (c: AggChannel) => fmt(c.comments) },
                     { metric: '24h Views', fn: (c: AggChannel) => fmt(c.views24h) },
                     { metric: 'Engagement', fn: (c: AggChannel) => fmtPct(c.engagement) },
-                    { metric: 'Posts', fn: (c: AggChannel) => c.videos.toString() },
-                    { metric: 'Threat', fn: (c: AggChannel) => c.threat.toUpperCase() },
                   ].map((row, ri) => (
                     <tr key={ri} style={{ borderBottom: '1px solid rgba(255,255,255,.05)' }}>
                       <td style={{ padding: '8px 10px', fontSize: 11, fontWeight: 700, color: 'rgba(255,255,255,.45)' }}>{row.metric}</td>
@@ -1541,15 +1478,15 @@ const CompetitorIntelligence: React.FC = () => {
 
                 const highEngNew = channels.filter(c => c.engagement >= 0.1 && c.videos <= 2);
                 highEngNew.forEach(ch => {
-                  alerts.push({ severity: 'warning', title: `New high-engagement competitor: ${ch.name}`, desc: `${fmtPct(ch.engagement)} engagement with only ${ch.videos} posts. Could be a rising threat.`, time: '5h ago', channel: ch.name });
+                  alerts.push({ severity: 'warning', title: `New high-engagement competitor: ${ch.name}`, desc: `${fmtPct(ch.engagement)} engagement with only ${ch.videos} posts. Rapid momentum detected.`, time: '5h ago', channel: ch.name });
                 });
 
                 if (summary.avgEng < 0.03) {
                   alerts.push({ severity: 'info', title: 'Industry engagement is low', desc: `Average engagement across competitors is ${fmtPct(summary.avgEng)} — below typical 3-6% range. Opportunity to stand out.`, time: '1d ago' });
                 }
 
-                if (summary.highThreat > 2) {
-                  alerts.push({ severity: 'critical', title: `Multiple high-threat competitors (${summary.highThreat})`, desc: 'More than 2 competitors showing aggressive growth. Consider accelerating your content strategy.', time: '6h ago' });
+                if (summary.fastRising > 2) {
+                  alerts.push({ severity: 'critical', title: `Multiple fast-rising competitors (${summary.fastRising})`, desc: 'More than 2 competitors are showing aggressive growth. Consider accelerating your content strategy.', time: '6h ago' });
                 }
 
                 alerts.push({ severity: 'info', title: `${summary.totalVideos} videos tracked this period`, desc: `Across ${summary.totalChannels} competitors on ${platDist.length} platform${platDist.length > 1 ? 's' : ''}. Data is fresh and comprehensive.`, time: 'now' });
@@ -1590,7 +1527,7 @@ const CompetitorIntelligence: React.FC = () => {
               <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
                 {[
                   { emoji: '📊', text: `You're tracking ${summary.totalChannels} competitors with ${summary.totalVideos} active pieces of content across ${platDist.length} platform${platDist.length > 1 ? 's' : ''}.` },
-                  { emoji: '🔥', text: `${summary.highThreat} competitor${summary.highThreat !== 1 ? 's' : ''} flagged as high threat — they combine rapid growth with strong engagement.` },
+                  { emoji: '🔥', text: `${summary.fastRising} competitor${summary.fastRising !== 1 ? 's' : ''} flagged as fast-rising — they combine rapid growth with strong engagement.` },
                   { emoji: '📈', text: `The market average engagement is ${fmtPct(summary.avgEng)}, ${summary.avgEng >= 0.05 ? 'above' : 'below'} the typical 3-6% benchmark.` },
                   { emoji: '🏆', text: top ? `${top.name} leads the pack with ${fmt(top.views24h)} 24h views and ${fmtPct(top.engagement)} engagement.` : 'No clear leader detected.' },
                   { emoji: '💡', text: `To compete, aim for ${top ? fmtPct(top.engagement) : '5%+'} engagement and ${top ? `${top.videos}+ posts` : '3+ posts'} per week minimum.` },
@@ -1607,7 +1544,7 @@ const CompetitorIntelligence: React.FC = () => {
               <PanelHeader title="Action Items" subtitle="Recommended next steps" icon={<Lightbulb style={{ width: 14, height: 14 }} />} iconColor="#f59e0b" />
               <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
                 {[
-                  { priority: 'HIGH', action: 'Analyze top competitor content formats', desc: 'Study what content types are driving engagement for high-threat competitors', color: '#ef4444' },
+                  { priority: 'HIGH', action: 'Analyze top competitor content formats', desc: 'Study what content types are driving engagement for fast-rising competitors', color: '#ef4444' },
                   { priority: 'HIGH', action: 'Optimize posting schedule', desc: 'Align your posting times with the peak engagement windows (11AM-1PM, 6PM-9PM)', color: '#ef4444' },
                   { priority: 'MED', action: 'Adopt high-performing hashtags', desc: `Start using trending tags like ${hashtags[0]?.tag || '#trending'} in your content`, color: '#f59e0b' },
                   { priority: 'MED', action: 'Increase content volume', desc: `Match the leader\'s cadence of ${top?.videos || 3}+ posts per period`, color: '#f59e0b' },
