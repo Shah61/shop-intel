@@ -2,6 +2,7 @@
 
 import React, { useState, useRef, useEffect, useMemo, useCallback } from 'react';
 import { usePathname, useSearchParams } from 'next/navigation';
+import { useTheme } from 'next-themes';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { ScrollArea } from '@/components/ui/scroll-area';
@@ -489,7 +490,7 @@ const CompetitorIntelligence: React.FC = () => {
               <Radio style={{ width: 18, height: 18, color: '#fff' }} />
             </div>
             <div>
-              <h2 style={{ margin: 0, fontSize: 22, fontWeight: 800, letterSpacing: '-0.5px', lineHeight: 1.15 }}>Competitor Intelligence</h2>
+              <h2 style={{ margin: 0, fontSize: 22, fontWeight: 800, letterSpacing: '-0.5px', lineHeight: 1.15, fontFamily: 'inherit' }}>Competitor Intelligence</h2>
               <div style={{ display: 'flex', alignItems: 'center', gap: 7, marginTop: 3, flexWrap: 'wrap' }}>
                 <PulseDot size={6} />
                 <span style={{ fontSize: 10, color: 'rgba(255,255,255,.4)', fontWeight: 700, letterSpacing: '.07em', textTransform: 'uppercase' }}>Live Monitoring</span>
@@ -685,8 +686,8 @@ const CompetitorIntelligence: React.FC = () => {
           <div style={{ borderRadius: 13, border: '1px solid rgba(255,255,255,.07)', background: 'rgba(255,255,255,.03)', overflow: 'hidden' }}>
             <div style={{ padding: '13px 17px', borderBottom: '1px solid rgba(255,255,255,.07)', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 8 }}>
               <div>
-                <div style={{ fontSize: 13, fontWeight: 800, letterSpacing: '-0.2px' }}>Competitor Channel Radar</div>
-                <div style={{ fontSize: 11, color: 'rgba(255,255,255,.38)', marginTop: 2 }}>{sorted.length} channels · {summary.totalVideos} videos</div>
+                <div style={{ fontSize: 14, fontWeight: 700, letterSpacing: '0', lineHeight: 1.45, fontFamily: 'inherit' }}>Competitor Channel Radar</div>
+                <div style={{ fontSize: 14, fontWeight: 400, color: 'rgba(255,255,255,.38)', marginTop: 2, lineHeight: 1.45, fontFamily: 'inherit' }}>{sorted.length} channels · {summary.totalVideos} videos</div>
               </div>
               <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
                 <div style={{ position: 'relative' }}>
@@ -1576,6 +1577,8 @@ const CompetitorIntelligence: React.FC = () => {
 const AITrend: React.FC = () => {
   const pathname = usePathname();
   const searchParams = useSearchParams();
+  const { resolvedTheme } = useTheme();
+  const isLight = resolvedTheme === 'light';
   const isTrendsRoute = pathname === '/intelligence' && searchParams?.get('tab') === 'trends';
 
   const [messages, setMessages] = useState<Message[]>([]);
@@ -1684,6 +1687,40 @@ const AITrend: React.FC = () => {
   const globalStyles = `
     @keyframes ait-pulse { 0%,100%{transform:scale(1);opacity:.4} 50%{transform:scale(2.4);opacity:0} }
     @keyframes ait-up { from{opacity:0;transform:translateY(12px)} to{opacity:1;transform:translateY(0)} }
+
+    /* Match /sales typography family on desktop only.
+       Keep component-level sizes so KPI numbers stay large. */
+    @media (min-width: 1280px) {
+      .sales-typography,
+      .sales-typography * {
+        font-family: 'Outfit', sans-serif !important;
+      }
+    }
+
+    /* Light mode like /sales: clean white surfaces, crisp text, subtle primary accents */
+    .sales-typography.light-mode {
+      background: #f8fafc;
+      color: #111827;
+    }
+
+    .sales-typography.light-mode [style*="rgba(255,255,255"],
+    .sales-typography.light-mode [style*="rgba(255, 255, 255"] {
+      color: rgba(17, 24, 39, 0.86) !important;
+      border-color: rgba(var(--preset-primary-rgb), 0.16) !important;
+      background: rgba(255, 255, 255, 0.92) !important;
+      box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04);
+    }
+
+    .sales-typography.light-mode .recharts-cartesian-grid line {
+      stroke: rgba(148, 163, 184, 0.24) !important;
+    }
+
+    .sales-typography.light-mode .recharts-text,
+    .sales-typography.light-mode .recharts-legend-item-text,
+    .sales-typography.light-mode svg text,
+    .sales-typography.light-mode svg tspan {
+      fill: rgba(30, 41, 59, 0.82) !important;
+    }
   `;
 
   // Standalone "Trends" route: show only Competitor Intelligence dashboard
@@ -1691,8 +1728,8 @@ const AITrend: React.FC = () => {
     return (
       <>
         <style>{globalStyles}</style>
-        <div className="h-full overflow-y-auto">
-          <div className="flex flex-col gap-5 w-full p-4 md:p-6">
+        <div className={`sales-typography ${isLight ? 'light-mode' : ''} h-full overflow-y-auto`}>
+          <div className="flex flex-col gap-5 w-full p-4 md:p-6" style={{ background: isLight ? '#ffffff' : 'transparent' }}>
             <CompetitorIntelligence />
           </div>
         </div>
@@ -1705,7 +1742,7 @@ const AITrend: React.FC = () => {
     return (
       <>
         <style>{globalStyles}</style>
-        <div className="flex w-full h-full min-h-0 overflow-hidden">
+        <div className={`sales-typography ${isLight ? 'light-mode' : ''} flex w-full h-full min-h-0 overflow-hidden`}>
           <div className="flex-shrink-0 h-full">
             <ChatHistory currentChatType={Category.TREND} onNewChat={handleNewChat} onSelectChat={handleSelectChat} />
           </div>
@@ -1814,8 +1851,8 @@ const AITrend: React.FC = () => {
   return (
     <>
       <style>{globalStyles}</style>
-      <div className="h-full overflow-y-auto">
-        <div className="flex flex-col gap-5 w-full p-4 md:p-6">
+      <div className={`sales-typography ${isLight ? 'light-mode' : ''} h-full overflow-y-auto`}>
+        <div className="flex flex-col gap-5 w-full p-4 md:p-6" style={{ background: isLight ? '#ffffff' : 'transparent' }}>
           <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between w-full gap-4">
             <div>
               <h2 className="text-2xl font-bold text-slate-900 dark:text-slate-100">Trend Analyzer</h2>

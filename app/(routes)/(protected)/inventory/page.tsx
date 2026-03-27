@@ -10,7 +10,7 @@ function InventoryContent() {
     const tab = searchParams.get("tab") || "inventory";
 
     return (
-        <div className="space-y-4 sm:space-y-6 pt-4 sm:pt-6 md:pt-10">
+        <div className="space-y-4 sm:space-y-6 -mt-4 sm:-mt-6 lg:-mt-8">
             {tab === "ninjavan" ? <NinjaVanDashboard /> : <InventoryScreen />}
         </div>
     );

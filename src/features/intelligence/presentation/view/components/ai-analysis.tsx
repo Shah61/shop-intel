@@ -1306,7 +1306,8 @@ const AIStrategicSummarySection: React.FC = () => (
 const AIAnalysis: React.FC = () => {
   const [activeTab, setActiveTab] = useState<string>('overview');
   const [mounted, setMounted] = useState(false);
-  const { theme } = useTheme();
+  const { resolvedTheme } = useTheme();
+  const isLight = resolvedTheme === 'light';
 
   const [dateRange, setDateRange] = useState<{ from: Date; to: Date }>({
     from: subDays(new Date(), 30),
@@ -1365,6 +1366,40 @@ const AIAnalysis: React.FC = () => {
     @keyframes ait-pulse { 0%,100%{transform:scale(1);opacity:.4} 50%{transform:scale(2.4);opacity:0} }
     @keyframes ait-up { from{opacity:0;transform:translateY(12px)} to{opacity:1;transform:translateY(0)} }
     @keyframes ait-row-in { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+
+    /* Match /sales typography family on desktop only.
+       Keep component-level sizes so KPI numbers stay large. */
+    @media (min-width: 1280px) {
+      .sales-typography,
+      .sales-typography * {
+        font-family: 'Outfit', sans-serif !important;
+      }
+    }
+
+    /* Light mode like /sales: clean white surfaces, crisp text, subtle primary accents */
+    .sales-typography.light-mode {
+      background: #f8fafc;
+      color: #111827;
+    }
+
+    .sales-typography.light-mode [style*="rgba(255,255,255"],
+    .sales-typography.light-mode [style*="rgba(255, 255, 255"] {
+      color: rgba(17, 24, 39, 0.86) !important;
+      border-color: rgba(var(--preset-primary-rgb), 0.16) !important;
+      background: rgba(255, 255, 255, 0.92) !important;
+      box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04);
+    }
+
+    .sales-typography.light-mode .recharts-cartesian-grid line {
+      stroke: rgba(148, 163, 184, 0.24) !important;
+    }
+
+    .sales-typography.light-mode .recharts-text,
+    .sales-typography.light-mode .recharts-legend-item-text,
+    .sales-typography.light-mode svg text,
+    .sales-typography.light-mode svg tspan {
+      fill: rgba(30, 41, 59, 0.82) !important;
+    }
   `;
 
   if (!mounted) {
@@ -1376,8 +1411,8 @@ const AIAnalysis: React.FC = () => {
     return (
       <>
         <style>{globalStyles}</style>
-        <div className="h-full overflow-y-auto" style={{ color: 'rgba(255,255,255,.88)', fontFamily: "-apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', sans-serif" }}>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 18, padding: '16px 24px' }}>
+        <div className={`sales-typography ${isLight ? 'light-mode' : ''} h-full overflow-y-auto`} style={{ color: isLight ? '#111827' : 'rgba(255,255,255,.88)', fontFamily: 'inherit' }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 18, padding: '16px 24px', background: isLight ? '#ffffff' : 'transparent' }}>
             <DetailsCompetitorSection channelId={selectedCompetitor.id} channelName={selectedCompetitor.name} onBack={() => setSelectedCompetitor(null)} />
           </div>
         </div>
@@ -1388,8 +1423,8 @@ const AIAnalysis: React.FC = () => {
   return (
     <>
       <style>{globalStyles}</style>
-      <div className="h-full overflow-y-auto" style={{ color: 'rgba(255,255,255,.88)', fontFamily: "-apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', sans-serif" }}>
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 18, padding: '16px 24px' }}>
+      <div className={`sales-typography ${isLight ? 'light-mode' : ''} h-full overflow-y-auto`} style={{ color: isLight ? '#111827' : 'rgba(255,255,255,.88)', fontFamily: 'inherit' }}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 18, padding: '16px 24px', background: isLight ? '#ffffff' : 'transparent' }}>
 
           {/* ═══ HEADER ═══ */}
           <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 16, flexWrap: 'wrap' }}>
@@ -1399,7 +1434,7 @@ const AIAnalysis: React.FC = () => {
                   <BarChart3 style={{ width: 18, height: 18, color: '#fff' }} />
                 </div>
                 <div>
-                  <h2 style={{ margin: 0, fontSize: 22, fontWeight: 800, letterSpacing: '-0.5px', lineHeight: 1.15 }}>Competitor Analysis</h2>
+                  <h2 style={{ margin: 0, fontSize: 22, fontWeight: 800, letterSpacing: '-0.5px', lineHeight: 1.15, fontFamily: 'inherit' }}>Competitor Analysis</h2>
                   <div style={{ display: 'flex', alignItems: 'center', gap: 7, marginTop: 3 }}>
                     <PulseDot size={6} />
                     <span style={{ fontSize: 10, color: 'rgba(255,255,255,.4)', fontWeight: 700, letterSpacing: '.07em', textTransform: 'uppercase' }}>Live Analytics</span>

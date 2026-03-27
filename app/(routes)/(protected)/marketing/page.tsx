@@ -11,27 +11,29 @@ function MarketingContent() {
     const tab = searchParams.get("tab") || "personal";
 
     const titles: Record<string, { heading: string; sub: string }> = {
-        personal: { heading: "Marketing Dashboard", sub: "Manage your marketing campaigns and strategies" },
-        facebook: { heading: "Facebook Marketing", sub: "Manage your Facebook ad campaigns" },
+        personal: { heading: "", sub: "" },
+        facebook: { heading: "", sub: "" },
         ai: { heading: "AI Marketing Generator", sub: "Create stunning marketing content with AI-powered tools" },
     }
     const { heading, sub } = titles[tab] || titles.personal
 
     return (
-        <div className="space-y-4 sm:space-y-6">
-            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 sm:gap-0">
-                <div>
-                    <h1
-                        className="text-xl sm:text-2xl md:text-3xl font-bold bg-clip-text text-transparent pt-4 sm:pt-6 md:pt-10"
-                        style={{
-                            backgroundImage: "linear-gradient(90deg, var(--preset-primary), var(--preset-lighter))",
-                        }}
-                    >
-                        {heading}
-                    </h1>
-                    <p className="text-xs sm:text-sm text-muted-foreground mt-1">{sub}</p>
+        <div className="space-y-4 sm:space-y-6 -mt-4 sm:-mt-6 lg:-mt-8">
+            {(heading || sub) && (
+                <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 sm:gap-0">
+                    <div>
+                        <h1
+                            className="text-xl sm:text-2xl md:text-3xl font-bold bg-clip-text text-transparent"
+                            style={{
+                                backgroundImage: "linear-gradient(90deg, var(--preset-primary), var(--preset-lighter))",
+                            }}
+                        >
+                            {heading}
+                        </h1>
+                        <p className="text-xs sm:text-sm text-muted-foreground mt-1">{sub}</p>
+                    </div>
                 </div>
-            </div>
+            )}
 
             <div className="space-y-4 sm:space-y-6">
                 {tab === "facebook" ? <FacebookMarketingTab /> : tab === "ai" ? <AIMarketingGenerator /> : <MarketingScreen />}

@@ -40,7 +40,7 @@ const wooCommerceData = {
     revenue: 125000,
     orders: 1250,
     averageOrderValue: 100,
-    topDomain: "magicclothing.com",
+    topDomain: "clothing.com",
     marketingSpend: 45000,
     purchases: 890,
     totalReach: 125000,
@@ -97,34 +97,34 @@ const revenueVsMarketingData = (() => {
 
 // Static data for top sellers
 const topSellersData = [
-    { id: 1, name: "Hydrating Face Serum", quantity: 245, domain: "magicclothing.com" },
-    { id: 2, name: "Anti-Aging Night Cream", quantity: 198, domain: "magicclothing.com" },
-    { id: 3, name: "Vitamin C Brightening Serum", quantity: 167, domain: "magicclothing.com" },
-    { id: 4, name: "Gentle Facial Cleanser", quantity: 156, domain: "magicclothing.com" },
-    { id: 5, name: "Moisturizing Day Cream", quantity: 134, domain: "magicclothing.com" },
-    { id: 6, name: "Eye Contour Gel", quantity: 123, domain: "magicclothing.com" },
-    { id: 7, name: "Exfoliating Face Scrub", quantity: 98, domain: "magicclothing.com" },
-    { id: 8, name: "Facial Toner", quantity: 87, domain: "magicclothing.com" }
+    { id: 1, name: "Hydrating Face Serum", quantity: 245, domain: "clothing.com" },
+    { id: 2, name: "Anti-Aging Night Cream", quantity: 198, domain: "clothing.com" },
+    { id: 3, name: "Vitamin C Brightening Serum", quantity: 167, domain: "clothing.com" },
+    { id: 4, name: "Gentle Facial Cleanser", quantity: 156, domain: "clothing.com" },
+    { id: 5, name: "Moisturizing Day Cream", quantity: 134, domain: "clothing.com" },
+    { id: 6, name: "Eye Contour Gel", quantity: 123, domain: "clothing.com" },
+    { id: 7, name: "Exfoliating Face Scrub", quantity: 98, domain: "clothing.com" },
+    { id: 8, name: "Facial Toner", quantity: 87, domain: "clothing.com" }
 ];
 
 // Static data for orders
 const ordersData = [
-    { id: "#1001", status: "Completed", total: 125.50, date: "2025-01-15", domain: "magicclothing.com", items: ["Hydrating Face Serum", "Gentle Facial Cleanser"] },
-    { id: "#1002", status: "Processing", total: 89.90, date: "2025-01-15", domain: "magicclothing.com", items: ["Anti-Aging Night Cream"] },
-    { id: "#1003", status: "Completed", total: 156.75, date: "2025-01-14", domain: "magicclothing.com", items: ["Vitamin C Brightening Serum", "Eye Contour Gel"] },
-    { id: "#1004", status: "Shipped", total: 67.25, date: "2025-01-14", domain: "magicclothing.com", items: ["Moisturizing Day Cream"] },
-    { id: "#1005", status: "Completed", total: 198.00, date: "2025-01-13", domain: "magicclothing.com", items: ["Hydrating Face Serum", "Anti-Aging Night Cream", "Facial Toner"] }
+    { id: "#1001", status: "Completed", total: 125.50, date: "2025-01-15", domain: "clothing.com", items: ["Hydrating Face Serum", "Gentle Facial Cleanser"] },
+    { id: "#1002", status: "Processing", total: 89.90, date: "2025-01-15", domain: "clothing.com", items: ["Anti-Aging Night Cream"] },
+    { id: "#1003", status: "Completed", total: 156.75, date: "2025-01-14", domain: "clothing.com", items: ["Vitamin C Brightening Serum", "Eye Contour Gel"] },
+    { id: "#1004", status: "Shipped", total: 67.25, date: "2025-01-14", domain: "clothing.com", items: ["Moisturizing Day Cream"] },
+    { id: "#1005", status: "Completed", total: 198.00, date: "2025-01-13", domain: "clothing.com", items: ["Hydrating Face Serum", "Anti-Aging Night Cream", "Facial Toner"] }
 ];
 
 // Static data for daily sales
 const dailySalesData = [
-    { date: "2025-01-15", sales: 9200, orders: 92, currency: "MYR", domain: "magicclothing.com" },
-    { date: "2025-01-14", sales: 8900, orders: 89, currency: "MYR", domain: "magicclothing.com" },
-    { date: "2025-01-13", sales: 7500, orders: 75, currency: "MYR", domain: "magicclothing.com" },
-    { date: "2025-01-12", sales: 8200, orders: 82, currency: "MYR", domain: "magicclothing.com" },
-    { date: "2025-01-11", sales: 7800, orders: 78, currency: "MYR", domain: "magicclothing.com" },
-    { date: "2025-01-10", sales: 6500, orders: 65, currency: "MYR", domain: "magicclothing.com" },
-    { date: "2025-01-09", sales: 7200, orders: 72, currency: "MYR", domain: "magicclothing.com" }
+    { date: "2025-01-15", sales: 9200, orders: 92, currency: "MYR", domain: "clothing.com" },
+    { date: "2025-01-14", sales: 8900, orders: 89, currency: "MYR", domain: "clothing.com" },
+    { date: "2025-01-13", sales: 7500, orders: 75, currency: "MYR", domain: "clothing.com" },
+    { date: "2025-01-12", sales: 8200, orders: 82, currency: "MYR", domain: "clothing.com" },
+    { date: "2025-01-11", sales: 7800, orders: 78, currency: "MYR", domain: "clothing.com" },
+    { date: "2025-01-10", sales: 6500, orders: 65, currency: "MYR", domain: "clothing.com" },
+    { date: "2025-01-09", sales: 7200, orders: 72, currency: "MYR", domain: "clothing.com" }
 ];
 
 const formatCurrency = (value: number) => {
@@ -158,8 +158,8 @@ const BADGE_CONFIG: Record<string, { label: string; gradient: string; shadow: st
     WooCommerce: { label: "WooCommerce", gradient: "linear-gradient(135deg, var(--preset-primary), var(--preset-lighter))", shadow: "0 2px 8px rgba(var(--preset-primary-rgb), 0.35)" },
     Facebook: { label: "Facebook", gradient: "linear-gradient(135deg, #2563eb, #60a5fa)", shadow: "0 2px 8px rgba(96, 165, 250, 0.35)" },
     "In Development": { label: "In Development", gradient: "linear-gradient(135deg, #d97706, #fbbf24)", shadow: "0 2px 8px rgba(251, 191, 36, 0.35)" },
-    "magicclothing.com": { label: "magicclothing.com", gradient: "linear-gradient(135deg, var(--preset-primary), var(--preset-lighter))", shadow: "0 2px 8px rgba(var(--preset-primary-rgb), 0.35)" },
-    "magicclothing.sg": { label: "magicclothing.sg", gradient: "linear-gradient(135deg, #5b21b6, #8b5cf6)", shadow: "0 2px 8px rgba(139, 92, 246, 0.35)" },
+    "clothing.com": { label: "clothing.com", gradient: "linear-gradient(135deg, var(--preset-primary), var(--preset-lighter))", shadow: "0 2px 8px rgba(var(--preset-primary-rgb), 0.35)" },
+    "clothing.sg": { label: "clothing.sg", gradient: "linear-gradient(135deg, #5b21b6, #8b5cf6)", shadow: "0 2px 8px rgba(139, 92, 246, 0.35)" },
 };
 
 function StyledBadge({ value }: { value: string }) {
@@ -275,8 +275,8 @@ export default function WooCommerceDashboard() {
                         </SelectTrigger>
                         <SelectContent>
                             <SelectItem value="all">All Domains</SelectItem>
-                            <SelectItem value="magicclothing.com">magicclothing.com</SelectItem>
-                            <SelectItem value="magicclothing.sg">magicclothing.sg</SelectItem>
+                            <SelectItem value="clothing.com">clothing.com</SelectItem>
+                            <SelectItem value="clothing.sg">clothing.sg</SelectItem>
                         </SelectContent>
                     </Select>
                     <Button
