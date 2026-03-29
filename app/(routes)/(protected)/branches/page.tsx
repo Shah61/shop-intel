@@ -23,6 +23,7 @@ import {
   ComposedChart, PieChart as RePieChart, Pie, RadarChart, Radar,
   PolarGrid, PolarAngleAxis, PolarRadiusAxis,
 } from "recharts";
+import { useTheme } from "next-themes";
 
 // ═══════════════════════════════════════════════════════════════════════════
 // TYPES
@@ -182,7 +183,8 @@ const fmtN = (n: number) => { if (!n || isNaN(n)) return "0"; if (n >= 1e6) retu
 const fmtRM = (n: number) => { if (n >= 1e6) return `RM ${(n/1e6).toFixed(2)}M`; if (n >= 1e3) return `RM ${(n/1e3).toFixed(1)}K`; return `RM ${n.toLocaleString()}`; };
 const sc = (s: string) => s === "open" ? { bg: "#10b981", ring: "rgba(16,185,129,.35)", label: "OPEN", glow: "0 0 12px rgba(16,185,129,.5)" } : s === "renovating" ? { bg: "#f59e0b", ring: "rgba(245,158,11,.35)", label: "RENOVATING", glow: "0 0 12px rgba(245,158,11,.5)" } : { bg: "#ef4444", ring: "rgba(239,68,68,.35)", label: "CLOSED", glow: "0 0 12px rgba(239,68,68,.5)" };
 const perfC = (p: number) => p >= 90 ? "#10b981" : p >= 75 ? "#f59e0b" : "#ef4444";
-const MAP_STYLE = "https://basemaps.cartocdn.com/gl/dark-matter-gl-style/style.json";
+const MAP_STYLE_DARK = "https://basemaps.cartocdn.com/gl/dark-matter-gl-style/style.json";
+const MAP_STYLE_LIGHT = "https://basemaps.cartocdn.com/gl/positron-gl-style/style.json";
 
 const genWeekly = (b: BranchData) => ["Mon","Tue","Wed","Thu","Fri","Sat","Sun"].map((d,i) => { const m = (i >= 5 ? 1.3 : 0.7) + Math.random() * 0.5; return { day: d, revenue: Math.round(b.todayRevenue * m), orders: Math.round(b.todayOrders * m), target: Math.round(b.monthlyTarget / 30) }; });
 const genMonthly = (b: BranchData) => Array.from({ length: 6 }, (_, i) => { const mo = new Date(); mo.setMonth(mo.getMonth()-(5-i)); return { month: mo.toLocaleDateString("en-US",{month:"short"}), revenue: Math.round((b.monthRevenue/6)*(0.7+Math.random()*0.6)*(1+i*0.03)), orders: Math.round((b.monthOrders/6)*(0.7+Math.random()*0.6)*(1+i*0.03)) }; });
@@ -229,8 +231,9 @@ const ChartTip: React.FC<any> = ({active,payload,label}) => {
 // ═══════════════════════════════════════════════════════════════════════════
 const BranchMarker: React.FC<{
   branch:BranchData; isSelected:boolean; isHovered:boolean; rank:number;
+  isLight:boolean;
   onHover:(id:string|null)=>void; onClick:()=>void;
-}> = ({branch,isSelected,isHovered,rank,onHover,onClick}) => {
+}> = ({branch,isSelected,isHovered,rank,isLight,onHover,onClick}) => {
   const s = sc(branch.status);
   const sz = isSelected ? 20 : isHovered ? 16 : 12;
   const active = branch.status === "open";
@@ -240,7 +243,7 @@ const BranchMarker: React.FC<{
       {active&&<span style={{position:"absolute",width:sz+20,height:sz+20,borderRadius:"50%",border:`2px solid ${s.bg}`,opacity:0,animation:"br-marker-pulse 2.5s ease-out infinite",pointerEvents:"none"}} />}
       {active&&isSelected&&<span style={{position:"absolute",width:sz+20,height:sz+20,borderRadius:"50%",border:`2px solid ${s.bg}`,opacity:0,animation:"br-marker-pulse 2.5s ease-out 1.25s infinite",pointerEvents:"none"}} />}
       <span style={{position:"absolute",width:sz+8,height:sz+8,borderRadius:"50%",background:`radial-gradient(circle, ${s.ring}, transparent 70%)`,transition:"all .3s",opacity:isSelected?1:isHovered?.7:.4,pointerEvents:"none"}} />
-      <span style={{position:"relative",width:sz,height:sz,borderRadius:"50%",background:s.bg,border:isSelected?"2.5px solid #fff":"1.5px solid rgba(255,255,255,.3)",boxShadow:isSelected||isHovered?s.glow:"none",transition:"all .25s",display:"flex",alignItems:"center",justifyContent:"center",zIndex:2}}>
+      <span style={{position:"relative",width:sz,height:sz,borderRadius:"50%",background:s.bg,border:isSelected?`2.5px solid ${active && isLight ? "#10b981" : "#fff"}`:"1.5px solid rgba(255,255,255,.3)",boxShadow:isSelected||isHovered?s.glow:"none",transition:"all .25s",display:"flex",alignItems:"center",justifyContent:"center",zIndex:2}}>
         {isSelected&&rank<=3&&<Crown style={{width:8,height:8,color:"#fff"}} />}
       </span>
       <span style={{position:"absolute",top:"100%",left:"50%",transform:"translateX(-50%)",marginTop:2,fontSize:9,fontWeight:isSelected?800:600,color:isSelected?"rgba(255,255,255,.9)":"rgba(255,255,255,.4)",whiteSpace:"nowrap",textShadow:"0 1px 4px rgba(0,0,0,.8)",pointerEvents:"none"}}>{branch.code}</span>
@@ -251,11 +254,11 @@ const BranchMarker: React.FC<{
 // ═══════════════════════════════════════════════════════════════════════════
 // MAP POPUP
 // ═══════════════════════════════════════════════════════════════════════════
-const BranchPopupContent: React.FC<{branch:BranchData;rank:number;onSelect:()=>void}> = ({branch,rank,onSelect}) => {
+const BranchPopupContent: React.FC<{branch:BranchData;rank:number;onSelect:()=>void;isLight:boolean}> = ({branch,rank,onSelect,isLight}) => {
   const s = sc(branch.status);
   const isOpen = branch.status==="open";
   return (
-    <div style={{background:"rgba(14,20,30,.95)",backdropFilter:"blur(16px)",border:"1px solid rgba(255,255,255,.1)",borderRadius:14,padding:"16px 18px",minWidth:260,maxWidth:300,fontFamily:"-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif",color:"rgba(255,255,255,.88)",boxShadow:"0 12px 48px rgba(0,0,0,.6)"}}>
+    <div style={{background:isLight?"rgba(255,255,255,.96)":"rgba(14,20,30,.95)",backdropFilter:"blur(16px)",border:`1px solid ${isLight?"rgba(148,163,184,.4)":"rgba(255,255,255,.1)"}`,borderRadius:14,padding:"16px 18px",minWidth:260,maxWidth:300,fontFamily:"-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif",color:isLight?"rgba(15,23,42,.9)":"rgba(255,255,255,.88)",boxShadow:isLight?"0 10px 30px rgba(2,6,23,.12)":"0 12px 48px rgba(0,0,0,.6)"}}>
       <div style={{display:"flex",alignItems:"flex-start",justifyContent:"space-between",marginBottom:12}}>
         <div>
           <div style={{display:"flex",alignItems:"center",gap:6,marginBottom:4}}>
@@ -264,7 +267,7 @@ const BranchPopupContent: React.FC<{branch:BranchData;rank:number;onSelect:()=>v
           </div>
           <div style={{display:"flex",alignItems:"center",gap:6}}>
             <span style={{display:"inline-flex",alignItems:"center",gap:3,padding:"2px 7px",borderRadius:5,background:`${s.bg}18`,border:`1px solid ${s.bg}44`,fontSize:9,fontWeight:800,color:s.bg}}><span style={{width:5,height:5,borderRadius:"50%",background:s.bg}} />{s.label}</span>
-            <span style={{fontSize:10,color:"rgba(255,255,255,.35)"}}>{branch.city}</span>
+            <span style={{fontSize:10,color:isLight?"rgba(51,65,85,.7)":"rgba(255,255,255,.35)"}}>{branch.city}</span>
           </div>
         </div>
       </div>
@@ -272,8 +275,8 @@ const BranchPopupContent: React.FC<{branch:BranchData;rank:number;onSelect:()=>v
         <>
           <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:8,marginBottom:12}}>
             {[{l:"Revenue",v:fmtRM(branch.todayRevenue),t:branch.revenueTrend,ic:<DollarSign style={{width:10,height:10}} />},{l:"Orders",v:String(branch.todayOrders),t:branch.ordersTrend,ic:<ShoppingBag style={{width:10,height:10}} />},{l:"Traffic",v:fmtN(branch.footTraffic),t:null,ic:<Footprints style={{width:10,height:10}} />},{l:"Target",v:`${branch.targetAchievement}%`,t:null,ic:<Target style={{width:10,height:10}} />}].map((m,i)=>(
-              <div key={i} style={{padding:"8px 10px",borderRadius:8,background:"rgba(255,255,255,.04)",border:"1px solid rgba(255,255,255,.06)"}}>
-                <div style={{display:"flex",alignItems:"center",gap:4,marginBottom:3,color:"rgba(255,255,255,.3)"}}>{m.ic}<span style={{fontSize:9,fontWeight:700,textTransform:"uppercase",letterSpacing:".04em"}}>{m.l}</span></div>
+              <div key={i} style={{padding:"8px 10px",borderRadius:8,background:isLight?"rgba(248,250,252,.9)":"rgba(255,255,255,.04)",border:`1px solid ${isLight?"rgba(148,163,184,.25)":"rgba(255,255,255,.06)"}`}}>
+                <div style={{display:"flex",alignItems:"center",gap:4,marginBottom:3,color:isLight?"rgba(51,65,85,.75)":"rgba(255,255,255,.3)"}}>{m.ic}<span style={{fontSize:9,fontWeight:700,textTransform:"uppercase",letterSpacing:".04em"}}>{m.l}</span></div>
                 <div style={{display:"flex",alignItems:"center",justifyContent:"space-between"}}>
                   <span style={{fontSize:14,fontWeight:800}}>{m.v}</span>
                   {m.t!==null&&<span style={{display:"inline-flex",alignItems:"center",gap:1,fontSize:9,fontWeight:800,color:m.t>=0?"#10b981":"#ef4444"}}>{m.t>=0?<ArrowUp style={{width:8,height:8}} />:<ArrowDown style={{width:8,height:8}} />}{Math.abs(m.t).toFixed(1)}%</span>}
@@ -282,14 +285,14 @@ const BranchPopupContent: React.FC<{branch:BranchData;rank:number;onSelect:()=>v
             ))}
           </div>
           <div style={{marginBottom:12}}>
-            <div style={{display:"flex",justifyContent:"space-between",marginBottom:4}}><span style={{fontSize:10,color:"rgba(255,255,255,.35)"}}>Monthly Target</span><span style={{fontSize:10,fontWeight:800,color:perfC(branch.targetAchievement)}}>{branch.targetAchievement}%</span></div>
+            <div style={{display:"flex",justifyContent:"space-between",marginBottom:4}}><span style={{fontSize:10,color:isLight?"rgba(51,65,85,.75)":"rgba(255,255,255,.35)"}}>Monthly Target</span><span style={{fontSize:10,fontWeight:800,color:perfC(branch.targetAchievement)}}>{branch.targetAchievement}%</span></div>
             <MiniBar value={branch.targetAchievement} max={100} color={perfC(branch.targetAchievement)} />
           </div>
         </>
       ) : (
-        <div style={{padding:"16px 12px",borderRadius:8,background:"rgba(245,158,11,.06)",border:"1px solid rgba(245,158,11,.15)",display:"flex",alignItems:"center",gap:8,marginBottom:12}}>
+        <div style={{padding:"16px 12px",borderRadius:8,background:isLight?"rgba(245,158,11,.1)":"rgba(245,158,11,.06)",border:"1px solid rgba(245,158,11,.2)",display:"flex",alignItems:"center",gap:8,marginBottom:12}}>
           <AlertTriangle style={{width:14,height:14,color:"#f59e0b",flexShrink:0}} />
-          <span style={{fontSize:11,color:"rgba(255,255,255,.5)"}}>Branch is currently {branch.status}</span>
+          <span style={{fontSize:11,color:isLight?"rgba(120,53,15,.9)":"rgba(255,255,255,.5)"}}>Branch is currently {branch.status}</span>
         </div>
       )}
       <button onClick={onSelect} style={{width:"100%",padding:"9px 14px",borderRadius:9,background:"linear-gradient(135deg,var(--preset-primary),var(--preset-lighter))",border:"none",color:"#fff",fontSize:11,fontWeight:700,cursor:"pointer",display:"flex",alignItems:"center",justifyContent:"center",gap:5,boxShadow:"0 4px 16px rgba(var(--preset-primary-rgb),.3)",fontFamily:"inherit"}}>
@@ -563,6 +566,8 @@ const BranchCard: React.FC<{branch:BranchData;isSelected:boolean;rank:number;onC
 // MAIN PAGE
 // ═══════════════════════════════════════════════════════════════════════════
 const BranchesPage: React.FC = () => {
+  const { resolvedTheme } = useTheme();
+  const isLight = resolvedTheme === "light";
   const mapRef = useRef<MapRef>(null);
   const [selectedId, setSelectedId] = useState<string|null>(null);
   const [hoveredId, setHoveredId] = useState<string|null>(null);
@@ -604,9 +609,21 @@ const BranchesPage: React.FC = () => {
         .maplibregl-popup-close-button{color:rgba(255,255,255,.4)!important;font-size:18px!important;right:8px!important;top:8px!important;width:24px!important;height:24px!important;display:flex!important;align-items:center!important;justify-content:center!important;border-radius:6px!important;background:rgba(255,255,255,.06)!important}
         .maplibregl-popup-close-button:hover{color:rgba(255,255,255,.8)!important;background:rgba(255,255,255,.12)!important}
         .maplibregl-ctrl-bottom-left,.maplibregl-ctrl-bottom-right{opacity:.4}
+        .branches-theme.light-mode{background:#fff;color:#0f172a}
+        .branches-theme.light-mode [style*="rgba(255,255,255"], .branches-theme.light-mode [style*="rgba(255, 255, 255"]{
+          color:rgba(15,23,42,.86)!important;
+          border-color:rgba(148,163,184,.35)!important;
+          background:rgba(255,255,255,.92)!important;
+        }
+        .branches-theme.light-mode .recharts-cartesian-grid line{stroke:rgba(148,163,184,.24)!important}
+        .branches-theme.light-mode .recharts-text,.branches-theme.light-mode .recharts-legend-item-text,.branches-theme.light-mode svg text,.branches-theme.light-mode svg tspan{fill:rgba(30,41,59,.82)!important}
+        .branches-theme.light-mode .maplibregl-popup-close-button{color:rgba(15,23,42,.5)!important;background:rgba(241,245,249,.95)!important}
+        .branches-theme.light-mode .maplibregl-popup-close-button:hover{color:rgba(15,23,42,.8)!important;background:rgba(226,232,240,.95)!important}
+        .branches-theme.light-mode .maplibregl-ctrl-group{background:rgba(255,255,255,.95)!important;border:1px solid rgba(148,163,184,.35)!important}
+        .branches-theme.light-mode .maplibregl-ctrl-group button span{filter:invert(0)!important}
       `}</style>
 
-      <div style={{color:"rgba(255,255,255,.88)",display:"flex",flexDirection:"column",gap:18,width:"100%",fontFamily:"-apple-system,BlinkMacSystemFont,'Segoe UI','Helvetica Neue',sans-serif"}}>
+      <div className={`branches-theme ${isLight ? "light-mode" : ""}`} style={{color:isLight?"#0f172a":"rgba(255,255,255,.88)",display:"flex",flexDirection:"column",gap:18,width:"100%",fontFamily:"-apple-system,BlinkMacSystemFont,'Segoe UI','Helvetica Neue',sans-serif"}}>
 
         {/* HEADER */}
         <div style={{display:"flex",alignItems:"flex-start",justifyContent:"space-between",gap:16,flexWrap:"wrap"}}>
@@ -658,12 +675,12 @@ const BranchesPage: React.FC = () => {
           <div style={{display:"grid",gridTemplateColumns:"1fr 330px",gap:14,alignItems:"start"}}>
             {/* MAP */}
             <div style={{position:"relative",borderRadius:16,overflow:"hidden",border:"1px solid rgba(255,255,255,.06)"}}>
-              <Map ref={mapRef} initialViewState={{longitude:101.5,latitude:3.5,zoom:8,pitch:30,bearing:0}} style={{width:"100%",height:500}} mapStyle={MAP_STYLE} maxZoom={18} minZoom={6} maxBounds={[[99.5,1.0],[104.5,7.5]]} attributionControl={false}>
+              <Map ref={mapRef} initialViewState={{longitude:101.5,latitude:3.5,zoom:8,pitch:30,bearing:0}} style={{width:"100%",height:500}} mapStyle={isLight ? MAP_STYLE_LIGHT : MAP_STYLE_DARK} maxZoom={18} minZoom={6} maxBounds={[[99.5,1.0],[104.5,7.5]]} attributionControl={false}>
                 <NavigationControl position="bottom-right" showCompass showZoom />
                 <ScaleControl position="bottom-left" />
                 {BRANCHES.map(b=>(
                   <Marker key={b.id} longitude={b.lng} latitude={b.lat} anchor="center">
-                    <BranchMarker branch={b} isSelected={selectedId===b.id||popupBranch?.id===b.id} isHovered={hoveredId===b.id} rank={getRank(b.id)} onHover={setHoveredId} onClick={()=>handleMarkerClick(b)} />
+                    <BranchMarker branch={b} isSelected={selectedId===b.id||popupBranch?.id===b.id} isHovered={hoveredId===b.id} rank={getRank(b.id)} isLight={isLight} onHover={setHoveredId} onClick={()=>handleMarkerClick(b)} />
                   </Marker>
                 ))}
                 {popupBranch&&(
@@ -676,13 +693,13 @@ const BranchesPage: React.FC = () => {
                     onClose={handlePopupClose}
                     maxWidth="320px"
                   >
-                    <BranchPopupContent branch={popupBranch} rank={getRank(popupBranch.id)} onSelect={()=>handleViewDetail(popupBranch.id)} />
+                    <BranchPopupContent branch={popupBranch} rank={getRank(popupBranch.id)} onSelect={()=>handleViewDetail(popupBranch.id)} isLight={isLight} />
                   </Popup>
                 )}
               </Map>
               {/* Overlay: legend */}
-              <div style={{position:"absolute",top:14,right:14,display:"flex",gap:8,padding:"8px 12px",borderRadius:10,background:"rgba(10,15,24,.85)",backdropFilter:"blur(8px)",border:"1px solid rgba(255,255,255,.06)",zIndex:10}}>
-                {[{l:"Open",c:"#10b981"},{l:"Renovating",c:"#f59e0b"},{l:"Closed",c:"#ef4444"}].map((l,i)=>(<div key={i} style={{display:"flex",alignItems:"center",gap:4,fontSize:10,color:"rgba(255,255,255,.45)"}}><span style={{width:7,height:7,borderRadius:"50%",background:l.c,boxShadow:`0 0 6px ${l.c}66`}} />{l.l}</div>))}
+              <div style={{position:"absolute",top:14,right:14,display:"flex",gap:8,padding:"8px 12px",borderRadius:10,background:isLight?"rgba(255,255,255,.92)":"rgba(10,15,24,.85)",backdropFilter:"blur(8px)",border:`1px solid ${isLight?"rgba(148,163,184,.35)":"rgba(255,255,255,.06)"}`,zIndex:10}}>
+                {[{l:"Open",c:"#10b981"},{l:"Renovating",c:"#f59e0b"},{l:"Closed",c:"#ef4444"}].map((l,i)=>(<div key={i} style={{display:"flex",alignItems:"center",gap:4,fontSize:10,color:isLight?"rgba(51,65,85,.88)":"rgba(255,255,255,.45)"}}><span style={{width:7,height:7,borderRadius:"50%",background:l.c,boxShadow:`0 0 6px ${l.c}66`}} />{l.l}</div>))}
               </div>
             </div>
 

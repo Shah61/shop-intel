@@ -1,5 +1,6 @@
 "use client";
 
+import type { ReactNode } from "react";
 import Image from "next/image";
 import { useTheme } from "next-themes";
 import { ChevronDown, ChevronUp } from "lucide-react";
@@ -7,13 +8,22 @@ import { formatCurrency } from "@/src/core/constant/helper";
 import { SmallLoader, TinyLoader } from "@/components/ui/shop-intel-loader";
 
 interface OverviewDataCardProps {
-    platform: string;
-    dailySales: number;
-    orderCount: number;
-    averageOrderValue: number;
+    platform?: string;
+    dailySales?: number;
+    orderCount?: number;
+    averageOrderValue?: number;
     isLoading: boolean;
     expanded?: boolean;
     onExpandToggle?: () => void;
+    /** When set with customIcon, renders like platform cards but with your own title, primary line, and expand stats (Sales overview pattern). */
+    customTitle?: string;
+    customIcon?: ReactNode;
+    metricSubtitle?: string;
+    primaryValueDisplay?: string;
+    expandLabel1?: string;
+    expandValue1Display?: string;
+    expandLabel2?: string;
+    expandValue2Display?: string;
 }
 
 const PLATFORM_CONFIG: Record<
@@ -77,18 +87,37 @@ const PLATFORM_CONFIG: Record<
 };
 
 const OverviewDataCard = ({
-    platform,
-    dailySales,
-    orderCount,
-    averageOrderValue,
+    platform = "tiktok",
+    dailySales = 0,
+    orderCount = 0,
+    averageOrderValue = 0,
     isLoading,
     expanded = false,
     onExpandToggle,
+    customTitle,
+    customIcon,
+    metricSubtitle,
+    primaryValueDisplay,
+    expandLabel1,
+    expandValue1Display,
+    expandLabel2,
+    expandValue2Display,
 }: OverviewDataCardProps) => {
     const { resolvedTheme } = useTheme();
     const isDark = resolvedTheme === "dark";
 
+    const isCustom = Boolean(customTitle != null && customIcon != null);
     const config = PLATFORM_CONFIG[platform] || PLATFORM_CONFIG.tiktok;
+
+    const displayTitle = isCustom ? customTitle! : config.label;
+    const displayMetricSubtitle = isCustom ? (metricSubtitle ?? "Revenue") : "Revenue";
+    const displayPrimary = isCustom
+        ? (primaryValueDisplay ?? "—")
+        : formatCurrency(dailySales);
+    const ex1L = isCustom ? (expandLabel1 ?? "—") : "Orders";
+    const ex1V = isCustom ? (expandValue1Display ?? "—") : orderCount.toLocaleString();
+    const ex2L = isCustom ? (expandLabel2 ?? "—") : "Avg. Order";
+    const ex2V = isCustom ? (expandValue2Display ?? "—") : formatCurrency(averageOrderValue);
 
     const t = isDark
         ? {
@@ -186,14 +215,20 @@ const OverviewDataCard = ({
                         border: `1px solid rgba(var(--preset-primary-rgb), ${isDark ? 0.12 : 0.08})`,
                     }}
                 >
-                    <Image
-                        src={config.iconSrc}
-                        alt={`${config.label} logo`}
-                        width={40}
-                        height={40}
-                        className="h-[34px] w-[34px] object-contain"
-                        sizes="40px"
-                    />
+                    {isCustom ? (
+                        <span className="flex h-[34px] w-[34px] items-center justify-center text-[var(--preset-primary)]">
+                            {customIcon}
+                        </span>
+                    ) : (
+                        <Image
+                            src={config.iconSrc}
+                            alt={`${config.label} logo`}
+                            width={40}
+                            height={40}
+                            className="h-[34px] w-[34px] object-contain"
+                            sizes="40px"
+                        />
+                    )}
                 </div>
                 <div style={{ display: "flex", flexDirection: "column", gap: 2 }}>
                     <span
@@ -203,7 +238,7 @@ const OverviewDataCard = ({
                             color: t.title,
                         }}
                     >
-                        {config.label}
+                        {displayTitle}
                     </span>
                     <span
                         style={{
@@ -211,7 +246,7 @@ const OverviewDataCard = ({
                             color: t.subtitle,
                         }}
                     >
-                        Revenue
+                        {displayMetricSubtitle}
                     </span>
                 </div>
             </div>
@@ -244,7 +279,7 @@ const OverviewDataCard = ({
                             fontFamily: "'Outfit', sans-serif",
                         }}
                     >
-                        {formatCurrency(dailySales)}
+                        {displayPrimary}
                     </p>
                 )}
             </div>
@@ -285,7 +320,7 @@ const OverviewDataCard = ({
                                 letterSpacing: "0.4px",
                             }}
                         >
-                            Orders
+                            {ex1L}
                         </div>
                         {isLoading ? (
                             <div className="flex items-center gap-2 pt-0.5">
@@ -299,7 +334,7 @@ const OverviewDataCard = ({
                                     color: t.statValue,
                                 }}
                             >
-                                {orderCount.toLocaleString()}
+                                {ex1V}
                             </div>
                         )}
                     </div>
@@ -314,7 +349,7 @@ const OverviewDataCard = ({
                                 letterSpacing: "0.4px",
                             }}
                         >
-                            Avg. Order
+                            {ex2L}
                         </div>
                         {isLoading ? (
                             <div className="flex items-center gap-2 pt-0.5">
@@ -328,7 +363,7 @@ const OverviewDataCard = ({
                                     color: t.statValue,
                                 }}
                             >
-                                {formatCurrency(averageOrderValue)}
+                                {ex2V}
                             </div>
                         )}
                     </div>
