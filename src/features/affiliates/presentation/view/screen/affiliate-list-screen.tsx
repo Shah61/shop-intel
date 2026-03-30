@@ -20,6 +20,18 @@ import {
     SlidersHorizontal,
     Eye,
     EyeOff,
+    ClipboardList,
+    UserPlus,
+    CheckCircle2,
+    XCircle,
+    Clock,
+    ChevronRight,
+    Calendar,
+    Mail,
+    Phone,
+    MapPin,
+    User,
+    ArrowLeft,
 } from "lucide-react";
 import {
     ColumnDef,
@@ -54,7 +66,7 @@ import toast from "react-hot-toast";
 import OverviewDataCard from "@/src/features/sales/presentation/view/components/analytics/overview-data-card";
 
 /* ════════════════════════════════════════════════════════════════════
-   DUMMY DATA
+   DUMMY DATA — AFFILIATES
    ════════════════════════════════════════════════════════════════════ */
 
 interface DummyBankDetail {
@@ -88,6 +100,101 @@ interface DummyAffiliate {
     total_unpaid_commission_amount: number;
     unpaid_commissions: DummyCommission[];
 }
+
+/* ════════════════════════════════════════════════════════════════════
+   DUMMY DATA — APPLICATIONS
+   ════════════════════════════════════════════════════════════════════ */
+
+interface DummyApplication {
+    id: string;
+    first_name: string;
+    last_name: string;
+    email: string;
+    phone: string;
+    date_of_birth: string;
+    address: string;
+    product_applied: string;
+    applied_at: string;
+    status: "pending" | "approved" | "rejected";
+    note?: string;
+}
+
+const DUMMY_APPLICATIONS: DummyApplication[] = [
+    {
+        id: "app-001", first_name: "Ahmad", last_name: "Firdaus", email: "ahmad.firdaus@gmail.com",
+        phone: "+60 12-345 6789", date_of_birth: "1995-03-14", address: "No. 12, Jalan Mawar 3, Taman Bunga, 47100 Puchong, Selangor",
+        product_applied: "Premium Skincare Bundle", applied_at: "2025-03-27T10:30:00Z", status: "pending",
+    },
+    {
+        id: "app-002", first_name: "Rachel", last_name: "Tan", email: "rachel.tan@outlook.com",
+        phone: "+60 16-789 0123", date_of_birth: "1992-07-22", address: "Unit 8-3, Kondominium Seri Aman, Jalan Ampang, 50450 Kuala Lumpur",
+        product_applied: "Fitness Equipment Pro", applied_at: "2025-03-26T14:15:00Z", status: "pending",
+    },
+    {
+        id: "app-003", first_name: "Ismail", last_name: "Zainal", email: "ismail.z@yahoo.com",
+        phone: "+60 19-456 7890", date_of_birth: "1998-11-05", address: "Lot 45, Kampung Baru Sungai Buloh, 47000 Sungai Buloh, Selangor",
+        product_applied: "Digital Marketing Course", applied_at: "2025-03-25T09:00:00Z", status: "pending",
+    },
+    {
+        id: "app-004", first_name: "James", last_name: "Loh", email: "james.loh@icloud.com",
+        phone: "+60 11-2345 6780", date_of_birth: "1990-01-30", address: "No. 7, Lorong Kenanga 5, Taman Sejahtera, 81100 Johor Bahru, Johor",
+        product_applied: "Premium Skincare Bundle", applied_at: "2025-03-24T16:45:00Z", status: "pending",
+    },
+    {
+        id: "app-005", first_name: "Nur", last_name: "Aisyah", email: "nur.aisyah@gmail.com",
+        phone: "+60 13-678 9012", date_of_birth: "1997-05-18", address: "Block C-12-5, Pangsapuri Harmoni, Jalan Putra, 68000 Ampang, Selangor",
+        product_applied: "Organic Tea Collection", applied_at: "2025-03-23T11:20:00Z", status: "pending",
+    },
+    {
+        id: "app-006", first_name: "Vincent", last_name: "Chua", email: "v.chua@hotmail.com",
+        phone: "+60 17-890 1234", date_of_birth: "1993-09-02", address: "No. 33, Jalan SS2/55, 47300 Petaling Jaya, Selangor",
+        product_applied: "Tech Gadgets Starter Pack", applied_at: "2025-03-22T08:30:00Z", status: "pending",
+    },
+    {
+        id: "app-007", first_name: "Kavitha", last_name: "Rajan", email: "kavitha.r@gmail.com",
+        phone: "+60 14-567 8901", date_of_birth: "1996-12-11", address: "No. 5, Jalan Tun Sambanthan, 50470 Kuala Lumpur",
+        product_applied: "Digital Marketing Course", applied_at: "2025-03-21T13:00:00Z", status: "pending",
+    },
+    {
+        id: "app-008", first_name: "Hafiz", last_name: "Rahman", email: "hafiz.rahman@proton.me",
+        phone: "+60 18-234 5678", date_of_birth: "1994-06-25", address: "No. 88, Persiaran Gurney, 10250 Georgetown, Penang",
+        product_applied: "Premium Skincare Bundle", applied_at: "2025-03-20T15:40:00Z", status: "pending",
+    },
+    {
+        id: "app-009", first_name: "Michelle", last_name: "Yong", email: "m.yong@outlook.com",
+        phone: "+60 12-901 2345", date_of_birth: "1991-02-08", address: "Unit 15-A, The Horizon Residences, Jalan Tun Razak, 50400 Kuala Lumpur",
+        product_applied: "Fitness Equipment Pro", applied_at: "2025-03-19T10:10:00Z", status: "pending",
+    },
+    {
+        id: "app-010", first_name: "Amirul", last_name: "Hakim", email: "amirul.h@yahoo.com",
+        phone: "+60 15-345 6789", date_of_birth: "1999-08-17", address: "No. 21, Taman Desa Jaya, Jalan Kepong, 52100 Kuala Lumpur",
+        product_applied: "Organic Tea Collection", applied_at: "2025-03-18T12:50:00Z", status: "pending",
+    },
+    {
+        id: "app-011", first_name: "Siew", last_name: "Lin", email: "siew.lin@gmail.com",
+        phone: "+60 16-012 3456", date_of_birth: "1988-04-03", address: "No. 9, Jalan Bukit Bintang, 55100 Kuala Lumpur",
+        product_applied: "Tech Gadgets Starter Pack", applied_at: "2025-03-17T09:30:00Z", status: "approved",
+        note: "Strong social media presence with 15K followers",
+    },
+    {
+        id: "app-012", first_name: "Ravi", last_name: "Chandran", email: "ravi.c@hotmail.com",
+        phone: "+60 19-678 0123", date_of_birth: "1986-10-29", address: "No. 14, Jalan Sultan Ismail, 50250 Kuala Lumpur",
+        product_applied: "Premium Skincare Bundle", applied_at: "2025-03-16T14:20:00Z", status: "rejected",
+        note: "Competitor affiliate — conflict of interest",
+    },
+    {
+        id: "app-013", first_name: "Zulaikha", last_name: "Mohamad", email: "zulaikha.m@gmail.com",
+        phone: "+60 11-7890 1234", date_of_birth: "2000-01-15", address: "No. 77, Jalan Raja Chulan, 50200 Kuala Lumpur",
+        product_applied: "Digital Marketing Course", applied_at: "2025-03-15T11:00:00Z", status: "approved",
+        note: "Previous experience in digital marketing affiliates",
+    },
+    {
+        id: "app-014", first_name: "Timothy", last_name: "Goh", email: "tim.goh@outlook.com",
+        phone: "+60 13-456 7801", date_of_birth: "1987-07-07", address: "No. 2, Lorong Damai, Taman Tun Dr Ismail, 60000 Kuala Lumpur",
+        product_applied: "Organic Tea Collection", applied_at: "2025-03-14T16:00:00Z", status: "rejected",
+        note: "Incomplete social media verification",
+    },
+];
 
 const DUMMY_AFFILIATES: DummyAffiliate[] = [
     {
@@ -328,11 +435,13 @@ const DUMMY_AFFILIATES: DummyAffiliate[] = [
    STATUS BADGE (shimmer — matching PlatformBadge from AnalyticsSalesTable)
    ════════════════════════════════════════════════════════════════════ */
 
-function StatusBadge({ status }: { status: "active" | "inactive" | "pending" }) {
-    const map = {
+function StatusBadge({ status }: { status: "active" | "inactive" | "pending" | "approved" | "rejected" }) {
+    const map: Record<string, { gradient: string; shadow: string; label: string }> = {
         active: { gradient: "linear-gradient(135deg, #22c55e, #4ade80)", shadow: "0 2px 8px rgba(34,197,94,0.3)", label: "Active" },
         inactive: { gradient: "linear-gradient(135deg, #ef4444, #f87171)", shadow: "0 2px 8px rgba(239,68,68,0.3)", label: "Inactive" },
         pending: { gradient: "linear-gradient(135deg, #f59e0b, #fbbf24)", shadow: "0 2px 8px rgba(245,158,11,0.3)", label: "Pending" },
+        approved: { gradient: "linear-gradient(135deg, #22c55e, #4ade80)", shadow: "0 2px 8px rgba(34,197,94,0.3)", label: "Approved" },
+        rejected: { gradient: "linear-gradient(135deg, #ef4444, #f87171)", shadow: "0 2px 8px rgba(239,68,68,0.3)", label: "Rejected" },
     };
     const c = map[status] || map.active;
     return (
@@ -355,8 +464,553 @@ function StatusBadge({ status }: { status: "active" | "inactive" | "pending" }) 
 }
 
 /* ════════════════════════════════════════════════════════════════════
+   APPLICATION DETAIL VIEW (View More panel)
+   ════════════════════════════════════════════════════════════════════ */
+
+function ApplicationDetailView({
+    application,
+    onClose,
+    onApprove,
+    onReject,
+    isDark,
+    theme,
+}: {
+    application: DummyApplication;
+    onClose: () => void;
+    onApprove: (id: string) => void;
+    onReject: (id: string) => void;
+    isDark: boolean;
+    theme: any;
+}) {
+    const [isApproving, setIsApproving] = useState(false);
+    const [isRejecting, setIsRejecting] = useState(false);
+
+    const handleApprove = () => {
+        setIsApproving(true);
+        setTimeout(() => {
+            onApprove(application.id);
+            setIsApproving(false);
+        }, 800);
+    };
+
+    const handleReject = () => {
+        setIsRejecting(true);
+        setTimeout(() => {
+            onReject(application.id);
+            setIsRejecting(false);
+        }, 800);
+    };
+
+    const infoFields = [
+        { icon: <User size={14} />, label: "First Name", value: application.first_name },
+        { icon: <User size={14} />, label: "Last Name", value: application.last_name },
+        { icon: <Calendar size={14} />, label: "Date of Birth", value: new Date(application.date_of_birth).toLocaleDateString("en-MY", { day: "numeric", month: "long", year: "numeric" }) },
+        { icon: <MapPin size={14} />, label: "Address", value: application.address },
+        { icon: <Mail size={14} />, label: "Email", value: application.email },
+        { icon: <Phone size={14} />, label: "Phone", value: application.phone },
+    ];
+
+    return (
+        <div
+            style={{
+                position: "fixed", inset: 0, zIndex: 9999,
+                display: "flex", alignItems: "center", justifyContent: "center",
+            }}
+            onClick={(e) => { if (e.target === e.currentTarget) onClose(); }}
+        >
+            <div style={{ position: "absolute", inset: 0, background: "rgba(0,0,0,0.5)", backdropFilter: "blur(4px)" }} />
+            <div
+                style={{
+                    position: "relative", zIndex: 1,
+                    width: "100%", maxWidth: 560, maxHeight: "90vh", overflowY: "auto",
+                    margin: "0 16px",
+                    background: isDark ? "hsl(222, 20%, 14%)" : "#fff",
+                    borderRadius: 20, padding: 0,
+                    boxShadow: "0 24px 80px rgba(0,0,0,0.3)",
+                    fontFamily: "'Outfit', sans-serif",
+                    color: isDark ? "#e2e8f0" : "#1a1a2e",
+                    overflow: "hidden",
+                }}
+                onClick={(e) => e.stopPropagation()}
+            >
+                {/* Gradient header */}
+                <div style={{
+                    background: "linear-gradient(135deg, var(--preset-primary), var(--preset-lighter))",
+                    padding: "24px 24px 32px",
+                    position: "relative",
+                    overflow: "hidden",
+                }}>
+                    <div style={{
+                        position: "absolute", top: -30, right: -30, width: 120, height: 120,
+                        background: "radial-gradient(circle, rgba(255,255,255,0.15) 0%, transparent 70%)",
+                        pointerEvents: "none",
+                    }} />
+                    <div style={{
+                        position: "absolute", bottom: -20, left: -20, width: 80, height: 80,
+                        background: "radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%)",
+                        pointerEvents: "none",
+                    }} />
+
+                    <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between" }}>
+                        <button
+                            onClick={onClose}
+                            style={{
+                                display: "flex", alignItems: "center", gap: 6, background: "rgba(255,255,255,0.15)",
+                                border: "none", borderRadius: 10, padding: "6px 12px",
+                                color: "#fff", cursor: "pointer", fontSize: 12, fontWeight: 600,
+                                backdropFilter: "blur(10px)",
+                            }}
+                        >
+                            <ArrowLeft size={14} /> Back
+                        </button>
+                        <StatusBadge status={application.status} />
+                    </div>
+
+                    <div style={{ marginTop: 16, display: "flex", alignItems: "center", gap: 14 }}>
+                        <div style={{
+                            width: 52, height: 52, borderRadius: 14,
+                            background: "rgba(255,255,255,0.2)",
+                            backdropFilter: "blur(10px)",
+                            display: "flex", alignItems: "center", justifyContent: "center",
+                            fontSize: 20, fontWeight: 700, color: "#fff", flexShrink: 0,
+                            border: "1px solid rgba(255,255,255,0.2)",
+                        }}>
+                            {application.first_name[0].toUpperCase()}
+                        </div>
+                        <div>
+                            <h2 style={{ fontSize: 20, fontWeight: 700, color: "#fff", margin: 0 }}>
+                                {application.first_name} {application.last_name}
+                            </h2>
+                            <p style={{ fontSize: 12, color: "rgba(255,255,255,0.75)", margin: "2px 0 0" }}>
+                                Applied for <strong>{application.product_applied}</strong>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                {/* Body */}
+                <div style={{ padding: "20px 24px 24px" }}>
+                    {/* Applied date chip */}
+                    <div style={{
+                        display: "inline-flex", alignItems: "center", gap: 6,
+                        background: isDark ? "rgba(255,255,255,0.04)" : "rgba(0,0,0,0.03)",
+                        border: `1px solid ${isDark ? "rgba(255,255,255,0.08)" : "rgba(0,0,0,0.06)"}`,
+                        borderRadius: 10, padding: "6px 12px", marginBottom: 20,
+                    }}>
+                        <Clock size={12} style={{ color: isDark ? "#94a3b8" : "#64748b" }} />
+                        <span style={{ fontSize: 11, fontWeight: 600, color: isDark ? "#94a3b8" : "#64748b" }}>
+                            Applied {new Date(application.applied_at).toLocaleDateString("en-MY", { day: "numeric", month: "long", year: "numeric" })} at {new Date(application.applied_at).toLocaleTimeString("en-MY", { hour: "2-digit", minute: "2-digit" })}
+                        </span>
+                    </div>
+
+                    {/* Info fields */}
+                    <div style={{ display: "flex", flexDirection: "column", gap: 0 }}>
+                        {infoFields.map((field, idx) => (
+                            <div
+                                key={field.label}
+                                style={{
+                                    display: "flex", alignItems: "flex-start", gap: 12,
+                                    padding: "14px 0",
+                                    borderBottom: idx < infoFields.length - 1
+                                        ? `1px solid ${isDark ? "rgba(255,255,255,0.06)" : "rgba(0,0,0,0.06)"}`
+                                        : "none",
+                                }}
+                            >
+                                <div style={{
+                                    width: 32, height: 32, borderRadius: 9, flexShrink: 0,
+                                    background: isDark ? "rgba(var(--preset-primary-rgb), 0.1)" : "rgba(var(--preset-primary-rgb), 0.08)",
+                                    display: "flex", alignItems: "center", justifyContent: "center",
+                                    color: "var(--preset-primary)",
+                                    marginTop: 1,
+                                }}>
+                                    {field.icon}
+                                </div>
+                                <div style={{ flex: 1, minWidth: 0 }}>
+                                    <div style={{
+                                        fontSize: 10, fontWeight: 600, color: isDark ? "#64748b" : "#94a3b8",
+                                        textTransform: "uppercase", letterSpacing: "0.5px", marginBottom: 3,
+                                    }}>
+                                        {field.label}
+                                    </div>
+                                    <div style={{
+                                        fontSize: 13, fontWeight: 600,
+                                        color: isDark ? "#e2e8f0" : "#1a1a2e",
+                                        lineHeight: 1.4,
+                                        wordBreak: "break-word",
+                                    }}>
+                                        {field.value}
+                                    </div>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+
+                    {/* Note if exists */}
+                    {application.note && (
+                        <div style={{
+                            marginTop: 16, padding: "12px 14px", borderRadius: 12,
+                            background: isDark ? "rgba(255,255,255,0.04)" : "rgba(0,0,0,0.03)",
+                            border: `1px solid ${isDark ? "rgba(255,255,255,0.06)" : "rgba(0,0,0,0.06)"}`,
+                        }}>
+                            <div style={{ fontSize: 10, fontWeight: 600, color: isDark ? "#64748b" : "#94a3b8", textTransform: "uppercase", letterSpacing: "0.5px", marginBottom: 4 }}>
+                                Note
+                            </div>
+                            <div style={{ fontSize: 12, color: isDark ? "#cbd5e1" : "#475569", lineHeight: 1.5 }}>
+                                {application.note}
+                            </div>
+                        </div>
+                    )}
+
+                    {/* Action buttons (only for pending) */}
+                    {application.status === "pending" && (
+                        <div style={{ display: "flex", gap: 8, marginTop: 24 }}>
+                            <button
+                                onClick={handleReject}
+                                disabled={isRejecting || isApproving}
+                                style={{
+                                    flex: 1, padding: "10px 16px", borderRadius: 12, fontSize: 13, fontWeight: 700,
+                                    border: `1px solid ${isDark ? "rgba(239,68,68,0.3)" : "rgba(239,68,68,0.2)"}`,
+                                    background: isDark ? "rgba(239,68,68,0.08)" : "rgba(239,68,68,0.05)",
+                                    color: "#ef4444",
+                                    cursor: isRejecting || isApproving ? "not-allowed" : "pointer",
+                                    opacity: isApproving ? 0.5 : 1,
+                                    transition: "all 0.15s",
+                                    display: "flex", alignItems: "center", justifyContent: "center", gap: 6,
+                                }}
+                            >
+                                {isRejecting ? <Loader2 size={14} className="animate-spin" /> : <XCircle size={14} />}
+                                Reject
+                            </button>
+                            <button
+                                onClick={handleApprove}
+                                disabled={isApproving || isRejecting}
+                                style={{
+                                    flex: 1, padding: "10px 16px", borderRadius: 12, fontSize: 13, fontWeight: 700,
+                                    border: "none",
+                                    background: "linear-gradient(135deg, var(--preset-primary), var(--preset-lighter))",
+                                    color: "#fff",
+                                    cursor: isApproving || isRejecting ? "not-allowed" : "pointer",
+                                    opacity: isRejecting ? 0.5 : 1,
+                                    transition: "all 0.15s",
+                                    display: "flex", alignItems: "center", justifyContent: "center", gap: 6,
+                                    boxShadow: "0 4px 16px rgba(var(--preset-primary-rgb), 0.3)",
+                                }}
+                            >
+                                {isApproving ? <Loader2 size={14} className="animate-spin" /> : <CheckCircle2 size={14} />}
+                                Approve
+                            </button>
+                        </div>
+                    )}
+                </div>
+            </div>
+        </div>
+    );
+}
+
+/* ════════════════════════════════════════════════════════════════════
+   APPLICATION LIST TAB CONTENT
+   ════════════════════════════════════════════════════════════════════ */
+
+function ApplicationsTab({
+    applications,
+    setApplications,
+    isDark,
+    theme,
+    isLoading,
+}: {
+    applications: DummyApplication[];
+    setApplications: React.Dispatch<React.SetStateAction<DummyApplication[]>>;
+    isDark: boolean;
+    theme: any;
+    isLoading: boolean;
+}) {
+    const [appStatusFilter, setAppStatusFilter] = useState<string>("pending");
+    const [searchQuery, setSearchQuery] = useState("");
+    const [selectedApp, setSelectedApp] = useState<DummyApplication | null>(null);
+
+    const filteredApps = useMemo(() => {
+        let filtered = applications;
+        if (appStatusFilter !== "all") {
+            filtered = filtered.filter((a) => a.status === appStatusFilter);
+        }
+        if (searchQuery.trim()) {
+            const q = searchQuery.toLowerCase();
+            filtered = filtered.filter(
+                (a) =>
+                    a.first_name.toLowerCase().includes(q) ||
+                    a.last_name.toLowerCase().includes(q) ||
+                    a.email.toLowerCase().includes(q) ||
+                    a.product_applied.toLowerCase().includes(q)
+            );
+        }
+        return filtered;
+    }, [applications, appStatusFilter, searchQuery]);
+
+    const appMeta = useMemo(() => ({
+        total: applications.length,
+        pending: applications.filter((a) => a.status === "pending").length,
+        approved: applications.filter((a) => a.status === "approved").length,
+        rejected: applications.filter((a) => a.status === "rejected").length,
+    }), [applications]);
+
+    const handleApprove = (id: string) => {
+        setApplications((prev) =>
+            prev.map((a) => (a.id === id ? { ...a, status: "approved" as const, note: a.note || "Approved by admin" } : a))
+        );
+        setSelectedApp(null);
+        toast.success("Application approved!");
+    };
+
+    const handleReject = (id: string) => {
+        setApplications((prev) =>
+            prev.map((a) => (a.id === id ? { ...a, status: "rejected" as const, note: a.note || "Rejected by admin" } : a))
+        );
+        setSelectedApp(null);
+        toast.success("Application rejected");
+    };
+
+    const appStatusOptions = [
+        { value: "pending", label: "Pending", count: appMeta.pending },
+        { value: "approved", label: "Approved", count: appMeta.approved },
+        { value: "rejected", label: "Rejected", count: appMeta.rejected },
+        { value: "all", label: "All", count: appMeta.total },
+    ];
+
+    return (
+        <>
+            {/* Mini stat cards */}
+            <div
+                style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 12, marginBottom: 16 }}
+                className="!grid-cols-1 sm:!grid-cols-3"
+            >
+                {[
+                    { label: "Pending Review", value: appMeta.pending, icon: <Clock size={18} />, color: "#f59e0b", bg: "rgba(245,158,11,0.1)" },
+                    { label: "Approved", value: appMeta.approved, icon: <CheckCircle2 size={18} />, color: "#22c55e", bg: "rgba(34,197,94,0.1)" },
+                    { label: "Rejected", value: appMeta.rejected, icon: <XCircle size={18} />, color: "#ef4444", bg: "rgba(239,68,68,0.1)" },
+                ].map((stat) => (
+                    <div
+                        key={stat.label}
+                        style={{
+                            background: theme.cardBg, border: theme.cardBorder, borderRadius: 14,
+                            padding: "16px 18px", display: "flex", alignItems: "center", gap: 12,
+                            backdropFilter: "blur(20px)", WebkitBackdropFilter: "blur(20px)",
+                            position: "relative", overflow: "hidden",
+                        }}
+                    >
+                        <div style={{
+                            width: 38, height: 38, borderRadius: 10,
+                            background: stat.bg, display: "flex", alignItems: "center", justifyContent: "center",
+                            color: stat.color, flexShrink: 0,
+                        }}>
+                            {stat.icon}
+                        </div>
+                        <div>
+                            <div style={{ fontSize: 22, fontWeight: 700, color: theme.title, lineHeight: 1.1 }}>{stat.value}</div>
+                            <div style={{ fontSize: 11, fontWeight: 500, color: theme.subtitle, marginTop: 2 }}>{stat.label}</div>
+                        </div>
+                    </div>
+                ))}
+            </div>
+
+            {/* Applications table card */}
+            <div
+                style={{
+                    background: theme.cardBg, borderRadius: 20, border: theme.cardBorder,
+                    padding: "22px 26px", display: "flex", flexDirection: "column", gap: 16,
+                    position: "relative", overflow: "hidden",
+                    backdropFilter: "blur(20px)", WebkitBackdropFilter: "blur(20px)",
+                }}
+            >
+                <div style={{ position: "absolute", top: -60, right: -60, width: 180, height: 180, background: `radial-gradient(circle, ${theme.glowColor} 0%, transparent 70%)`, pointerEvents: "none" }} />
+
+                {isLoading && (
+                    <div style={{
+                        position: "absolute", inset: 0,
+                        background: isDark ? "rgba(26, 34, 44, 0.78)" : "rgba(250, 247, 255, 0.72)",
+                        backdropFilter: "blur(6px)", WebkitBackdropFilter: "blur(6px)",
+                        zIndex: 10, display: "flex", alignItems: "center", justifyContent: "center", borderRadius: 20,
+                    }}>
+                        <MediumLoader label="Loading applications" className="!py-4" />
+                    </div>
+                )}
+
+                {/* Header + status filters */}
+                <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", flexWrap: "wrap", gap: 12 }}>
+                    <div>
+                        <h2 style={{ fontSize: 18, fontWeight: 700, color: theme.title, margin: 0, letterSpacing: "-0.3px", lineHeight: 1.2 }}>
+                            Applications
+                        </h2>
+                        <p style={{ fontSize: 12, color: theme.subtitle, margin: "4px 0 0" }}>
+                            {filteredApps.length} application{filteredApps.length !== 1 ? "s" : ""}
+                        </p>
+                    </div>
+
+                    <div style={{ background: theme.pillBg, borderRadius: 10, padding: 3, display: "flex", gap: 2 }}>
+                        {appStatusOptions.map((opt) => (
+                            <button
+                                key={opt.value}
+                                type="button"
+                                onClick={() => setAppStatusFilter(opt.value)}
+                                style={{
+                                    fontSize: 11, fontWeight: 600, padding: "5px 10px", borderRadius: 8,
+                                    border: "none", cursor: "pointer", transition: "all 0.15s ease",
+                                    color: appStatusFilter === opt.value ? theme.pillActiveText : theme.pillText,
+                                    background: appStatusFilter === opt.value ? theme.pillActive : "transparent",
+                                    boxShadow: appStatusFilter === opt.value ? "0 1px 4px rgba(var(--preset-primary-rgb), 0.25)" : "none",
+                                    display: "flex", alignItems: "center", gap: 4,
+                                }}
+                            >
+                                {opt.label}
+                                {opt.count > 0 && (
+                                    <span style={{
+                                        fontSize: 9, fontWeight: 700, padding: "1px 5px", borderRadius: 6,
+                                        background: appStatusFilter === opt.value ? "rgba(255,255,255,0.2)" : theme.expandBtnBg,
+                                        color: appStatusFilter === opt.value ? "#fff" : theme.subtitle,
+                                    }}>
+                                        {opt.count}
+                                    </span>
+                                )}
+                            </button>
+                        ))}
+                    </div>
+                </div>
+
+                {/* Search */}
+                <div style={{ display: "flex", alignItems: "center", gap: 8, background: theme.inputBg, border: theme.cardBorder, borderRadius: 12, padding: "0 14px" }}>
+                    <Search size={15} style={{ color: theme.subtitle, flexShrink: 0 }} />
+                    <input
+                        type="text"
+                        placeholder="Search by name, email, or product..."
+                        value={searchQuery}
+                        onChange={(e) => setSearchQuery(e.target.value)}
+                        style={{ flex: 1, padding: "10px 0", fontSize: 13, fontWeight: 500, background: "transparent", border: "none", outline: "none", color: theme.title, fontFamily: "'Outfit', sans-serif" }}
+                    />
+                </div>
+
+                {/* Application list */}
+                <div style={{
+                    borderRadius: 14,
+                    border: isDark ? "1px solid rgba(255,255,255,0.07)" : "1px solid rgba(0,0,0,0.08)",
+                    background: isDark ? "rgba(255,255,255,0.025)" : "rgba(0,0,0,0.02)",
+                    overflow: "hidden",
+                }}>
+                    {filteredApps.length === 0 ? (
+                        <div style={{ padding: "48px 20px", textAlign: "center" }}>
+                            <div style={{ fontSize: 14, fontWeight: 600, color: theme.subtitle, marginBottom: 4 }}>
+                                No {appStatusFilter !== "all" ? appStatusFilter : ""} applications
+                            </div>
+                            <div style={{ fontSize: 12, color: isDark ? "#475569" : "#94a3b8" }}>
+                                {appStatusFilter === "pending" ? "All caught up! No pending reviews." : "Try changing the filter to see more."}
+                            </div>
+                        </div>
+                    ) : (
+                        filteredApps.map((app, idx) => (
+                            <div
+                                key={app.id}
+                                style={{
+                                    display: "flex", alignItems: "center", justifyContent: "space-between",
+                                    padding: "14px 18px", gap: 12,
+                                    borderBottom: idx < filteredApps.length - 1
+                                        ? (isDark ? "1px solid rgba(255,255,255,0.06)" : "1px solid rgba(0,0,0,0.06)")
+                                        : "none",
+                                    transition: "background 0.15s ease",
+                                    cursor: "pointer",
+                                }}
+                                onMouseEnter={(e) => { e.currentTarget.style.background = isDark ? "rgba(var(--preset-primary-rgb), 0.04)" : "rgba(var(--preset-primary-rgb), 0.06)"; }}
+                                onMouseLeave={(e) => { e.currentTarget.style.background = "transparent"; }}
+                                onClick={() => setSelectedApp(app)}
+                            >
+                                <div style={{ display: "flex", alignItems: "center", gap: 12, flex: 1, minWidth: 0 }}>
+                                    <div style={{
+                                        width: 36, height: 36, borderRadius: 10,
+                                        background: "linear-gradient(135deg, var(--preset-primary), var(--preset-lighter))",
+                                        display: "flex", alignItems: "center", justifyContent: "center",
+                                        fontSize: 13, fontWeight: 700, color: "#fff", flexShrink: 0,
+                                    }}>
+                                        {app.first_name[0].toUpperCase()}
+                                    </div>
+                                    <div style={{ flex: 1, minWidth: 0 }}>
+                                        <div style={{ display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap" }}>
+                                            <span style={{ fontSize: 13, fontWeight: 600, color: theme.cellBold }}>
+                                                {app.first_name} {app.last_name}
+                                            </span>
+                                            <StatusBadge status={app.status} />
+                                        </div>
+                                        <div style={{ fontSize: 11, color: theme.cellText, marginTop: 2, display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap" }}>
+                                            <span>{app.product_applied}</span>
+                                            <span style={{ opacity: 0.5 }}>•</span>
+                                            <span>{new Date(app.applied_at).toLocaleDateString("en-MY", { day: "numeric", month: "short", year: "numeric" })}</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div style={{ display: "flex", alignItems: "center", gap: 6, flexShrink: 0 }}>
+                                    {/* Quick action buttons (only for pending) */}
+                                    {app.status === "pending" && (
+                                        <>
+                                            <button
+                                                onClick={(e) => { e.stopPropagation(); handleApprove(app.id); }}
+                                                title="Approve"
+                                                style={{
+                                                    width: 30, height: 30, borderRadius: 8, border: "none",
+                                                    background: "rgba(34,197,94,0.1)", color: "#22c55e",
+                                                    cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center",
+                                                    transition: "all 0.15s",
+                                                }}
+                                                onMouseEnter={(e) => { e.currentTarget.style.background = "rgba(34,197,94,0.2)"; }}
+                                                onMouseLeave={(e) => { e.currentTarget.style.background = "rgba(34,197,94,0.1)"; }}
+                                            >
+                                                <Check size={14} />
+                                            </button>
+                                            <button
+                                                onClick={(e) => { e.stopPropagation(); handleReject(app.id); }}
+                                                title="Reject"
+                                                style={{
+                                                    width: 30, height: 30, borderRadius: 8, border: "none",
+                                                    background: "rgba(239,68,68,0.1)", color: "#ef4444",
+                                                    cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center",
+                                                    transition: "all 0.15s",
+                                                }}
+                                                onMouseEnter={(e) => { e.currentTarget.style.background = "rgba(239,68,68,0.2)"; }}
+                                                onMouseLeave={(e) => { e.currentTarget.style.background = "rgba(239,68,68,0.1)"; }}
+                                            >
+                                                <X size={14} />
+                                            </button>
+                                        </>
+                                    )}
+                                    {/* View more arrow */}
+                                    <div style={{
+                                        width: 30, height: 30, borderRadius: 8,
+                                        background: theme.expandBtnBg,
+                                        display: "flex", alignItems: "center", justifyContent: "center",
+                                        color: theme.subtitle,
+                                    }}>
+                                        <ChevronRight size={14} />
+                                    </div>
+                                </div>
+                            </div>
+                        ))
+                    )}
+                </div>
+            </div>
+
+            {/* Detail modal */}
+            {selectedApp && (
+                <ApplicationDetailView
+                    application={selectedApp}
+                    onClose={() => setSelectedApp(null)}
+                    onApprove={handleApprove}
+                    onReject={handleReject}
+                    isDark={isDark}
+                    theme={theme}
+                />
+            )}
+        </>
+    );
+}
+
+/* ════════════════════════════════════════════════════════════════════
    PAYOUT DIALOG (fully self-contained, no portals that break clicks)
-   Uses a simple overlay approach to avoid the shadcn Dialog portal issue
    ════════════════════════════════════════════════════════════════════ */
 
 function PayoutDialog({
@@ -416,10 +1070,7 @@ function PayoutDialog({
             }}
             onClick={(e) => { if (e.target === e.currentTarget) onClose(); }}
         >
-            {/* Backdrop */}
             <div style={{ position: "absolute", inset: 0, background: "rgba(0,0,0,0.5)", backdropFilter: "blur(4px)" }} />
-
-            {/* Content */}
             <div
                 style={{
                     position: "relative", zIndex: 1,
@@ -433,7 +1084,6 @@ function PayoutDialog({
                 }}
                 onClick={(e) => e.stopPropagation()}
             >
-                {/* Header */}
                 <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 20 }}>
                     <div>
                         <h2 style={{ fontSize: 20, fontWeight: 700, margin: 0 }}>Create Payout</h2>
@@ -441,28 +1091,13 @@ function PayoutDialog({
                             {affiliate.user_affiliate.first_name} {affiliate.user_affiliate.last_name}
                         </p>
                     </div>
-                    <button
-                        onClick={onClose}
-                        style={{
-                            width: 32, height: 32, borderRadius: 8, border: "none",
-                            background: isDark ? "rgba(255,255,255,0.06)" : "rgba(0,0,0,0.05)",
-                            color: isDark ? "#94a3b8" : "#64748b",
-                            cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center",
-                        }}
-                    >
+                    <button onClick={onClose} style={{ width: 32, height: 32, borderRadius: 8, border: "none", background: isDark ? "rgba(255,255,255,0.06)" : "rgba(0,0,0,0.05)", color: isDark ? "#94a3b8" : "#64748b", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center" }}>
                         <X size={16} />
                     </button>
                 </div>
 
-                {/* Affiliate info + bank details */}
-                <div style={{
-                    borderRadius: 12,
-                    border: `1px solid ${isDark ? "rgba(255,255,255,0.08)" : "rgba(0,0,0,0.08)"}`,
-                    padding: 16, marginBottom: 16,
-                }}>
-                    <div style={{ fontSize: 12, fontWeight: 600, color: isDark ? "#94a3b8" : "#64748b", textTransform: "uppercase", letterSpacing: "0.5px", marginBottom: 8 }}>
-                        Bank Details
-                    </div>
+                <div style={{ borderRadius: 12, border: `1px solid ${isDark ? "rgba(255,255,255,0.08)" : "rgba(0,0,0,0.08)"}`, padding: 16, marginBottom: 16 }}>
+                    <div style={{ fontSize: 12, fontWeight: 600, color: isDark ? "#94a3b8" : "#64748b", textTransform: "uppercase", letterSpacing: "0.5px", marginBottom: 8 }}>Bank Details</div>
                     <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 12 }}>
                         {[
                             { label: "Bank", value: bank.bank_name, field: "bank" },
@@ -473,15 +1108,8 @@ function PayoutDialog({
                                 <div style={{ fontSize: 11, color: isDark ? "#64748b" : "#94a3b8", marginBottom: 2 }}>{label}</div>
                                 <div style={{ display: "flex", alignItems: "center", gap: 4 }}>
                                     <span style={{ fontSize: 13, fontWeight: 600 }}>{value}</span>
-                                    <button
-                                        type="button"
-                                        onClick={() => handleCopy(value, field)}
-                                        style={{ background: "none", border: "none", cursor: "pointer", padding: 2 }}
-                                    >
-                                        {copiedField === field
-                                            ? <Check size={12} style={{ color: "#22c55e" }} />
-                                            : <Copy size={12} style={{ color: isDark ? "#64748b" : "#94a3b8" }} />
-                                        }
+                                    <button type="button" onClick={() => handleCopy(value, field)} style={{ background: "none", border: "none", cursor: "pointer", padding: 2 }}>
+                                        {copiedField === field ? <Check size={12} style={{ color: "#22c55e" }} /> : <Copy size={12} style={{ color: isDark ? "#64748b" : "#94a3b8" }} />}
                                     </button>
                                 </div>
                             </div>
@@ -489,45 +1117,18 @@ function PayoutDialog({
                     </div>
                 </div>
 
-                {/* Commission list */}
-                <div style={{
-                    borderRadius: 12,
-                    border: `1px solid ${isDark ? "rgba(255,255,255,0.08)" : "rgba(0,0,0,0.08)"}`,
-                    overflow: "hidden", marginBottom: 16,
-                }}>
-                    {/* Select all header */}
-                    <div style={{
-                        display: "flex", alignItems: "center", gap: 10, padding: "10px 14px",
-                        background: isDark ? "rgba(255,255,255,0.04)" : "rgba(0,0,0,0.03)",
-                        borderBottom: `1px solid ${isDark ? "rgba(255,255,255,0.06)" : "rgba(0,0,0,0.06)"}`,
-                    }}>
-                        <Checkbox
-                            checked={selectedIds.length === commissions.length && commissions.length > 0}
-                            onCheckedChange={(v) => handleSelectAll(!!v)}
-                        />
+                <div style={{ borderRadius: 12, border: `1px solid ${isDark ? "rgba(255,255,255,0.08)" : "rgba(0,0,0,0.08)"}`, overflow: "hidden", marginBottom: 16 }}>
+                    <div style={{ display: "flex", alignItems: "center", gap: 10, padding: "10px 14px", background: isDark ? "rgba(255,255,255,0.04)" : "rgba(0,0,0,0.03)", borderBottom: `1px solid ${isDark ? "rgba(255,255,255,0.06)" : "rgba(0,0,0,0.06)"}` }}>
+                        <Checkbox checked={selectedIds.length === commissions.length && commissions.length > 0} onCheckedChange={(v) => handleSelectAll(!!v)} />
                         <span style={{ fontSize: 13, fontWeight: 600, flex: 1 }}>Select All</span>
-                        <span style={{ fontSize: 11, color: isDark ? "#64748b" : "#94a3b8" }}>
-                            {selectedIds.length} / {commissions.length} selected
-                        </span>
+                        <span style={{ fontSize: 11, color: isDark ? "#64748b" : "#94a3b8" }}>{selectedIds.length} / {commissions.length} selected</span>
                     </div>
-
-                    {/* Commission rows */}
                     <div style={{ maxHeight: 220, overflowY: "auto" }}>
                         {commissions.length === 0 ? (
-                            <div style={{ padding: "24px 14px", textAlign: "center", fontSize: 13, color: isDark ? "#64748b" : "#94a3b8" }}>
-                                No unpaid commissions
-                            </div>
+                            <div style={{ padding: "24px 14px", textAlign: "center", fontSize: 13, color: isDark ? "#64748b" : "#94a3b8" }}>No unpaid commissions</div>
                         ) : (
                             commissions.map((c) => (
-                                <div
-                                    key={c.id}
-                                    style={{
-                                        display: "flex", alignItems: "center", justifyContent: "space-between",
-                                        padding: "10px 14px",
-                                        borderBottom: `1px solid ${isDark ? "rgba(255,255,255,0.04)" : "rgba(0,0,0,0.04)"}`,
-                                        transition: "background 0.15s",
-                                        cursor: "pointer",
-                                    }}
+                                <div key={c.id} style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "10px 14px", borderBottom: `1px solid ${isDark ? "rgba(255,255,255,0.04)" : "rgba(0,0,0,0.04)"}`, transition: "background 0.15s", cursor: "pointer" }}
                                     onClick={() => handleToggle(c.id)}
                                     onMouseOver={(e) => (e.currentTarget.style.background = isDark ? "rgba(255,255,255,0.03)" : "rgba(0,0,0,0.02)")}
                                     onMouseOut={(e) => (e.currentTarget.style.background = "transparent")}
@@ -536,62 +1137,24 @@ function PayoutDialog({
                                         <Checkbox checked={selectedIds.includes(c.id)} onCheckedChange={() => handleToggle(c.id)} />
                                         <div>
                                             <div style={{ fontSize: 13, fontWeight: 600 }}>Order #{c.order_id}</div>
-                                            <div style={{ fontSize: 11, color: isDark ? "#64748b" : "#94a3b8" }}>
-                                                Sales: {formatCurrency(c.total_sales)} • Commission: {formatCurrency(c.commission)}
-                                            </div>
+                                            <div style={{ fontSize: 11, color: isDark ? "#64748b" : "#94a3b8" }}>Sales: {formatCurrency(c.total_sales)} • Commission: {formatCurrency(c.commission)}</div>
                                         </div>
                                     </div>
-                                    <span style={{ fontSize: 11, color: isDark ? "#64748b" : "#94a3b8" }}>
-                                        {new Date(c.created_at).toLocaleDateString("en-MY", { day: "numeric", month: "short" })}
-                                    </span>
+                                    <span style={{ fontSize: 11, color: isDark ? "#64748b" : "#94a3b8" }}>{new Date(c.created_at).toLocaleDateString("en-MY", { day: "numeric", month: "short" })}</span>
                                 </div>
                             ))
                         )}
                     </div>
                 </div>
 
-                {/* Total */}
-                <div style={{
-                    display: "flex", justifyContent: "space-between", alignItems: "center",
-                    padding: "12px 16px", borderRadius: 12, marginBottom: 20,
-                    background: isDark ? "rgba(255,255,255,0.04)" : "rgba(0,0,0,0.03)",
-                    border: `1px solid ${isDark ? "rgba(255,255,255,0.06)" : "rgba(0,0,0,0.06)"}`,
-                }}>
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "12px 16px", borderRadius: 12, marginBottom: 20, background: isDark ? "rgba(255,255,255,0.04)" : "rgba(0,0,0,0.03)", border: `1px solid ${isDark ? "rgba(255,255,255,0.06)" : "rgba(0,0,0,0.06)"}` }}>
                     <span style={{ fontSize: 14, fontWeight: 600 }}>Total Payout</span>
-                    <span style={{ fontSize: 20, fontWeight: 700, fontFamily: "'Outfit', sans-serif" }}>
-                        {formatCurrency(totalSelected)}
-                    </span>
+                    <span style={{ fontSize: 20, fontWeight: 700, fontFamily: "'Outfit', sans-serif" }}>{formatCurrency(totalSelected)}</span>
                 </div>
 
-                {/* Actions */}
                 <div style={{ display: "flex", justifyContent: "flex-end", gap: 8 }}>
-                    <button
-                        onClick={onClose}
-                        disabled={isSubmitting}
-                        style={{
-                            padding: "8px 20px", borderRadius: 10, fontSize: 13, fontWeight: 600,
-                            border: `1px solid ${isDark ? "rgba(255,255,255,0.1)" : "rgba(0,0,0,0.1)"}`,
-                            background: "transparent", color: isDark ? "#e2e8f0" : "#1a1a2e",
-                            cursor: "pointer", transition: "all 0.15s",
-                        }}
-                    >
-                        Cancel
-                    </button>
-                    <button
-                        onClick={handleSubmit}
-                        disabled={isSubmitting || selectedIds.length === 0}
-                        style={{
-                            padding: "8px 20px", borderRadius: 10, fontSize: 13, fontWeight: 600,
-                            border: "none",
-                            background: selectedIds.length === 0
-                                ? (isDark ? "rgba(255,255,255,0.06)" : "rgba(0,0,0,0.06)")
-                                : "linear-gradient(135deg, var(--preset-primary), var(--preset-lighter))",
-                            color: selectedIds.length === 0 ? (isDark ? "#475569" : "#94a3b8") : "#fff",
-                            cursor: selectedIds.length === 0 ? "not-allowed" : "pointer",
-                            transition: "all 0.15s",
-                            display: "flex", alignItems: "center", gap: 6,
-                        }}
-                    >
+                    <button onClick={onClose} disabled={isSubmitting} style={{ padding: "8px 20px", borderRadius: 10, fontSize: 13, fontWeight: 600, border: `1px solid ${isDark ? "rgba(255,255,255,0.1)" : "rgba(0,0,0,0.1)"}`, background: "transparent", color: isDark ? "#e2e8f0" : "#1a1a2e", cursor: "pointer", transition: "all 0.15s" }}>Cancel</button>
+                    <button onClick={handleSubmit} disabled={isSubmitting || selectedIds.length === 0} style={{ padding: "8px 20px", borderRadius: 10, fontSize: 13, fontWeight: 600, border: "none", background: selectedIds.length === 0 ? (isDark ? "rgba(255,255,255,0.06)" : "rgba(0,0,0,0.06)") : "linear-gradient(135deg, var(--preset-primary), var(--preset-lighter))", color: selectedIds.length === 0 ? (isDark ? "#475569" : "#94a3b8") : "#fff", cursor: selectedIds.length === 0 ? "not-allowed" : "pointer", transition: "all 0.15s", display: "flex", alignItems: "center", gap: 6 }}>
                         {isSubmitting && <Loader2 size={14} className="animate-spin" />}
                         Create Payout
                     </button>
@@ -602,7 +1165,7 @@ function PayoutDialog({
 }
 
 /* ════════════════════════════════════════════════════════════════════
-   DELETE CONFIRM DIALOG (same self-contained overlay approach)
+   DELETE CONFIRM DIALOG
    ════════════════════════════════════════════════════════════════════ */
 
 function DeleteDialog({
@@ -617,53 +1180,21 @@ function DeleteDialog({
     isDark: boolean;
 }) {
     return (
-        <div
-            style={{
-                position: "fixed", inset: 0, zIndex: 9999,
-                display: "flex", alignItems: "center", justifyContent: "center",
-            }}
+        <div style={{ position: "fixed", inset: 0, zIndex: 9999, display: "flex", alignItems: "center", justifyContent: "center" }}
             onClick={(e) => { if (e.target === e.currentTarget) onClose(); }}
         >
             <div style={{ position: "absolute", inset: 0, background: "rgba(0,0,0,0.5)", backdropFilter: "blur(4px)" }} />
-            <div
-                style={{
-                    position: "relative", zIndex: 1,
-                    width: "100%", maxWidth: 440, margin: "0 16px",
-                    background: isDark ? "hsl(222, 20%, 14%)" : "#fff",
-                    borderRadius: 16, padding: "24px",
-                    boxShadow: "0 24px 80px rgba(0,0,0,0.3)",
-                    fontFamily: "'Outfit', sans-serif",
-                    color: isDark ? "#e2e8f0" : "#1a1a2e",
-                }}
+            <div style={{ position: "relative", zIndex: 1, width: "100%", maxWidth: 440, margin: "0 16px", background: isDark ? "hsl(222, 20%, 14%)" : "#fff", borderRadius: 16, padding: "24px", boxShadow: "0 24px 80px rgba(0,0,0,0.3)", fontFamily: "'Outfit', sans-serif", color: isDark ? "#e2e8f0" : "#1a1a2e" }}
                 onClick={(e) => e.stopPropagation()}
             >
                 <h2 style={{ fontSize: 18, fontWeight: 700, margin: "0 0 8px" }}>Are you sure?</h2>
                 <p style={{ fontSize: 13, color: isDark ? "#94a3b8" : "#64748b", margin: "0 0 20px", lineHeight: 1.5 }}>
                     This will permanently delete the affiliate account for{" "}
-                    <strong>{affiliate.user_affiliate.first_name} {affiliate.user_affiliate.last_name}</strong>.
-                    This action cannot be undone.
+                    <strong>{affiliate.user_affiliate.first_name} {affiliate.user_affiliate.last_name}</strong>. This action cannot be undone.
                 </p>
                 <div style={{ display: "flex", justifyContent: "flex-end", gap: 8 }}>
-                    <button
-                        onClick={onClose}
-                        style={{
-                            padding: "8px 20px", borderRadius: 10, fontSize: 13, fontWeight: 600,
-                            border: `1px solid ${isDark ? "rgba(255,255,255,0.1)" : "rgba(0,0,0,0.1)"}`,
-                            background: "transparent", color: isDark ? "#e2e8f0" : "#1a1a2e", cursor: "pointer",
-                        }}
-                    >
-                        Cancel
-                    </button>
-                    <button
-                        onClick={() => { onConfirm(); onClose(); }}
-                        style={{
-                            padding: "8px 20px", borderRadius: 10, fontSize: 13, fontWeight: 600,
-                            border: "none", background: "linear-gradient(135deg, #ef4444, #f87171)",
-                            color: "#fff", cursor: "pointer",
-                        }}
-                    >
-                        Delete
-                    </button>
+                    <button onClick={onClose} style={{ padding: "8px 20px", borderRadius: 10, fontSize: 13, fontWeight: 600, border: `1px solid ${isDark ? "rgba(255,255,255,0.1)" : "rgba(0,0,0,0.1)"}`, background: "transparent", color: isDark ? "#e2e8f0" : "#1a1a2e", cursor: "pointer" }}>Cancel</button>
+                    <button onClick={() => { onConfirm(); onClose(); }} style={{ padding: "8px 20px", borderRadius: 10, fontSize: 13, fontWeight: 600, border: "none", background: "linear-gradient(135deg, #ef4444, #f87171)", color: "#fff", cursor: "pointer" }}>Delete</button>
                 </div>
             </div>
         </div>
@@ -671,7 +1202,7 @@ function DeleteDialog({
 }
 
 /* ════════════════════════════════════════════════════════════════════
-   QUICK VIEW PANEL (slides in from right on desktop, dialog on mobile)
+   QUICK VIEW PANEL
    ════════════════════════════════════════════════════════════════════ */
 
 function AffiliateQuickView({
@@ -697,50 +1228,24 @@ function AffiliateQuickView({
     ];
 
     return (
-        <div
-            style={{
-                background: theme.cardBg, border: theme.cardBorder, borderRadius: 16,
-                padding: "20px 22px", display: "flex", flexDirection: "column", gap: 16,
-                fontFamily: "'Outfit', sans-serif", position: "relative", overflow: "hidden",
-                backdropFilter: "blur(20px)", WebkitBackdropFilter: "blur(20px)",
-            }}
-        >
+        <div style={{ background: theme.cardBg, border: theme.cardBorder, borderRadius: 16, padding: "20px 22px", display: "flex", flexDirection: "column", gap: 16, fontFamily: "'Outfit', sans-serif", position: "relative", overflow: "hidden", backdropFilter: "blur(20px)", WebkitBackdropFilter: "blur(20px)" }}>
             <div style={{ position: "absolute", top: -60, right: -60, width: 180, height: 180, background: `radial-gradient(circle, ${theme.glowColor} 0%, transparent 70%)`, pointerEvents: "none" }} />
-
-            <button
-                onClick={onClose}
-                style={{
-                    position: "absolute", top: 14, right: 14, width: 28, height: 28, borderRadius: 8,
-                    border: "none", background: theme.expandBtnBg, color: theme.subtitle,
-                    cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 2,
-                }}
-            >
+            <button onClick={onClose} style={{ position: "absolute", top: 14, right: 14, width: 28, height: 28, borderRadius: 8, border: "none", background: theme.expandBtnBg, color: theme.subtitle, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 2 }}>
                 <X size={14} />
             </button>
-
             <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-                <div style={{
-                    width: 42, height: 42, borderRadius: 12,
-                    background: "linear-gradient(135deg, var(--preset-primary), var(--preset-lighter))",
-                    display: "flex", alignItems: "center", justifyContent: "center",
-                    fontSize: 16, fontWeight: 700, color: "#fff", flexShrink: 0,
-                    boxShadow: `0 2px 12px ${theme.glowColor}`,
-                }}>
+                <div style={{ width: 42, height: 42, borderRadius: 12, background: "linear-gradient(135deg, var(--preset-primary), var(--preset-lighter))", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 16, fontWeight: 700, color: "#fff", flexShrink: 0, boxShadow: `0 2px 12px ${theme.glowColor}` }}>
                     {(user.first_name?.[0] || "A").toUpperCase()}
                 </div>
                 <div>
-                    <h3 style={{ fontSize: 16, fontWeight: 700, color: theme.title, margin: 0, lineHeight: 1.2 }}>
-                        {user.first_name} {user.last_name}
-                    </h3>
+                    <h3 style={{ fontSize: 16, fontWeight: 700, color: theme.title, margin: 0, lineHeight: 1.2 }}>{user.first_name} {user.last_name}</h3>
                     <p style={{ fontSize: 12, color: theme.subtitle, margin: "2px 0 0" }}>{user.email}</p>
                 </div>
             </div>
-
             <div style={{ background: theme.expandBtnBg, borderRadius: 12, padding: "12px 16px", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
                 <span style={{ fontSize: 11, fontWeight: 500, color: theme.subtitle, textTransform: "uppercase", letterSpacing: "0.4px" }}>Effective Rate</span>
                 <span style={{ fontSize: 22, fontWeight: 700, color: theme.title, fontFamily: "'Outfit', sans-serif" }}>{commissionRate}%</span>
             </div>
-
             <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
                 {stats.map((s) => (
                     <div key={s.label}>
@@ -749,7 +1254,6 @@ function AffiliateQuickView({
                     </div>
                 ))}
             </div>
-
             <div style={{ width: "100%", height: 1, background: theme.divider }} />
             <div>
                 <div style={{ fontSize: 10, color: theme.subtitle, fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.5px", marginBottom: 8 }}>Bank Details</div>
@@ -804,6 +1308,9 @@ const AffiliateListScreen = () => {
     const { resolvedTheme } = useTheme();
     const isDark = resolvedTheme === "dark";
 
+    /* ── Top-level tab: "affiliates" | "applications" ── */
+    const [activeTab, setActiveTab] = useState<"affiliates" | "applications">("affiliates");
+
     const [statusFilter, setStatusFilter] = useState<string>("all");
     const [revealedAmounts, setRevealedAmounts] = useState(true);
     const [cardsExpanded, setCardsExpanded] = useState(false);
@@ -812,6 +1319,7 @@ const AffiliateListScreen = () => {
     const [quickViewAffiliate, setQuickViewAffiliate] = useState<DummyAffiliate | null>(null);
     const [isLoading, setIsLoading] = useState(true);
     const [affiliates, setAffiliates] = useState<DummyAffiliate[]>([]);
+    const [applications, setApplications] = useState<DummyApplication[]>([]);
 
     const perPage = 20;
     const [visibleAffiliateCount, setVisibleAffiliateCount] = useState(perPage);
@@ -825,10 +1333,13 @@ const AffiliateListScreen = () => {
     useEffect(() => {
         const timer = setTimeout(() => {
             setAffiliates(DUMMY_AFFILIATES);
+            setApplications(DUMMY_APPLICATIONS);
             setIsLoading(false);
         }, 1500);
         return () => clearTimeout(timer);
     }, []);
+
+    const pendingAppCount = useMemo(() => applications.filter((a) => a.status === "pending").length, [applications]);
 
     const filteredData = useMemo(() => {
         if (statusFilter === "all") return affiliates;
@@ -846,21 +1357,10 @@ const AffiliateListScreen = () => {
         const paidPositive = affiliates.filter((a) => a.total_commission_amount > 0).length;
         const avgPaidPerAff = total > 0 ? total_commission / total : 0;
         const avgUnpaidAmongOwed = withUnpaid > 0 ? total_unpaid / withUnpaid : 0;
-        return {
-            total,
-            active,
-            inactive,
-            pending,
-            total_commission,
-            total_unpaid,
-            withUnpaid,
-            paidPositive,
-            avgPaidPerAff,
-            avgUnpaidAmongOwed,
-        };
+        return { total, active, inactive, pending, total_commission, total_unpaid, withUnpaid, paidPositive, avgPaidPerAff, avgUnpaidAmongOwed };
     }, [affiliates]);
 
-    /* ── Theme tokens (exact match to sales dashboard) ── */
+    /* ── Theme tokens ── */
     const t = useMemo(() => {
         if (isDark) {
             return {
@@ -929,10 +1429,7 @@ const AffiliateListScreen = () => {
             {
                 accessorKey: "user_affiliate",
                 header: ({ column }) => (
-                    <button
-                        onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-                        style={{ display: "flex", alignItems: "center", gap: 4, background: "none", border: "none", cursor: "pointer", fontSize: 11, fontWeight: 600, color: t.headerText, textTransform: "uppercase", letterSpacing: "0.5px", padding: 0 }}
-                    >
+                    <button onClick={() => column.toggleSorting(column.getIsSorted() === "asc")} style={{ display: "flex", alignItems: "center", gap: 4, background: "none", border: "none", cursor: "pointer", fontSize: 11, fontWeight: 600, color: t.headerText, textTransform: "uppercase", letterSpacing: "0.5px", padding: 0 }}>
                         Name <ArrowUpDown size={12} />
                     </button>
                 ),
@@ -941,12 +1438,7 @@ const AffiliateListScreen = () => {
                     return (
                         <div style={{ cursor: "pointer" }} onClick={() => setQuickViewAffiliate(row.original)}>
                             <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-                                <div style={{
-                                    width: 30, height: 30, borderRadius: 8,
-                                    background: "linear-gradient(135deg, var(--preset-primary), var(--preset-lighter))",
-                                    display: "flex", alignItems: "center", justifyContent: "center",
-                                    fontSize: 12, fontWeight: 700, color: "#fff", flexShrink: 0,
-                                }}>
+                                <div style={{ width: 30, height: 30, borderRadius: 8, background: "linear-gradient(135deg, var(--preset-primary), var(--preset-lighter))", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 12, fontWeight: 700, color: "#fff", flexShrink: 0 }}>
                                     {(user.first_name?.[0] || "A").toUpperCase()}
                                 </div>
                                 <div>
@@ -971,9 +1463,7 @@ const AffiliateListScreen = () => {
                     </button>
                 ),
                 cell: ({ row }) => (
-                    <span style={{ fontSize: 12, color: t.cellText }}>
-                        {new Date(row.original.joined_at).toLocaleDateString("en-MY", { day: "numeric", month: "short", year: "numeric" })}
-                    </span>
+                    <span style={{ fontSize: 12, color: t.cellText }}>{new Date(row.original.joined_at).toLocaleDateString("en-MY", { day: "numeric", month: "short", year: "numeric" })}</span>
                 ),
             },
             {
@@ -984,9 +1474,7 @@ const AffiliateListScreen = () => {
                     </button>
                 ),
                 cell: ({ row }) => (
-                    <span style={{ fontSize: 12, fontWeight: 600, color: t.cellBold }}>
-                        {revealedAmounts ? formatCurrency(row.original.total_sales_amount) : "••••••"}
-                    </span>
+                    <span style={{ fontSize: 12, fontWeight: 600, color: t.cellBold }}>{revealedAmounts ? formatCurrency(row.original.total_sales_amount) : "••••••"}</span>
                 ),
             },
             {
@@ -997,9 +1485,7 @@ const AffiliateListScreen = () => {
                     </button>
                 ),
                 cell: ({ row }) => (
-                    <span style={{ fontSize: 12, color: t.cellText }}>
-                        {revealedAmounts ? formatCurrency(row.original.total_commission_amount) : "••••••"}
-                    </span>
+                    <span style={{ fontSize: 12, color: t.cellText }}>{revealedAmounts ? formatCurrency(row.original.total_commission_amount) : "••••••"}</span>
                 ),
             },
             {
@@ -1032,23 +1518,9 @@ const AffiliateListScreen = () => {
                             </DropdownMenuTrigger>
                             <DropdownMenuContent align="end">
                                 <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                                <DropdownMenuItem onClick={() => setQuickViewAffiliate(aff)}>
-                                    View Details <Eye className="ml-2 h-4 w-4" />
-                                </DropdownMenuItem>
-                                <DropdownMenuItem
-                                    onClick={() => {
-                                        if (aff.unpaid_commissions.length > 0) {
-                                            setPayoutAffiliate(aff);
-                                        } else {
-                                            toast.error("No unpaid commissions.");
-                                        }
-                                    }}
-                                >
-                                    Mark as Paid <DollarSign className="ml-2 h-4 w-4" />
-                                </DropdownMenuItem>
-                                <DropdownMenuItem onClick={() => setDeleteAffiliate(aff)}>
-                                    Delete <UserX className="ml-2 h-4 w-4" />
-                                </DropdownMenuItem>
+                                <DropdownMenuItem onClick={() => setQuickViewAffiliate(aff)}>View Details <Eye className="ml-2 h-4 w-4" /></DropdownMenuItem>
+                                <DropdownMenuItem onClick={() => { if (aff.unpaid_commissions.length > 0) { setPayoutAffiliate(aff); } else { toast.error("No unpaid commissions."); } }}>Mark as Paid <DollarSign className="ml-2 h-4 w-4" /></DropdownMenuItem>
+                                <DropdownMenuItem onClick={() => setDeleteAffiliate(aff)}>Delete <UserX className="ml-2 h-4 w-4" /></DropdownMenuItem>
                             </DropdownMenuContent>
                         </DropdownMenu>
                     );
@@ -1082,10 +1554,7 @@ const AffiliateListScreen = () => {
     const visibleAffiliateRows = sortedAffiliateRows.slice(0, visibleAffiliateCount);
     const hasMoreAffiliates = visibleAffiliateCount < sortedAffiliateRows.length;
     const affiliateTableTotalPages = Math.max(1, Math.ceil(sortedAffiliateRows.length / perPage));
-    const affiliateTableCurrentPage = Math.min(
-        affiliateTableTotalPages,
-        Math.max(1, Math.ceil(visibleAffiliateCount / perPage))
-    );
+    const affiliateTableCurrentPage = Math.min(affiliateTableTotalPages, Math.max(1, Math.ceil(visibleAffiliateCount / perPage)));
 
     const handleLoadMoreAffiliates = useCallback(() => {
         if (loadAffiliateLockRef.current) return;
@@ -1125,6 +1594,12 @@ const AffiliateListScreen = () => {
         { value: "inactive", label: "Inactive" },
     ];
 
+    /* ── Tab definitions ── */
+    const tabs = [
+        { id: "affiliates" as const, label: "Affiliates", icon: <Users size={15} /> },
+        { id: "applications" as const, label: "Applications", icon: <ClipboardList size={15} />, badge: pendingAppCount },
+    ];
+
     /* ════════════════════════════════════════════════════════════════
        RENDER
        ════════════════════════════════════════════════════════════════ */
@@ -1134,6 +1609,7 @@ const AffiliateListScreen = () => {
             <style>{`
                 @keyframes shimmer-badge { 0% { background-position: -200% 0; } 100% { background-position: 200% 0; } }
                 @keyframes slideIn { from { opacity: 0; transform: translateX(16px); } to { opacity: 1; transform: translateX(0); } }
+                @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
             `}</style>
 
             {/* ── Header ── */}
@@ -1143,7 +1619,7 @@ const AffiliateListScreen = () => {
                         Affiliates
                     </h2>
                     <p style={{ fontSize: 13, color: t.subtitle, margin: "4px 0 0" }}>
-                        Manage your affiliates and track their performance
+                        Manage your affiliates and review applications
                     </p>
                 </div>
                 <button
@@ -1159,313 +1635,208 @@ const AffiliateListScreen = () => {
                 </button>
             </div>
 
-            {/* ── Stat cards — same component & layout as /sales overview platform cards ── */}
-            <div
-                style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 16, width: "100%" }}
-                className="overview-platform-grid !grid-cols-1 sm:!grid-cols-2 lg:!grid-cols-4"
-            >
-                <OverviewDataCard
-                    customTitle="Total Affiliates"
-                    customIcon={<Users size={22} strokeWidth={2} />}
-                    metricSubtitle="Registered affiliates"
-                    primaryValueDisplay={String(meta.total)}
-                    expandLabel1="Active"
-                    expandValue1Display={String(meta.active)}
-                    expandLabel2="Inactive"
-                    expandValue2Display={String(meta.inactive)}
-                    isLoading={isLoading}
-                    expanded={cardsExpanded}
-                    onExpandToggle={() => setCardsExpanded((e) => !e)}
-                />
-                <OverviewDataCard
-                    customTitle="Active Affiliates"
-                    customIcon={<UserCheck size={22} strokeWidth={2} />}
-                    metricSubtitle="Currently active"
-                    primaryValueDisplay={String(meta.active)}
-                    expandLabel1="Pending"
-                    expandValue1Display={String(meta.pending)}
-                    expandLabel2="Inactive"
-                    expandValue2Display={String(meta.inactive)}
-                    isLoading={isLoading}
-                    expanded={cardsExpanded}
-                    onExpandToggle={() => setCardsExpanded((e) => !e)}
-                />
-                <OverviewDataCard
-                    customTitle="Total Commissions"
-                    customIcon={<Wallet size={22} strokeWidth={2} />}
-                    metricSubtitle="Total commissions paid"
-                    primaryValueDisplay={revealedAmounts ? formatCurrency(meta.total_commission) : "RM ••••••"}
-                    expandLabel1="Avg. per affiliate"
-                    expandValue1Display={revealedAmounts ? formatCurrency(meta.avgPaidPerAff) : "••••••"}
-                    expandLabel2="With payouts"
-                    expandValue2Display={String(meta.paidPositive)}
-                    isLoading={isLoading}
-                    expanded={cardsExpanded}
-                    onExpandToggle={() => setCardsExpanded((e) => !e)}
-                />
-                <OverviewDataCard
-                    customTitle="Unpaid Commissions"
-                    customIcon={<DollarSign size={22} strokeWidth={2} />}
-                    metricSubtitle="Awaiting payout"
-                    primaryValueDisplay={revealedAmounts ? formatCurrency(meta.total_unpaid) : "RM ••••••"}
-                    expandLabel1="Affiliates owed"
-                    expandValue1Display={String(meta.withUnpaid)}
-                    expandLabel2="Avg. owed"
-                    expandValue2Display={revealedAmounts ? formatCurrency(meta.avgUnpaidAmongOwed) : "••••••"}
-                    isLoading={isLoading}
-                    expanded={cardsExpanded}
-                    onExpandToggle={() => setCardsExpanded((e) => !e)}
-                />
+            {/* ── Main Tabs ── */}
+            <div style={{
+                display: "flex", gap: 2, padding: 3, borderRadius: 12,
+                background: t.pillBg, width: "fit-content",
+            }}>
+                {tabs.map((tab) => (
+                    <button
+                        key={tab.id}
+                        type="button"
+                        onClick={() => setActiveTab(tab.id)}
+                        style={{
+                            display: "flex", alignItems: "center", gap: 7, fontSize: 13, fontWeight: 600,
+                            padding: "8px 18px", borderRadius: 10, border: "none", cursor: "pointer",
+                            transition: "all 0.2s ease",
+                            color: activeTab === tab.id ? t.pillActiveText : t.pillText,
+                            background: activeTab === tab.id ? t.pillActive : "transparent",
+                            boxShadow: activeTab === tab.id ? "0 2px 8px rgba(var(--preset-primary-rgb), 0.25)" : "none",
+                            position: "relative",
+                        }}
+                    >
+                        {tab.icon}
+                        {tab.label}
+                        {tab.badge != null && tab.badge > 0 && (
+                            <span style={{
+                                fontSize: 10, fontWeight: 700, lineHeight: 1,
+                                padding: "2px 6px", borderRadius: 8, minWidth: 18, textAlign: "center",
+                                background: activeTab === tab.id ? "rgba(255,255,255,0.25)" : "linear-gradient(135deg, #f59e0b, #fbbf24)",
+                                color: activeTab === tab.id ? "#fff" : "#fff",
+                                boxShadow: activeTab !== tab.id ? "0 1px 4px rgba(245,158,11,0.35)" : "none",
+                            }}>
+                                {tab.badge}
+                            </span>
+                        )}
+                    </button>
+                ))}
             </div>
 
-            {/* ── Table Card (matching AnalyticsSalesTable) ── */}
-            <div
-                style={{
-                    background: t.cardBg, borderRadius: 20, border: t.cardBorder,
-                    padding: "22px 26px", display: "flex", flexDirection: "column", gap: 16,
-                    position: "relative", overflow: "hidden",
-                    backdropFilter: "blur(20px)", WebkitBackdropFilter: "blur(20px)",
-                }}
-            >
-                <div style={{ position: "absolute", top: -60, right: -60, width: 180, height: 180, background: `radial-gradient(circle, ${t.glowColor} 0%, transparent 70%)`, pointerEvents: "none" }} />
-
-                {/* Loading overlay */}
-                {isLoading && (
-                    <div style={{
-                        position: "absolute", inset: 0,
-                        background: isDark ? "rgba(26, 34, 44, 0.78)" : "rgba(250, 247, 255, 0.72)",
-                        backdropFilter: "blur(6px)", WebkitBackdropFilter: "blur(6px)",
-                        zIndex: 10, display: "flex", alignItems: "center", justifyContent: "center", borderRadius: 20,
-                    }}>
-                        <MediumLoader label="Loading affiliates" className="!py-4" />
-                    </div>
-                )}
-
-                {/* Table header */}
-                <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", flexWrap: "wrap", gap: 12 }}>
-                    <div>
-                        <h2 style={{ fontSize: 18, fontWeight: 700, color: t.title, margin: 0, letterSpacing: "-0.3px", lineHeight: 1.2 }}>
-                            Affiliate Directory
-                        </h2>
-                        <p style={{ fontSize: 12, color: t.subtitle, margin: "4px 0 0" }}>
-                            {filteredData.length} affiliates
-                        </p>
+            {/* ── TAB: Affiliates ── */}
+            {activeTab === "affiliates" && (
+                <div style={{ animation: "fadeIn 0.25s ease-out" }} className="flex flex-col gap-4">
+                    {/* Stat cards */}
+                    <div
+                        style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 16, width: "100%" }}
+                        className="overview-platform-grid !grid-cols-1 sm:!grid-cols-2 lg:!grid-cols-4"
+                    >
+                        <OverviewDataCard customTitle="Total Affiliates" customIcon={<Users size={22} strokeWidth={2} />} metricSubtitle="Registered affiliates" primaryValueDisplay={String(meta.total)} expandLabel1="Active" expandValue1Display={String(meta.active)} expandLabel2="Inactive" expandValue2Display={String(meta.inactive)} isLoading={isLoading} expanded={cardsExpanded} onExpandToggle={() => setCardsExpanded((e) => !e)} />
+                        <OverviewDataCard customTitle="Active Affiliates" customIcon={<UserCheck size={22} strokeWidth={2} />} metricSubtitle="Currently active" primaryValueDisplay={String(meta.active)} expandLabel1="Pending" expandValue1Display={String(meta.pending)} expandLabel2="Inactive" expandValue2Display={String(meta.inactive)} isLoading={isLoading} expanded={cardsExpanded} onExpandToggle={() => setCardsExpanded((e) => !e)} />
+                        <OverviewDataCard customTitle="Total Commissions" customIcon={<Wallet size={22} strokeWidth={2} />} metricSubtitle="Total commissions paid" primaryValueDisplay={revealedAmounts ? formatCurrency(meta.total_commission) : "RM ••••••"} expandLabel1="Avg. per affiliate" expandValue1Display={revealedAmounts ? formatCurrency(meta.avgPaidPerAff) : "••••••"} expandLabel2="With payouts" expandValue2Display={String(meta.paidPositive)} isLoading={isLoading} expanded={cardsExpanded} onExpandToggle={() => setCardsExpanded((e) => !e)} />
+                        <OverviewDataCard customTitle="Unpaid Commissions" customIcon={<DollarSign size={22} strokeWidth={2} />} metricSubtitle="Awaiting payout" primaryValueDisplay={revealedAmounts ? formatCurrency(meta.total_unpaid) : "RM ••••••"} expandLabel1="Affiliates owed" expandValue1Display={String(meta.withUnpaid)} expandLabel2="Avg. owed" expandValue2Display={revealedAmounts ? formatCurrency(meta.avgUnpaidAmongOwed) : "••••••"} isLoading={isLoading} expanded={cardsExpanded} onExpandToggle={() => setCardsExpanded((e) => !e)} />
                     </div>
 
-                    <div style={{ display: "flex", alignItems: "center", gap: 6, flexWrap: "wrap" }}>
-                        {/* Status pills */}
-                        <div style={{ background: t.pillBg, borderRadius: 10, padding: 3, display: "flex", gap: 2 }}>
-                            {statusOptions.map((opt) => (
-                                <button
-                                    key={opt.value}
-                                    type="button"
-                                    onClick={() => setStatusFilter(opt.value)}
-                                    style={{
-                                        fontSize: 12, fontWeight: 600, padding: "5px 12px", borderRadius: 8,
-                                        border: "none", cursor: "pointer", transition: "all 0.15s ease",
-                                        color: statusFilter === opt.value ? t.pillActiveText : t.pillText,
-                                        background: statusFilter === opt.value ? t.pillActive : "transparent",
-                                        boxShadow: statusFilter === opt.value ? "0 1px 4px rgba(var(--preset-primary-rgb), 0.25)" : "none",
-                                    }}
-                                >
-                                    {opt.label}
-                                </button>
-                            ))}
-                        </div>
+                    {/* Table Card */}
+                    <div
+                        style={{
+                            background: t.cardBg, borderRadius: 20, border: t.cardBorder,
+                            padding: "22px 26px", display: "flex", flexDirection: "column", gap: 16,
+                            position: "relative", overflow: "hidden",
+                            backdropFilter: "blur(20px)", WebkitBackdropFilter: "blur(20px)",
+                        }}
+                    >
+                        <div style={{ position: "absolute", top: -60, right: -60, width: 180, height: 180, background: `radial-gradient(circle, ${t.glowColor} 0%, transparent 70%)`, pointerEvents: "none" }} />
 
-                        {/* Column visibility */}
-                        <DropdownMenu>
-                            <DropdownMenuTrigger asChild>
-                                <button type="button" style={{ display: "flex", alignItems: "center", justifyContent: "center", width: 32, height: 32, borderRadius: 8, border: t.cardBorder, cursor: "pointer", color: t.subtitle, background: t.expandBtnBg }}>
-                                    <SlidersHorizontal size={14} />
-                                </button>
-                            </DropdownMenuTrigger>
-                            <DropdownMenuContent align="end">
-                                {table.getAllColumns().filter((col) => col.getCanHide()).map((col) => (
-                                    <DropdownMenuCheckboxItem key={col.id} className="capitalize" checked={col.getIsVisible()} onCheckedChange={(v) => col.toggleVisibility(!!v)}>
-                                        {col.id.replace(/_/g, " ")}
-                                    </DropdownMenuCheckboxItem>
-                                ))}
-                            </DropdownMenuContent>
-                        </DropdownMenu>
-                    </div>
-                </div>
-
-                {/* Search */}
-                <div style={{ display: "flex", alignItems: "center", gap: 8, background: t.inputBg, border: t.cardBorder, borderRadius: 12, padding: "0 14px" }}>
-                    <Search size={15} style={{ color: t.subtitle, flexShrink: 0 }} />
-                    <input
-                        type="text"
-                        placeholder="Search affiliates by name..."
-                        value={(table.getColumn("user_affiliate")?.getFilterValue() as string) ?? ""}
-                        onChange={(e) => table.getColumn("user_affiliate")?.setFilterValue(e.target.value)}
-                        style={{ flex: 1, padding: "10px 0", fontSize: 13, fontWeight: 500, background: "transparent", border: "none", outline: "none", color: t.title, fontFamily: "'Outfit', sans-serif" }}
-                    />
-                </div>
-
-                {/* Table + Quick View — Facebook Marketing–style table shell + scroll lazy-load */}
-                <div style={{ display: "flex", gap: 16 }}>
-                    <div style={{ flex: 1, minWidth: 0 }}>
-                        <div
-                            style={{
-                                borderRadius: 14,
-                                border: isDark ? "1px solid rgba(255,255,255,0.07)" : "1px solid rgba(0,0,0,0.08)",
-                                background: isDark ? "rgba(255,255,255,0.025)" : "rgba(0,0,0,0.02)",
-                                overflow: "hidden",
-                            }}
-                        >
-                            <div
-                                style={{
-                                    padding: "13px 17px",
-                                    borderBottom: isDark ? "1px solid rgba(255,255,255,0.07)" : "1px solid rgba(0,0,0,0.08)",
-                                    display: "flex",
-                                    alignItems: "center",
-                                    justifyContent: "space-between",
-                                    flexWrap: "wrap",
-                                    gap: 8,
-                                }}
-                            >
-                                <div style={{ fontSize: 13, fontWeight: 800, color: t.title }}>
-                                    All Affiliates ({filteredData.length})
-                                </div>
-                                <div style={{ fontSize: 10, color: t.subtitle }}>
-                                    Click any row for quick view
-                                </div>
+                        {isLoading && (
+                            <div style={{ position: "absolute", inset: 0, background: isDark ? "rgba(26, 34, 44, 0.78)" : "rgba(250, 247, 255, 0.72)", backdropFilter: "blur(6px)", WebkitBackdropFilter: "blur(6px)", zIndex: 10, display: "flex", alignItems: "center", justifyContent: "center", borderRadius: 20 }}>
+                                <MediumLoader label="Loading affiliates" className="!py-4" />
                             </div>
-                            <div style={{ overflowX: "auto" }}>
-                                <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 12 }}>
-                                    <thead>
-                                        {table.getHeaderGroups().map((hg) => (
-                                            <tr key={hg.id} style={{ borderBottom: isDark ? "1px solid rgba(255,255,255,0.07)" : "1px solid rgba(0,0,0,0.08)" }}>
-                                                <th style={{ padding: "9px 11px", textAlign: "left", fontSize: 10, fontWeight: 800, color: t.headerText, textTransform: "uppercase", letterSpacing: "0.05em", minWidth: 36 }}>
-                                                    #
-                                                </th>
-                                                {hg.headers.map((header) => (
-                                                    <th key={header.id} style={{ textAlign: "left", padding: "9px 11px", fontSize: 10, fontWeight: 800, color: t.headerText, textTransform: "uppercase", letterSpacing: "0.05em", whiteSpace: "nowrap" }}>
-                                                        {header.isPlaceholder ? null : flexRender(header.column.columnDef.header, header.getContext())}
-                                                    </th>
-                                                ))}
-                                            </tr>
+                        )}
+
+                        {/* Table header */}
+                        <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", flexWrap: "wrap", gap: 12 }}>
+                            <div>
+                                <h2 style={{ fontSize: 18, fontWeight: 700, color: t.title, margin: 0, letterSpacing: "-0.3px", lineHeight: 1.2 }}>Affiliate Directory</h2>
+                                <p style={{ fontSize: 12, color: t.subtitle, margin: "4px 0 0" }}>{filteredData.length} affiliates</p>
+                            </div>
+                            <div style={{ display: "flex", alignItems: "center", gap: 6, flexWrap: "wrap" }}>
+                                <div style={{ background: t.pillBg, borderRadius: 10, padding: 3, display: "flex", gap: 2 }}>
+                                    {statusOptions.map((opt) => (
+                                        <button key={opt.value} type="button" onClick={() => setStatusFilter(opt.value)} style={{ fontSize: 12, fontWeight: 600, padding: "5px 12px", borderRadius: 8, border: "none", cursor: "pointer", transition: "all 0.15s ease", color: statusFilter === opt.value ? t.pillActiveText : t.pillText, background: statusFilter === opt.value ? t.pillActive : "transparent", boxShadow: statusFilter === opt.value ? "0 1px 4px rgba(var(--preset-primary-rgb), 0.25)" : "none" }}>
+                                            {opt.label}
+                                        </button>
+                                    ))}
+                                </div>
+                                <DropdownMenu>
+                                    <DropdownMenuTrigger asChild>
+                                        <button type="button" style={{ display: "flex", alignItems: "center", justifyContent: "center", width: 32, height: 32, borderRadius: 8, border: t.cardBorder, cursor: "pointer", color: t.subtitle, background: t.expandBtnBg }}>
+                                            <SlidersHorizontal size={14} />
+                                        </button>
+                                    </DropdownMenuTrigger>
+                                    <DropdownMenuContent align="end">
+                                        {table.getAllColumns().filter((col) => col.getCanHide()).map((col) => (
+                                            <DropdownMenuCheckboxItem key={col.id} className="capitalize" checked={col.getIsVisible()} onCheckedChange={(v) => col.toggleVisibility(!!v)}>
+                                                {col.id.replace(/_/g, " ")}
+                                            </DropdownMenuCheckboxItem>
                                         ))}
-                                    </thead>
-                                    <tbody>
-                                        {visibleAffiliateRows.length ? (
-                                            visibleAffiliateRows.map((row, rowIdx) => (
-                                                <tr
-                                                    key={row.id}
-                                                    style={{
-                                                        borderBottom: isDark ? "1px solid rgba(255,255,255,0.06)" : "1px solid rgba(0,0,0,0.06)",
-                                                        cursor: "pointer",
-                                                        transition: "background 0.15s ease",
-                                                    }}
-                                                    onMouseEnter={(e) => {
-                                                        e.currentTarget.style.background = isDark ? "rgba(var(--preset-primary-rgb), 0.04)" : "rgba(var(--preset-primary-rgb), 0.06)";
-                                                    }}
-                                                    onMouseLeave={(e) => {
-                                                        e.currentTarget.style.background = "transparent";
-                                                    }}
-                                                >
-                                                    <td style={{ padding: "10px 11px", fontSize: 11, fontWeight: 700, color: t.subtitle }}>
-                                                        {rowIdx + 1}
-                                                    </td>
-                                                    {row.getVisibleCells().map((cell) => (
-                                                        <td key={cell.id} style={{ padding: "10px 11px", fontSize: 12, whiteSpace: "nowrap" }}>
-                                                            {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                                                        </td>
-                                                    ))}
-                                                </tr>
-                                            ))
-                                        ) : (
-                                            <tr>
-                                                <td colSpan={columns.length + 1} style={{ padding: "40px 0", textAlign: "center", color: t.subtitle, fontSize: 14 }}>
-                                                    No affiliates found.
-                                                </td>
-                                            </tr>
-                                        )}
-                                    </tbody>
-                                </table>
+                                    </DropdownMenuContent>
+                                </DropdownMenu>
                             </div>
-                            {(hasMoreAffiliates || loadingAffiliatesMore) && sortedAffiliateRows.length > perPage && (
-                                <div
-                                    ref={sentinelAffiliateRef}
-                                    aria-hidden
-                                    style={{
-                                        minHeight: loadingAffiliatesMore ? 8 : 24,
-                                        borderTop: isDark ? "1px solid rgba(255,255,255,0.05)" : "1px solid rgba(0,0,0,0.06)",
-                                        display: "flex",
-                                        alignItems: "center",
-                                        justifyContent: "center",
-                                    }}
-                                >
-                                    {loadingAffiliatesMore ? (
-                                        <AffiliateLoadMoreMascots
-                                            text="Fetching affiliates"
-                                            subColor={isDark ? "rgba(255,255,255,0.6)" : "rgba(71,85,105,0.85)"}
-                                        />
-                                    ) : null}
+                        </div>
+
+                        {/* Search */}
+                        <div style={{ display: "flex", alignItems: "center", gap: 8, background: t.inputBg, border: t.cardBorder, borderRadius: 12, padding: "0 14px" }}>
+                            <Search size={15} style={{ color: t.subtitle, flexShrink: 0 }} />
+                            <input type="text" placeholder="Search affiliates by name..." value={(table.getColumn("user_affiliate")?.getFilterValue() as string) ?? ""} onChange={(e) => table.getColumn("user_affiliate")?.setFilterValue(e.target.value)} style={{ flex: 1, padding: "10px 0", fontSize: 13, fontWeight: 500, background: "transparent", border: "none", outline: "none", color: t.title, fontFamily: "'Outfit', sans-serif" }} />
+                        </div>
+
+                        {/* Table + Quick View */}
+                        <div style={{ display: "flex", gap: 16 }}>
+                            <div style={{ flex: 1, minWidth: 0 }}>
+                                <div style={{ borderRadius: 14, border: isDark ? "1px solid rgba(255,255,255,0.07)" : "1px solid rgba(0,0,0,0.08)", background: isDark ? "rgba(255,255,255,0.025)" : "rgba(0,0,0,0.02)", overflow: "hidden" }}>
+                                    <div style={{ padding: "13px 17px", borderBottom: isDark ? "1px solid rgba(255,255,255,0.07)" : "1px solid rgba(0,0,0,0.08)", display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: 8 }}>
+                                        <div style={{ fontSize: 13, fontWeight: 800, color: t.title }}>All Affiliates ({filteredData.length})</div>
+                                        <div style={{ fontSize: 10, color: t.subtitle }}>Click any row for quick view</div>
+                                    </div>
+                                    <div style={{ overflowX: "auto" }}>
+                                        <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 12 }}>
+                                            <thead>
+                                                {table.getHeaderGroups().map((hg) => (
+                                                    <tr key={hg.id} style={{ borderBottom: isDark ? "1px solid rgba(255,255,255,0.07)" : "1px solid rgba(0,0,0,0.08)" }}>
+                                                        <th style={{ padding: "9px 11px", textAlign: "left", fontSize: 10, fontWeight: 800, color: t.headerText, textTransform: "uppercase", letterSpacing: "0.05em", minWidth: 36 }}>#</th>
+                                                        {hg.headers.map((header) => (
+                                                            <th key={header.id} style={{ textAlign: "left", padding: "9px 11px", fontSize: 10, fontWeight: 800, color: t.headerText, textTransform: "uppercase", letterSpacing: "0.05em", whiteSpace: "nowrap" }}>
+                                                                {header.isPlaceholder ? null : flexRender(header.column.columnDef.header, header.getContext())}
+                                                            </th>
+                                                        ))}
+                                                    </tr>
+                                                ))}
+                                            </thead>
+                                            <tbody>
+                                                {visibleAffiliateRows.length ? (
+                                                    visibleAffiliateRows.map((row, rowIdx) => (
+                                                        <tr key={row.id} style={{ borderBottom: isDark ? "1px solid rgba(255,255,255,0.06)" : "1px solid rgba(0,0,0,0.06)", cursor: "pointer", transition: "background 0.15s ease" }}
+                                                            onMouseEnter={(e) => { e.currentTarget.style.background = isDark ? "rgba(var(--preset-primary-rgb), 0.04)" : "rgba(var(--preset-primary-rgb), 0.06)"; }}
+                                                            onMouseLeave={(e) => { e.currentTarget.style.background = "transparent"; }}
+                                                        >
+                                                            <td style={{ padding: "10px 11px", fontSize: 11, fontWeight: 700, color: t.subtitle }}>{rowIdx + 1}</td>
+                                                            {row.getVisibleCells().map((cell) => (
+                                                                <td key={cell.id} style={{ padding: "10px 11px", fontSize: 12, whiteSpace: "nowrap" }}>
+                                                                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                                                                </td>
+                                                            ))}
+                                                        </tr>
+                                                    ))
+                                                ) : (
+                                                    <tr><td colSpan={columns.length + 1} style={{ padding: "40px 0", textAlign: "center", color: t.subtitle, fontSize: 14 }}>No affiliates found.</td></tr>
+                                                )}
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                    {(hasMoreAffiliates || loadingAffiliatesMore) && sortedAffiliateRows.length > perPage && (
+                                        <div ref={sentinelAffiliateRef} aria-hidden style={{ minHeight: loadingAffiliatesMore ? 8 : 24, borderTop: isDark ? "1px solid rgba(255,255,255,0.05)" : "1px solid rgba(0,0,0,0.06)", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                                            {loadingAffiliatesMore ? <AffiliateLoadMoreMascots text="Fetching affiliates" subColor={isDark ? "rgba(255,255,255,0.6)" : "rgba(71,85,105,0.85)"} /> : null}
+                                        </div>
+                                    )}
+                                    {sortedAffiliateRows.length > 0 && (
+                                        <div style={{ padding: "10px 17px 12px", borderTop: (hasMoreAffiliates || loadingAffiliatesMore) && sortedAffiliateRows.length > perPage ? "none" : isDark ? "1px solid rgba(255,255,255,0.07)" : "1px solid rgba(0,0,0,0.08)", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                                            <span style={{ fontSize: 12, fontWeight: 600, color: t.subtitle, letterSpacing: "0.02em" }}>Page {affiliateTableCurrentPage} of {affiliateTableTotalPages}</span>
+                                        </div>
+                                    )}
                                 </div>
-                            )}
-                            {sortedAffiliateRows.length > 0 && (
-                                <div
-                                    style={{
-                                        padding: "10px 17px 12px",
-                                        borderTop:
-                                            (hasMoreAffiliates || loadingAffiliatesMore) && sortedAffiliateRows.length > perPage
-                                                ? "none"
-                                                : isDark
-                                                  ? "1px solid rgba(255,255,255,0.07)"
-                                                  : "1px solid rgba(0,0,0,0.08)",
-                                        display: "flex",
-                                        alignItems: "center",
-                                        justifyContent: "center",
-                                    }}
-                                >
-                                    <span style={{ fontSize: 12, fontWeight: 600, color: t.subtitle, letterSpacing: "0.02em" }}>
-                                        Page {affiliateTableCurrentPage} of {affiliateTableTotalPages}
-                                    </span>
+                            </div>
+
+                            {quickViewAffiliate && (
+                                <div className="hidden lg:block" style={{ width: 300, flexShrink: 0, animation: "slideIn 0.2s ease-out" }}>
+                                    <AffiliateQuickView affiliate={quickViewAffiliate} onClose={() => setQuickViewAffiliate(null)} theme={t} />
                                 </div>
                             )}
                         </div>
+
+                        {Object.keys(rowSelection).length > 0 && (
+                            <div style={{ fontSize: 12, color: t.subtitle, paddingTop: 4 }}>{Object.keys(rowSelection).length} selected</div>
+                        )}
                     </div>
 
-                    {/* Quick View — desktop */}
+                    {/* Quick View — mobile */}
                     {quickViewAffiliate && (
-                        <div className="hidden lg:block" style={{ width: 300, flexShrink: 0, animation: "slideIn 0.2s ease-out" }}>
-                            <AffiliateQuickView affiliate={quickViewAffiliate} onClose={() => setQuickViewAffiliate(null)} theme={t} />
+                        <div className="lg:hidden">
+                            <div style={{ position: "fixed", inset: 0, zIndex: 9998, display: "flex", alignItems: "center", justifyContent: "center" }} onClick={() => setQuickViewAffiliate(null)}>
+                                <div style={{ position: "absolute", inset: 0, background: "rgba(0,0,0,0.4)", backdropFilter: "blur(4px)" }} />
+                                <div style={{ position: "relative", zIndex: 1, width: "100%", maxWidth: 400, margin: "0 16px" }} onClick={(e) => e.stopPropagation()}>
+                                    <AffiliateQuickView affiliate={quickViewAffiliate} onClose={() => setQuickViewAffiliate(null)} theme={t} />
+                                </div>
+                            </div>
                         </div>
                     )}
                 </div>
+            )}
 
-                {Object.keys(rowSelection).length > 0 && (
-                    <div style={{ fontSize: 12, color: t.subtitle, paddingTop: 4 }}>
-                        {Object.keys(rowSelection).length} selected
-                    </div>
-                )}
-            </div>
-
-            {/* Quick View — mobile */}
-            {quickViewAffiliate && (
-                <div className="lg:hidden">
-                    <div
-                        style={{ position: "fixed", inset: 0, zIndex: 9998, display: "flex", alignItems: "center", justifyContent: "center" }}
-                        onClick={() => setQuickViewAffiliate(null)}
-                    >
-                        <div style={{ position: "absolute", inset: 0, background: "rgba(0,0,0,0.4)", backdropFilter: "blur(4px)" }} />
-                        <div style={{ position: "relative", zIndex: 1, width: "100%", maxWidth: 400, margin: "0 16px" }} onClick={(e) => e.stopPropagation()}>
-                            <AffiliateQuickView affiliate={quickViewAffiliate} onClose={() => setQuickViewAffiliate(null)} theme={t} />
-                        </div>
-                    </div>
+            {/* ── TAB: Applications ── */}
+            {activeTab === "applications" && (
+                <div style={{ animation: "fadeIn 0.25s ease-out" }} className="flex flex-col gap-4">
+                    <ApplicationsTab
+                        applications={applications}
+                        setApplications={setApplications}
+                        isDark={isDark}
+                        theme={t}
+                        isLoading={isLoading}
+                    />
                 </div>
             )}
 
             {/* Payout dialog */}
-            {payoutAffiliate && (
-                <PayoutDialog
-                    affiliate={payoutAffiliate}
-                    onClose={() => setPayoutAffiliate(null)}
-                    isDark={isDark}
-                />
-            )}
+            {payoutAffiliate && <PayoutDialog affiliate={payoutAffiliate} onClose={() => setPayoutAffiliate(null)} isDark={isDark} />}
 
             {/* Delete dialog */}
             {deleteAffiliate && (

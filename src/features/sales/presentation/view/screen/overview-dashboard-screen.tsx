@@ -21,6 +21,10 @@ import AnalyticsSalesTable from "../components/analytics/analytics-sales-table";
 import { useSession } from "@/src/core/lib/dummy-session-provider";
 import TotalCumulativeCard from "../components/analytics/total-cumulative-card";
 import OverviewDataCard from "../components/analytics/overview-data-card";
+import {
+    SeasonalPerformanceBanner,
+    SeasonalPerformanceDialog,
+} from "../components/analytics/seasonal-performance-analysis";
 
 export const OverviewDashboardScreen = () => {
 
@@ -35,6 +39,8 @@ export const OverviewDashboardScreen = () => {
     const [selectedYear, setSelectedYear] = useState("2025")
     const [selectedQuarter, setSelectedQuarter] = useState("Q1")
     const [cardsExpanded, setCardsExpanded] = useState(false)
+    const [seasonalDialogOpen, setSeasonalDialogOpen] = useState(false)
+    const [seasonalOrigin, setSeasonalOrigin] = useState<DOMRect | null>(null)
 
     const { data: session } = useSession();
 
@@ -129,13 +135,28 @@ export const OverviewDashboardScreen = () => {
         return "Welcome Back";
     })();
 
+    const totalSalesAll = data?.find((item) => item.type === AnalyticsType.TOTAL)?.total_sales ?? 0;
+    const seasonalHeadlineSub =
+        "↑ 12.4% vs same period last year.";
+
     return (
         <div className="overview-dashboard flex flex-col gap-4 w-full">
 
             <div className="overview-header flex flex-col lg:flex-row items-start lg:items-center justify-between w-full gap-4">
-                <div>
-                    <h2 className="overview-greeting text-2xl font-bold">{greetingTitle}</h2>
-                    <p className="text-muted-foreground">Here’s your sales performance at a glance</p>
+                <div className="flex min-w-0 flex-1 flex-col gap-3 lg:flex-row lg:items-center lg:gap-6">
+                    <div className="min-w-0 shrink-0">
+                        <h2 className="overview-greeting text-2xl font-bold">{greetingTitle}</h2>
+                        <p className="text-muted-foreground">Here’s your sales performance at a glance</p>
+                    </div>
+                    <div className="min-w-0 flex-1 lg:max-w-md xl:max-w-lg">
+                        <SeasonalPerformanceBanner
+                            onOpen={(e) => {
+                                setSeasonalOrigin(e.currentTarget.getBoundingClientRect())
+                                setSeasonalDialogOpen(true)
+                            }}
+                            ytdGrowthLabel="+18.2%"
+                        />
+                    </div>
                 </div>
 
                 <DateRangePickerPro
@@ -214,6 +235,17 @@ export const OverviewDashboardScreen = () => {
                     />
                 </div>
             </div>
+
+            <SeasonalPerformanceDialog
+                open={seasonalDialogOpen}
+                onOpenChange={(next) => {
+                    setSeasonalDialogOpen(next)
+                    if (!next) setSeasonalOrigin(null)
+                }}
+                originRect={seasonalOrigin}
+                headlineRevenue={totalSalesAll || 1_285_400}
+                headlineSub={seasonalHeadlineSub}
+            />
 
         </div>
     );
