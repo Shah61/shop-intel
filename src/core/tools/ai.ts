@@ -1,4 +1,3 @@
-import { createServerFn } from "@tanstack/react-start";
 import { anthropic } from "@ai-sdk/anthropic";
 import { streamText } from "ai";
 
@@ -28,21 +27,19 @@ You can get a list of sales performance by using the getSalesPerformance tool.`;
 
 
 
-export const genAIResponse = createServerFn({ method: "POST", response: "raw" })
-    .validator(
-        (d: {
-            messages: Array<Message>;
-            systemPrompt?: { value: string; enabled: boolean };
-        }) => d
-    )
-    .handler(async ({ data }) => {
+type GenAIResponseInput = {
+    messages: Array<Message>;
+    systemPrompt?: { value: string; enabled: boolean };
+};
+
+export const genAIResponse = async (data: GenAIResponseInput): Promise<Response> => {
         const messages = data.messages
             .filter(
-                (msg) =>
+                (msg: Message) =>
                     msg.content.trim() !== "" &&
                     !msg.content.startsWith("Sorry, I encountered an error")
             )
-            .map((msg) => ({
+            .map((msg: Message) => ({
                 role: msg.role,
                 content: msg.content.trim(),
             }));
@@ -98,4 +95,4 @@ export const genAIResponse = createServerFn({ method: "POST", response: "raw" })
                 }
             );
         }
-    });
+    };

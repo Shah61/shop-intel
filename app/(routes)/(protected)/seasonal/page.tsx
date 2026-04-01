@@ -11,7 +11,7 @@ import {
     SeasonalContentBody,
 } from "@/src/features/sales/presentation/view/components/analytics/seasonal-performance-analysis";
 
-export const SeasonalPage = () => {
+const SeasonalPage = () => {
     const router = useRouter();
     const { resolvedTheme } = useTheme();
     const isDark = resolvedTheme === "dark";
