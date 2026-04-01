@@ -467,7 +467,7 @@ export default function AppSidebar() {
             icon: <Megaphone size={20} />,
             children: [
                 { id: "personal", label: "Personal Marketing", path: "/marketing" },
-                { id: "facebook", label: "Facebook Marketing", path: "/marketing?tab=facebook", iconSrc: "/images/facebook.png" },
+                { id: "facebook", label: "Facebook Marketing", path: "/marketing?tab=facebook" },
                 { id: "ai-generator", label: "AI Storyboard", path: "/marketing?tab=ai" },
             ],
         },
