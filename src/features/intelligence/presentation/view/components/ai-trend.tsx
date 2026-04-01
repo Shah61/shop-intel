@@ -162,7 +162,7 @@ const PulseDot: React.FC<{ color?: string; size?: number }> = ({ color = 'var(--
 const TierBadge: React.FC<{ tier: 'viral' | 'active' | 'low' }> = ({ tier }) => {
   const m = { viral: { c: '#10b981', l: 'VIRAL', bg: 'rgba(16,185,129,.12)', icon: <Flame style={{ width: 8, height: 8 }} /> }, active: { c: '#f59e0b', l: 'ACTIVE', bg: 'rgba(245,158,11,.12)', icon: <Activity style={{ width: 8, height: 8 }} /> }, low: { c: 'rgba(255,255,255,.25)', l: 'LOW', bg: 'rgba(255,255,255,.04)', icon: null } }[tier];
   return (
-    <span style={{ display: 'inline-flex', alignItems: 'center', gap: 3, padding: '2px 7px', borderRadius: 5, background: m.bg, border: `1px solid ${m.c}44`, fontSize: 9, fontWeight: 800, color: m.c, letterSpacing: '.07em' }}>
+    <span className="ci-tier-badge" style={{ display: 'inline-flex', alignItems: 'center', gap: 3, padding: '2px 7px', borderRadius: 5, background: m.bg, border: `1px solid ${m.c}44`, fontSize: 9, fontWeight: 800, color: m.c, letterSpacing: '.07em' }}>
       {m.icon}{m.l}
     </span>
   );
@@ -171,7 +171,7 @@ const TierBadge: React.FC<{ tier: 'viral' | 'active' | 'low' }> = ({ tier }) => 
 const PlatChip: React.FC<{ platform: string }> = ({ platform }) => {
   const icons: Record<string, string> = { INSTAGRAM: '/images/instargram.png', TIKTOK: '/images/tiktok2.png' };
   return (
-    <span style={{ display: 'inline-flex', alignItems: 'center', gap: 3, padding: '1px 6px', borderRadius: 6, background: 'rgba(255,255,255,.05)', border: '1px solid rgba(255,255,255,.08)', fontSize: 9, fontWeight: 700, color: 'rgba(255,255,255,.45)', textTransform: 'capitalize', lineHeight: 1.1, minWidth: 0, maxWidth: '100%', flexShrink: 1 }}>
+    <span className="ci-plat-chip" style={{ display: 'inline-flex', alignItems: 'center', gap: 3, padding: '1px 6px', borderRadius: 6, background: 'rgba(255,255,255,.05)', border: '1px solid rgba(255,255,255,.08)', fontSize: 9, fontWeight: 700, color: 'rgba(255,255,255,.45)', textTransform: 'capitalize', lineHeight: 1.1, minWidth: 0, maxWidth: '100%', flexShrink: 1 }}>
       {icons[platform] && <img src={icons[platform]} alt="" style={{ width: 10, height: 10, objectFit: 'contain' }} />}
       <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', maxWidth: 64 }}>{platform.toLowerCase()}</span>
     </span>
@@ -686,11 +686,11 @@ const CompetitorIntelligence: React.FC = () => {
           <div style={{ borderRadius: 13, border: '1px solid rgba(255,255,255,.07)', background: 'rgba(255,255,255,.03)', overflow: 'hidden' }}>
             <div style={{ padding: '13px 17px', borderBottom: '1px solid rgba(255,255,255,.07)', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 8 }}>
               <div>
-                <div style={{ fontSize: 14, fontWeight: 700, letterSpacing: '0', lineHeight: 1.45, fontFamily: 'inherit' }}>Competitor Channel Radar</div>
-                <div style={{ fontSize: 14, fontWeight: 400, color: 'rgba(255,255,255,.38)', marginTop: 2, lineHeight: 1.45, fontFamily: 'inherit' }}>{sorted.length} channels · {summary.totalVideos} videos</div>
+                <div className="ci-tbl-title" style={{ fontSize: 14, fontWeight: 700, letterSpacing: '0', lineHeight: 1.45, fontFamily: 'inherit' }}>Competitor Channel Radar</div>
+                <div className="ci-tbl-sub" style={{ fontSize: 14, fontWeight: 400, color: 'rgba(255,255,255,.38)', marginTop: 2, lineHeight: 1.45, fontFamily: 'inherit' }}>{sorted.length} channels · {summary.totalVideos} videos</div>
               </div>
               <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                <div style={{ position: 'relative' }}>
+                <div className="ci-search" style={{ position: 'relative' }}>
                   <Search style={{ position: 'absolute', left: 8, top: '50%', transform: 'translateY(-50%)', width: 12, height: 12, color: 'rgba(255,255,255,.25)' }} />
                   <input
                     value={searchQuery} onChange={e => setSearchQuery(e.target.value)}
@@ -700,7 +700,7 @@ const CompetitorIntelligence: React.FC = () => {
                 </div>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
                   <Shield style={{ width: 11, height: 11, color: 'rgba(255,255,255,.3)' }} />
-                  <span style={{ fontSize: 11, color: 'rgba(255,255,255,.35)' }}>Sorted by <b style={{ color: 'rgba(255,255,255,.75)' }}>{{ videos: 'Videos', views: 'Views', likes: 'Likes', comments: 'Comments', views_24h: '24h Views', likes_24h: '24h Likes', engagement: 'Engagement' }[sortField] || 'Engagement'}</b></span>
+                  <span className="ci-sort-info" style={{ fontSize: 11, color: 'rgba(255,255,255,.35)' }}>Sorted by <b style={{ color: 'rgba(255,255,255,.75)' }}>{{ videos: 'Videos', views: 'Views', likes: 'Likes', comments: 'Comments', views_24h: '24h Views', likes_24h: '24h Likes', engagement: 'Engagement' }[sortField] || 'Engagement'}</b></span>
                 </div>
               </div>
             </div>
@@ -745,39 +745,39 @@ const CompetitorIntelligence: React.FC = () => {
                           style={{ borderBottom: '1px solid rgba(255,255,255,.06)', cursor: 'pointer', transition: 'background .15s', background: highlighted === ch.id ? 'rgba(var(--preset-primary-rgb),.07)' : 'transparent' }}>
                           <td style={{ padding: '10px 11px' }}>
                             {idx === 0
-                              ? <span style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', width: 22, height: 22, borderRadius: '50%', background: 'linear-gradient(135deg,#f59e0b,#ef4444)' }}><Crown style={{ width: 10, height: 10, color: '#fff' }} /></span>
+                              ? <span className="ci-rank" style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', width: 22, height: 22, borderRadius: '50%', background: 'linear-gradient(135deg,#f59e0b,#ef4444)' }}><Crown style={{ width: 10, height: 10, color: '#fff' }} /></span>
                               : idx < 3
-                                ? <span style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', width: 22, height: 22, borderRadius: '50%', background: 'rgba(var(--preset-primary-rgb),.14)', fontSize: 10, fontWeight: 800, color: 'var(--preset-primary)' }}>{idx + 1}</span>
-                                : <span style={{ fontSize: 11, fontWeight: 700, color: 'rgba(255,255,255,.25)', display: 'inline-block', width: 22, textAlign: 'center' }}>{idx + 1}</span>
+                                ? <span className="ci-rank" style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', width: 22, height: 22, borderRadius: '50%', background: 'rgba(var(--preset-primary-rgb),.14)', fontSize: 10, fontWeight: 800, color: 'var(--preset-primary)' }}>{idx + 1}</span>
+                                : <span className="ci-rank-num" style={{ fontSize: 11, fontWeight: 700, color: 'rgba(255,255,255,.25)', display: 'inline-block', width: 22, textAlign: 'center' }}>{idx + 1}</span>
                             }
                           </td>
                           <td style={{ padding: '10px 11px' }}>
                             <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
                               <div style={{ position: 'relative', flexShrink: 0 }}>
                                 {ch.avatar
-                                  ? <img src={ch.avatar} alt="" style={{ width: 30, height: 30, borderRadius: '50%', objectFit: 'cover', ...(idx === 0 ? { boxShadow: '0 0 0 2px rgba(var(--preset-primary-rgb),.4)' } : {}) }} onError={e => { (e.target as HTMLImageElement).style.display = 'none'; }} />
-                                  : <div style={{ width: 30, height: 30, borderRadius: '50%', background: 'rgba(var(--preset-primary-rgb),.14)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 12, fontWeight: 800, color: 'var(--preset-primary)' }}>{ch.name[0].toUpperCase()}</div>
+                                  ? <img src={ch.avatar} alt="" className="ci-avatar" style={{ width: 30, height: 30, borderRadius: '50%', objectFit: 'cover', ...(idx === 0 ? { boxShadow: '0 0 0 2px rgba(var(--preset-primary-rgb),.4)' } : {}) }} onError={e => { (e.target as HTMLImageElement).style.display = 'none'; }} />
+                                  : <div className="ci-avatar-fb" style={{ width: 30, height: 30, borderRadius: '50%', background: 'rgba(var(--preset-primary-rgb),.14)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 12, fontWeight: 800, color: 'var(--preset-primary)' }}>{ch.name[0].toUpperCase()}</div>
                                 }
                               </div>
                               <div style={{ minWidth: 0 }}>
-                                <div style={{ fontSize: 12, fontWeight: 700, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', maxWidth: 125 }}>{ch.name}</div>
-                                <div style={{ display: 'flex', gap: 4, marginTop: 2 }}><PlatChip platform={ch.platform} />{ch.region && <span style={{ fontSize: 10, color: 'rgba(255,255,255,.25)', textTransform: 'uppercase', alignSelf: 'center' }}>{ch.region}</span>}</div>
+                                <div className="ci-ch-name" style={{ fontSize: 12, fontWeight: 700, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', maxWidth: 125 }}>{ch.name}</div>
+                                <div style={{ display: 'flex', gap: 4, marginTop: 2 }}><PlatChip platform={ch.platform} />{ch.region && <span className="ci-region" style={{ fontSize: 10, color: 'rgba(255,255,255,.25)', textTransform: 'uppercase', alignSelf: 'center' }}>{ch.region}</span>}</div>
                               </div>
                             </div>
                           </td>
                           <td style={{ padding: '10px 11px', textAlign: 'right', color: 'rgba(255,255,255,.65)' }}>{fmt(ch.views)}</td>
                           <td style={{ padding: '10px 11px', textAlign: 'right', color: 'rgba(255,255,255,.65)' }}>{fmt(ch.likes)}</td>
                           <td style={{ padding: '10px 11px', textAlign: 'right', color: 'rgba(255,255,255,.65)' }}>{fmt(ch.comments)}</td>
-                          <td style={{ padding: '10px 11px', textAlign: 'right', fontWeight: 700, color: v24c }}>
+                          <td className="ci-24h" style={{ padding: '10px 11px', textAlign: 'right', fontWeight: 700, color: v24c }}>
                             <span style={{ display: 'inline-flex', alignItems: 'center', gap: 2 }}>{ch.views24h > 0 ? <ArrowUp style={{ width: 10, height: 10 }} /> : ch.views24h < 0 ? <ArrowDown style={{ width: 10, height: 10 }} /> : null}{fmt(Math.abs(ch.views24h))}</span>
                           </td>
-                          <td style={{ padding: '10px 11px', textAlign: 'right', fontWeight: 700, color: l24c }}>
+                          <td className="ci-24h" style={{ padding: '10px 11px', textAlign: 'right', fontWeight: 700, color: l24c }}>
                             <span style={{ display: 'inline-flex', alignItems: 'center', gap: 2 }}>{ch.likes24h > 0 ? <ArrowUp style={{ width: 10, height: 10 }} /> : ch.likes24h < 0 ? <ArrowDown style={{ width: 10, height: 10 }} /> : null}{fmt(Math.abs(ch.likes24h))}</span>
                           </td>
                           <td style={{ padding: '10px 15px 10px 11px', minWidth: 130 }}>
                             <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                              <div style={{ flex: 1 }}><MiniBar value={ch.engagement} max={maxEng} color={engC} /></div>
-                              <span style={{ fontSize: 11, fontWeight: 800, color: engC, minWidth: 36, textAlign: 'right' }}>{fmtPct(ch.engagement)}</span>
+                              <div className="ci-minibar-wrap" style={{ flex: 1 }}><MiniBar value={ch.engagement} max={maxEng} color={engC} /></div>
+                              <span className="ci-eng-val" style={{ fontSize: 11, fontWeight: 800, color: engC, minWidth: 36, textAlign: 'right' }}>{fmtPct(ch.engagement)}</span>
                             </div>
                           </td>
                         </tr>
@@ -1687,6 +1687,65 @@ const AITrend: React.FC = () => {
   const globalStyles = `
     @keyframes ait-pulse { 0%,100%{transform:scale(1);opacity:.4} 50%{transform:scale(2.4);opacity:0} }
     @keyframes ait-up { from{opacity:0;transform:translateY(12px)} to{opacity:1;transform:translateY(0)} }
+
+    /* ── Responsive table scaling for QHD / 2K+ screens ── */
+    @media (min-width: 1440px) {
+      .ci-root table { font-size: 14px; }
+      .ci-root table th { padding: 12px 14px !important; }
+      .ci-root table th button,
+      .ci-root table th span { font-size: 12px !important; }
+      .ci-root table td { padding: 13px 14px !important; font-size: 14px !important; }
+      .ci-root .ci-plat-chip { font-size: 11px !important; padding: 3px 9px !important; gap: 5px !important; border-radius: 7px !important; }
+      .ci-root .ci-plat-chip img { width: 13px !important; height: 13px !important; }
+      .ci-root .ci-tier-badge { font-size: 11px !important; padding: 3px 9px !important; gap: 4px !important; border-radius: 6px !important; }
+      .ci-root .ci-tier-badge svg { width: 10px !important; height: 10px !important; }
+      .ci-root .ci-avatar { width: 36px !important; height: 36px !important; }
+      .ci-root .ci-avatar-fb { width: 36px !important; height: 36px !important; font-size: 14px !important; }
+      .ci-root .ci-ch-name { font-size: 14px !important; max-width: 180px !important; }
+      .ci-root .ci-rank { width: 26px !important; height: 26px !important; font-size: 12px !important; }
+      .ci-root .ci-rank svg { width: 12px !important; height: 12px !important; }
+      .ci-root .ci-rank-num { font-size: 13px !important; width: 26px !important; }
+      .ci-root .ci-eng-val { font-size: 13px !important; min-width: 44px !important; }
+      .ci-root .ci-minibar-wrap { height: 5px !important; }
+      .ci-root .ci-minibar-wrap > div { height: 5px !important; }
+      .ci-root .ci-24h span { font-size: 13px !important; }
+      .ci-root .ci-24h svg { width: 12px !important; height: 12px !important; }
+      .ci-root .ci-search input { width: 200px !important; height: 34px !important; font-size: 13px !important; }
+      .ci-root .ci-search svg { width: 14px !important; height: 14px !important; }
+      .ci-root .ci-tbl-title { font-size: 16px !important; }
+      .ci-root .ci-tbl-sub { font-size: 13px !important; }
+      .ci-root .ci-sort-info { font-size: 13px !important; }
+      .ci-root .ci-region { font-size: 12px !important; }
+    }
+
+    @media (min-width: 1920px) {
+      .ci-root table { font-size: 15px; }
+      .ci-root table th { padding: 14px 18px !important; }
+      .ci-root table th button,
+      .ci-root table th span { font-size: 13px !important; }
+      .ci-root table td { padding: 16px 18px !important; font-size: 15px !important; }
+      .ci-root .ci-plat-chip { font-size: 12px !important; padding: 4px 11px !important; gap: 6px !important; border-radius: 8px !important; }
+      .ci-root .ci-plat-chip img { width: 15px !important; height: 15px !important; }
+      .ci-root .ci-tier-badge { font-size: 12px !important; padding: 4px 11px !important; gap: 5px !important; border-radius: 7px !important; }
+      .ci-root .ci-tier-badge svg { width: 11px !important; height: 11px !important; }
+      .ci-root .ci-avatar { width: 42px !important; height: 42px !important; }
+      .ci-root .ci-avatar-fb { width: 42px !important; height: 42px !important; font-size: 16px !important; }
+      .ci-root .ci-ch-name { font-size: 16px !important; max-width: 240px !important; }
+      .ci-root .ci-rank { width: 30px !important; height: 30px !important; font-size: 14px !important; }
+      .ci-root .ci-rank svg { width: 14px !important; height: 14px !important; }
+      .ci-root .ci-rank-num { font-size: 15px !important; width: 30px !important; }
+      .ci-root .ci-eng-val { font-size: 15px !important; min-width: 52px !important; }
+      .ci-root .ci-minibar-wrap { height: 6px !important; }
+      .ci-root .ci-minibar-wrap > div { height: 6px !important; }
+      .ci-root .ci-24h span { font-size: 15px !important; }
+      .ci-root .ci-24h svg { width: 14px !important; height: 14px !important; }
+      .ci-root .ci-search input { width: 260px !important; height: 38px !important; font-size: 14px !important; padding-left: 34px !important; }
+      .ci-root .ci-search svg { width: 16px !important; height: 16px !important; }
+      .ci-root .ci-tbl-title { font-size: 18px !important; }
+      .ci-root .ci-tbl-sub { font-size: 15px !important; }
+      .ci-root .ci-sort-info { font-size: 14px !important; }
+      .ci-root .ci-region { font-size: 14px !important; }
+    }
 
     /* Match /sales typography family on desktop only.
        Keep component-level sizes so KPI numbers stay large. */

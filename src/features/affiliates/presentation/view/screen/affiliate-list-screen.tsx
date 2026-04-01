@@ -32,6 +32,9 @@ import {
     MapPin,
     User,
     ArrowLeft,
+    RefreshCw,
+    Link,
+    Globe,
 } from "lucide-react";
 import {
     ColumnDef,
@@ -59,6 +62,15 @@ import {
     SelectTrigger,
     SelectValue,
 } from "@/components/ui/select";
+import {
+    Drawer,
+    DrawerClose,
+    DrawerContent,
+    DrawerDescription,
+    DrawerFooter,
+    DrawerHeader,
+    DrawerTitle,
+} from "@/components/ui/drawer";
 import { Checkbox } from "@/components/ui/checkbox";
 import { SmallLoader, MediumLoader } from "@/components/ui/shop-intel-loader";
 import { formatCurrency } from "@/src/core/constant/helper";
@@ -432,6 +444,23 @@ const DUMMY_AFFILIATES: DummyAffiliate[] = [
 ];
 
 /* ════════════════════════════════════════════════════════════════════
+   HELPER — Generate unique affiliate code
+   ════════════════════════════════════════════════════════════════════ */
+
+function generateAffiliateCode(firstName: string, lastName: string): string {
+    const prefix = (firstName.slice(0, 2) + lastName.slice(0, 2)).toUpperCase();
+    const random = Math.random().toString(36).substring(2, 8).toUpperCase();
+    return `${prefix}-${random}`;
+}
+
+function slugifyProduct(product: string): string {
+    return product
+        .toLowerCase()
+        .replace(/[^a-z0-9]+/g, "-")
+        .replace(/(^-|-$)/g, "");
+}
+
+/* ════════════════════════════════════════════════════════════════════
    STATUS BADGE (shimmer — matching PlatformBadge from AnalyticsSalesTable)
    ════════════════════════════════════════════════════════════════════ */
 
@@ -464,6 +493,471 @@ function StatusBadge({ status }: { status: "active" | "inactive" | "pending" | "
 }
 
 /* ════════════════════════════════════════════════════════════════════
+   APPROVE DRAWER — Side drawer (PC) / Bottom drawer (Tablet/Mobile)
+   ════════════════════════════════════════════════════════════════════ */
+
+function ApproveDrawer({
+    application,
+    open,
+    onOpenChange,
+    onConfirmApprove,
+    isDark,
+    theme,
+}: {
+    application: DummyApplication;
+    open: boolean;
+    onOpenChange: (open: boolean) => void;
+    onConfirmApprove: (id: string) => void;
+    isDark: boolean;
+    theme: any;
+}) {
+    const [isDesktop, setIsDesktop] = useState(false);
+    const [desktopMounted, setDesktopMounted] = useState(false);
+    const [desktopVisible, setDesktopVisible] = useState(false);
+    const enterTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+    const exitTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+    const [code, setCode] = useState(() => generateAffiliateCode(application.first_name, application.last_name));
+    const [url, setUrl] = useState(() => `https://${slugifyProduct(application.product_applied)}.myshop.com`);
+    const [isSubmitting, setIsSubmitting] = useState(false);
+    const [copiedField, setCopiedField] = useState<string | null>(null);
+
+    const fullUrl = `${url}/${code}`;
+
+    useEffect(() => {
+        // Use side drawer only on true desktop-class pointers.
+        // iPads in landscape should still use bottom drawer.
+        const media = window.matchMedia("(min-width: 1024px) and (hover: hover) and (pointer: fine)");
+        const apply = () => setIsDesktop(media.matches);
+        apply();
+        media.addEventListener("change", apply);
+        return () => media.removeEventListener("change", apply);
+    }, []);
+
+    useEffect(() => {
+        if (!isDesktop) {
+            if (enterTimerRef.current) clearTimeout(enterTimerRef.current);
+            if (exitTimerRef.current) clearTimeout(exitTimerRef.current);
+            setDesktopVisible(false);
+            setDesktopMounted(false);
+            return;
+        }
+
+        if (open) {
+            if (exitTimerRef.current) clearTimeout(exitTimerRef.current);
+            setDesktopMounted(true);
+            setDesktopVisible(false);
+            // Ensure one paint in hidden state before animating in.
+            enterTimerRef.current = setTimeout(() => setDesktopVisible(true), 20);
+            return;
+        }
+
+        if (enterTimerRef.current) clearTimeout(enterTimerRef.current);
+        setDesktopVisible(false);
+        exitTimerRef.current = setTimeout(() => setDesktopMounted(false), 260);
+        return () => {
+            if (exitTimerRef.current) clearTimeout(exitTimerRef.current);
+        };
+    }, [open, isDesktop]);
+
+    const handleGenerateCode = () => {
+        setCode(generateAffiliateCode(application.first_name, application.last_name));
+    };
+
+    const handleCopy = (text: string, field: string) => {
+        navigator.clipboard.writeText(text);
+        setCopiedField(field);
+        toast.success("Copied!");
+        setTimeout(() => setCopiedField(null), 1500);
+    };
+
+    const handleConfirm = () => {
+        setIsSubmitting(true);
+        setTimeout(() => {
+            onConfirmApprove(application.id);
+            setIsSubmitting(false);
+            onOpenChange(false);
+        }, 800);
+    };
+
+    /* ── Shared form content ── */
+    const formContent = (
+        <div style={{ display: "flex", flexDirection: "column", gap: 0, fontFamily: "'Outfit', sans-serif" }}>
+            {/* Applicant info fields (read-only) */}
+            {[
+                { icon: <User size={14} />, label: "Name", value: `${application.first_name} ${application.last_name}` },
+                { icon: <Mail size={14} />, label: "Email", value: application.email },
+                { icon: <Calendar size={14} />, label: "Date of Birth", value: new Date(application.date_of_birth).toLocaleDateString("en-MY", { day: "numeric", month: "long", year: "numeric" }) },
+                { icon: <MapPin size={14} />, label: "Address", value: application.address },
+            ].map((field, idx) => (
+                <div
+                    key={field.label}
+                    style={{
+                        display: "flex", alignItems: "flex-start", gap: 12,
+                        padding: "14px 0",
+                        borderBottom: `1px solid ${isDark ? "rgba(255,255,255,0.06)" : "rgba(0,0,0,0.06)"}`,
+                    }}
+                >
+                    <div style={{
+                        width: 32, height: 32, borderRadius: 9, flexShrink: 0,
+                        background: isDark ? "rgba(var(--preset-primary-rgb), 0.1)" : "rgba(var(--preset-primary-rgb), 0.08)",
+                        display: "flex", alignItems: "center", justifyContent: "center",
+                        color: "var(--preset-primary)", marginTop: 1,
+                    }}>
+                        {field.icon}
+                    </div>
+                    <div style={{ flex: 1, minWidth: 0 }}>
+                        <div style={{
+                            fontSize: 10, fontWeight: 600, color: isDark ? "#64748b" : "#94a3b8",
+                            textTransform: "uppercase", letterSpacing: "0.5px", marginBottom: 3,
+                        }}>
+                            {field.label}
+                        </div>
+                        <div style={{
+                            fontSize: 13, fontWeight: 600,
+                            color: isDark ? "#e2e8f0" : "#1a1a2e",
+                            lineHeight: 1.4, wordBreak: "break-word",
+                        }}>
+                            {field.value}
+                        </div>
+                    </div>
+                </div>
+            ))}
+
+            {/* Code field */}
+            <div style={{
+                padding: "14px 0",
+                borderBottom: `1px solid ${isDark ? "rgba(255,255,255,0.06)" : "rgba(0,0,0,0.06)"}`,
+            }}>
+                <div style={{ display: "flex", alignItems: "flex-start", gap: 12 }}>
+                    <div style={{
+                        width: 32, height: 32, borderRadius: 9, flexShrink: 0,
+                        background: isDark ? "rgba(var(--preset-primary-rgb), 0.1)" : "rgba(var(--preset-primary-rgb), 0.08)",
+                        display: "flex", alignItems: "center", justifyContent: "center",
+                        color: "var(--preset-primary)", marginTop: 1,
+                    }}>
+                        <Link size={14} />
+                    </div>
+                    <div style={{ flex: 1, minWidth: 0 }}>
+                        <div style={{
+                            fontSize: 10, fontWeight: 600, color: isDark ? "#64748b" : "#94a3b8",
+                            textTransform: "uppercase", letterSpacing: "0.5px", marginBottom: 6,
+                        }}>
+                            Affiliate Code
+                        </div>
+                        <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+                            <div style={{
+                                flex: 1, padding: "8px 12px", borderRadius: 10, fontSize: 13, fontWeight: 700,
+                                fontFamily: "'JetBrains Mono', 'Fira Code', monospace",
+                                letterSpacing: "0.5px",
+                                background: isDark ? "rgba(255,255,255,0.04)" : "rgba(0,0,0,0.03)",
+                                border: `1px solid ${isDark ? "rgba(255,255,255,0.08)" : "rgba(0,0,0,0.08)"}`,
+                                color: isDark ? "#e2e8f0" : "#1a1a2e",
+                            }}>
+                                {code}
+                            </div>
+                            <button
+                                type="button"
+                                onClick={() => handleCopy(code, "code")}
+                                style={{
+                                    width: 34, height: 34, borderRadius: 9, border: "none", flexShrink: 0,
+                                    background: isDark ? "rgba(255,255,255,0.06)" : "rgba(0,0,0,0.04)",
+                                    color: isDark ? "#94a3b8" : "#64748b",
+                                    cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center",
+                                    transition: "all 0.15s",
+                                }}
+                            >
+                                {copiedField === "code" ? <Check size={14} style={{ color: "#22c55e" }} /> : <Copy size={14} />}
+                            </button>
+                            <button
+                                type="button"
+                                onClick={handleGenerateCode}
+                                style={{
+                                    display: "flex", alignItems: "center", gap: 5,
+                                    padding: "7px 12px", borderRadius: 9, border: "none", flexShrink: 0,
+                                    background: "linear-gradient(135deg, var(--preset-primary), var(--preset-lighter))",
+                                    color: "#fff", fontSize: 11, fontWeight: 700,
+                                    cursor: "pointer", transition: "all 0.15s",
+                                    boxShadow: "0 2px 8px rgba(var(--preset-primary-rgb), 0.25)",
+                                }}
+                            >
+                                <RefreshCw size={12} />
+                                Generate
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            {/* URL field (editable) */}
+            <div style={{
+                padding: "14px 0",
+                borderBottom: `1px solid ${isDark ? "rgba(255,255,255,0.06)" : "rgba(0,0,0,0.06)"}`,
+            }}>
+                <div style={{ display: "flex", alignItems: "flex-start", gap: 12 }}>
+                    <div style={{
+                        width: 32, height: 32, borderRadius: 9, flexShrink: 0,
+                        background: isDark ? "rgba(var(--preset-primary-rgb), 0.1)" : "rgba(var(--preset-primary-rgb), 0.08)",
+                        display: "flex", alignItems: "center", justifyContent: "center",
+                        color: "var(--preset-primary)", marginTop: 1,
+                    }}>
+                        <Globe size={14} />
+                    </div>
+                    <div style={{ flex: 1, minWidth: 0 }}>
+                        <div style={{
+                            fontSize: 10, fontWeight: 600, color: isDark ? "#64748b" : "#94a3b8",
+                            textTransform: "uppercase", letterSpacing: "0.5px", marginBottom: 6,
+                        }}>
+                            URL
+                        </div>
+                        <input
+                            type="text"
+                            value={url}
+                            onChange={(e) => setUrl(e.target.value)}
+                            style={{
+                                width: "100%", padding: "8px 12px", borderRadius: 10, fontSize: 13, fontWeight: 500,
+                                background: isDark ? "rgba(255,255,255,0.04)" : "rgba(0,0,0,0.03)",
+                                border: `1px solid ${isDark ? "rgba(255,255,255,0.08)" : "rgba(0,0,0,0.08)"}`,
+                                color: isDark ? "#e2e8f0" : "#1a1a2e",
+                                outline: "none", fontFamily: "'Outfit', sans-serif",
+                                transition: "border-color 0.15s",
+                            }}
+                            onFocus={(e) => { e.currentTarget.style.borderColor = "var(--preset-primary)"; }}
+                            onBlur={(e) => { e.currentTarget.style.borderColor = isDark ? "rgba(255,255,255,0.08)" : "rgba(0,0,0,0.08)"; }}
+                        />
+                    </div>
+                </div>
+            </div>
+
+            {/* Full URL (read-only) */}
+            <div style={{ padding: "14px 0" }}>
+                <div style={{ display: "flex", alignItems: "flex-start", gap: 12 }}>
+                    <div style={{
+                        width: 32, height: 32, borderRadius: 9, flexShrink: 0,
+                        background: isDark ? "rgba(34,197,94,0.1)" : "rgba(34,197,94,0.08)",
+                        display: "flex", alignItems: "center", justifyContent: "center",
+                        color: "#22c55e", marginTop: 1,
+                    }}>
+                        <Link size={14} />
+                    </div>
+                    <div style={{ flex: 1, minWidth: 0 }}>
+                        <div style={{
+                            fontSize: 10, fontWeight: 600, color: isDark ? "#64748b" : "#94a3b8",
+                            textTransform: "uppercase", letterSpacing: "0.5px", marginBottom: 6,
+                        }}>
+                            Full Affiliate URL
+                        </div>
+                        <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+                            <div style={{
+                                flex: 1, padding: "8px 12px", borderRadius: 10, fontSize: 12, fontWeight: 600,
+                                fontFamily: "'JetBrains Mono', 'Fira Code', monospace",
+                                background: isDark ? "rgba(34,197,94,0.06)" : "rgba(34,197,94,0.04)",
+                                border: `1px solid ${isDark ? "rgba(34,197,94,0.15)" : "rgba(34,197,94,0.12)"}`,
+                                color: isDark ? "#4ade80" : "#16a34a",
+                                wordBreak: "break-all", lineHeight: 1.5,
+                            }}>
+                                {fullUrl}
+                            </div>
+                            <button
+                                type="button"
+                                onClick={() => handleCopy(fullUrl, "fullUrl")}
+                                style={{
+                                    width: 34, height: 34, borderRadius: 9, border: "none", flexShrink: 0,
+                                    background: isDark ? "rgba(255,255,255,0.06)" : "rgba(0,0,0,0.04)",
+                                    color: isDark ? "#94a3b8" : "#64748b",
+                                    cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center",
+                                    transition: "all 0.15s",
+                                }}
+                            >
+                                {copiedField === "fullUrl" ? <Check size={14} style={{ color: "#22c55e" }} /> : <Copy size={14} />}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    );
+
+    /* ── Shared footer buttons ── */
+    const footerButtons = (
+        <div style={{ display: "flex", gap: 8, width: "100%" }}>
+            <button
+                type="button"
+                onClick={() => onOpenChange(false)}
+                disabled={isSubmitting}
+                style={{
+                    flex: 1, padding: "10px 16px", borderRadius: 12, fontSize: 13, fontWeight: 700,
+                    border: `1px solid ${isDark ? "rgba(255,255,255,0.1)" : "rgba(0,0,0,0.1)"}`,
+                    background: "transparent",
+                    color: isDark ? "#e2e8f0" : "#1a1a2e",
+                    cursor: isSubmitting ? "not-allowed" : "pointer",
+                    transition: "all 0.15s",
+                    fontFamily: "'Outfit', sans-serif",
+                }}
+            >
+                Cancel
+            </button>
+            <button
+                type="button"
+                onClick={handleConfirm}
+                disabled={isSubmitting}
+                style={{
+                    flex: 1, padding: "10px 16px", borderRadius: 12, fontSize: 13, fontWeight: 700,
+                    border: "none",
+                    background: "linear-gradient(135deg, var(--preset-primary), var(--preset-lighter))",
+                    color: "#fff",
+                    cursor: isSubmitting ? "not-allowed" : "pointer",
+                    transition: "all 0.15s",
+                    display: "flex", alignItems: "center", justifyContent: "center", gap: 6,
+                    boxShadow: "0 4px 16px rgba(var(--preset-primary-rgb), 0.3)",
+                    fontFamily: "'Outfit', sans-serif",
+                }}
+            >
+                {isSubmitting ? <Loader2 size={14} className="animate-spin" /> : <CheckCircle2 size={14} />}
+                Approve & Create
+            </button>
+        </div>
+    );
+
+    return isDesktop ? (
+        <>
+            {/* ── Desktop: Side drawer (right) ── */}
+            {desktopMounted && (
+                    <div
+                        style={{
+                            position: "fixed", inset: 0, zIndex: 9999,
+                            display: "flex", justifyContent: "flex-end",
+                        }}
+                        onClick={(e) => { if (e.target === e.currentTarget) onOpenChange(false); }}
+                    >
+                        <div style={{
+                            position: "absolute", inset: 0,
+                            background: "rgba(0,0,0,0.5)", backdropFilter: "blur(4px)",
+                            opacity: desktopVisible ? 1 : 0,
+                            transition: "opacity 260ms cubic-bezier(0.22, 1, 0.36, 1)",
+                        }} />
+                        <div
+                            style={{
+                                position: "relative", zIndex: 1,
+                                width: "100%", maxWidth: 480, height: "100vh",
+                                background: isDark ? "hsl(222, 20%, 14%)" : "#fff",
+                                boxShadow: "-8px 0 40px rgba(0,0,0,0.2)",
+                                display: "flex", flexDirection: "column",
+                                transform: desktopVisible ? "translateX(0)" : "translateX(100%)",
+                                opacity: desktopVisible ? 1 : 0.98,
+                                transition: "transform 260ms cubic-bezier(0.22, 1, 0.36, 1), opacity 260ms cubic-bezier(0.22, 1, 0.36, 1)",
+                                fontFamily: "'Outfit', sans-serif",
+                                color: isDark ? "#e2e8f0" : "#1a1a2e",
+                            }}
+                            onClick={(e) => e.stopPropagation()}
+                        >
+                            {/* Header */}
+                            <div style={{
+                                background: "linear-gradient(135deg, var(--preset-primary), var(--preset-lighter))",
+                                padding: "20px 24px 24px",
+                                position: "relative", overflow: "hidden", flexShrink: 0,
+                            }}>
+                                <div style={{
+                                    position: "absolute", top: -30, right: -30, width: 120, height: 120,
+                                    background: "radial-gradient(circle, rgba(255,255,255,0.15) 0%, transparent 70%)",
+                                    pointerEvents: "none",
+                                }} />
+                                <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 14 }}>
+                                    <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                                        <UserPlus size={18} style={{ color: "#fff" }} />
+                                        <h2 style={{ fontSize: 18, fontWeight: 700, color: "#fff", margin: 0 }}>
+                                            Approve Affiliate
+                                        </h2>
+                                    </div>
+                                    <button
+                                        onClick={() => onOpenChange(false)}
+                                        style={{
+                                            width: 32, height: 32, borderRadius: 9, border: "none",
+                                            background: "rgba(255,255,255,0.15)", backdropFilter: "blur(10px)",
+                                            color: "#fff", cursor: "pointer",
+                                            display: "flex", alignItems: "center", justifyContent: "center",
+                                        }}
+                                    >
+                                        <X size={16} />
+                                    </button>
+                                </div>
+                                <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+                                    <div style={{
+                                        width: 40, height: 40, borderRadius: 12,
+                                        background: "rgba(255,255,255,0.2)", backdropFilter: "blur(10px)",
+                                        display: "flex", alignItems: "center", justifyContent: "center",
+                                        fontSize: 16, fontWeight: 700, color: "#fff",
+                                        border: "1px solid rgba(255,255,255,0.2)",
+                                    }}>
+                                        {application.first_name[0].toUpperCase()}
+                                    </div>
+                                    <div>
+                                        <p style={{ fontSize: 14, fontWeight: 600, color: "#fff", margin: 0 }}>
+                                            {application.first_name} {application.last_name}
+                                        </p>
+                                        <p style={{ fontSize: 11, color: "rgba(255,255,255,0.7)", margin: "2px 0 0" }}>
+                                            {application.product_applied}
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* Body (scrollable) */}
+                            <div style={{ flex: 1, overflowY: "auto", padding: "4px 24px 0" }}>
+                                {formContent}
+                            </div>
+
+                            {/* Footer */}
+                            <div style={{
+                                padding: "16px 24px 20px", flexShrink: 0,
+                                borderTop: `1px solid ${isDark ? "rgba(255,255,255,0.06)" : "rgba(0,0,0,0.06)"}`,
+                            }}>
+                                {footerButtons}
+                            </div>
+                        </div>
+                    </div>
+                )}
+        </>
+    ) : (
+        <Drawer open={open} onOpenChange={onOpenChange}>
+            <DrawerContent
+                style={{ fontFamily: "'Outfit', sans-serif" }}
+            >
+                <div style={{ maxHeight: "85vh", display: "flex", flexDirection: "column" }}>
+                    <DrawerHeader className="text-left">
+                        <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 4 }}>
+                            <div style={{
+                                width: 36, height: 36, borderRadius: 10,
+                                background: "linear-gradient(135deg, var(--preset-primary), var(--preset-lighter))",
+                                display: "flex", alignItems: "center", justifyContent: "center",
+                                fontSize: 14, fontWeight: 700, color: "#fff", flexShrink: 0,
+                            }}>
+                                {application.first_name[0].toUpperCase()}
+                            </div>
+                            <div>
+                                <DrawerTitle style={{ fontSize: 16, fontWeight: 700, fontFamily: "'Outfit', sans-serif" }}>
+                                    Approve Affiliate
+                                </DrawerTitle>
+                                <DrawerDescription style={{ fontSize: 12, fontFamily: "'Outfit', sans-serif" }}>
+                                    {application.first_name} {application.last_name} — {application.product_applied}
+                                </DrawerDescription>
+                            </div>
+                        </div>
+                    </DrawerHeader>
+
+                    <div style={{ flex: 1, overflowY: "auto", padding: "0 16px" }}>
+                        {formContent}
+                    </div>
+
+                    <DrawerFooter>
+                        {footerButtons}
+                    </DrawerFooter>
+                </div>
+            </DrawerContent>
+        </Drawer>
+    );
+}
+
+/* ════════════════════════════════════════════════════════════════════
    APPLICATION DETAIL VIEW (View More panel)
    ════════════════════════════════════════════════════════════════════ */
 
@@ -482,16 +976,7 @@ function ApplicationDetailView({
     isDark: boolean;
     theme: any;
 }) {
-    const [isApproving, setIsApproving] = useState(false);
     const [isRejecting, setIsRejecting] = useState(false);
-
-    const handleApprove = () => {
-        setIsApproving(true);
-        setTimeout(() => {
-            onApprove(application.id);
-            setIsApproving(false);
-        }, 800);
-    };
 
     const handleReject = () => {
         setIsRejecting(true);
@@ -666,14 +1151,13 @@ function ApplicationDetailView({
                         <div style={{ display: "flex", gap: 8, marginTop: 24 }}>
                             <button
                                 onClick={handleReject}
-                                disabled={isRejecting || isApproving}
+                                disabled={isRejecting}
                                 style={{
                                     flex: 1, padding: "10px 16px", borderRadius: 12, fontSize: 13, fontWeight: 700,
                                     border: `1px solid ${isDark ? "rgba(239,68,68,0.3)" : "rgba(239,68,68,0.2)"}`,
                                     background: isDark ? "rgba(239,68,68,0.08)" : "rgba(239,68,68,0.05)",
                                     color: "#ef4444",
-                                    cursor: isRejecting || isApproving ? "not-allowed" : "pointer",
-                                    opacity: isApproving ? 0.5 : 1,
+                                    cursor: isRejecting ? "not-allowed" : "pointer",
                                     transition: "all 0.15s",
                                     display: "flex", alignItems: "center", justifyContent: "center", gap: 6,
                                 }}
@@ -682,21 +1166,21 @@ function ApplicationDetailView({
                                 Reject
                             </button>
                             <button
-                                onClick={handleApprove}
-                                disabled={isApproving || isRejecting}
+                                onClick={() => onApprove(application.id)}
+                                disabled={isRejecting}
                                 style={{
                                     flex: 1, padding: "10px 16px", borderRadius: 12, fontSize: 13, fontWeight: 700,
                                     border: "none",
                                     background: "linear-gradient(135deg, var(--preset-primary), var(--preset-lighter))",
                                     color: "#fff",
-                                    cursor: isApproving || isRejecting ? "not-allowed" : "pointer",
+                                    cursor: isRejecting ? "not-allowed" : "pointer",
                                     opacity: isRejecting ? 0.5 : 1,
                                     transition: "all 0.15s",
                                     display: "flex", alignItems: "center", justifyContent: "center", gap: 6,
                                     boxShadow: "0 4px 16px rgba(var(--preset-primary-rgb), 0.3)",
                                 }}
                             >
-                                {isApproving ? <Loader2 size={14} className="animate-spin" /> : <CheckCircle2 size={14} />}
+                                <CheckCircle2 size={14} />
                                 Approve
                             </button>
                         </div>
@@ -727,6 +1211,8 @@ function ApplicationsTab({
     const [appStatusFilter, setAppStatusFilter] = useState<string>("pending");
     const [searchQuery, setSearchQuery] = useState("");
     const [selectedApp, setSelectedApp] = useState<DummyApplication | null>(null);
+    const [approveDrawerApp, setApproveDrawerApp] = useState<DummyApplication | null>(null);
+    const [approveDrawerOpen, setApproveDrawerOpen] = useState(false);
 
     const filteredApps = useMemo(() => {
         let filtered = applications;
@@ -753,12 +1239,22 @@ function ApplicationsTab({
         rejected: applications.filter((a) => a.status === "rejected").length,
     }), [applications]);
 
-    const handleApprove = (id: string) => {
+    /** Opens the approve drawer instead of immediately approving */
+    const handleOpenApproveDrawer = (app: DummyApplication) => {
+        setApproveDrawerApp(app);
+        setApproveDrawerOpen(true);
+        // If the detail modal is open, close it
+        setSelectedApp(null);
+    };
+
+    /** Called when the approve drawer confirms */
+    const handleConfirmApprove = (id: string) => {
         setApplications((prev) =>
             prev.map((a) => (a.id === id ? { ...a, status: "approved" as const, note: a.note || "Approved by admin" } : a))
         );
-        setSelectedApp(null);
-        toast.success("Application approved!");
+        setApproveDrawerApp(null);
+        setApproveDrawerOpen(false);
+        toast.success("Application approved & affiliate created!");
     };
 
     const handleReject = (id: string) => {
@@ -767,6 +1263,14 @@ function ApplicationsTab({
         );
         setSelectedApp(null);
         toast.success("Application rejected");
+    };
+
+    /** Triggered from the detail modal's Approve button */
+    const handleApproveFromDetail = (id: string) => {
+        const app = applications.find((a) => a.id === id);
+        if (app) {
+            handleOpenApproveDrawer(app);
+        }
     };
 
     const appStatusOptions = [
@@ -934,7 +1438,7 @@ function ApplicationsTab({
                                             <span style={{ fontSize: 13, fontWeight: 600, color: theme.cellBold }}>
                                                 {app.first_name} {app.last_name}
                                             </span>
-                                            <StatusBadge status={app.status} />
+                                            {appStatusFilter === "all" && <StatusBadge status={app.status} />}
                                         </div>
                                         <div style={{ fontSize: 11, color: theme.cellText, marginTop: 2, display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap" }}>
                                             <span>{app.product_applied}</span>
@@ -949,7 +1453,7 @@ function ApplicationsTab({
                                     {app.status === "pending" && (
                                         <>
                                             <button
-                                                onClick={(e) => { e.stopPropagation(); handleApprove(app.id); }}
+                                                onClick={(e) => { e.stopPropagation(); handleOpenApproveDrawer(app); }}
                                                 title="Approve"
                                                 style={{
                                                     width: 30, height: 30, borderRadius: 8, border: "none",
@@ -999,8 +1503,26 @@ function ApplicationsTab({
                 <ApplicationDetailView
                     application={selectedApp}
                     onClose={() => setSelectedApp(null)}
-                    onApprove={handleApprove}
+                    onApprove={handleApproveFromDetail}
                     onReject={handleReject}
+                    isDark={isDark}
+                    theme={theme}
+                />
+            )}
+
+            {/* Approve drawer */}
+            {approveDrawerApp && (
+                <ApproveDrawer
+                    application={approveDrawerApp}
+                    open={approveDrawerOpen}
+                    onOpenChange={(open) => {
+                        setApproveDrawerOpen(open);
+                        if (!open) {
+                            // Delay clearing the app so close animation can finish
+                            setTimeout(() => setApproveDrawerApp(null), 300);
+                        }
+                    }}
+                    onConfirmApprove={handleConfirmApprove}
                     isDark={isDark}
                     theme={theme}
                 />
@@ -1609,6 +2131,7 @@ const AffiliateListScreen = () => {
             <style>{`
                 @keyframes shimmer-badge { 0% { background-position: -200% 0; } 100% { background-position: 200% 0; } }
                 @keyframes slideIn { from { opacity: 0; transform: translateX(16px); } to { opacity: 1; transform: translateX(0); } }
+                @keyframes slideInRight { from { opacity: 0; transform: translateX(100%); } to { opacity: 1; transform: translateX(0); } }
                 @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
             `}</style>
 
