@@ -2,12 +2,8 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   devIndicators: {
-    buildActivityPosition: "top-right",
+    position: "top-right",
   },
-  eslint: {
-    ignoreDuringBuilds: true,
-  },
-
   env: {
     SHOPIFY_ADMIN_URL: process.env.SHOPIFY_ADMIN_URL,
     X_SHOPIFY_ACCESS_TOKEN: process.env.X_SHOPIFY_ACCESS_TOKEN,

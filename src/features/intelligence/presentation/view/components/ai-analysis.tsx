@@ -649,8 +649,8 @@ const TopPerformersSection: React.FC<{
               <Sparkles style={{ width: 16, height: 16, color: 'var(--preset-lighter)' }} />
             </div>
             <div>
-              <div style={{ fontSize: 10, fontWeight: 800, color: 'rgba(255,255,255,.4)', textTransform: 'uppercase', letterSpacing: '.08em' }}>Your content</div>
-              <div style={{ fontSize: 12, fontWeight: 700, color: 'rgba(255,255,255,.72)' }}>Average engagement rate (your brand)</div>
+              <div style={{ fontSize: 10, fontWeight: 800, color: 'rgba(255,255,255,.4)', textTransform: 'uppercase', letterSpacing: '.08em', background: 'transparent', boxShadow: 'none' }}>Your content</div>
+              <div style={{ fontSize: 12, fontWeight: 700, color: 'rgba(255,255,255,.72)', background: 'transparent', boxShadow: 'none' }}>Average engagement rate (your brand)</div>
             </div>
           </div>
           <div style={{ fontSize: 22, fontWeight: 900, color: '#e9d5ff', letterSpacing: '-0.5px' }}>
@@ -1382,12 +1382,18 @@ const AIAnalysis: React.FC = () => {
       color: #111827;
     }
 
+    /* Keep text readable in light mode without forcing white chips behind every label */
     .sales-typography.light-mode [style*="rgba(255,255,255"],
     .sales-typography.light-mode [style*="rgba(255, 255, 255"] {
       color: rgba(17, 24, 39, 0.86) !important;
       border-color: rgba(var(--preset-primary-rgb), 0.16) !important;
-      background: rgba(255, 255, 255, 0.92) !important;
-      box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04);
+    }
+
+    /* Recharts/custom tooltip shell in light mode */
+    .sales-typography.light-mode .recharts-tooltip-wrapper > div {
+      background: rgba(255, 255, 255, 0.98) !important;
+      border: 1px solid rgba(var(--preset-primary-rgb), 0.2) !important;
+      box-shadow: 0 8px 24px rgba(15, 23, 42, 0.12) !important;
     }
 
     .sales-typography.light-mode .recharts-cartesian-grid line {
