@@ -10,6 +10,7 @@ const ProtectedLayout = ({ children }: { children: React.ReactNode }) => {
     const router = useRouter();
     const pathname = usePathname();
     const isIntelligence = pathname?.startsWith("/intelligence");
+    const isSeasonal = pathname?.startsWith("/seasonal");
 
     useEffect(() => {
         if (status === 'unauthenticated') {
@@ -36,7 +37,7 @@ const ProtectedLayout = ({ children }: { children: React.ReactNode }) => {
         <div className="protected-layout-root flex h-screen overflow-hidden">
             <AppSidebar />
             <main
-                className={`main-content flex-1 overflow-y-auto overflow-x-hidden ${isIntelligence ? "main-content--intelligence p-0" : "p-4 sm:p-6 lg:p-8 pb-24 lg:pb-8"}`}
+                className={`main-content flex-1 overflow-y-auto overflow-x-hidden ${isIntelligence ? "main-content--intelligence p-0" : isSeasonal ? "p-0" : "p-4 sm:p-6 lg:p-8 pb-24 lg:pb-8"}`}
             >
                 {children}
             </main>

@@ -1,12 +1,14 @@
 import { useMemo } from "react";
 import { SegmentedBarLoader, SmallLoader } from "@/components/ui/shop-intel-loader";
 import { useTheme } from "next-themes";
+import type { ReactNode } from "react";
 
 interface TotalCumulativeCardProps {
     totalSales: number;
     totalOrders: number;
     avgOrderValue: number;
     isLoading: boolean;
+    seasonalBanner?: ReactNode;
 }
 
 interface DaySegment {
@@ -18,6 +20,7 @@ interface DaySegment {
 const TotalCumulativeCard = ({
     totalSales,
     isLoading,
+    seasonalBanner,
 }: TotalCumulativeCardProps) => {
     const { resolvedTheme } = useTheme();
     const isDark = resolvedTheme === "dark";
@@ -133,33 +136,40 @@ const TotalCumulativeCard = ({
             />
 
             {/* 1. Header */}
-            <div>
-                <h2
-                    className="cumulative-title"
-                    style={{
-                        fontSize: 26,
-                        fontWeight: 700,
-                        color: t.title,
-                        margin: 0,
-                        fontFamily: "'Outfit', sans-serif",
-                        letterSpacing: "-0.5px",
-                        lineHeight: 1.2,
-                    }}
-                >
-                    Total Cumulative Sales
-                </h2>
-                <p
-                    style={{
-                        fontSize: 13,
-                        color: t.subtitle,
-                        margin: "4px 0 0 0",
-                    }}
-                >
-                    All platforms •{" "}
-                    <span style={{ color: t.subtitleAccent, fontWeight: 500 }}>
-                        {todayDate}
-                    </span>
-                </p>
+            <div className="flex flex-col gap-3 md:flex-row md:items-start md:justify-between">
+                <div>
+                    <h2
+                        className="cumulative-title"
+                        style={{
+                            fontSize: 26,
+                            fontWeight: 700,
+                            color: t.title,
+                            margin: 0,
+                            fontFamily: "'Outfit', sans-serif",
+                            letterSpacing: "-0.5px",
+                            lineHeight: 1.2,
+                        }}
+                    >
+                        Total Cumulative Sales
+                    </h2>
+                    <p
+                        style={{
+                            fontSize: 13,
+                            color: t.subtitle,
+                            margin: "4px 0 0 0",
+                        }}
+                    >
+                        All platforms •{" "}
+                        <span style={{ color: t.subtitleAccent, fontWeight: 500 }}>
+                            {todayDate}
+                        </span>
+                    </p>
+                </div>
+                {seasonalBanner && (
+                    <div className="w-full md:w-[460px] max-w-full">
+                        {seasonalBanner}
+                    </div>
+                )}
             </div>
 
             {/* 2. Segment bar row */}

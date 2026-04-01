@@ -175,7 +175,7 @@ function resolveStackedYs(
   return result;
 }
 
-function SeasonalContentBody({
+export function SeasonalContentBody({
   rangeStart,
   rangeEnd,
   onRangeChange,
@@ -1129,9 +1129,11 @@ const BANNER_SPARK = [312000, 338000, 362000, 388000, 418000, 455000, 502000].ma
 export function SeasonalPerformanceBanner({
   onOpen,
   ytdGrowthLabel,
+  compact = false,
 }: {
   onOpen: (e: ReactMouseEvent<HTMLButtonElement>) => void;
   ytdGrowthLabel: string;
+  compact?: boolean;
 }) {
   return (
     <>
@@ -1159,30 +1161,34 @@ export function SeasonalPerformanceBanner({
       <button
         type="button"
         onClick={onOpen}
-        className="seasonal-banner-trigger group flex w-full max-w-xl items-center justify-between gap-3 rounded-xl border border-border bg-gradient-to-r from-primary/[0.08] via-card to-card px-3 py-2.5 text-left shadow-sm sm:max-w-md lg:max-w-lg"
+        className={`seasonal-banner-trigger group flex w-full items-center justify-between rounded-xl border border-border bg-gradient-to-r from-primary/[0.08] via-card to-card text-left shadow-sm ${
+          compact
+            ? "max-w-[460px] gap-2 px-3 py-2 sm:px-3.5 sm:py-2.5"
+            : "max-w-xl gap-2.5 px-3 py-2 sm:max-w-md lg:max-w-lg"
+        }`}
       >
-        <div className="flex min-w-0 flex-1 items-center gap-3">
+        <div className={`flex min-w-0 flex-1 items-center ${compact ? "gap-2.5" : "gap-3"}`}>
           <div
-            className="h-9 w-1 shrink-0 rounded-full bg-gradient-to-b from-primary to-[var(--preset-lighter)]"
+            className={`${compact ? "h-7" : "h-9"} w-1 shrink-0 rounded-full bg-gradient-to-b from-primary to-[var(--preset-lighter)]`}
             aria-hidden
           />
           <div className="min-w-0">
             <div className="flex flex-wrap items-center gap-2">
-              <span className="text-sm font-semibold text-foreground">
+              <span className={`${compact ? "text-xs sm:text-sm" : "text-sm"} whitespace-nowrap font-semibold text-foreground`}>
                 Seasonal performance
               </span>
-              <span className="rounded bg-primary/15 px-1.5 py-0.5 text-[10px] font-bold uppercase tracking-wide text-primary">
+              <span className={`${compact ? "text-[9px]" : "text-[10px]"} rounded bg-primary/15 px-1.5 py-0.5 font-bold uppercase tracking-wide text-primary`}>
                 Insight
               </span>
             </div>
-            <p className="text-[11px] text-muted-foreground">
+            <p className={`${compact ? "hidden text-[10px] sm:block sm:truncate" : "text-[11px] truncate"} text-muted-foreground`}>
               Monthly revenue patterns across years — tap to explore
             </p>
           </div>
         </div>
-        <div className="flex shrink-0 items-center gap-3">
+        <div className={`flex shrink-0 items-center ${compact ? "gap-2" : "gap-3"}`}>
           <div className="hidden text-right sm:block">
-            <div className="text-xs font-bold tabular-nums text-emerald-600 dark:text-emerald-400">
+            <div className={`${compact ? "text-[11px]" : "text-xs"} font-bold tabular-nums text-emerald-600 dark:text-emerald-400`}>
               {ytdGrowthLabel}
             </div>
             <div className="text-[10px] text-muted-foreground">vs prior YTD</div>

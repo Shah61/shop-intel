@@ -161,52 +161,29 @@
 }
 
 /* ═══════════════════════════════════════════════════════════
-   iPad compact layout — fits overview dashboard without scroll.
-   Uses viewport-height flex-grow so the bottom row always fills
-   remaining space regardless of exact iPad resolution.
+   iPad layout tuning (768px–1366px).
+   Keep compact spacing, but allow natural page scroll so
+   long dashboard content is always reachable.
    ═══════════════════════════════════════════════════════════ */
 
 /* Shared iPad rules (768px–1366px) */
 @media (min-width: 768px) and (max-width: 1366px) {
   .protected-layout-root {
-    height: 100dvh !important;
-  }
-
-  /* Only overview dashboard fits one screen; other pages scroll via main overflow-y-auto */
-
-  /* --- Dynamic viewport-fill layout (Overview only) --- */
-  .overview-dashboard {
-    height: calc(100dvh - var(--dash-top) - var(--dash-bot)) !important;
-    display: flex !important;
-    flex-direction: column !important;
-  }
-  .overview-bottom-grid {
-    flex: 1 !important;
-    min-height: 0 !important;
-  }
-  .overview-chart-wrapper,
-  .overview-table-wrapper {
-    display: flex !important;
-    flex-direction: column !important;
-    min-height: 0 !important;
-  }
-  .sales-chart-card,
-  .analytics-table-card {
-    flex: 1 !important;
-    min-height: 0 !important;
-  }
-  .sales-chart-container {
-    flex: 1 !important;
+    min-height: 100dvh !important;
     height: auto !important;
-    min-height: 0 !important;
   }
-  .sales-chart-inner {
-    height: 100% !important;
-  }
-  .analytics-table-scroll {
-    flex: 1 !important;
-    min-height: 0 !important;
+
+  .main-content {
     overflow-y: auto !important;
+    -webkit-overflow-scrolling: touch !important;
+  }
+
+  /* Keep overview responsive but not height-locked */
+  .overview-dashboard {
+    min-height: calc(100dvh - var(--dash-top) - var(--dash-bot)) !important;
+    height: auto !important;
+    display: flex !important;
+    flex-direction: column !important;
   }
 
   /* --- Shared compact styling --- */

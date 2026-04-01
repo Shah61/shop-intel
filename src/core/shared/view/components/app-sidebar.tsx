@@ -723,6 +723,7 @@ export default function AppSidebar() {
 
             {/* Scrollable menu */}
             <div
+                className="sidebar-scroll"
                 style={{
                     flex: 1,
                     overflowY: "auto",
@@ -1546,11 +1547,55 @@ export default function AppSidebar() {
 
             {/* Scrollbar styling */}
             <style>{`
-                aside::-webkit-scrollbar { width: 4px; }
-                aside::-webkit-scrollbar-track { background: transparent; }
-                aside::-webkit-scrollbar-thumb { background: rgba(${pcRgb},0.15); border-radius: 4px; }
-                aside::-webkit-scrollbar-thumb:hover { background: rgba(${pcRgb},0.3); }
+                /* ─── Custom Sidebar Scrollbar (cross-platform) ─── */
+
+                /* WebKit (Chrome, Safari, Edge) */
+                .sidebar-scroll::-webkit-scrollbar {
+                    width: 6px;
+                }
+                .sidebar-scroll::-webkit-scrollbar-track {
+                    background: transparent;
+                    margin: 8px 0;
+                }
+                .sidebar-scroll::-webkit-scrollbar-thumb {
+                    background: rgba(${pcRgb}, 0.12);
+                    border-radius: 100px;
+                    border: 1px solid transparent;
+                    background-clip: padding-box;
+                    transition: background 0.3s ease;
+                }
+                .sidebar-scroll::-webkit-scrollbar-thumb:hover {
+                    background: rgba(${pcRgb}, 0.28);
+                    border: 1px solid rgba(${pcRgb}, 0.08);
+                    background-clip: padding-box;
+                }
+                .sidebar-scroll::-webkit-scrollbar-thumb:active {
+                    background: rgba(${pcRgb}, 0.4);
+                    background-clip: padding-box;
+                }
+
+                /* Firefox */
+                .sidebar-scroll {
+                    scrollbar-width: thin;
+                    scrollbar-color: rgba(${pcRgb}, 0.12) transparent;
+                }
+
+                /* Auto-hide effect — show on hover only */
+                .sidebar-scroll::-webkit-scrollbar-thumb {
+                    opacity: 0;
+                }
+                .sidebar-scroll:hover::-webkit-scrollbar-thumb {
+                    background: rgba(${pcRgb}, 0.15);
+                    background-clip: padding-box;
+                }
+                .sidebar-scroll:hover::-webkit-scrollbar-thumb:hover {
+                    background: rgba(${pcRgb}, 0.3);
+                    background-clip: padding-box;
+                }
+
+                /* Hide mobile bottom nav scrollbar */
                 nav::-webkit-scrollbar { display: none; }
+                nav { scrollbar-width: none; }
             `}</style>
         </>
     )
