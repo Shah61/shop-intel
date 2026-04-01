@@ -1757,8 +1757,12 @@ const AITrend: React.FC = () => {
     }
 
     /* Light mode like /sales: clean white surfaces, crisp text, subtle primary accents */
+    .sales-typography {
+      background: #131820;
+    }
+
     .sales-typography.light-mode {
-      background: #f8fafc;
+      background: #ffffff;
       color: #111827;
     }
 
@@ -1788,7 +1792,7 @@ const AITrend: React.FC = () => {
       <>
         <style>{globalStyles}</style>
         <div className={`sales-typography ${isLight ? 'light-mode' : ''} h-full overflow-y-auto`}>
-          <div className="flex flex-col gap-5 w-full p-4 md:p-6" style={{ background: isLight ? '#ffffff' : 'transparent' }}>
+          <div className="flex flex-col gap-5 w-full p-4 md:p-6" style={{ background: isLight ? '#ffffff' : '#131820' }}>
             <CompetitorIntelligence />
           </div>
         </div>
