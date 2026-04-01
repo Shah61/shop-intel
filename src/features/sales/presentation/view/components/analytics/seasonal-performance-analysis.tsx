@@ -864,8 +864,9 @@ function YearRangeSliderHandles({
   startPct: number;
   endPct: number;
 }) {
-  const [dragging, setDragging] = useState<"start" | "end" | null>(null);
+  const [dragging, setDragging] = useState<"start" | "end" | "range" | null>(null);
   const sliderRef = useRef<HTMLDivElement | null>(null);
+  const rangeGrabOffsetRef = useRef(0);
 
   const getYearFromX = useCallback((clientX: number) => {
     const el = sliderRef.current?.parentElement;
@@ -879,8 +880,18 @@ function YearRangeSliderHandles({
     if (!dragging) return;
     const move = (e: MouseEvent) => {
       const y = getYearFromX(e.clientX);
-      if (dragging === "start") onRangeChange(Math.min(y, rangeEnd - 1), rangeEnd);
-      else onRangeChange(rangeStart, Math.max(y, rangeStart + 1));
+      if (dragging === "start") {
+        onRangeChange(Math.min(y, rangeEnd - 1), rangeEnd);
+        return;
+      }
+      if (dragging === "end") {
+        onRangeChange(rangeStart, Math.max(y, rangeStart + 1));
+        return;
+      }
+      const span = rangeEnd - rangeStart;
+      const desiredStart = y - rangeGrabOffsetRef.current;
+      const nextStart = Math.max(MIN_YEAR, Math.min(MAX_YEAR - span, desiredStart));
+      onRangeChange(nextStart, nextStart + span);
     };
     const up = () => setDragging(null);
     window.addEventListener("mousemove", move);
@@ -893,6 +904,30 @@ function YearRangeSliderHandles({
 
   return (
     <>
+      <div
+        role="slider"
+        tabIndex={0}
+        aria-label="Move selected year range"
+        className="absolute top-1/2 z-10 flex -translate-x-1/2 -translate-y-1/2 cursor-grab items-center justify-center p-1 active:cursor-grabbing"
+        style={{ left: `${(startPct + endPct) / 2}%` }}
+        onMouseDown={(e) => {
+          e.preventDefault();
+          rangeGrabOffsetRef.current = getYearFromX(e.clientX) - rangeStart;
+          setDragging("range");
+        }}
+      >
+        <div
+          className="grid grid-cols-3 grid-rows-2 gap-px"
+          aria-hidden
+        >
+          {Array.from({ length: 6 }, (_, i) => (
+            <span
+              key={i}
+              className="h-0.5 w-0.5 rounded-full bg-primary/90"
+            />
+          ))}
+        </div>
+      </div>
       {(["start", "end"] as const).map((w) => {
         const pct = w === "start" ? startPct : endPct;
         const val = w === "start" ? rangeStart : rangeEnd;
