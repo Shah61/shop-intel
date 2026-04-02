@@ -129,8 +129,16 @@ export const generateHistoricalSalesData = (year: string, quarter: string): Anal
 // Generate SKU data
 export const generateSKUData = (): AnalysisSKUEntity[] => {
   const skuNames = [
-    "Premium Denim Jeans", "Classic White T-Shirt", "Cotton Dress Shirt", "Leather Jacket",
-    "Wool Sweater", "Chino Pants", "Cotton Polo Shirt", "Hoodie", "Cargo Shorts", "Blazer"
+    "Beauty Skincare ShopIntel — Hydrating Cloud Cleanser",
+    "Beauty Skincare ShopIntel — Niacinamide 10% Serum",
+    "Beauty Skincare ShopIntel — Daily UV Defense SPF 50",
+    "Beauty Skincare ShopIntel — Retinol Night Renewal Cream",
+    "Beauty Skincare ShopIntel — Ceramide Barrier Cream",
+    "Beauty Skincare ShopIntel — HA Rose Toner",
+    "Beauty Skincare ShopIntel — Vitamin C Glow Essence",
+    "Beauty Skincare ShopIntel — Overnight Lip Recovery Balm",
+    "Beauty Skincare ShopIntel — Rice Milk Body Lotion",
+    "Beauty Skincare ShopIntel — Peptide Eye Revive Cream"
   ];
   
   return skuNames.map((name, index) => ({
@@ -218,8 +226,9 @@ export const generateTikTokConversionRate = (): TiktokConversionRate[] => {
 
 export const generateTikTokSkus = (): TiktokSku[] => {
   const products = [
-    "Viral Dance Accessories", "Phone Ring Light", "Trendy Face Mask", "Selfie Stick Pro",
-    "LED Strip Lights", "Mini Tripod", "Phone Lens Kit", "Bluetooth Mic", "Ring Light Stand", "Cable Organizer"
+    "Glass Skin Essence Duo", "SPF 50 Glow Milk", "Lip Sleeping Mask Mini", "Ceramide Repair Set",
+    "Niacinamide + Zinc Bundle", "Double Cleanse Kit", "Vitamin C AM Routine", "Retinol Starter Box",
+    "Body Lotion Travel Trio", "Eye Cream + Roller Set"
   ];
   
   return products.map((name, index) => ({
@@ -267,8 +276,9 @@ export const generateShopeeConversionRate = (): ShopeeConversionRate[] => {
 
 export const generateShopeeSkus = (): ShopeeSku[] => {
   const products = [
-    "Southeast Asian Snacks", "Local Beauty Products", "Traditional Crafts", "Electronics Bundle",
-    "Fashion Accessories", "Home Decor Items", "Kitchen Gadgets", "Smartphone Case", "Tablet Stand", "Power Bank"
+    "Centella Soothing Gel", "Snail Mucin Essence", "Rice Toner Jumbo", "SPF Stick Multipack",
+    "Hydrating Serum Trial Set", "Barrier Cream Refill", "Lip Oil Tint Bundle", "Body Scrub Coconut",
+    "Peptide Sheet Mask 10pc", "Brightening Eye Patches"
   ];
   
   return products.map((name, index) => ({
@@ -317,8 +327,16 @@ export const generateShopifyConversionRate = (): ShopifyConversionRate[] => {
 
 export const generateShopifySkus = (): ShopifySku[] => {
   const products = [
-    "Premium Denim Jacket", "Eco-Friendly Cotton T-Shirt", "Wool Blend Sweater", "Organic Cotton Collection",
-    "Classic Chino Pants", "Leather Belt", "Canvas Tote Bag", "Polo Shirt", "Cargo Shorts", "Dress Shirt Set"
+    "Beauty Skincare ShopIntel — Full Routine Kit",
+    "Beauty Skincare ShopIntel — Sensitive Skin Set",
+    "Beauty Skincare ShopIntel — Acne Care System",
+    "Beauty Skincare ShopIntel — Anti-Aging Night Kit",
+    "Beauty Skincare ShopIntel — Travel Minis 8pc",
+    "Beauty Skincare ShopIntel — Gua Sha + Oil Duo",
+    "Beauty Skincare ShopIntel — Cotton Pads Refill",
+    "Beauty Skincare ShopIntel — Cleansing Headband",
+    "Beauty Skincare ShopIntel — Reusable Sheet Mask",
+    "Beauty Skincare ShopIntel — Routine Card Deck"
   ];
   
   return products.map((name, index) => ({

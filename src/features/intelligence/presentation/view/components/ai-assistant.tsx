@@ -396,9 +396,9 @@ const AIAssistant: React.FC = () => {
 
     const handleSend = async (content: string) => {
         if (!content.trim() || isTyping) return;
-
-        setHasStarted(true); // triggers layout transition
-
+    
+        setHasStarted(true);
+    
         const userMsg: Message = {
             id: Date.now().toString(),
             content: content.trim(),
@@ -408,42 +408,38 @@ const AIAssistant: React.FC = () => {
         setMessages(prev => [...prev, userMsg]);
         setInputValue('');
         setIsTyping(true);
-
+    
         const tempId = (Date.now() + 1).toString();
         setMessages(prev => [...prev, { id: tempId, content: '', sender: 'ai', timestamp: new Date() }]);
-
+    
         try {
-            let roomId = currentRoomId;
-            if (!roomId) {
-                const r = await createRoom.mutateAsync({ category: Category.ASSISTANT, user_id });
-                roomId = r.data.rooms.id;
-                setCurrentRoomId(roomId);
-            }
-            const response = await createChat.mutateAsync({
-                room_id: roomId!,
-                message: content.trim(),
-                role: 'USER',
+            const response = await fetch(`${process.env.NEXT_PUBLIC_AI_STREAM_URL}/intelligence/assistant/stream`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ prompt: content.trim() }),
             });
+    
             const reader = response.body?.getReader();
             if (!reader) throw new Error('No reader');
-
-            let acc = '', actualId = tempId;
+    
+            let acc = '';
+            const decoder = new TextDecoder();
+    
             while (true) {
                 const { done, value } = await reader.read();
                 if (done) break;
-                const chunk = new TextDecoder().decode(value);
+    
+                const chunk = decoder.decode(value, { stream: true });
                 for (const line of chunk.split('\n').filter(l => l.trim())) {
                     try {
                         const json = line.replace(/^data:\s*/, '').trim();
-                        if (!json || json === '[DONE]') continue;
+                        if (!json) continue;
                         const data = JSON.parse(json);
-                        if (data.type === 'chat_created') {
-                            actualId = data.data.chat.id;
-                            setMessages(prev => prev.map(m => m.id === tempId ? { ...m, id: actualId } : m));
-                        } else if (data.type === 'ai_response_chunk' && data.content) {
+    
+                        if (data.type === 'response_chunk' && data.content) {
                             acc += data.content;
-                            setMessages(prev => prev.map(m => m.id === actualId ? { ...m, content: acc } : m));
-                        } else if (data.type === 'response_complete') {
+                            setMessages(prev => prev.map(m => m.id === tempId ? { ...m, content: acc } : m));
+                        } else if (data.type === 'complete') {
                             setIsTyping(false);
                         }
                     } catch {}
@@ -461,7 +457,6 @@ const AIAssistant: React.FC = () => {
             setIsTyping(false);
         }
     };
-
     return (
         <>
             <style>{`

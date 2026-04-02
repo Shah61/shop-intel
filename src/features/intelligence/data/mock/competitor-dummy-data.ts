@@ -20,26 +20,26 @@ import {
   PreviousEngagementMetrics
 } from '../model/competitor-model';
 
-// Clothing / fashion brand mock data (Top Performing Videos & related charts)
-const clothingBrands = [
-  { name: 'Zara', uniqueId: '@zara', source: 'COMPETITOR' as const },
-  { name: 'H&M', uniqueId: '@hm', source: 'COMPETITOR' as const },
-  { name: 'Uniqlo', uniqueId: '@uniqlo', source: 'COMPETITOR' as const },
-  { name: 'Nike', uniqueId: '@nike', source: 'COMPETITOR' as const },
-  { name: 'Adidas', uniqueId: '@adidas', source: 'COMPETITOR' as const },
-  { name: "Levi's", uniqueId: '@levis', source: 'COMPETITOR' as const },
-  { name: 'COS', uniqueId: '@cosstores', source: 'COMPETITOR' as const },
-  { name: 'Mango', uniqueId: '@mango', source: 'COMPETITOR' as const },
-  { name: 'ASOS', uniqueId: '@asos', source: 'COMPETITOR' as const },
-  { name: 'Reformation', uniqueId: '@reformation', source: 'COMPETITOR' as const },
-  { name: 'Style Studio', uniqueId: '@stylestudio', source: 'CREATOR' as const },
-  { name: 'Wardrobe Edit', uniqueId: '@wardrobeedit', source: 'CREATOR' as const },
-  { name: 'Fit Check Daily', uniqueId: '@fitcheckdaily', source: 'CREATOR' as const },
-  { name: 'Thrift Flip Co', uniqueId: '@thriftflipco', source: 'CREATOR' as const },
-  { name: 'Capsule Closet', uniqueId: '@capsulecloset', source: 'CREATOR' as const },
-  { name: 'Shop-Intel Apparel', uniqueId: '@shopintel_apparel', source: 'Shop-Intel' as const },
-  { name: 'Shop-Intel Studio', uniqueId: '@shopintel_studio', source: 'Shop-Intel' as const },
-  { name: 'Shop-Intel Label', uniqueId: '@shopintel_label', source: 'Shop-Intel' as const },
+// Beauty & skincare mock channels (competitors vs Shop-Intel brand line)
+const beautyBrands = [
+  { name: 'Sephora Malaysia', uniqueId: '@sephoramalaysia', source: 'COMPETITOR' as const },
+  { name: 'Watsons Malaysia', uniqueId: '@watsonsmalaysia', source: 'COMPETITOR' as const },
+  { name: 'Guardian Malaysia', uniqueId: '@guardianmy', source: 'COMPETITOR' as const },
+  { name: 'Hermo Malaysia', uniqueId: '@hermomy', source: 'COMPETITOR' as const },
+  { name: 'Innisfree Malaysia', uniqueId: '@innisfreemalaysia', source: 'COMPETITOR' as const },
+  { name: 'Laneige Malaysia', uniqueId: '@laneigemy', source: 'COMPETITOR' as const },
+  { name: 'The Ordinary', uniqueId: '@theordinary', source: 'COMPETITOR' as const },
+  { name: 'CeraVe', uniqueId: '@cerave', source: 'COMPETITOR' as const },
+  { name: 'La Roche-Posay', uniqueId: '@larocheposay', source: 'COMPETITOR' as const },
+  { name: 'b.liv', uniqueId: '@blivskin', source: 'COMPETITOR' as const },
+  { name: 'Glow Lab MY', uniqueId: '@glowlabmy', source: 'CREATOR' as const },
+  { name: 'Derm Decoder', uniqueId: '@dermdecoder', source: 'CREATOR' as const },
+  { name: 'Skincare with Sarah', uniqueId: '@skincarewithsarah', source: 'CREATOR' as const },
+  { name: 'K-Beauty KL', uniqueId: '@kbeautykl', source: 'CREATOR' as const },
+  { name: 'Routine Check MY', uniqueId: '@routinecheckmy', source: 'CREATOR' as const },
+  { name: 'Beauty Skincare ShopIntel', uniqueId: '@beautyskincareshopintel', source: 'Shop-Intel' as const },
+  { name: 'Shop-Intel Beauty Lab', uniqueId: '@shopintel_beauty', source: 'Shop-Intel' as const },
+  { name: 'Shop-Intel Glow', uniqueId: '@shopintel_glow', source: 'Shop-Intel' as const },
 ];
 
 // Generate realistic engagement metrics
@@ -102,7 +102,7 @@ const generateDateRange = () => {
 export const mockTopPerformingCompetitorsData = (params?: TopPerformingCompetitorsParams): TopPerformingCompetitorsResponse => {
   const { start_date, end_date } = generateDateRange();
   
-  let filteredBrands = [...clothingBrands];
+  let filteredBrands = [...beautyBrands];
   
   // Filter by source
   if (params?.source && params.source !== 'ALL') {
@@ -177,21 +177,21 @@ export const mockOverviewMetadataData = (params?: OverviewMetadataParams): Overv
 
 // Mock Engagement Rate Comparison
 export const mockEngagementRateComparisonData = (params?: EngagementRateComparisonParams): EngagementRateComparisonResponse => {
-  const competitors = clothingBrands.filter(b => b.source === 'COMPETITOR').slice(0, 8).map((brand, index) => ({
+  const competitors = beautyBrands.filter(b => b.source === 'COMPETITOR').slice(0, 8).map((brand, index) => ({
     id: `comp_${index + 1}`,
     name: brand.name,
     engagement_rate: 7.2 + Math.random() * 4, // 7.2-11.2%
     source: brand.source
   }));
   
-  const creators = clothingBrands.filter(b => b.source === 'CREATOR').slice(0, 5).map((brand, index) => ({
+  const creators = beautyBrands.filter(b => b.source === 'CREATOR').slice(0, 5).map((brand, index) => ({
     id: `creator_${index + 1}`,
     name: brand.name,
     engagement_rate: 6.8 + Math.random() * 3.5, // 6.8-10.3%
     source: brand.source
   }));
   
-  const shopIntelCompetitors = clothingBrands.filter(b => b.source === 'Shop-Intel').map((brand, index) => ({
+  const shopIntelCompetitors = beautyBrands.filter(b => b.source === 'Shop-Intel').map((brand, index) => ({
     id: `Shop-Intel_${index + 1}`,
     name: brand.name,
     engagement_rate: 9.5 + Math.random() * 2, // 9.5-11.5%
@@ -363,35 +363,35 @@ export const mock24hPerformanceChangesData = (params?: Performance24hParams): Pe
 
 // Mock Competitor Content
 export const mockCompetitorContentData = (params: CompetitorContentParams): CompetitorContentResponse => {
-  const clothingContent = [
+  const beautyContent = [
     {
-      title: "Perfect clothing Tempering Technique",
-      description: "Master the art of clothing tempering with this professional technique guide",
-      video_id: "choc_temp_001"
+      title: "Double cleanse routine for humid weather",
+      description: "Oil cleanser plus gel cleanser demo for Malaysia-level humidity without stripping",
+      video_id: "bsi_dc_001"
     },
     {
-      title: "Bean to Bar: From Cacao to clothing",
-      description: "Follow the complete journey from raw cacao beans to finished clothing bars",
-      video_id: "bean_bar_002"
+      title: "SPF layering that never pills",
+      description: "How to layer serum, moisturizer, and SPF 50 without balling up under makeup",
+      video_id: "bsi_spf_002"
     },
     {
-      title: "Artisan Truffle Making Masterclass",
-      description: "Learn to create gourmet truffles with premium ingredients and techniques",
-      video_id: "truffle_003"
+      title: "Retinol without the freakout",
+      description: "Sandwich method and barrier cream pairings for first-time retinol users",
+      video_id: "bsi_rtn_003"
     },
     {
-      title: "T-Shirts Health Benefits Explained",
-      description: "Discover the science behind dark clothing's health benefits and antioxidants",
-      video_id: "health_004"
+      title: "Niacinamide vs vitamin C: order matters",
+      description: "AM routine sequencing for brightening without ingredient clashes",
+      video_id: "bsi_act_004"
     },
     {
-      title: "Swiss clothing Factory Tour",
-      description: "Exclusive behind-the-scenes look at traditional Swiss clothing making",
-      video_id: "swiss_005"
+      title: "Barrier repair after over-exfoliating",
+      description: "Ceramide and panthenol recovery routine in seven days",
+      video_id: "bsi_bar_005"
     }
   ];
   
-  const contents = clothingContent.map((content, index) => {
+  const contents = beautyContent.map((content, index) => {
     const baseViews = 800000 - (index * 50000);
     const engagementMetrics = generateEngagementMetrics(baseViews);
     
@@ -447,15 +447,15 @@ export const mockCompetitorContentData = (params: CompetitorContentParams): Comp
       updated_at: new Date().toISOString(),
       channel: {
         id: params.channel_id,
-        name: clothingBrands.find(b => b.source === 'Shop-Intel')?.name || 'Fashion Forward',
+        name: beautyBrands.find(b => b.source === 'Shop-Intel')?.name || 'Beauty Skincare ShopIntel',
         platform: 'TIKTOK',
         region: 'US',
-        unique_id: '@shopintel_apparel',
+        unique_id: '@beautyskincareshopintel',
         image_url: `https://picsum.photos/150/150?random=${index + 300}`,
         categories: [
           {
             category: {
-              name: 'Fashion & Apparel',
+              name: 'Beauty & Skincare',
             },
           },
         ],

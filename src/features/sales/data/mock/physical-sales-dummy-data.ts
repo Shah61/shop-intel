@@ -43,140 +43,129 @@ import {
   AnalyticsType 
 } from '../model/analytics-entity';
 
-// Clothing Product Names and Data
-const clothingProducts = [
+// Beauty Skincare ShopIntel — physical catalog (mock)
+const beautyProducts = [
   {
-    name: "Classic White T-Shirt",
-    description: "Premium cotton t-shirt with comfortable fit",
-    category: "T-Shirts",
-    basePrice: 24.99,
+    name: "Beauty Skincare ShopIntel — Hydrating Cloud Cleanser",
+    description: "Low-pH gel cleanser with ceramides for daily double cleansing",
+    category: "Cleansers",
+    basePrice: 22.99,
     images: ["https://picsum.photos/400/400?random=1"]
   },
   {
-    name: "Slim Fit Denim Jeans",
-    description: "Classic blue denim jeans with stretch fabric",
-    category: "Jeans",
-    basePrice: 79.99,
+    name: "Beauty Skincare ShopIntel — Niacinamide 10% Serum",
+    description: "Oil-control serum to refine pores and even tone",
+    category: "Serums",
+    basePrice: 34.99,
     images: ["https://picsum.photos/400/400?random=2"]
   },
   {
-    name: "Cotton Polo Shirt",
-    description: "Casual polo shirt perfect for everyday wear",
-    category: "Polo Shirts",
-    basePrice: 39.99,
+    name: "Beauty Skincare ShopIntel — Daily UV Defense SPF 50",
+    description: "Invisible fluid sunscreen, PA++++, no white cast",
+    category: "Sun Care",
+    basePrice: 29.99,
     images: ["https://picsum.photos/400/400?random=3"]
   },
   {
-    name: "Leather Jacket",
-    description: "Genuine leather jacket with classic design",
-    category: "Jackets",
-    basePrice: 199.99,
+    name: "Beauty Skincare ShopIntel — Retinol Night Renewal Cream",
+    description: "Encapsulated retinol with squalane for overnight renewal",
+    category: "Treatments",
+    basePrice: 48.99,
     images: ["https://picsum.photos/400/400?random=4"]
   },
   {
-    name: "Hooded Sweatshirt",
-    description: "Comfortable hoodie with front pocket",
-    category: "Hoodies",
-    basePrice: 49.99,
+    name: "Beauty Skincare ShopIntel — Ceramide Barrier Cream",
+    description: "Rich moisturizer to repair dry, sensitized skin",
+    category: "Moisturizers",
+    basePrice: 39.99,
     images: ["https://picsum.photos/400/400?random=5"]
   },
   {
-    name: "Chino Pants",
-    description: "Versatile chino pants for casual and smart casual",
-    category: "Pants",
-    basePrice: 59.99,
+    name: "Beauty Skincare ShopIntel — HA Rose Toner",
+    description: "Hydrating essence-toner with hyaluronic acid",
+    category: "Toners",
+    basePrice: 24.99,
     images: ["https://picsum.photos/400/400?random=6"]
   },
   {
-    name: "Button-Down Dress Shirt",
-    description: "Formal dress shirt for business and occasions",
-    category: "Dress Shirts",
-    basePrice: 44.99,
+    name: "Beauty Skincare ShopIntel — Vitamin C Glow Essence",
+    description: "15% ethyl ascorbic acid for bright, glass skin",
+    category: "Essences",
+    basePrice: 42.99,
     images: ["https://picsum.photos/400/400?random=7"]
   },
   {
-    name: "Cargo Shorts",
-    description: "Practical cargo shorts with multiple pockets",
-    category: "Shorts",
-    basePrice: 34.99,
+    name: "Beauty Skincare ShopIntel — Overnight Lip Recovery Balm",
+    description: "Peptide and shea overnight lip mask",
+    category: "Lip Care",
+    basePrice: 16.99,
     images: ["https://picsum.photos/400/400?random=8"]
   },
   {
-    name: "Winter Coat",
-    description: "Warm winter coat with insulated lining",
-    category: "Coats",
-    basePrice: 149.99,
+    name: "Beauty Skincare ShopIntel — Rice Milk Body Lotion",
+    description: "Lightweight body lotion with rice ferment",
+    category: "Body Care",
+    basePrice: 27.99,
     images: ["https://picsum.photos/400/400?random=9"]
   },
   {
-    name: "Blazer",
-    description: "Classic blazer for professional and formal wear",
-    category: "Blazers",
-    basePrice: 129.99,
+    name: "Beauty Skincare ShopIntel — Peptide Eye Revive Cream",
+    description: "Caffeine and peptides for puffiness and fine lines",
+    category: "Eye Care",
+    basePrice: 36.99,
     images: ["https://picsum.photos/400/400?random=10"]
   }
 ];
 
-// Clothing Variants/SKUs
-const clothingVariants = [
-  // Classic White T-Shirt variants
-  { productIndex: 0, sku: "TS-WH-S", name: "White T-Shirt - Small", size: "S", price: 24.99, quantity: 150 },
-  { productIndex: 0, sku: "TS-WH-M", name: "White T-Shirt - Medium", size: "M", price: 24.99, quantity: 200 },
-  { productIndex: 0, sku: "TS-WH-L", name: "White T-Shirt - Large", size: "L", price: 24.99, quantity: 180 },
-  { productIndex: 0, sku: "TS-WH-XL", name: "White T-Shirt - XL", size: "XL", price: 26.99, quantity: 120 },
-  
-  // Denim Jeans
-  { productIndex: 1, sku: "JN-BL-30", name: "Blue Jeans - 30", size: "30", price: 79.99, quantity: 45 },
-  { productIndex: 1, sku: "JN-BL-32", name: "Blue Jeans - 32", size: "32", price: 79.99, quantity: 60 },
-  { productIndex: 1, sku: "JN-BL-34", name: "Blue Jeans - 34", size: "34", price: 79.99, quantity: 55 },
-  { productIndex: 1, sku: "JN-BL-36", name: "Blue Jeans - 36", size: "36", price: 79.99, quantity: 40 },
-  
-  // Cotton Polo Shirt
-  { productIndex: 2, sku: "PL-BL-M", name: "Blue Polo - Medium", size: "M", price: 39.99, quantity: 85 },
-  { productIndex: 2, sku: "PL-BL-L", name: "Blue Polo - Large", size: "L", price: 39.99, quantity: 90 },
-  { productIndex: 2, sku: "PL-NV-M", name: "Navy Polo - Medium", size: "M", price: 39.99, quantity: 75 },
-  { productIndex: 2, sku: "PL-NV-L", name: "Navy Polo - Large", size: "L", price: 39.99, quantity: 80 },
-  
-  // Leather Jacket
-  { productIndex: 3, sku: "LJ-BK-M", name: "Black Leather - Medium", size: "M", price: 199.99, quantity: 25 },
-  { productIndex: 3, sku: "LJ-BK-L", name: "Black Leather - Large", size: "L", price: 199.99, quantity: 30 },
-  { productIndex: 3, sku: "LJ-BK-XL", name: "Black Leather - XL", size: "XL", price: 199.99, quantity: 20 },
-  
-  // Hooded Sweatshirt
-  { productIndex: 4, sku: "HD-GY-M", name: "Gray Hoodie - Medium", size: "M", price: 49.99, quantity: 95 },
-  { productIndex: 4, sku: "HD-GY-L", name: "Gray Hoodie - Large", size: "L", price: 49.99, quantity: 110 },
-  { productIndex: 4, sku: "HD-BK-M", name: "Black Hoodie - Medium", size: "M", price: 49.99, quantity: 85 },
-  { productIndex: 4, sku: "HD-BK-L", name: "Black Hoodie - Large", size: "L", price: 49.99, quantity: 100 },
-  
-  // Chino Pants
-  { productIndex: 5, sku: "CH-KH-32", name: "Khaki Chinos - 32", size: "32", price: 59.99, quantity: 70 },
-  { productIndex: 5, sku: "CH-KH-34", name: "Khaki Chinos - 34", size: "34", price: 59.99, quantity: 65 },
-  { productIndex: 5, sku: "CH-NV-32", name: "Navy Chinos - 32", size: "32", price: 59.99, quantity: 60 },
-  { productIndex: 5, sku: "CH-NV-34", name: "Navy Chinos - 34", size: "34", price: 59.99, quantity: 55 },
-  
-  // Dress Shirt
-  { productIndex: 6, sku: "DS-WH-15", name: "White Dress Shirt - 15", size: "15", price: 44.99, quantity: 50 },
-  { productIndex: 6, sku: "DS-WH-16", name: "White Dress Shirt - 16", size: "16", price: 44.99, quantity: 55 },
-  { productIndex: 6, sku: "DS-BL-15", name: "Blue Dress Shirt - 15", size: "15", price: 44.99, quantity: 45 },
-  { productIndex: 6, sku: "DS-BL-16", name: "Blue Dress Shirt - 16", size: "16", price: 44.99, quantity: 50 },
-  
-  // Cargo Shorts
-  { productIndex: 7, sku: "CS-KH-32", name: "Khaki Cargo - 32", size: "32", price: 34.99, quantity: 80 },
-  { productIndex: 7, sku: "CS-KH-34", name: "Khaki Cargo - 34", size: "34", price: 34.99, quantity: 75 },
-  { productIndex: 7, sku: "CS-BL-32", name: "Black Cargo - 32", size: "32", price: 34.99, quantity: 70 },
-  { productIndex: 7, sku: "CS-BL-34", name: "Black Cargo - 34", size: "34", price: 34.99, quantity: 65 },
-  
-  // Winter Coat
-  { productIndex: 8, sku: "WC-BK-M", name: "Black Winter Coat - Medium", size: "M", price: 149.99, quantity: 35 },
-  { productIndex: 8, sku: "WC-BK-L", name: "Black Winter Coat - Large", size: "L", price: 149.99, quantity: 40 },
-  { productIndex: 8, sku: "WC-NV-M", name: "Navy Winter Coat - Medium", size: "M", price: 149.99, quantity: 30 },
-  { productIndex: 8, sku: "WC-NV-L", name: "Navy Winter Coat - Large", size: "L", price: 149.99, quantity: 35 },
-  
-  // Blazer
-  { productIndex: 9, sku: "BZ-NV-40", name: "Navy Blazer - 40", size: "40", price: 129.99, quantity: 40 },
-  { productIndex: 9, sku: "BZ-NV-42", name: "Navy Blazer - 42", size: "42", price: 129.99, quantity: 45 },
-  { productIndex: 9, sku: "BZ-BK-40", name: "Black Blazer - 40", size: "40", price: 129.99, quantity: 35 },
-  { productIndex: 9, sku: "BZ-BK-42", name: "Black Blazer - 42", size: "42", price: 129.99, quantity: 40 }
+const beautyVariants = [
+  { productIndex: 0, sku: "BSI-CLN-150ML", name: "Cloud Cleanser — 150ml", size: "150ml", price: 22.99, quantity: 220 },
+  { productIndex: 0, sku: "BSI-CLN-400ML", name: "Cloud Cleanser — 400ml", size: "400ml", price: 44.99, quantity: 140 },
+  { productIndex: 0, sku: "BSI-CLN-TRVL", name: "Cloud Cleanser — Travel 30ml", size: "30ml", price: 9.99, quantity: 310 },
+  { productIndex: 0, sku: "BSI-CLN-DUO", name: "Cloud Cleanser — Duo refill", size: "2×150ml", price: 39.99, quantity: 95 },
+
+  { productIndex: 1, sku: "BSI-NIA-30ML", name: "Niacinamide Serum — 30ml", size: "30ml", price: 34.99, quantity: 180 },
+  { productIndex: 1, sku: "BSI-NIA-50ML", name: "Niacinamide Serum — 50ml", size: "50ml", price: 48.99, quantity: 120 },
+  { productIndex: 1, sku: "BSI-NIA-15ML", name: "Niacinamide Serum — Mini 15ml", size: "15ml", price: 18.99, quantity: 200 },
+  { productIndex: 1, sku: "BSI-NIA-DUO", name: "Niacinamide Serum — Twin pack", size: "2×30ml", price: 62.99, quantity: 75 },
+
+  { productIndex: 2, sku: "BSI-SPF-30ML", name: "UV Defense SPF 50 — 30ml", size: "30ml", price: 29.99, quantity: 260 },
+  { productIndex: 2, sku: "BSI-SPF-50ML", name: "UV Defense SPF 50 — 50ml", size: "50ml", price: 39.99, quantity: 190 },
+  { productIndex: 2, sku: "BSI-SPF-STK", name: "UV Defense — Stick SPF 50", size: "15g", price: 22.99, quantity: 150 },
+  { productIndex: 2, sku: "BSI-SPF-KIDS", name: "UV Defense — Mineral family 100ml", size: "100ml", price: 34.99, quantity: 88 },
+
+  { productIndex: 3, sku: "BSI-RTN-30ML", name: "Retinol Night Cream — 30ml", size: "30ml", price: 48.99, quantity: 110 },
+  { productIndex: 3, sku: "BSI-RTN-50ML", name: "Retinol Night Cream — 50ml", size: "50ml", price: 64.99, quantity: 72 },
+  { productIndex: 3, sku: "BSI-RTN-15ML", name: "Retinol Night Cream — Starter 15ml", size: "15ml", price: 26.99, quantity: 95 },
+
+  { productIndex: 4, sku: "BSI-CER-50ML", name: "Ceramide Barrier Cream — 50ml", size: "50ml", price: 39.99, quantity: 165 },
+  { productIndex: 4, sku: "BSI-CER-100ML", name: "Ceramide Barrier Cream — 100ml", size: "100ml", price: 58.99, quantity: 98 },
+  { productIndex: 4, sku: "BSI-CER-RICH", name: "Ceramide Barrier — Rich 50ml", size: "50ml", price: 44.99, quantity: 82 },
+  { productIndex: 4, sku: "BSI-CER-LITE", name: "Ceramide Barrier — Gel-Cream 50ml", size: "50ml", price: 39.99, quantity: 104 },
+
+  { productIndex: 5, sku: "BSI-TON-200ML", name: "HA Rose Toner — 200ml", size: "200ml", price: 24.99, quantity: 175 },
+  { productIndex: 5, sku: "BSI-TON-400ML", name: "HA Rose Toner — Jumbo 400ml", size: "400ml", price: 36.99, quantity: 92 },
+  { productIndex: 5, sku: "BSI-TON-MST", name: "HA Rose — Fine mist 120ml", size: "120ml", price: 19.99, quantity: 130 },
+  { productIndex: 5, sku: "BSI-TON-PAD", name: "HA Rose — Toner pads 60ct", size: "60 pads", price: 21.99, quantity: 118 },
+
+  { productIndex: 6, sku: "BSI-VCE-30ML", name: "Vitamin C Essence — 30ml", size: "30ml", price: 42.99, quantity: 142 },
+  { productIndex: 6, sku: "BSI-VCE-50ML", name: "Vitamin C Essence — 50ml", size: "50ml", price: 58.99, quantity: 86 },
+  { productIndex: 6, sku: "BSI-VCE-15ML", name: "Vitamin C Essence — Mini 15ml", size: "15ml", price: 22.99, quantity: 155 },
+  { productIndex: 6, sku: "BSI-VCE-REF", name: "Vitamin C Essence — Refill 30ml", size: "30ml", price: 36.99, quantity: 64 },
+
+  { productIndex: 7, sku: "BSI-LIP-10G", name: "Lip Recovery Balm — 10g", size: "10g", price: 16.99, quantity: 240 },
+  { productIndex: 7, sku: "BSI-LIP-20G", name: "Lip Recovery Balm — Jumbo 20g", size: "20g", price: 24.99, quantity: 140 },
+  { productIndex: 7, sku: "BSI-LIP-TINT", name: "Lip Balm — Sheer rose tint", size: "10g", price: 17.99, quantity: 190 },
+  { productIndex: 7, sku: "BSI-LIP-TRIO", name: "Lip Balm — Trio gift set", size: "3×10g", price: 42.99, quantity: 55 },
+
+  { productIndex: 8, sku: "BSI-BDY-250ML", name: "Rice Milk Body Lotion — 250ml", size: "250ml", price: 27.99, quantity: 128 },
+  { productIndex: 8, sku: "BSI-BDY-500ML", name: "Rice Milk Body Lotion — 500ml", size: "500ml", price: 42.99, quantity: 76 },
+  { productIndex: 8, sku: "BSI-BDY-OIL", name: "Rice Milk — Dry body oil 100ml", size: "100ml", price: 31.99, quantity: 62 },
+  { productIndex: 8, sku: "BSI-BDY-WASH", name: "Rice Milk — Cream wash 400ml", size: "400ml", price: 26.99, quantity: 94 },
+
+  { productIndex: 9, sku: "BSI-EYE-15ML", name: "Peptide Eye Cream — 15ml", size: "15ml", price: 36.99, quantity: 118 },
+  { productIndex: 9, sku: "BSI-EYE-30ML", name: "Peptide Eye Cream — 30ml", size: "30ml", price: 54.99, quantity: 68 },
+  { productIndex: 9, sku: "BSI-EYE-ROLL", name: "Peptide Eye — Cooling roller 12ml", size: "12ml", price: 32.99, quantity: 102 },
+  { productIndex: 9, sku: "BSI-EYE-DUO", name: "Peptide Eye — Day & night duo", size: "2×12ml", price: 58.99, quantity: 44 }
 ];
 
 // Generate dates
@@ -240,8 +229,8 @@ const mockCustomers: CustomerEntity[] = [
 ];
 
 // Generate Mock Products with Variants
-export const mockProducts: ProductEntity[] = clothingProducts.map((product, index) => {
-  const productVariants = clothingVariants
+export const mockProducts: ProductEntity[] = beautyProducts.map((product, index) => {
+  const productVariants = beautyVariants
     .filter(variant => variant.productIndex === index)
     .map((variant, variantIndex) => ({
       id: `var_${index}_${variantIndex}`,
@@ -274,8 +263,8 @@ export const mockCategories: Category[] = [
   {
     id: "cat_1",
     country_id: "US",
-    name: "T-Shirts",
-    description: "Premium t-shirts and casual tops",
+    name: "Cleansers & Lip Care",
+    description: "Daily cleansing and targeted lip repair",
     is_active: true,
     launch_date: "2024-01-01",
     end_date: null,
@@ -299,7 +288,7 @@ export const mockCategories: Category[] = [
         updated_at: new Date().toISOString()
       }
     ],
-    variants: clothingVariants.filter(v => [0, 7].includes(v.productIndex)).map((variant, idx) => ({
+    variants: beautyVariants.filter(v => [0, 7].includes(v.productIndex)).map((variant, idx) => ({
       id: `var_cat1_${idx}`,
       sku_name: variant.name,
       price: variant.price,
@@ -307,16 +296,16 @@ export const mockCategories: Category[] = [
       updated_at: new Date().toISOString(),
       product: {
         id: `prod_${variant.productIndex + 1}`,
-        name: clothingProducts[variant.productIndex].name,
-        description: clothingProducts[variant.productIndex].description
+        name: beautyProducts[variant.productIndex].name,
+        description: beautyProducts[variant.productIndex].description
       }
     }))
   },
   {
     id: "cat_2",
     country_id: "US",
-    name: "Jeans",
-    description: "Premium denim jeans and pants",
+    name: "Serums & Sun Care",
+    description: "Actives and photoprotection for every skin type",
     is_active: true,
     launch_date: "2024-01-15",
     end_date: null,
@@ -332,7 +321,7 @@ export const mockCategories: Category[] = [
         updated_at: new Date().toISOString()
       }
     ],
-    variants: clothingVariants.filter(v => [1, 2].includes(v.productIndex)).slice(0, 3).map((variant, idx) => ({
+    variants: beautyVariants.filter(v => [1, 2].includes(v.productIndex)).slice(0, 3).map((variant, idx) => ({
       id: `var_cat2_${idx}`,
       sku_name: variant.name,
       price: variant.price,
@@ -340,16 +329,16 @@ export const mockCategories: Category[] = [
       updated_at: new Date().toISOString(),
       product: {
         id: `prod_${variant.productIndex + 1}`,
-        name: clothingProducts[variant.productIndex].name,
-        description: clothingProducts[variant.productIndex].description
+        name: beautyProducts[variant.productIndex].name,
+        description: beautyProducts[variant.productIndex].description
       }
     }))
   },
   {
     id: "cat_3",
     country_id: "US",
-    name: "Jackets & Outerwear",
-    description: "Premium jackets and outerwear for all seasons",
+    name: "Essences, Body & Eye",
+    description: "Brightening essences plus body and eye treatments",
     is_active: true,
     launch_date: "2024-02-01",
     end_date: null,
@@ -373,7 +362,7 @@ export const mockCategories: Category[] = [
         updated_at: new Date().toISOString()
       }
     ],
-    variants: clothingVariants.filter(v => [6, 8, 9].includes(v.productIndex)).slice(0, 4).map((variant, idx) => ({
+    variants: beautyVariants.filter(v => [6, 8, 9].includes(v.productIndex)).slice(0, 4).map((variant, idx) => ({
       id: `var_cat3_${idx}`,
       sku_name: variant.name,
       price: variant.price,
@@ -381,23 +370,23 @@ export const mockCategories: Category[] = [
       updated_at: new Date().toISOString(),
       product: {
         id: `prod_${variant.productIndex + 1}`,
-        name: clothingProducts[variant.productIndex].name,
-        description: clothingProducts[variant.productIndex].description
+        name: beautyProducts[variant.productIndex].name,
+        description: beautyProducts[variant.productIndex].description
       }
     }))
   },
   {
     id: "cat_4",
     country_id: "US",
-    name: "Hoodies & Sweaters",
-    description: "Comfortable hoodies and warm sweaters for all seasons",
+    name: "Treatments & Moisturizers",
+    description: "Retinoids, barrier creams, and overnight repair",
     is_active: true,
     launch_date: "2024-02-15",
     end_date: null,
     created_at: "2024-02-15T00:00:00Z",
     updated_at: new Date().toISOString(),
     users: [],
-    variants: clothingVariants.filter(v => [3, 4].includes(v.productIndex)).map((variant, idx) => ({
+    variants: beautyVariants.filter(v => [3, 4].includes(v.productIndex)).map((variant, idx) => ({
       id: `var_cat4_${idx}`,
       sku_name: variant.name,
       price: variant.price,
@@ -405,16 +394,16 @@ export const mockCategories: Category[] = [
       updated_at: new Date().toISOString(),
       product: {
         id: `prod_${variant.productIndex + 1}`,
-        name: clothingProducts[variant.productIndex].name,
-        description: clothingProducts[variant.productIndex].description
+        name: beautyProducts[variant.productIndex].name,
+        description: beautyProducts[variant.productIndex].description
       }
     }))
   },
   {
     id: "cat_5",
     country_id: "US",
-    name: "Accessories",
-    description: "Fashion accessories and complementary clothing items",
+    name: "Toners & Prep",
+    description: "Hydrating toners, mists, and first-step prep",
     is_active: false,
     launch_date: "2024-03-01",
     end_date: "2024-12-31",
@@ -430,7 +419,7 @@ export const mockCategories: Category[] = [
         updated_at: new Date().toISOString()
       }
     ],
-    variants: clothingVariants.filter(v => [5].includes(v.productIndex)).map((variant, idx) => ({
+    variants: beautyVariants.filter(v => [5].includes(v.productIndex)).map((variant, idx) => ({
       id: `var_cat5_${idx}`,
       sku_name: variant.name,
       price: variant.price,
@@ -438,8 +427,8 @@ export const mockCategories: Category[] = [
       updated_at: new Date().toISOString(),
       product: {
         id: `prod_${variant.productIndex + 1}`,
-        name: clothingProducts[variant.productIndex].name,
-        description: clothingProducts[variant.productIndex].description
+        name: beautyProducts[variant.productIndex].name,
+        description: beautyProducts[variant.productIndex].description
       }
     }))
   }
@@ -449,55 +438,55 @@ export const mockCategories: Category[] = [
 export const mockCollections: CollectionEntity[] = [
   {
     id: "col_1",
-    name: "Premium T-Shirt Collection",
-    description: "Our finest t-shirt selections for everyday comfort",
+    name: "Glow Essentials",
+    description: "Cleanser-led routines for glass-skin mornings",
     is_active: true,
-    handle: "premium-tshirt-collection",
+    handle: "glow-essentials",
     created_at: "2024-01-01T00:00:00Z",
     updated_at: new Date().toISOString()
   },
   {
     id: "col_2",
-    name: "Denim Collection",
-    description: "Best-selling jeans and denim products loved by everyone",
+    name: "Barrier Repair Heroes",
+    description: "Ceramides, niacinamide, and SPF staples",
     is_active: true,
-    handle: "denim-collection",
+    handle: "barrier-repair-heroes",
     created_at: "2024-01-15T00:00:00Z",
     updated_at: new Date().toISOString()
   },
   {
     id: "col_3",
-    name: "Formal Wear Collection",
-    description: "Professional and formal clothing perfect for special occasions",
+    name: "Clinical Actives",
+    description: "Retinol, vitamin C, and peptide-powered treatments",
     is_active: true,
-    handle: "formal-wear-collection",
+    handle: "clinical-actives",
     created_at: "2024-02-01T00:00:00Z",
     updated_at: new Date().toISOString()
   },
   {
     id: "col_4",
-    name: "Casual Wear",
-    description: "Comfortable and stylish casual clothing for everyday wear",
+    name: "Everyday Ritual",
+    description: "Simple AM/PM steps for consistent results",
     is_active: true,
-    handle: "casual-wear",
+    handle: "everyday-ritual",
     created_at: "2024-02-15T00:00:00Z",
     updated_at: new Date().toISOString()
   },
   {
     id: "col_5",
-    name: "Seasonal Specials",
-    description: "Limited time seasonal clothing offerings",
+    name: "Seasonal Glow",
+    description: "Limited drops for humid season and travel",
     is_active: false,
-    handle: "seasonal-specials",
+    handle: "seasonal-glow",
     created_at: "2024-03-01T00:00:00Z",
     updated_at: new Date().toISOString()
   },
   {
     id: "col_6",
-    name: "Premium Jackets",
-    description: "Exclusive premium jacket collection",
+    name: "Body & Eye Studio",
+    description: "Body lotions and peptide eye care",
     is_active: true,
-    handle: "premium-jackets",
+    handle: "body-eye-studio",
     created_at: "2024-03-15T00:00:00Z",
     updated_at: new Date().toISOString()
   }
@@ -520,8 +509,8 @@ export const mockDiscounts: DiscountEntity[] = [
     created_at: "2024-01-01T00:00:00Z",
     updated_at: new Date().toISOString(),
     collection_discounts: [
-      { collection: { id: "col_1", name: "Premium T-Shirt Collection" } },
-      { collection: { id: "col_2", name: "Denim Collection" } }
+      { collection: { id: "col_1", name: "Glow Essentials" } },
+      { collection: { id: "col_2", name: "Barrier Repair Heroes" } }
     ],
     customer_medusa_discounts: [
       {
@@ -550,7 +539,7 @@ export const mockDiscounts: DiscountEntity[] = [
     created_at: "2024-01-15T00:00:00Z",
     updated_at: new Date().toISOString(),
     collection_discounts: [
-      { collection: { id: "col_3", name: "Formal Wear Collection" } }
+      { collection: { id: "col_3", name: "Clinical Actives" } }
     ],
     customer_medusa_discounts: []
   },
@@ -586,8 +575,8 @@ export const mockDiscounts: DiscountEntity[] = [
     created_at: "2024-05-15T00:00:00Z",
     updated_at: new Date().toISOString(),
     collection_discounts: [
-      { collection: { id: "col_4", name: "Casual Wear" } },
-      { collection: { id: "col_6", name: "Premium Jackets" } }
+      { collection: { id: "col_4", name: "Everyday Ritual" } },
+      { collection: { id: "col_6", name: "Body & Eye Studio" } }
     ],
     customer_medusa_discounts: [
       {
@@ -621,7 +610,7 @@ export const mockOrders: OrderEntity[] = Array.from({ length: 50 }, (_, index) =
   let totalAmount = 0;
 
   for (let i = 0; i < itemCount; i++) {
-    const variant = clothingVariants[Math.floor(Math.random() * clothingVariants.length)];
+    const variant = beautyVariants[Math.floor(Math.random() * beautyVariants.length)];
     const quantity = Math.floor(Math.random() * 3) + 1;
     const unitPrice = variant.price;
     const totalPrice = unitPrice * quantity;
@@ -634,7 +623,7 @@ export const mockOrders: OrderEntity[] = Array.from({ length: 50 }, (_, index) =
       total_price: totalPrice,
       order_id: `order_${index + 1}`,
       product_id: `prod_${variant.productIndex + 1}`,
-      variant_id: `var_${variant.productIndex}_${clothingVariants.filter(v => v.productIndex === variant.productIndex).findIndex(v => v.sku === variant.sku)}`,
+      variant_id: `var_${variant.productIndex}_${beautyVariants.filter(v => v.productIndex === variant.productIndex).findIndex(v => v.sku === variant.sku)}`,
       created_at: orderDate.toISOString(),
       updated_at: orderDate.toISOString(),
       product: mockProducts[variant.productIndex],
@@ -662,7 +651,7 @@ export const mockOrders: OrderEntity[] = Array.from({ length: 50 }, (_, index) =
 // Mock Physical Overview Data
 export const mockPhysicalOverview: PhysicalOverviewEntity = {
   total_products: mockProducts.length,
-  top_selling_products: "Classic White T-Shirt",
+  top_selling_products: "Beauty Skincare ShopIntel — Hydrating Cloud Cleanser",
   recent_products: mockProducts.slice(0, 5),
   total_orders: mockOrders.length,
   total_sales: mockOrders.reduce((sum, order) => sum + (order.total_amount || 0), 0)
@@ -679,7 +668,7 @@ export const mockPhysicalConversions: PhysicalConversionEntity[] = generateDateR
 }));
 
 // Mock SKU Analytics Data
-export const mockSKUAnalytics: AnalysisSKUEntity[] = clothingVariants.map((variant, index) => {
+export const mockSKUAnalytics: AnalysisSKUEntity[] = beautyVariants.map((variant, index) => {
   const revenue = Math.round((Math.random() * 5000 + 1000) * 100) / 100;
   const quantity = Math.floor(Math.random() * 100) + 20;
   
@@ -690,9 +679,9 @@ export const mockSKUAnalytics: AnalysisSKUEntity[] = clothingVariants.map((varia
     revenue,
     product_id: variant.productIndex + 1,
     variant_id: index + 1,
-    quantity_percentage: ((quantity / clothingVariants.reduce((sum, v) => sum + (Math.floor(Math.random() * 100) + 20), 0)) * 100).toFixed(2),
-    revenue_percentage: ((revenue / clothingVariants.reduce((sum, v) => sum + (Math.random() * 5000 + 1000), 0)) * 100).toFixed(2),
-    image: clothingProducts[variant.productIndex].images[0],
+    quantity_percentage: ((quantity / beautyVariants.reduce((sum, v) => sum + (Math.floor(Math.random() * 100) + 20), 0)) * 100).toFixed(2),
+    revenue_percentage: ((revenue / beautyVariants.reduce((sum, v) => sum + (Math.random() * 5000 + 1000), 0)) * 100).toFixed(2),
+    image: beautyProducts[variant.productIndex].images[0],
     variant_title: variant.name,
     type: AnalyticsType.PHYSICAL,
     created_at: new Date().toISOString()

@@ -8,38 +8,38 @@ import {
   TopContentsItem
 } from '../model/trend-model';
 
-// clothing-themed channel names and data
-const clothingChannels = [
-  { name: "FashionWorks", uniqueId: "@fashionworks", platform: "TIKTOK" as const },
-  { name: "StyleCravings", uniqueId: "@stylecravings", platform: "INSTAGRAM" as const },
-  { name: "Trend Temptations", uniqueId: "@trendtemptations", platform: "YOUTUBE" as const },
-  { name: "Wardrobe Dreams", uniqueId: "@wardrobedreams", platform: "TIKTOK" as const },
-  { name: "Fashion Paradise", uniqueId: "@fashionparadise", platform: "INSTAGRAM" as const },
-  { name: "Thread to Style", uniqueId: "@threadtostyle", platform: "YOUTUBE" as const },
-  { name: "Outfit Tales", uniqueId: "@outfittales", platform: "TIKTOK" as const },
-  { name: "Fabric Culture", uniqueId: "@fabricculture", platform: "INSTAGRAM" as const },
-  { name: "Classic Delights", uniqueId: "@classicdelights", platform: "YOUTUBE" as const },
-  { name: "Style & Magic", uniqueId: "@styleandmagic", platform: "TIKTOK" as const },
-  { name: "Design Secrets", uniqueId: "@designsecrets", platform: "INSTAGRAM" as const },
-  { name: "Premium Bliss", uniqueId: "@premiumbliss", platform: "YOUTUBE" as const },
-  { name: "Artisan Fashion Co", uniqueId: "@artisanfashion", platform: "TIKTOK" as const },
-  { name: "Fashion Therapy", uniqueId: "@fashiontherapy", platform: "INSTAGRAM" as const },
-  { name: "Style & Spice", uniqueId: "@styleandspice", platform: "YOUTUBE" as const },
-  { name: "Gourmet Garments", uniqueId: "@gourmetgarments", platform: "TIKTOK" as const },
-  { name: "Fashion Chronicles", uniqueId: "@fashionchronic", platform: "INSTAGRAM" as const },
-  { name: "Style Masterclass", uniqueId: "@stylemaster", platform: "YOUTUBE" as const },
-  { name: "Fashion Studio", uniqueId: "@fashionstudio", platform: "TIKTOK" as const },
-  { name: "Style Science", uniqueId: "@stylescience", platform: "INSTAGRAM" as const }
+// Beauty & skincare trend channels (mock)
+const beautyChannels = [
+  { name: "Glow Lab MY", uniqueId: "@glowlabmy", platform: "TIKTOK" as const },
+  { name: "Sephora Malaysia", uniqueId: "@sephoramalaysia", platform: "INSTAGRAM" as const },
+  { name: "Skincare Science MY", uniqueId: "@skincaresciencemy", platform: "YOUTUBE" as const },
+  { name: "Hermo Hauls", uniqueId: "@hermohauls", platform: "TIKTOK" as const },
+  { name: "Watsons Beauty", uniqueId: "@watsonsbeauty", platform: "INSTAGRAM" as const },
+  { name: "Derm Decoder", uniqueId: "@dermdecoder", platform: "YOUTUBE" as const },
+  { name: "K-Beauty KL", uniqueId: "@kbeautykl", platform: "TIKTOK" as const },
+  { name: "Laneige Malaysia", uniqueId: "@laneigemy", platform: "INSTAGRAM" as const },
+  { name: "The Ordinary Tips", uniqueId: "@theordinarytips", platform: "YOUTUBE" as const },
+  { name: "b.liv Official", uniqueId: "@blivskin", platform: "TIKTOK" as const },
+  { name: "Guardian Skin", uniqueId: "@guardianskin", platform: "INSTAGRAM" as const },
+  { name: "Innisfree MY", uniqueId: "@innisfreemalaysia", platform: "YOUTUBE" as const },
+  { name: "Beauty Skincare ShopIntel", uniqueId: "@beautyskincareshopintel", platform: "TIKTOK" as const },
+  { name: "CeraVe MY", uniqueId: "@ceravemy", platform: "INSTAGRAM" as const },
+  { name: "La Roche-Posay MY", uniqueId: "@larocheposaymy", platform: "YOUTUBE" as const },
+  { name: "Routine Check", uniqueId: "@routinecheckmy", platform: "TIKTOK" as const },
+  { name: "Sensitive Skin MY", uniqueId: "@sensitiveskinmy", platform: "INSTAGRAM" as const },
+  { name: "SPF Squad", uniqueId: "@spfsquad", platform: "YOUTUBE" as const },
+  { name: "Retinol Club", uniqueId: "@retinolclub", platform: "TIKTOK" as const },
+  { name: "Barrier Repair MY", uniqueId: "@barrierrepairmy", platform: "INSTAGRAM" as const }
 ];
 
 const regions = ["US", "UK", "CA", "AU", "DE", "FR", "IT", "ES", "BR", "MX"];
 
 const categories = [
-  { category: { name: "Food & Cooking" } },
+  { category: { name: "Beauty & Skincare" } },
   { category: { name: "Lifestyle" } },
   { category: { name: "Education" } },
-  { category: { name: "Entertainment" } },
-  { category: { name: "Business" } }
+  { category: { name: "Health & Wellness" } },
+  { category: { name: "Reviews" } }
 ];
 
 // Generate random numbers with realistic distributions
@@ -62,7 +62,7 @@ const generateMetrics = (baseViews: number) => {
 export const mockTopChannelsData: ChannelsResponse = {
   message: "Top channels retrieved successfully",
   data: {
-    channels: clothingChannels.map((channel, index) => {
+    channels: beautyChannels.map((channel, index) => {
       const baseViews = 10000000 - (index * 400000); // Decreasing views
       const metrics = generateMetrics(baseViews);
       
@@ -102,112 +102,111 @@ export const mockTopChannelsData: ChannelsResponse = {
   }
 };
 
-// clothing video titles and descriptions
-const clothingContent = [
+const beautyContent = [
   {
-    title: "Ultimate Denim Guide - Perfect Fit!",
-    description: "Learn how to find the most flattering denim that fits perfectly for days. Style secrets revealed!",
-    summarizerTitle: "Perfect Denim Fit Tutorial",
-    summarizerDescription: "Step-by-step guide to finding perfect denim with professional styling tips",
-    explanations: ["Understanding different cuts", "Fabric blend enhances comfort", "Proper sizing technique prevents fit issues"]
+    title: "Glass skin routine for tropical humidity",
+    description: "Layering essences and lightweight SPF without greasiness in KL-level heat.",
+    summarizerTitle: "Humid-climate glass skin",
+    summarizerDescription: "Product order and wait times for a dewy finish that lasts",
+    explanations: ["Humectants before occlusives", "Gel SPF over cream", "Blotting vs adding powder"]
   },
   {
-    title: "Styling Outfits Like a Pro",
-    description: "Master the art of outfit coordination for perfectly polished looks every time.",
-    summarizerTitle: "Professional Outfit Styling Guide", 
-    summarizerDescription: "Learn styling techniques used by professional fashion stylists",
-    explanations: ["Color coordination is crucial", "Layering method explained", "Testing for proper proportions"]
+    title: "Drugstore vs department store moisturizers",
+    description: "Blind test: CeraVe, La Roche-Posay, and luxury creams on dehydrated skin.",
+    summarizerTitle: "Moisturizer blind comparison",
+    summarizerDescription: "Texture, finish, and 8-hour hydration check",
+    explanations: ["Ceramide ratios", "Silicone feel", "Value per ml"]
   },
   {
-    title: "Italian Fashion Factory Tour",
-    description: "Take an exclusive behind-the-scenes look at how authentic Italian garments are made from fabric to finished product.",
-    summarizerTitle: "Italian Fashion Manufacturing Process",
-    summarizerDescription: "Documentary-style tour of traditional clothing making methods",
-    explanations: ["Fabric selection process", "Cutting and sewing techniques", "Traditional finishing methods"]
+    title: "Inside a K-beauty lab (Innisfree-style formulation)",
+    description: "How green tea extract and stabilizers become a shelf-stable serum.",
+    summarizerTitle: "K-beauty formulation tour",
+    summarizerDescription: "From raw botanicals to stability testing",
+    explanations: ["Extraction methods", "Preservative systems", "pH targets"]
   },
   {
-    title: "5-Minute Outfit Transformation",
-    description: "Need a quick style upgrade? This fast styling trick will transform your look in minutes!",
-    summarizerTitle: "Quick Style Transformation",
-    summarizerDescription: "Fast and easy outfit changes for instant style gratification",
-    explanations: ["No special items needed", "Perfect for any occasion", "Customizable accessories"]
+    title: "5-minute morning: cleanse, vitamin C, SPF",
+    description: "Fast routine for commuters who still want photoaging protection.",
+    summarizerTitle: "Quick AM protection stack",
+    summarizerDescription: "Minimum viable routine before sunscreen",
+    explanations: ["Vitamin C wait time", "SPF amount", "Reapplication hacks"]
   },
   {
-    title: "Cotton T-Shirts Benefits",
-    description: "Discover the science behind why cotton clothing is actually good for you. Breathability, comfort, and more!",
-    summarizerTitle: "Cotton Fabric Science",
-    summarizerDescription: "Evidence-based explanation of cotton clothing's benefits",
-    explanations: ["Natural fiber properties explained", "Comfort benefits", "Recommended for daily wear"]
+    title: "Niacinamide percentage: marketing vs evidence",
+    description: "Why 10% is not always better and how to pair with acids.",
+    summarizerTitle: "Niacinamide science breakdown",
+    summarizerDescription: "Studies, irritation, and compatible actives",
+    explanations: ["Sebum data", "Barrier support", "Contradictions with low pH"]
   },
   {
-    title: "Fashion Design Time-lapse",
-    description: "Watch master designer create stunning fashion pieces in this mesmerizing time-lapse video.",
-    summarizerTitle: "Fashion Design Creation Process",
-    summarizerDescription: "Artistic fashion design techniques and creative process",
-    explanations: ["Specialized tools required", "Pattern management", "Artistic vision execution"]
+    title: "Beauty Skincare ShopIntel — full routine try-on",
+    description: "30-day diary using the ShopIntel cleanser, serum, and barrier cream only.",
+    summarizerTitle: "ShopIntel routine diary",
+    summarizerDescription: "Honest texture notes and breakout tracking",
+    explanations: ["Purging vs reaction", "Texture changes", "Makeup compatibility"]
   },
   {
-    title: "DIY Custom T-Shirt Design",
-    description: "Make your own personalized t-shirt at home with just 5 simple steps!",
-    summarizerTitle: "DIY Custom Clothing Design",
-    summarizerDescription: "Simple method for creating custom clothing without special equipment",
-    explanations: ["Design transfer techniques", "Fabric paint options", "Care recommendations"]
+    title: "DIY not always cheaper: costing a dupe routine",
+    description: "Spreadsheet of The Ordinary stacks vs ready-made bundles from Hermo.",
+    summarizerTitle: "DIY skincare cost analysis",
+    summarizerDescription: "Shipping, oxidation waste, and time cost",
+    explanations: ["PAO dates", "Minimum orders", "Travel waste"]
   },
   {
-    title: "Fashion Quality Test Challenge",
-    description: "Can you tell the difference between $20 and $200 clothing? We put it to the test!",
-    summarizerTitle: "Premium vs Budget Fashion Comparison",
-    summarizerDescription: "Blind quality test comparing different price points of clothing",
-    explanations: ["Price doesn't always equal quality", "Fabric quality differences", "Consumer preferences vary"]
+    title: "Sunscreen under makeup that does not pill",
+    description: "Testing Asian fluid SPFs vs Western filters with foundation on top.",
+    summarizerTitle: "SPF + foundation compatibility",
+    summarizerDescription: "Film formers and rubbing technique",
+    explanations: ["Chemical vs mineral cast", "Primer order", "Setting spray impact"]
   },
   {
-    title: "Polo Shirt Styling Guide",
-    description: "Elegant styling tips combining classic polo shirts with modern accessories.",
-    summarizerTitle: "Polo Shirt Style Guide",
-    summarizerDescription: "Elegant styling perfect for special occasions",
-    explanations: ["Color coordination technique", "Balancing casual and formal", "Professional presentation tips"]
+    title: "Centella for redness: serum vs cream",
+    description: "Side-by-side on post-acne marks and barrier flare-ups.",
+    summarizerTitle: "Centella format comparison",
+    summarizerDescription: "When to choose watery vs rich vehicles",
+    explanations: ["Madecassoside %", "Occlusion needs", "Layering rules"]
   },
   {
-    title: "Fashion History Documentary",
-    description: "From ancient textiles to modern fashion - the fascinating history of clothing.",
-    summarizerTitle: "Cultural History of Fashion",
-    summarizerDescription: "Educational content about clothing's role in human civilization",
-    explanations: ["Ancient textile traditions", "Industrial trade impact", "Fashion revolution changes"]
+    title: "History of sunscreen in Southeast Asia",
+    description: "From beach zinc to PA++++ labels and Malaysian consumer habits.",
+    summarizerTitle: "SPF culture in SEA",
+    summarizerDescription: "Regulatory labels and shopping behavior",
+    explanations: ["PPD vs PA", "Drugstore penetration", "TikTok influence"]
   },
   {
-    title: "Sustainable Fashion Guide",
-    description: "Eco-friendly, ethical clothing that looks great - no one will know the difference!",
-    summarizerTitle: "Eco-Friendly Fashion Guide",
-    summarizerDescription: "Sustainable fashion techniques for traditional clothing styles",
-    explanations: ["Organic fabric options", "Ethical production alternatives", "Maintaining style without compromise"]
+    title: "Refill pods and less plastic: sustainable beauty haul",
+    description: "Watsons and Guardian refill stations vs online bulk refills.",
+    summarizerTitle: "Eco refill shopping MY",
+    summarizerDescription: "Cost and contamination considerations",
+    explanations: ["Refill hygiene", "Brand programs", "Carbon tradeoffs"]
   },
   {
-    title: "Fashion Psychology Science",
-    description: "Why do we love clothing so much? The science behind fashion's effect on our confidence.",
-    summarizerTitle: "Psychology of Fashion",
-    summarizerDescription: "Scientific explanation of fashion's impact on well-being",
-    explanations: ["Confidence boost mechanisms", "Emotional comfort associations", "Style and self-expression effects"]
+    title: "Why your skin hates air-con: barrier repair night",
+    description: "Peptides, ceramides, and occlusive last step for office workers.",
+    summarizerTitle: "AC-dehydration repair",
+    summarizerDescription: "Night stack when humidity drops indoors",
+    explanations: ["TEWL basics", "Humidifier optional", "Occlusive amount"]
   },
   {
-    title: "Street Style Around the World",
-    description: "Explore unique fashion traditions from Tokyo to Paris and beyond!",
-    summarizerTitle: "Global Street Style Varieties",
-    summarizerDescription: "Cultural variations of fashion styles worldwide",
-    explanations: ["Style variations by region", "Traditional fashion methods", "Cultural significance"]
+    title: "Sephora haul: luxury serums worth it?",
+    description: "Four-figure routine vs mid-range dupes on the same concerns.",
+    summarizerTitle: "Luxury serum ROI",
+    summarizerDescription: "Ingredient overlap and packaging premium",
+    explanations: ["Peptide blends", "Fragrance load", "Sample strategy"]
   },
   {
-    title: "Fabric Care Science",
-    description: "The science behind keeping your clothes looking perfect - color preservation, fabric care, and more.",
-    summarizerTitle: "Fabric Care Science Explained",
-    summarizerDescription: "Technical breakdown of clothing care and maintenance",
-    explanations: ["Washing temperature effects", "Fabric type impact", "Detergent vs fabric softener roles"]
+    title: "Lip care ASMR: overnight masks compared",
+    description: "Laneige, local balms, and peptide treatments under a microscope.",
+    summarizerTitle: "Overnight lip mask test",
+    summarizerDescription: "Occlusion and flake reduction by morning",
+    explanations: ["Petrolatum role", "Plant oils", "Exfoliation timing"]
   },
   {
-    title: "Luxury Fashion Unboxing",
-    description: "Unboxing and reviewing the world's most expensive fashion collection - $2000 per piece!",
-    summarizerTitle: "Premium Fashion Product Review",
-    summarizerDescription: "Luxury fashion brand comparison and quality analysis",
-    explanations: ["Artisanal production methods", "Rare fabric varieties", "Packaging and presentation value"]
+    title: "Unboxing: Beauty Skincare ShopIntel travel kit",
+    description: "TSA-friendly minis and whether the kit beats buying à la carte.",
+    summarizerTitle: "ShopIntel travel kit review",
+    summarizerDescription: "Decant vs official mini pricing",
+    explanations: ["Stability in minis", "Airport humidity", "Routine gaps"]
   }
 ];
 
@@ -217,10 +216,10 @@ export const mockTrendingVideosData: TopContentsResponse = {
   data: {
     contents: {
       total: 15,
-      contents: clothingContent.slice(0, 15).map((content, index) => {
+      contents: beautyContent.slice(0, 15).map((content, index) => {
         const baseViews = 5000000 - (index * 200000);
         const metrics = generateMetrics(baseViews);
-        const channel = clothingChannels[index % clothingChannels.length];
+        const channel = beautyChannels[index % beautyChannels.length];
         
         return {
           id: `content_${index + 1}`,
@@ -258,12 +257,12 @@ export const mockTrendingVideosData: TopContentsResponse = {
           created_at: new Date(Date.now() - Math.random() * 30 * 24 * 60 * 60 * 1000).toISOString(),
           updated_at: new Date().toISOString(),
           channel: {
-            id: `channel_${(index % clothingChannels.length) + 1}`,
+            id: `channel_${(index % beautyChannels.length) + 1}`,
             name: channel.name,
             platform: channel.platform,
             region: regions[index % regions.length],
             unique_id: channel.uniqueId,
-            image_url: `https://picsum.photos/150/150?random=${(index % clothingChannels.length) + 1}`,
+            image_url: `https://picsum.photos/150/150?random=${(index % beautyChannels.length) + 1}`,
             categories: [categories[index % categories.length]]
           }
         } as TopContentsItem;
@@ -277,10 +276,10 @@ export const mockTrendingContentData: ContentResponse = {
   message: "Content retrieved successfully",
   status_code: 200,
   data: {
-    contents: clothingContent.map((content, index) => {
+    contents: beautyContent.map((content, index) => {
       const baseViews = 3000000 - (index * 150000);
       const metrics = generateMetrics(baseViews);
-      const channel = clothingChannels[index % clothingChannels.length];
+      const channel = beautyChannels[index % beautyChannels.length];
       
       return {
         id: `content_gen_${index + 1}`,
@@ -324,21 +323,21 @@ export const mockTrendingContentData: ContentResponse = {
         created_at: new Date(Date.now() - Math.random() * 30 * 24 * 60 * 60 * 1000).toISOString(),
         updated_at: new Date().toISOString(),
         channel: {
-          id: `channel_gen_${(index % clothingChannels.length) + 1}`,
+          id: `channel_gen_${(index % beautyChannels.length) + 1}`,
           name: channel.name,
           platform: channel.platform,
           region: regions[index % regions.length],
           unique_id: channel.uniqueId,
-          image_url: `https://picsum.photos/150/150?random=${(index % clothingChannels.length) + 1}`,
+          image_url: `https://picsum.photos/150/150?random=${(index % beautyChannels.length) + 1}`,
           categories: [categories[index % categories.length]]
         }
       } as ContentItem;
     }),
     metadata: {
-      total: clothingContent.length,
+      total: beautyContent.length,
       page: 1,
       limit: 20,
-      total_pages: Math.ceil(clothingContent.length / 20),
+      total_pages: Math.ceil(beautyContent.length / 20),
       has_next: false,
       has_previous: false
     }
@@ -348,68 +347,68 @@ export const mockTrendingContentData: ContentResponse = {
 // Trending topics data
 export const mockTrendingTopics = [
   {
-    topic: "Fashion Styling",
-    description: "Professional techniques for achieving perfect outfit coordination and style",
+    topic: "Glass skin routines",
+    description: "Layered hydration, essences, and SPF for a dewy finish in humid climates",
     trending_score: 95,
     mentions: 12500,
     growth_rate: 23.4,
-    related_keywords: ["styling", "fashion design", "professional", "technique"]
+    related_keywords: ["essence", "SPF", "humidity", "dewy"]
   },
   {
-    topic: "Fabric to Fashion",
-    description: "Artisanal clothing making from raw materials to finished products",
+    topic: "Barrier repair",
+    description: "Ceramides, panthenol, and gentle cleansers after over-exfoliation",
     trending_score: 89,
     mentions: 9800,
     growth_rate: 18.7,
-    related_keywords: ["artisanal", "craft fashion", "materials", "small batch"]
+    related_keywords: ["ceramide", "repair", "sensitive", "skin cycling"]
   },
   {
-    topic: "Sustainable Fashion",
-    description: "Eco-friendly clothing alternatives and ethical production methods",
+    topic: "Reef-safe & sustainable SPF",
+    description: "Refillable bottles, mineral filters, and Malaysian reef-conscious shoppers",
     trending_score: 87,
     mentions: 11200,
     growth_rate: 31.2,
-    related_keywords: ["sustainable", "eco-friendly", "ethical", "organic"]
+    related_keywords: ["reef safe", "refill", "mineral SPF", "eco"]
   },
   {
-    topic: "Fashion Design",
-    description: "Artistic clothing creations and creative fashion installations",
+    topic: "Retinol for beginners",
+    description: "Sandwich method, frequency, and pairing with moisturizers",
     trending_score: 82,
     mentions: 7600,
     growth_rate: 15.8,
-    related_keywords: ["art", "design", "creative", "fashion"]
+    related_keywords: ["retinol", "sandwich", "purge", "night routine"]
   },
   {
-    topic: "Premium Fashion",
-    description: "High-end clothing from specific regions and designers",
+    topic: "K-beauty in Malaysia",
+    description: "Innisfree, Laneige, and Shopee bundles shaping local preferences",
     trending_score: 78,
     mentions: 6900,
     growth_rate: 12.3,
-    related_keywords: ["premium", "luxury", "designer", "quality"]
+    related_keywords: ["K-beauty", "Shopee", "serum", "toner"]
   },
   {
-    topic: "Fashion Benefits",
-    description: "Scientific research on clothing's impact on confidence and well-being",
+    topic: "Dermocosmetic science",
+    description: "La Roche-Posay, CeraVe, and evidence-led claims in drugstore aisles",
     trending_score: 75,
     mentions: 8400,
     growth_rate: 9.6,
-    related_keywords: ["confidence", "well-being", "fashion psychology", "style"]
+    related_keywords: ["niacinamide", "dermatology", "drugstore", "clinical"]
   },
   {
-    topic: "Jackets",
-    description: "Versatile outerwear with natural style and comfort",
+    topic: "Hyperpigmentation care",
+    description: "Vitamin C, tranexamic acid, and sunscreen discipline for tropical sun",
     trending_score: 72,
     mentions: 5500,
     growth_rate: 28.9,
-    related_keywords: ["outerwear", "style", "comfort", "versatile"]
+    related_keywords: ["vitamin C", "dark spots", "PA++++", "brightening"]
   },
   {
-    topic: "Fashion Pairing",
-    description: "Outfit coordination and accessory pairings with different clothing types",
+    topic: "Ingredient stacking",
+    description: "Safe AM/PM sequencing for acids, retinoids, and hydrating layers",
     trending_score: 69,
     mentions: 4800,
     growth_rate: 7.2,
-    related_keywords: ["pairing", "coordination", "accessories", "styling"]
+    related_keywords: ["layering", "pH", "wait time", "conflicts"]
   }
 ];
 
@@ -418,7 +417,7 @@ export const mockSearchResults: SearchResponse = {
   message: "Search completed successfully",
   data: {
     contents: {
-      search_term: "clothing",
+      search_term: "skincare malaysia",
       total_results: {
         contents: 150,
         channels: 45

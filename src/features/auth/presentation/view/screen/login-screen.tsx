@@ -393,15 +393,15 @@ const LoginScreen = () => {
                         <span className="text-md font-bold">Shop-Intel</span>
                     </div>
                         <h2 className="text-3xl font-bold mb-5 leading-tight text-white">
-                            Fashion Intelligence Platform.
+                            Beauty & Skincare Intelligence Platform.
                         </h2>
                         
                         <p className="text-md text-white mb-8">
-                            Your complete command center for fashion retail. Seamlessly connect sales analytics, marketing campaigns, inventory tracking, and business intelligence in one powerful dashboard — empowering smarter decisions that drive growth.
+                            Your complete command center for beauty retail. Seamlessly connect sales analytics, marketing campaigns, inventory tracking, and business intelligence in one powerful dashboard — empowering smarter decisions that drive growth.
                         </p>
                         
                         <p className="text-md text-white mb-8">
-                            Unify every platform, every metric, every insight. Shop-Intel brings together your entire fashion business ecosystem, delivering real-time intelligence that turns data into competitive advantage.
+                            Unify every platform, every metric, every insight. Shop-Intel brings together your entire beauty business ecosystem, delivering real-time intelligence that turns data into competitive advantage.
                         </p>
                     </div>
 
@@ -448,7 +448,7 @@ const LoginScreen = () => {
                                 </div>
                                 <div>
                                     <h3 className="font-semibold mt-1 mb-0 text-white">Trend Insights</h3>
-                                    <p className="text-xs text-white/90 mt-1">Stay ahead of fashion trends</p>
+                                    <p className="text-xs text-white/90 mt-1">Stay ahead of beauty & skincare trends</p>
                                 </div>
                             </div>
 

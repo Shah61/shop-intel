@@ -72,7 +72,7 @@ const AnimNum: React.FC<{ value: number; format?: (v: number) => string }> = ({ 
 
 const ChartTip: React.FC<any> = ({ active, payload, label }) => {
   if (!active || !payload?.length) return null;
-  return (<div style={{ background: '#141c2b', border: '1px solid rgba(var(--preset-primary-rgb),.2)', borderRadius: 10, padding: '9px 13px', fontSize: 12, backdropFilter: 'blur(12px)', boxShadow: '0 8px 32px rgba(0,0,0,.4)' }}>
+  return (<div className="chart-tip" style={{ background: '#141c2b', border: '1px solid rgba(var(--preset-primary-rgb),.2)', borderRadius: 10, padding: '9px 13px', fontSize: 12, backdropFilter: 'blur(12px)', boxShadow: '0 8px 32px rgba(0,0,0,.4)' }}>
     {label && <div style={{ color: 'rgba(255,255,255,.4)', marginBottom: 5, fontSize: 11 }}>{label}</div>}
     {payload.map((p: any, i: number) => (<div key={i} style={{ display: 'flex', alignItems: 'center', gap: 7, color: 'rgba(255,255,255,.8)', marginBottom: 2 }}>
       <span style={{ width: 7, height: 7, borderRadius: '50%', background: p.color || p.fill, flexShrink: 0 }} />
@@ -653,7 +653,10 @@ const MarketingScreen = () => {
     @keyframes mk-spin{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
     .marketing-theme.light-mode{background:#f8fafc;color:#111827;}
     .marketing-theme.light-mode [style*="rgba(255,255,255"], .marketing-theme.light-mode [style*="rgba(255, 255, 255"]{
-      color:rgba(17,24,39,.86)!important;border-color:rgba(var(--preset-primary-rgb),.16)!important;background:rgba(255,255,255,.92)!important;
+      color:rgba(17,24,39,.86)!important;border-color:rgba(var(--preset-primary-rgb),.16)!important;
+    }
+    .marketing-theme.light-mode .chart-tip{
+      background:rgba(255,255,255,.98)!important;border:1px solid rgba(var(--preset-primary-rgb),.2)!important;box-shadow:0 8px 24px rgba(15,23,42,.12)!important;
     }
     .marketing-theme.light-mode .recharts-cartesian-grid line{stroke:rgba(148,163,184,.24)!important;}
     .marketing-theme.light-mode .recharts-text,.marketing-theme.light-mode .recharts-legend-item-text,.marketing-theme.light-mode svg text,.marketing-theme.light-mode svg tspan{fill:rgba(30,41,59,.82)!important;}

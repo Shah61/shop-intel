@@ -2,345 +2,125 @@ import {
   BubbleTopKeyword,
   BubbleTopKeywordsResponse,
   TopMention,
-  TopMentionChild,
-  PersonalBeautyTopMentionsResponse,
-  Content,
-  Channel
+  PersonalBeautyTopMentionsResponse
 } from '../model/ai-model';
 
-// clothing-themed bubble keywords hierarchy
-const clothingKeywordsHierarchy = [
+// Skincare & beauty bubble keywords (mock)
+const beautyKeywordsHierarchy = [
   {
-    id: "choc_1",
-    keyword: "clothing tempering",
+    id: "sk_1",
+    keyword: "skin barrier repair",
     count: 2450,
     total_mention: 12500,
     parent_id: null,
-    category: "Technique",
+    category: "Barrier",
     region: "Global",
     children: [
-      {
-        id: "choc_1_1",
-        keyword: "seeding method",
-        count: 890,
-        total_mention: 4200,
-        parent_id: "choc_1",
-        category: "Technique",
-        region: "Global",
-        children: []
-      },
-      {
-        id: "choc_1_2", 
-        keyword: "temperature control",
-        count: 1240,
-        total_mention: 5800,
-        parent_id: "choc_1",
-        category: "Technique",
-        region: "Global",
-        children: []
-      },
-      {
-        id: "choc_1_3",
-        keyword: "marble surface",
-        count: 320,
-        total_mention: 1500,
-        parent_id: "choc_1",
-        category: "Equipment",
-        region: "Global",
-        children: []
-      }
+      { id: "sk_1_1", keyword: "ceramide cream", count: 890, total_mention: 4200, parent_id: "sk_1", category: "Barrier", region: "Global", children: [] },
+      { id: "sk_1_2", keyword: "panthenol serum", count: 1240, total_mention: 5800, parent_id: "sk_1", category: "Barrier", region: "Global", children: [] },
+      { id: "sk_1_3", keyword: "squalane oil", count: 320, total_mention: 1500, parent_id: "sk_1", category: "Barrier", region: "Global", children: [] }
     ]
   },
   {
-    id: "choc_2",
-    keyword: "bean to bar",
+    id: "sk_2",
+    keyword: "double cleanse",
     count: 2100,
     total_mention: 11200,
     parent_id: null,
-    category: "Process",
-    region: "Global",
+    category: "Cleansing",
+    region: "SEA",
     children: [
-      {
-        id: "choc_2_1",
-        keyword: "cacao roasting",
-        count: 850,
-        total_mention: 4100,
-        parent_id: "choc_2",
-        category: "Process",
-        region: "Global",
-        children: []
-      },
-      {
-        id: "choc_2_2",
-        keyword: "conching process",
-        count: 680,
-        total_mention: 3200,
-        parent_id: "choc_2",
-        category: "Process",
-        region: "Global",
-        children: []
-      },
-      {
-        id: "choc_2_3",
-        keyword: "winnowing",
-        count: 570,
-        total_mention: 2800,
-        parent_id: "choc_2",
-        category: "Process",
-        region: "Global",
-        children: []
-      }
+      { id: "sk_2_1", keyword: "balm cleanser", count: 850, total_mention: 4100, parent_id: "sk_2", category: "Cleansing", region: "SEA", children: [] },
+      { id: "sk_2_2", keyword: "low pH gel", count: 680, total_mention: 3200, parent_id: "sk_2", category: "Cleansing", region: "SEA", children: [] },
+      { id: "sk_2_3", keyword: "micellar water", count: 570, total_mention: 2800, parent_id: "sk_2", category: "Cleansing", region: "SEA", children: [] }
     ]
   },
   {
-    id: "choc_3",
-    keyword: "artisan clothing",
+    id: "sk_3",
+    keyword: "glass skin routine",
     count: 1950,
     total_mention: 9800,
     parent_id: null,
-    category: "Quality",
+    category: "Glow",
     region: "Global",
     children: [
-      {
-        id: "choc_3_1",
-        keyword: "single origin",
-        count: 780,
-        total_mention: 3900,
-        parent_id: "choc_3",
-        category: "Quality",
-        region: "Global",
-        children: []
-      },
-      {
-        id: "choc_3_2",
-        keyword: "craft clothing",
-        count: 650,
-        total_mention: 3200,
-        parent_id: "choc_3",
-        category: "Quality", 
-        region: "Global",
-        children: []
-      },
-      {
-        id: "choc_3_3",
-        keyword: "small batch",
-        count: 520,
-        total_mention: 2700,
-        parent_id: "choc_3",
-        category: "Production",
-        region: "Global",
-        children: []
-      }
+      { id: "sk_3_1", keyword: "essence layering", count: 780, total_mention: 3900, parent_id: "sk_3", category: "Glow", region: "Global", children: [] },
+      { id: "sk_3_2", keyword: "humectant stack", count: 650, total_mention: 3200, parent_id: "sk_3", category: "Glow", region: "Global", children: [] },
+      { id: "sk_3_3", keyword: "dewy SPF", count: 520, total_mention: 2700, parent_id: "sk_3", category: "Glow", region: "Global", children: [] }
     ]
   },
   {
-    id: "choc_4",
-    keyword: "vegan clothing",
+    id: "sk_4",
+    keyword: "SPF malaysia",
     count: 1800,
     total_mention: 8900,
     parent_id: null,
-    category: "Diet",
-    region: "Global",
+    category: "Sun care",
+    region: "Malaysia",
     children: [
-      {
-        id: "choc_4_1",
-        keyword: "plant based",
-        count: 720,
-        total_mention: 3500,
-        parent_id: "choc_4",
-        category: "Diet",
-        region: "Global",
-        children: []
-      },
-      {
-        id: "choc_4_2",
-        keyword: "dairy free",
-        count: 680,
-        total_mention: 3200,
-        parent_id: "choc_4",
-        category: "Diet",
-        region: "Global",
-        children: []
-      },
-      {
-        id: "choc_4_3",
-        keyword: "coconut milk",
-        count: 400,
-        total_mention: 2200,
-        parent_id: "choc_4",
-        category: "Ingredient",
-        region: "Global",
-        children: []
-      }
+      { id: "sk_4_1", keyword: "PA++++ fluid", count: 720, total_mention: 3500, parent_id: "sk_4", category: "Sun care", region: "Malaysia", children: [] },
+      { id: "sk_4_2", keyword: "reef safe mineral", count: 680, total_mention: 3200, parent_id: "sk_4", category: "Sun care", region: "Malaysia", children: [] },
+      { id: "sk_4_3", keyword: "reapply hacks", count: 400, total_mention: 2200, parent_id: "sk_4", category: "Sun care", region: "Malaysia", children: [] }
     ]
   },
   {
-    id: "choc_5",
-    keyword: "clothing sculpture",
+    id: "sk_5",
+    keyword: "retinol beginner",
     count: 1650,
     total_mention: 7800,
     parent_id: null,
-    category: "Art",
+    category: "Actives",
     region: "Global",
     children: [
-      {
-        id: "choc_5_1",
-        keyword: "edible art",
-        count: 620,
-        total_mention: 3000,
-        parent_id: "choc_5",
-        category: "Art",
-        region: "Global",
-        children: []
-      },
-      {
-        id: "choc_5_2",
-        keyword: "modeling clothing",
-        count: 580,
-        total_mention: 2800,
-        parent_id: "choc_5",
-        category: "Technique",
-        region: "Global",
-        children: []
-      },
-      {
-        id: "choc_5_3",
-        keyword: "clothing carving",
-        count: 450,
-        total_mention: 2000,
-        parent_id: "choc_5",
-        category: "Technique",
-        region: "Global",
-        children: []
-      }
+      { id: "sk_5_1", keyword: "sandwich method", count: 620, total_mention: 3000, parent_id: "sk_5", category: "Actives", region: "Global", children: [] },
+      { id: "sk_5_2", keyword: "encapsulated retinol", count: 580, total_mention: 2800, parent_id: "sk_5", category: "Actives", region: "Global", children: [] },
+      { id: "sk_5_3", keyword: "purge vs breakout", count: 450, total_mention: 2000, parent_id: "sk_5", category: "Actives", region: "Global", children: [] }
     ]
   },
   {
-    id: "choc_6",
-    keyword: "dark clothing benefits",
+    id: "sk_6",
+    keyword: "vitamin C brightening",
     count: 1580,
     total_mention: 7400,
     parent_id: null,
-    category: "Health",
+    category: "Brightening",
     region: "Global",
     children: [
-      {
-        id: "choc_6_1",
-        keyword: "antioxidants",
-        count: 650,
-        total_mention: 3100,
-        parent_id: "choc_6",
-        category: "Health",
-        region: "Global",
-        children: []
-      },
-      {
-        id: "choc_6_2",
-        keyword: "flavonoids",
-        count: 520,
-        total_mention: 2500,
-        parent_id: "choc_6",
-        category: "Health",
-        region: "Global",
-        children: []
-      },
-      {
-        id: "choc_6_3",
-        keyword: "heart health",
-        count: 410,
-        total_mention: 1800,
-        parent_id: "choc_6",
-        category: "Health",
-        region: "Global",
-        children: []
-      }
+      { id: "sk_6_1", keyword: "ethyl ascorbic acid", count: 650, total_mention: 3100, parent_id: "sk_6", category: "Brightening", region: "Global", children: [] },
+      { id: "sk_6_2", keyword: "ferulic pairing", count: 520, total_mention: 2500, parent_id: "sk_6", category: "Brightening", region: "Global", children: [] },
+      { id: "sk_6_3", keyword: "oxidation storage", count: 410, total_mention: 1800, parent_id: "sk_6", category: "Brightening", region: "Global", children: [] }
     ]
   },
   {
-    id: "choc_7",
-    keyword: "ruby clothing",
+    id: "sk_7",
+    keyword: "niacinamide pores",
     count: 1420,
     total_mention: 6800,
     parent_id: null,
-    category: "Innovation",
+    category: "Texture",
     region: "Global",
     children: [
-      {
-        id: "choc_7_1",
-        keyword: "fourth clothing",
-        count: 580,
-        total_mention: 2800,
-        parent_id: "choc_7",
-        category: "Innovation",
-        region: "Global",
-        children: []
-      },
-      {
-        id: "choc_7_2",
-        keyword: "natural pink",
-        count: 520,
-        total_mention: 2400,
-        parent_id: "choc_7",
-        category: "Color",
-        region: "Global",
-        children: []
-      },
-      {
-        id: "choc_7_3",
-        keyword: "barry callebaut",
-        count: 320,
-        total_mention: 1600,
-        parent_id: "choc_7",
-        category: "Brand",
-        region: "Global",
-        children: []
-      }
+      { id: "sk_7_1", keyword: "10 percent serum", count: 580, total_mention: 2800, parent_id: "sk_7", category: "Texture", region: "Global", children: [] },
+      { id: "sk_7_2", keyword: "sebum control", count: 520, total_mention: 2400, parent_id: "sk_7", category: "Texture", region: "Global", children: [] },
+      { id: "sk_7_3", keyword: "with salicylic acid", count: 320, total_mention: 1600, parent_id: "sk_7", category: "Texture", region: "Global", children: [] }
     ]
   },
   {
-    id: "choc_8",
-    keyword: "clothing pairing",
+    id: "sk_8",
+    keyword: "K-beauty malaysia",
     count: 1350,
     total_mention: 6200,
     parent_id: null,
-    category: "Gastronomy",
-    region: "Global",
+    category: "Retail",
+    region: "Malaysia",
     children: [
-      {
-        id: "choc_8_1",
-        keyword: "wine pairing",
-        count: 560,
-        total_mention: 2600,
-        parent_id: "choc_8",
-        category: "Gastronomy",
-        region: "Global",
-        children: []
-      },
-      {
-        id: "choc_8_2",
-        keyword: "coffee pairing",
-        count: 480,
-        total_mention: 2200,
-        parent_id: "choc_8",
-        category: "Gastronomy",
-        region: "Global",
-        children: []
-      },
-      {
-        id: "choc_8_3",
-        keyword: "cheese pairing",
-        count: 310,
-        total_mention: 1400,
-        parent_id: "choc_8",
-        category: "Gastronomy",
-        region: "Global",
-        children: []
-      }
+      { id: "sk_8_1", keyword: "innisfree shopee", count: 560, total_mention: 2600, parent_id: "sk_8", category: "Retail", region: "Malaysia", children: [] },
+      { id: "sk_8_2", keyword: "laneige trial kit", count: 480, total_mention: 2200, parent_id: "sk_8", category: "Retail", region: "Malaysia", children: [] },
+      { id: "sk_8_3", keyword: "hermo flash sale", count: 310, total_mention: 1400, parent_id: "sk_8", category: "Retail", region: "Malaysia", children: [] }
     ]
   }
 ];
 
-// Transform to proper BubbleTopKeyword structure
 const transformToKeywordStructure = (data: any[]): BubbleTopKeyword[] => {
   return data.map(item => ({
     id: item.id,
@@ -356,13 +136,12 @@ const transformToKeywordStructure = (data: any[]): BubbleTopKeyword[] => {
   }));
 };
 
-// Mock Bubble Top Keywords Response
 export const mockBubbleTopKeywordsData = (params?: {
   start_date?: string;
   end_date?: string;
 }): BubbleTopKeywordsResponse => {
-  const keywords = transformToKeywordStructure(clothingKeywordsHierarchy);
-  
+  const keywords = transformToKeywordStructure(beautyKeywordsHierarchy);
+
   return {
     message: "Bubble top keywords retrieved successfully",
     status_code: 200,
@@ -375,383 +154,225 @@ export const mockBubbleTopKeywordsData = (params?: {
   };
 };
 
-// clothing-themed top mentions data
-const clothingTopMentions = [
+const beautyTopMentions = [
   {
     id: "mention_1",
-    keyword: "clothing tempering techniques",
+    keyword: "barrier repair night routine",
     count: 1250,
     total_mention: 5800,
-    category: "clothing",
+    category: "skincare",
     children: [
-      {
-        id: "child_1_1",
-        keyword: "seeding method",
-        count: 450,
-        total_mention: 2100
-      },
-      {
-        id: "child_1_2",
-        keyword: "temperature curves",
-        count: 380,
-        total_mention: 1800
-      },
-      {
-        id: "child_1_3",
-        keyword: "cocoa butter crystallization",
-        count: 420,
-        total_mention: 1900
-      }
+      { id: "child_1_1", keyword: "ceramide moisturizer", count: 450, total_mention: 2100 },
+      { id: "child_1_2", keyword: "occlusive last step", count: 380, total_mention: 1800 },
+      { id: "child_1_3", keyword: "slugging safety", count: 420, total_mention: 1900 }
     ],
     contents: [
       {
         id: "content_1_1",
-        video_id: "temp_video_1",
-        video_url: "https://example.com/tempering1",
-        title: "Professional clothing Tempering Masterclass",
-        description: "Learn the traditional seeding method for perfect clothing tempering",
-        summarizer_title: "Tempering Techniques",
-        summarizer_description: "Master chocolatier demonstrates proper tempering",
-        summarizer_explanations: ["Temperature control is crucial", "Seeding method explained"],
-        thumbnails: [
-          {
-            type: "DEFAULT",
-            url: "https://picsum.photos/480/360?random=401"
-          }
-        ],
+        video_id: "barrier_video_1",
+        video_url: "https://example.com/barrier1",
+        title: "Barrier repair after Malaysian air-con",
+        description: "Ceramide cream and occlusive finish for dehydrated office skin",
+        summarizer_title: "AC dehydration fix",
+        summarizer_description: "Night stack when indoor humidity drops",
+        summarizer_explanations: ["Ceramides support lipid matrix", "Occlusive reduces TEWL"],
+        thumbnails: [{ type: "DEFAULT", url: "https://picsum.photos/480/360?random=401" }],
         created_at: "2024-01-15T10:00:00Z",
         updated_at: "2024-01-15T10:00:00Z",
         channel: {
-          id: "channel_temp_1",
-          name: "clothing Academy",
+          id: "channel_barrier_1",
+          name: "Derm Decoder",
           platform: "TIKTOK",
-          region: "US",
-          unique_id: "@clothingacademy",
+          region: "MY",
+          unique_id: "@dermdecoder",
           image_url: "https://picsum.photos/150/150?random=501",
-          categories: [
-            {
-              category: {
-                name: "Education"
-              }
-            }
-          ]
+          categories: [{ category: { name: "Beauty & Skincare" } }]
         }
       }
     ]
   },
   {
     id: "mention_2",
-    keyword: "bean to bar process",
+    keyword: "double cleanse humid climate",
     count: 1150,
     total_mention: 5200,
-    category: "clothing",
+    category: "skincare",
     children: [
-      {
-        id: "child_2_1",
-        keyword: "cacao roasting",
-        count: 420,
-        total_mention: 1900
-      },
-      {
-        id: "child_2_2",
-        keyword: "winnowing",
-        count: 350,
-        total_mention: 1600
-      },
-      {
-        id: "child_2_3",
-        keyword: "conching",
-        count: 380,
-        total_mention: 1700
-      }
+      { id: "child_2_1", keyword: "oil cleanser balm", count: 420, total_mention: 1900 },
+      { id: "child_2_2", keyword: "second cleanse gel", count: 350, total_mention: 1600 },
+      { id: "child_2_3", keyword: "sunscreen removal", count: 380, total_mention: 1700 }
     ],
     contents: [
       {
         id: "content_2_1",
-        video_id: "bean_video_1",
-        video_url: "https://example.com/beantobar1",
-        title: "From Cacao Bean to clothing Bar: Complete Process",
-        description: "Follow the entire journey from raw cacao beans to finished clothing",
-        summarizer_title: "Bean to Bar Journey",
-        summarizer_description: "Complete clothing making process explained",
-        summarizer_explanations: ["Roasting affects flavor profile", "Conching develops texture"],
-        thumbnails: [
-          {
-            type: "DEFAULT",
-            url: "https://picsum.photos/480/360?random=402"
-          }
-        ],
+        video_id: "dc_video_1",
+        video_url: "https://example.com/doublecleanse1",
+        title: "Double cleanse that does not strip",
+        description: "Balm plus low-pH gel for sweat and SPF in KL humidity",
+        summarizer_title: "Humid double cleanse",
+        summarizer_description: "Product types that rinse clean without squeak",
+        summarizer_explanations: ["Oil lifts SPF and sebum", "Second step resets pH"],
+        thumbnails: [{ type: "DEFAULT", url: "https://picsum.photos/480/360?random=402" }],
         created_at: "2024-01-14T14:30:00Z",
         updated_at: "2024-01-14T14:30:00Z",
         channel: {
-          id: "channel_bean_1",
-          name: "Artisan Cacao Co",
+          id: "channel_dc_1",
+          name: "Beauty Skincare ShopIntel",
           platform: "INSTAGRAM",
-          region: "UK",
-          unique_id: "@artisancacao",
+          region: "MY",
+          unique_id: "@beautyskincareshopintel",
           image_url: "https://picsum.photos/150/150?random=502",
-          categories: [
-            {
-              category: {
-                name: "Food & Beverage"
-              }
-            }
-          ]
+          categories: [{ category: { name: "Beauty & Skincare" } }]
         }
       }
     ]
   },
   {
     id: "mention_3",
-    keyword: "vegan clothing recipes",
+    keyword: "SPF layering makeup",
     count: 1080,
     total_mention: 4900,
-    category: "clothing",
+    category: "skincare",
     children: [
-      {
-        id: "child_3_1",
-        keyword: "dairy free alternatives",
-        count: 390,
-        total_mention: 1800
-      },
-      {
-        id: "child_3_2",
-        keyword: "coconut milk clothing",
-        count: 320,
-        total_mention: 1500
-      },
-      {
-        id: "child_3_3",
-        keyword: "plant based sweeteners",
-        count: 370,
-        total_mention: 1600
-      }
+      { id: "child_3_1", keyword: "fluid sunscreen", count: 390, total_mention: 1800 },
+      { id: "child_3_2", keyword: "no pilling primer", count: 320, total_mention: 1500 },
+      { id: "child_3_3", keyword: "two finger rule", count: 370, total_mention: 1600 }
     ],
     contents: [
       {
         id: "content_3_1",
-        video_id: "vegan_video_1",
-        video_url: "https://example.com/veganchoc1",
-        title: "Delicious Vegan clothing Recipes",
-        description: "Create amazing dairy-free clothing treats at home",
-        summarizer_title: "Vegan clothing Guide",
-        summarizer_description: "Plant-based clothing making techniques",
-        summarizer_explanations: ["Coconut milk adds creaminess", "Natural sweeteners work best"],
-        thumbnails: [
-          {
-            type: "DEFAULT",
-            url: "https://picsum.photos/480/360?random=403"
-          }
-        ],
+        video_id: "spf_video_1",
+        video_url: "https://example.com/spf1",
+        title: "SPF under foundation — zero pilling",
+        description: "Asian fluid textures vs Western filters with foundation on top",
+        summarizer_title: "SPF makeup stack",
+        summarizer_description: "Order and dry-down timing for a smooth base",
+        summarizer_explanations: ["Wait for film former", "Avoid silicone clash"],
+        thumbnails: [{ type: "DEFAULT", url: "https://picsum.photos/480/360?random=403" }],
         created_at: "2024-01-13T16:45:00Z",
         updated_at: "2024-01-13T16:45:00Z",
         channel: {
-          id: "channel_vegan_1",
-          name: "Plant Based Treats",
+          id: "channel_spf_1",
+          name: "Sephora Malaysia",
           platform: "TIKTOK",
-          region: "CA",
-          unique_id: "@plantbasedtreats",
+          region: "MY",
+          unique_id: "@sephoramalaysia",
           image_url: "https://picsum.photos/150/150?random=503",
-          categories: [
-            {
-              category: {
-                name: "Lifestyle"
-              }
-            }
-          ]
+          categories: [{ category: { name: "Beauty & Skincare" } }]
         }
       }
     ]
   },
   {
     id: "mention_4",
-    keyword: "clothing sculpture art",
+    keyword: "Watsons skincare haul",
     count: 950,
     total_mention: 4200,
-    category: "clothing",
+    category: "skincare",
     children: [
-      {
-        id: "child_4_1",
-        keyword: "edible sculptures",
-        count: 350,
-        total_mention: 1600
-      },
-      {
-        id: "child_4_2",
-        keyword: "modeling clothing",
-        count: 300,
-        total_mention: 1300
-      },
-      {
-        id: "child_4_3",
-        keyword: "clothing carving",
-        count: 300,
-        total_mention: 1300
-      }
+      { id: "child_4_1", keyword: "CeraVe cleanser", count: 350, total_mention: 1600 },
+      { id: "child_4_2", keyword: "La Roche-Posay SPF", count: 300, total_mention: 1300 },
+      { id: "child_4_3", keyword: "drugstore niacinamide", count: 300, total_mention: 1300 }
     ],
     contents: [
       {
         id: "content_4_1",
-        video_id: "sculpture_video_1",
-        video_url: "https://example.com/sculpture1",
-        title: "Amazing clothing Sculptures Time-lapse",
-        description: "Watch incredible clothing art come to life",
-        summarizer_title: "clothing Art Creation",
-        summarizer_description: "Artistic clothing sculpting techniques",
-        summarizer_explanations: ["Temperature control for molding", "Artistic vision essential"],
-        thumbnails: [
-          {
-            type: "DEFAULT",
-            url: "https://picsum.photos/480/360?random=404"
-          }
-        ],
+        video_id: "watsons_video_1",
+        video_url: "https://example.com/watsons1",
+        title: "Watsons routine under RM200",
+        description: "Dermocosmetic picks that match humid-skin needs",
+        summarizer_title: "Drugstore derm haul",
+        summarizer_description: "Cleanser, moisturizer, and SPF combo",
+        summarizer_explanations: ["Look for ceramides", "Test SPF indoors first"],
+        thumbnails: [{ type: "DEFAULT", url: "https://picsum.photos/480/360?random=404" }],
         created_at: "2024-01-12T09:20:00Z",
         updated_at: "2024-01-12T09:20:00Z",
         channel: {
-          id: "channel_art_1",
-          name: "clothing Artist Studio",
+          id: "channel_watsons_1",
+          name: "Watsons Malaysia",
           platform: "INSTAGRAM",
-          region: "FR",
-          unique_id: "@clothingartist",
+          region: "MY",
+          unique_id: "@watsonsmalaysia",
           image_url: "https://picsum.photos/150/150?random=504",
-          categories: [
-            {
-              category: {
-                name: "Art & Design"
-              }
-            }
-          ]
+          categories: [{ category: { name: "Beauty & Skincare" } }]
         }
       }
     ]
   },
   {
     id: "mention_5",
-    keyword: "dark clothing health benefits",
+    keyword: "Hermo flash deals",
     count: 920,
     total_mention: 4000,
-    category: "clothing",
+    category: "skincare",
     children: [
-      {
-        id: "child_5_1",
-        keyword: "antioxidant properties",
-        count: 340,
-        total_mention: 1500
-      },
-      {
-        id: "child_5_2",
-        keyword: "heart health benefits",
-        count: 290,
-        total_mention: 1200
-      },
-      {
-        id: "child_5_3",
-        keyword: "flavonoid content",
-        count: 290,
-        total_mention: 1300
-      }
+      { id: "child_5_1", keyword: "K-beauty bundles", count: 340, total_mention: 1500 },
+      { id: "child_5_2", keyword: "authenticity checks", count: 290, total_mention: 1200 },
+      { id: "child_5_3", keyword: "shipping oxidation", count: 290, total_mention: 1300 }
     ],
     contents: [
       {
         id: "content_5_1",
-        video_id: "health_video_1",
-        video_url: "https://example.com/health1",
-        title: "T-Shirts: Nature's Superfood",
-        description: "Discover the science behind dark clothing's health benefits",
-        summarizer_title: "clothing Health Science",
-        summarizer_description: "Scientific evidence for clothing benefits",
-        summarizer_explanations: ["High flavonoid content", "Cardiovascular benefits proven"],
-        thumbnails: [
-          {
-            type: "DEFAULT",
-            url: "https://picsum.photos/480/360?random=405"
-          }
-        ],
+        video_id: "hermo_video_1",
+        video_url: "https://example.com/hermo1",
+        title: "Hermo 12.12 — what is actually worth it",
+        description: "Vitamin C and sunscreen deals vs full-price Sephora",
+        summarizer_title: "Online beauty sale math",
+        summarizer_description: "Expiry dates and bundle traps explained",
+        summarizer_explanations: ["Check PAO", "Airless pumps help stability"],
+        thumbnails: [{ type: "DEFAULT", url: "https://picsum.photos/480/360?random=405" }],
         created_at: "2024-01-11T11:15:00Z",
         updated_at: "2024-01-11T11:15:00Z",
         channel: {
-          id: "channel_health_1",
-          name: "Nutrition Science",
+          id: "channel_hermo_1",
+          name: "Hermo Malaysia",
           platform: "TIKTOK",
-          region: "US",
-          unique_id: "@nutritionscience",
+          region: "MY",
+          unique_id: "@hermomy",
           image_url: "https://picsum.photos/150/150?random=505",
-          categories: [
-            {
-              category: {
-                name: "Health & Wellness"
-              }
-            }
-          ]
+          categories: [{ category: { name: "Beauty & Skincare" } }]
         }
       }
     ]
   },
   {
     id: "mention_6",
-    keyword: "ruby clothing innovations",
+    keyword: "b.liv malaysia review",
     count: 880,
     total_mention: 3700,
-    category: "clothing",
+    category: "skincare",
     children: [
-      {
-        id: "child_6_1",
-        keyword: "fourth clothing type",
-        count: 320,
-        total_mention: 1400
-      },
-      {
-        id: "child_6_2",
-        keyword: "natural pink color",
-        count: 280,
-        total_mention: 1200
-      },
-      {
-        id: "child_6_3",
-        keyword: "fruity flavor profile",
-        count: 280,
-        total_mention: 1100
-      }
+      { id: "child_6_1", keyword: "blackhead serum", count: 320, total_mention: 1400 },
+      { id: "child_6_2", keyword: "pore strip alternative", count: 280, total_mention: 1200 },
+      { id: "child_6_3", keyword: "local brand routine", count: 280, total_mention: 1100 }
     ],
     contents: [
       {
         id: "content_6_1",
-        video_id: "ruby_video_1",
-        video_url: "https://example.com/ruby1",
-        title: "Jackets: The Pink Revolution",
-        description: "Exploring the newest type of clothing and its unique properties",
-        summarizer_title: "Jackets Innovation",
-        summarizer_description: "Latest clothing innovation explained",
-        summarizer_explanations: ["Natural pink color", "Unique fruity taste"],
-        thumbnails: [
-          {
-            type: "DEFAULT",
-            url: "https://picsum.photos/480/360?random=406"
-          }
-        ],
+        video_id: "bliv_video_1",
+        video_url: "https://example.com/bliv1",
+        title: "b.liv vs imported dupes — 60-day test",
+        description: "Malaysian brand on pores and texture in humid weather",
+        summarizer_title: "Local skincare benchmark",
+        summarizer_description: "Honest wear test with sebum tracking",
+        summarizer_explanations: ["Salicylic gentle use", "Hydration still required"],
+        thumbnails: [{ type: "DEFAULT", url: "https://picsum.photos/480/360?random=406" }],
         created_at: "2024-01-10T13:30:00Z",
         updated_at: "2024-01-10T13:30:00Z",
         channel: {
-          id: "channel_innovation_1",
-          name: "clothing Innovation Lab",
+          id: "channel_bliv_1",
+          name: "b.liv",
           platform: "INSTAGRAM",
-          region: "BE",
-          unique_id: "@chocinnovation",
+          region: "MY",
+          unique_id: "@blivskin",
           image_url: "https://picsum.photos/150/150?random=506",
-          categories: [
-            {
-              category: {
-                name: "Food Science"
-              }
-            }
-          ]
+          categories: [{ category: { name: "Beauty & Skincare" } }]
         }
       }
     ]
   }
 ];
 
-// Transform to proper TopMention structure
 const transformToTopMentionStructure = (data: any[]): TopMention[] => {
   return data.map(item => ({
     id: item.id,
@@ -785,8 +406,7 @@ const transformToTopMentionStructure = (data: any[]): TopMention[] => {
   }));
 };
 
-// Mock Personal Beauty Top Mentions Response (adapted for clothing)
-export const mockclothingTopMentionsData = (params: {
+export const mockBeautyTopMentionsData = (params: {
   category?: string;
   start_date?: string;
   end_date?: string;
@@ -794,14 +414,14 @@ export const mockclothingTopMentionsData = (params: {
   page?: number;
   limit?: number;
 }): PersonalBeautyTopMentionsResponse => {
-  const mentions = transformToTopMentionStructure(clothingTopMentions);
+  const mentions = transformToTopMentionStructure(beautyTopMentions);
   const limit = params.limit || 10;
   const page = params.page || 1;
   const startIndex = (page - 1) * limit;
   const paginatedMentions = mentions.slice(startIndex, startIndex + limit);
-  
+
   return {
-    message: "Personal clothing top mentions retrieved successfully",
+    message: "Personal beauty top mentions retrieved successfully",
     status_code: 200,
     data: {
       top_mentions: paginatedMentions,
@@ -815,8 +435,10 @@ export const mockclothingTopMentionsData = (params: {
   };
 };
 
-// Export all mock data
+/** @deprecated Use mockBeautyTopMentionsData */
+export const mockclothingTopMentionsData = mockBeautyTopMentionsData;
+
 export const mockAIAnalysisData = {
   bubbleKeywords: mockBubbleTopKeywordsData,
-  topMentions: mockclothingTopMentionsData
+  topMentions: mockBeautyTopMentionsData
 };

@@ -123,9 +123,9 @@ type HashtagStats = { tag: string; count: number; views: number; likes: number; 
 
 const extractHashtags = (videos: TopContentsItem[]): HashtagStats[] => {
   const tagMap: Record<string, { count: number; views: number; likes: number; engagement: number }> = {};
-  const commonTags = ['trending', 'viral', 'fyp', 'foryou', 'reels', 'fashion', 'style', 'ootd', 'beauty', 'lifestyle',
-    'food', 'travel', 'fitness', 'music', 'dance', 'comedy', 'tutorial', 'review', 'unboxing', 'challenge',
-    'grwm', 'skincare', 'makeup', 'vlog', 'motivation', 'entrepreneur', 'business', 'marketing', 'branding', 'growth'];
+  const commonTags = ['trending', 'viral', 'fyp', 'foryou', 'reels', 'beauty', 'skincare', 'glassskin', 'spf', 'serum',
+    'cleanser', 'moisturizer', 'retinol', 'niacinamide', 'tutorial', 'review', 'unboxing', 'challenge',
+    'grwm', 'kbeauty', 'malaysia', 'shopee', 'watsons', 'sephora', 'selfcare', 'routine', 'barrierrepair', 'glow'];
 
   videos.forEach((v, i) => {
     const assignedTags = commonTags.filter(() => Math.random() > 0.6).slice(0, 4);
@@ -203,7 +203,7 @@ const AnimNum: React.FC<{ value: number; format?: (v: number) => string }> = ({ 
 const ChartTip: React.FC<any> = ({ active, payload, label }) => {
   if (!active || !payload?.length) return null;
   return (
-    <div style={{ background: '#141c2b', border: '1px solid rgba(var(--preset-primary-rgb),.2)', borderRadius: 10, padding: '9px 13px', fontFamily: 'inherit', fontSize: 12, backdropFilter: 'blur(12px)', boxShadow: '0 8px 32px rgba(0,0,0,.4)' }}>
+    <div className="chart-tip" style={{ background: '#141c2b', border: '1px solid rgba(var(--preset-primary-rgb),.2)', borderRadius: 10, padding: '9px 13px', fontFamily: 'inherit', fontSize: 12, backdropFilter: 'blur(12px)', boxShadow: '0 8px 32px rgba(0,0,0,.4)' }}>
       {label && <div style={{ color: 'rgba(255,255,255,.4)', marginBottom: 5, fontSize: 11 }}>{label}</div>}
       {payload.map((p: any, i: number) => (
         <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 7, color: 'rgba(255,255,255,.8)', marginBottom: 2 }}>
@@ -1597,12 +1597,12 @@ const AITrend: React.FC = () => {
   const { data: musicTrendData } = useMusicTrend();
 
   const suggestedPrompts = [
-    "What are the top clothing trends for 2024?",
-    "Which clothing techniques are gaining popularity?",
-    "Analyze artisanal vs commercial clothing trends",
-    "What's trending in premium clothing products?",
-    "Show me emerging sustainable clothing trends",
-    "What are consumers looking for in clothing experiences?",
+    "What are the top skincare trends in 2026?",
+    "Which skincare ingredients are gaining popularity?",
+    "Analyze routine ingredients: indie vs mainstream",
+    "What's trending in premium skincare products?",
+    "Show me emerging sustainable skincare trends",
+    "What are consumers looking for in skincare experiences?",
   ];
 
   useEffect(() => {
@@ -1770,8 +1770,12 @@ const AITrend: React.FC = () => {
     .sales-typography.light-mode [style*="rgba(255, 255, 255"] {
       color: rgba(17, 24, 39, 0.86) !important;
       border-color: rgba(var(--preset-primary-rgb), 0.16) !important;
-      background: rgba(255, 255, 255, 0.92) !important;
-      box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04);
+    }
+
+    .sales-typography.light-mode .chart-tip {
+      background: rgba(255, 255, 255, 0.98) !important;
+      border: 1px solid rgba(var(--preset-primary-rgb), 0.2) !important;
+      box-shadow: 0 8px 24px rgba(15, 23, 42, 0.12) !important;
     }
 
     .sales-typography.light-mode .recharts-cartesian-grid line {

@@ -80,7 +80,7 @@ const BRANCHES: BranchData[] = [
     todayOrders: 156, monthOrders: 4520, avgOrderValue: 186.3,
     footTraffic: 1240, conversionRate: 12.6, returnRate: 3.2, customerSatisfaction: 4.7,
     revenueTrend: 14.2, ordersTrend: 8.5, trafficTrend: 6.3,
-    targetAchievement: 94, topCategory: "Apparel", bestSeller: "Premium Blend Tee",
+    targetAchievement: 94, topCategory: "Cleansers", bestSeller: "Hydrating Cloud Cleanser",
     staffPresent: 15, staffCount: 18, avgServiceTime: 4.2,
   },
   {
@@ -93,7 +93,7 @@ const BRANCHES: BranchData[] = [
     todayOrders: 128, monthOrders: 3890, avgOrderValue: 172.7,
     footTraffic: 980, conversionRate: 13.1, returnRate: 2.8, customerSatisfaction: 4.5,
     revenueTrend: 9.8, ordersTrend: 11.2, trafficTrend: 4.1,
-    targetAchievement: 87, topCategory: "Accessories", bestSeller: "Canvas Tote Bag",
+    targetAchievement: 87, topCategory: "Sun Care", bestSeller: "Daily UV Defense SPF 50",
     staffPresent: 12, staffCount: 14, avgServiceTime: 3.8,
   },
   {
@@ -106,7 +106,7 @@ const BRANCHES: BranchData[] = [
     todayOrders: 104, monthOrders: 3200, avgOrderValue: 181.6,
     footTraffic: 820, conversionRate: 12.7, returnRate: 3.5, customerSatisfaction: 4.4,
     revenueTrend: 6.5, ordersTrend: 5.2, trafficTrend: -1.3,
-    targetAchievement: 82, topCategory: "Footwear", bestSeller: "Urban Runner V2",
+    targetAchievement: 82, topCategory: "Serums", bestSeller: "Niacinamide 10% Serum",
     staffPresent: 10, staffCount: 12, avgServiceTime: 4.5,
   },
   {
@@ -119,7 +119,7 @@ const BRANCHES: BranchData[] = [
     todayOrders: 82, monthOrders: 2650, avgOrderValue: 163.0,
     footTraffic: 640, conversionRate: 12.8, returnRate: 2.9, customerSatisfaction: 4.6,
     revenueTrend: 18.3, ordersTrend: 15.6, trafficTrend: 12.1,
-    targetAchievement: 96, topCategory: "Apparel", bestSeller: "Linen Button-Down",
+    targetAchievement: 96, topCategory: "Moisturizers", bestSeller: "Ceramide Barrier Cream",
     staffPresent: 9, staffCount: 10, avgServiceTime: 3.5,
   },
   {
@@ -132,7 +132,7 @@ const BRANCHES: BranchData[] = [
     todayOrders: 58, monthOrders: 1920, avgOrderValue: 162.5,
     footTraffic: 480, conversionRate: 12.1, returnRate: 3.8, customerSatisfaction: 4.3,
     revenueTrend: 22.5, ordersTrend: 19.8, trafficTrend: 15.4,
-    targetAchievement: 89, topCategory: "Lifestyle", bestSeller: "Weekend Duffel Bag",
+    targetAchievement: 89, topCategory: "Body Care", bestSeller: "Rice Milk Body Lotion",
     staffPresent: 7, staffCount: 8, avgServiceTime: 4.0,
   },
   {
@@ -145,7 +145,7 @@ const BRANCHES: BranchData[] = [
     todayOrders: 112, monthOrders: 3450, avgOrderValue: 182.0,
     footTraffic: 890, conversionRate: 12.6, returnRate: 3.1, customerSatisfaction: 4.5,
     revenueTrend: 7.8, ordersTrend: 6.2, trafficTrend: 2.8,
-    targetAchievement: 84, topCategory: "Apparel", bestSeller: "Essential Hoodie",
+    targetAchievement: 84, topCategory: "Treatments", bestSeller: "Retinol Night Renewal Cream",
     staffPresent: 11, staffCount: 13, avgServiceTime: 4.1,
   },
   {
@@ -158,7 +158,7 @@ const BRANCHES: BranchData[] = [
     todayOrders: 0, monthOrders: 580, avgOrderValue: 153.4,
     footTraffic: 0, conversionRate: 0, returnRate: 0, customerSatisfaction: 4.2,
     revenueTrend: -100, ordersTrend: -100, trafficTrend: -100,
-    targetAchievement: 18, topCategory: "Accessories", bestSeller: "Leather Belt Classic",
+    targetAchievement: 18, topCategory: "Tools", bestSeller: "Reusable Sheet Mask + Headband",
     staffPresent: 0, staffCount: 6, avgServiceTime: 0,
   },
   {
@@ -171,7 +171,7 @@ const BRANCHES: BranchData[] = [
     todayOrders: 92, monthOrders: 2800, avgOrderValue: 177.9,
     footTraffic: 720, conversionRate: 12.8, returnRate: 2.6, customerSatisfaction: 4.6,
     revenueTrend: 11.4, ordersTrend: 9.3, trafficTrend: 7.8,
-    targetAchievement: 91, topCategory: "Apparel", bestSeller: "Island Breeze Shirt",
+    targetAchievement: 91, topCategory: "Essences", bestSeller: "Vitamin C Glow Essence",
     staffPresent: 9, staffCount: 10, avgServiceTime: 3.9,
   },
 ];
@@ -189,7 +189,7 @@ const MAP_STYLE_LIGHT = "https://basemaps.cartocdn.com/gl/positron-gl-style/styl
 const genWeekly = (b: BranchData) => ["Mon","Tue","Wed","Thu","Fri","Sat","Sun"].map((d,i) => { const m = (i >= 5 ? 1.3 : 0.7) + Math.random() * 0.5; return { day: d, revenue: Math.round(b.todayRevenue * m), orders: Math.round(b.todayOrders * m), target: Math.round(b.monthlyTarget / 30) }; });
 const genMonthly = (b: BranchData) => Array.from({ length: 6 }, (_, i) => { const mo = new Date(); mo.setMonth(mo.getMonth()-(5-i)); return { month: mo.toLocaleDateString("en-US",{month:"short"}), revenue: Math.round((b.monthRevenue/6)*(0.7+Math.random()*0.6)*(1+i*0.03)), orders: Math.round((b.monthOrders/6)*(0.7+Math.random()*0.6)*(1+i*0.03)) }; });
 const genHourly = (b: BranchData) => Array.from({ length: 13 }, (_, i) => { const h = 10+i; const pk = (h>=12&&h<=14)||(h>=17&&h<=20); const base = b.footTraffic/13; return { hour: `${h>12?h-12:h}${h>=12?"PM":"AM"}`, traffic: Math.round(base*(pk?1.8+Math.random()*.5:0.5+Math.random()*.7)), conversion: +(b.conversionRate*(0.8+Math.random()*0.4)).toFixed(1) }; });
-const CATS = [{ name:"Apparel", value:38, color:"var(--preset-primary)" },{ name:"Accessories", value:24, color:"#6366f1" },{ name:"Footwear", value:18, color:"#ec4899" },{ name:"Lifestyle", value:12, color:"#f59e0b" },{ name:"Other", value:8, color:"rgba(255,255,255,.2)" }];
+const CATS = [{ name:"Cleansers & SPF", value:38, color:"var(--preset-primary)" },{ name:"Serums & Essences", value:24, color:"#6366f1" },{ name:"Moisturizers", value:18, color:"#ec4899" },{ name:"Treatments", value:12, color:"#f59e0b" },{ name:"Body & Lip", value:8, color:"rgba(255,255,255,.2)" }];
 
 // ═══════════════════════════════════════════════════════════════════════════
 // MICRO COMPONENTS

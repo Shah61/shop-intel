@@ -7,19 +7,19 @@ const USE_MOCK_DATA = true;
 // Simulate API delay
 const simulateDelay = (ms: number = 500) => new Promise(resolve => setTimeout(resolve, ms));
 
-// Mock inventory logs data with clothing SKUs
+// Mock inventory logs data with beauty SKUs
 const generateMockInventoryLogs = (): InventoryLog[] => {
-    const clothingSKUs = [
-        { sku_no: "TS-WH-S", name: "White T-Shirt - Small" },
-        { sku_no: "TS-WH-M", name: "White T-Shirt - Medium" },
-        { sku_no: "TS-WH-L", name: "White T-Shirt - Large" },
-        { sku_no: "JN-BL-32", name: "Blue Jeans - 32" },
-        { sku_no: "JN-BL-34", name: "Blue Jeans - 34" },
-        { sku_no: "PL-BL-M", name: "Blue Polo - Medium" },
-        { sku_no: "LJ-BK-M", name: "Black Leather - Medium" },
-        { sku_no: "HD-GY-M", name: "Gray Hoodie - Medium" },
-        { sku_no: "CH-KH-32", name: "Khaki Chinos - 32" },
-        { sku_no: "DS-WH-15", name: "White Dress Shirt - 15" }
+    const beautySKUs = [
+        { sku_no: "BSI-CLN-150ML", name: "Cloud Cleanser — 150ml" },
+        { sku_no: "BSI-NIA-30ML", name: "Niacinamide Serum — 30ml" },
+        { sku_no: "BSI-SPF-50ML", name: "UV Defense SPF 50 — 50ml" },
+        { sku_no: "BSI-CER-50ML", name: "Ceramide Barrier Cream — 50ml" },
+        { sku_no: "BSI-VCE-30ML", name: "Vitamin C Glow Essence — 30ml" },
+        { sku_no: "BSI-TON-200ML", name: "HA Rose Toner — 200ml" },
+        { sku_no: "BSI-RTN-30ML", name: "Retinol Night Cream — 30ml" },
+        { sku_no: "BSI-LIP-10G", name: "Lip Recovery Balm — 10g" },
+        { sku_no: "BSI-EYE-15ML", name: "Peptide Eye Cream — 15ml" },
+        { sku_no: "BSI-BDY-250ML", name: "Rice Milk Body Lotion — 250ml" }
     ];
 
     const warehouses = [
@@ -48,7 +48,7 @@ const generateMockInventoryLogs = (): InventoryLog[] => {
     const now = new Date();
 
     for (let i = 0; i < 50; i++) {
-        const sku = clothingSKUs[Math.floor(Math.random() * clothingSKUs.length)];
+        const sku = beautySKUs[Math.floor(Math.random() * beautySKUs.length)];
         const warehouse = warehouses[Math.floor(Math.random() * warehouses.length)];
         const user = users[Math.floor(Math.random() * users.length)];
         const logType = logTypes[Math.floor(Math.random() * logTypes.length)];

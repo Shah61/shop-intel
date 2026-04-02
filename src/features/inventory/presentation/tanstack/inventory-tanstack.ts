@@ -17,9 +17,9 @@ const simulateDelay = (ms: number = 500) => new Promise(resolve => setTimeout(re
 
 // Mock inventory data
 const mockInventoryStocks: InventoryStock[] = [
-    { storageClientNo: "CLI001", skuNo: "TS-WH-S", skuDesc: "White T-Shirt - Small", storageClientSkuNo: "TS-WH-S", goodQty: 150, damagedQty: 2, allocatingQty: 5, processingQty: 3, availableQty: 140, country: "MY", skuStatus: "ACTIVE", reservedQty: 0, thresholdQty: 20 },
-    { storageClientNo: "CLI002", skuNo: "TS-WH-M", skuDesc: "White T-Shirt - Medium", storageClientSkuNo: "TS-WH-M", goodQty: 200, damagedQty: 1, allocatingQty: 8, processingQty: 2, availableQty: 189, country: "MY", skuStatus: "ACTIVE", reservedQty: 0, thresholdQty: 25 },
-    { storageClientNo: "CLI003", skuNo: "JN-BL-32", skuDesc: "Blue Jeans - 32", storageClientSkuNo: "JN-BL-32", goodQty: 60, damagedQty: 0, allocatingQty: 2, processingQty: 1, availableQty: 57, country: "MY", skuStatus: "ACTIVE", reservedQty: 0, thresholdQty: 10 },
+    { storageClientNo: "CLI001", skuNo: "BSI-CLN-150ML", skuDesc: "Cloud Cleanser — 150ml", storageClientSkuNo: "BSI-CLN-150ML", goodQty: 150, damagedQty: 2, allocatingQty: 5, processingQty: 3, availableQty: 140, country: "MY", skuStatus: "ACTIVE", reservedQty: 0, thresholdQty: 20 },
+    { storageClientNo: "CLI002", skuNo: "BSI-NIA-30ML", skuDesc: "Niacinamide Serum — 30ml", storageClientSkuNo: "BSI-NIA-30ML", goodQty: 200, damagedQty: 1, allocatingQty: 8, processingQty: 2, availableQty: 189, country: "MY", skuStatus: "ACTIVE", reservedQty: 0, thresholdQty: 25 },
+    { storageClientNo: "CLI003", skuNo: "BSI-SPF-50ML", skuDesc: "UV Defense SPF 50 — 50ml", storageClientSkuNo: "BSI-SPF-50ML", goodQty: 60, damagedQty: 0, allocatingQty: 2, processingQty: 1, availableQty: 57, country: "MY", skuStatus: "ACTIVE", reservedQty: 0, thresholdQty: 10 },
     { storageClientNo: "CLI004", skuNo: "PL-BL-M", skuDesc: "Blue Polo - Medium", storageClientSkuNo: "PL-BL-M", goodQty: 85, damagedQty: 1, allocatingQty: 3, processingQty: 1, availableQty: 80, country: "MY", skuStatus: "ACTIVE", reservedQty: 0, thresholdQty: 15 },
     { storageClientNo: "CLI005", skuNo: "LJ-BK-M", skuDesc: "Black Leather - Medium", storageClientSkuNo: "LJ-BK-M", goodQty: 25, damagedQty: 0, allocatingQty: 1, processingQty: 0, availableQty: 24, country: "MY", skuStatus: "ACTIVE", reservedQty: 0, thresholdQty: 5 },
 ];

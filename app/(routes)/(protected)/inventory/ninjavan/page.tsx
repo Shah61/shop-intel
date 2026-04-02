@@ -45,7 +45,7 @@ const generateNinjaVanOrders = () => {
   const orders: any[] = [];
   const statuses = ["Delivered","In Transit","Pending Pickup","Out for Delivery","Failed Delivery","Returned"];
   const names = ["Ahmad bin Ismail","Sarah Tan","Mohammed Ali","Jennifer Lee","Raj Kumar","Fatimah binti Hassan","David Chen","Priya Sharma","Hassan Abdullah","Lisa Wong","Kumar Rajan","Aisha Rahman","Michael Tan","Nurul Huda","James Lim","Siti Aminah","Robert Ng","Zainab Ibrahim","Kevin Ooi","Mariam Ali"];
-  const itemSets = [["Classic White T-Shirt","Denim Jeans"],["Cotton Polo Shirt"],["Hooded Sweatshirt","Cargo Pants","Baseball Cap"],["Leather Jacket","Sneakers"],["Button-Down Shirt","Chino Pants"],["Winter Coat","Wool Scarf"],["Dress Shirt","Tie","Dress Shoes"],["Tank Top","Shorts","Sandals"],["Windbreaker","Running Shoes"],["Blazer","Dress Pants","Belt"]];
+  const itemSets = [["Hydrating Cloud Cleanser","Niacinamide Serum"],["Daily UV Defense SPF 50"],["Retinol Night Cream","Ceramide Barrier Cream","Lip Recovery Balm"],["Vitamin C Essence","HA Rose Toner"],["Peptide Eye Cream","Overnight Lip Balm"],["Rice Milk Body Lotion","Gua Sha Tool"],["Barrier Repair Kit","Sheet Mask 5pc"],["Travel Minis Set","Cotton Pads"],["Double Cleanse Duo","Micellar Refill"],["Beauty Skincare ShopIntel — Full Routine Kit"]];
   const streets = ["Jalan Ampang","Jalan Bukit Bintang","Jalan Petaling","Jalan Sultan Ismail","Jalan Tun Razak","Jalan Pudu","Jalan Imbi","Jalan Raja Chulan","Jalan Tuanku Abdul Rahman","Jalan Masjid India"];
   const areas = ["Kuala Lumpur","Petaling Jaya","Shah Alam","Subang Jaya","Klang","Kajang","Seremban","Malacca","Johor Bahru","Ipoh","Penang"];
   let oid = 1;

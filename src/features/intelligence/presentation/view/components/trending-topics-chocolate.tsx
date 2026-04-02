@@ -40,14 +40,14 @@ const TrendingTopicsclothing: React.FC = () => {
 
     const getTopicIcon = (topic: string) => {
         const iconMap: { [key: string]: any } = {
-            'Fashion Trends': Sparkles,
-            'Street Style': Coffee,
-            'Sustainable Fashion': Leaf,
-            'Fashion Design': Palette,
-            'Premium Brands': Award,
-            'Fashion Health': Heart,
-            'Jackets': Sparkles,
-            'Fashion Pairing': Globe,
+            'Glass skin routines': Sparkles,
+            'Barrier repair': Heart,
+            'Reef-safe & sustainable SPF': Leaf,
+            'Retinol for beginners': Timer,
+            'K-beauty in Malaysia': Coffee,
+            'Dermocosmetic science': Award,
+            'Hyperpigmentation care': Palette,
+            'Ingredient stacking': Globe,
         };
         return iconMap[topic] || Coffee;
     };
@@ -118,7 +118,7 @@ const TrendingTopicsclothing: React.FC = () => {
                         <Sparkles className="h-4 w-4 text-white" />
                     </div>
                     <div>
-                        <h3 className="text-lg font-bold text-slate-900 dark:text-slate-100">Trending Fashion Topics</h3>
+                        <h3 className="text-lg font-bold text-slate-900 dark:text-slate-100">Trending Skincare Topics</h3>
                         <p className="text-xs text-muted-foreground">{topicsData?.length || 0} active topics tracked</p>
                     </div>
                 </div>

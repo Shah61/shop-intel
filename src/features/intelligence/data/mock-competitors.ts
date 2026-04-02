@@ -1,11 +1,11 @@
 /* ═══════════════════════════════════════════════════════
    SHOP INTEL — Competitor Intelligence Mock Data
    
-   Scenario: You run "KYRA" — a mid-range women's fashion
-   brand based in KL, selling on Shopee, TikTok Shop,
-   Lazada, your own Shopify store, and 2 physical outlets.
+   Scenario: You sell "Beauty Skincare ShopIntel" — clinical-
+   inspired skincare from KL, on Shopee, TikTok Shop,
+   Lazada, Shopify, and select pharmacy consignments.
    
-   Average product price: RM 79–189
+   Average SKU price: RM 45–165
    Monthly revenue: ~RM 180k
    Shopee followers: 24.3k
    TikTok Shop followers: 11.8k
@@ -16,13 +16,13 @@ import type { CompetitorProfile } from "./model/competitor-profile";
 export const MOCK_COMPETITORS: CompetitorProfile[] = [
 
     // ═══════════════════════════════════════
-    // 1. PADINI — Direct rival, mass market
+    // 1. WATSONS MALAYSIA — Mass pharmacy & beauty retail
     // ═══════════════════════════════════════
     {
-        id: "comp_padini_001",
-        symbol: "PDI",
-        name: "Padini Concept Store",
-        description: "Malaysia's largest homegrown fashion retailer. Mass-market pricing, strong physical presence, aggressive Shopee promotions.",
+        id: "comp_watsons_001",
+        symbol: "WTS",
+        name: "Watsons Malaysia",
+        description: "ASEAN health & beauty chain. Huge skincare aisle, constant BOGO and member days — the default comparison for drugstore derm brands.",
         status: "ACTIVE",
         tier: "DIRECT",
         tracked_since: "2025-09-15T00:00:00.000Z",
@@ -31,8 +31,8 @@ export const MOCK_COMPETITORS: CompetitorProfile[] = [
         channels: [
             {
                 platform: "shopee",
-                store_name: "Padini Official Store",
-                store_url: "https://shopee.com.my/padini",
+                store_name: "Watsons Malaysia Official",
+                store_url: "https://shopee.com.my/watsons.os",
                 is_official: true,
                 followers: 892400,
                 rating: 4.8,
@@ -41,7 +41,7 @@ export const MOCK_COMPETITORS: CompetitorProfile[] = [
             },
             {
                 platform: "lazada",
-                store_name: "Padini Official",
+                store_name: "Watsons Malaysia",
                 is_official: true,
                 followers: 215600,
                 rating: 4.7,
@@ -50,7 +50,7 @@ export const MOCK_COMPETITORS: CompetitorProfile[] = [
             },
             {
                 platform: "physical",
-                store_name: "Padini Concept Store (78 outlets)",
+                store_name: "Watsons stores (Malaysia)",
                 is_official: true,
                 followers: 0,
                 rating: 4.3,
@@ -60,14 +60,14 @@ export const MOCK_COMPETITORS: CompetitorProfile[] = [
         ],
 
         catalog: {
-            total_skus: 4820,
-            new_skus_30d: 186,
-            removed_skus_30d: 94,
-            top_categories: ["Women's Tops", "Men's Casual", "Dresses", "Denim", "Accessories"],
-            price_range: { min: 19.9, max: 299, avg: 69, currency: "MYR" },
-            bestseller_price_avg: 49.9,
-            discount_rate_pct: 38,
-            avg_discount_depth_pct: 30,
+            total_skus: 12400,
+            new_skus_30d: 420,
+            removed_skus_30d: 180,
+            top_categories: ["Sunscreen", "Cleansers", "Serums", "Moisturizers", "Sheet Masks"],
+            price_range: { min: 9.9, max: 399, avg: 42, currency: "MYR" },
+            bestseller_price_avg: 35.9,
+            discount_rate_pct: 45,
+            avg_discount_depth_pct: 28,
         },
 
         engagement: {
@@ -86,10 +86,10 @@ export const MOCK_COMPETITORS: CompetitorProfile[] = [
             shopee_category_total: 4200,
             lazada_category_rank: 8,
             search_rank_keywords: [
-                { keyword: "women blouse malaysia", your_rank: 14, their_rank: 2 },
-                { keyword: "affordable dress", your_rank: 22, their_rank: 5 },
-                { keyword: "office wear women", your_rank: 8, their_rank: 3 },
-                { keyword: "kurung moden", your_rank: 31, their_rank: 11 },
+                { keyword: "cerave malaysia", your_rank: 18, their_rank: 2 },
+                { keyword: "sunscreen shopee", your_rank: 24, their_rank: 4 },
+                { keyword: "niacinamide serum murah", your_rank: 11, their_rank: 3 },
+                { keyword: "laroche posay malaysia", your_rank: 29, their_rank: 5 },
             ],
         },
 
@@ -110,15 +110,15 @@ export const MOCK_COMPETITORS: CompetitorProfile[] = [
         },
 
         ai_insights: [
-            "Padini dropped prices by 5% across 380+ SKUs this month — likely clearing winter stock before Raya collection launch.",
-            "Their Shopee Live frequency doubled from 6 to 12 sessions. Average viewers up 24%. Consider increasing your live schedule.",
-            "They're ranking #2 for 'women blouse malaysia' — you're at #14. Their listing has 3x more reviews. Focus on review collection campaigns.",
-            "New denim sub-brand detected: 29 new SKUs priced 20% below their usual range. Possible budget line test.",
+            "Watsons cut shelf prices ~5% across hundreds of skincare SKUs — likely ahead of Ramadan gift sets and travel minis.",
+            "Shopee Live sessions doubled; avg viewers up. Match frequency on SPF and cleanser education, not price-only wars.",
+            "They rank top 3 for mass-market derm keywords — your edge is focused routines (e.g. ShopIntel barrier kit) vs endless aisle noise.",
+            "New K-beauty exclusives detected in 30d — watch bundle pricing vs your hero SKUs.",
         ],
 
         active_promos: [
             {
-                title: "Pre-Raya Clearance: Up to 50% Off",
+                title: "Members: Buy 2nd @ 50% — Sun & Skin",
                 type: "seasonal",
                 started_at: "2026-03-15T00:00:00.000Z",
                 ends_at: "2026-03-31T23:59:59.000Z",
@@ -134,13 +134,13 @@ export const MOCK_COMPETITORS: CompetitorProfile[] = [
     },
 
     // ═══════════════════════════════════════
-    // 2. FASHIONVALET — Direct rival, modest fashion
+    // 2. HERMO — Major MY online beauty retailer
     // ═══════════════════════════════════════
     {
-        id: "comp_fv_002",
-        symbol: "FEV",
-        name: "FashionValet",
-        description: "Premium modest fashion marketplace by Vivy Yusof. Strong TikTok presence, influencer-driven, Raya season powerhouse.",
+        id: "comp_hermo_002",
+        symbol: "HRM",
+        name: "Hermo Malaysia",
+        description: "Leading Malaysian e-beauty destination. Heavy flash sales, authentic imports, strong Shopee/Lazada overlap with indie skincare.",
         status: "ACTIVE",
         tier: "DIRECT",
         tracked_since: "2025-10-01T00:00:00.000Z",
@@ -149,8 +149,8 @@ export const MOCK_COMPETITORS: CompetitorProfile[] = [
         channels: [
             {
                 platform: "shopify",
-                store_name: "FashionValet.com",
-                store_url: "https://fashionvalet.com",
+                store_name: "hermo.my",
+                store_url: "https://www.hermo.my",
                 is_official: true,
                 followers: 0,
                 rating: 4.5,
@@ -159,7 +159,7 @@ export const MOCK_COMPETITORS: CompetitorProfile[] = [
             },
             {
                 platform: "tiktok_shop",
-                store_name: "FashionValet Official",
+                store_name: "Hermo Malaysia",
                 is_official: true,
                 followers: 189000,
                 rating: 4.6,
@@ -168,7 +168,7 @@ export const MOCK_COMPETITORS: CompetitorProfile[] = [
             },
             {
                 platform: "shopee",
-                store_name: "FashionValet Official",
+                store_name: "Hermo Official Store",
                 is_official: true,
                 followers: 312000,
                 rating: 4.6,
@@ -177,7 +177,7 @@ export const MOCK_COMPETITORS: CompetitorProfile[] = [
             },
             {
                 platform: "instagram",
-                store_name: "@fashionvaletcom",
+                store_name: "@hermomy",
                 is_official: true,
                 followers: 1240000,
                 rating: 0,
@@ -187,14 +187,14 @@ export const MOCK_COMPETITORS: CompetitorProfile[] = [
         ],
 
         catalog: {
-            total_skus: 2340,
-            new_skus_30d: 312,
-            removed_skus_30d: 45,
-            top_categories: ["Baju Kurung", "Hijab", "Modest Dresses", "Raya Collection", "Accessories"],
-            price_range: { min: 49, max: 890, avg: 189, currency: "MYR" },
-            bestseller_price_avg: 149,
-            discount_rate_pct: 15,
-            avg_discount_depth_pct: 20,
+            total_skus: 18600,
+            new_skus_30d: 890,
+            removed_skus_30d: 210,
+            top_categories: ["K-Beauty", "Sunscreen", "Serums", "Cleansers", "Body Care"],
+            price_range: { min: 12, max: 699, avg: 72, currency: "MYR" },
+            bestseller_price_avg: 49,
+            discount_rate_pct: 42,
+            avg_discount_depth_pct: 32,
         },
 
         engagement: {
@@ -213,10 +213,10 @@ export const MOCK_COMPETITORS: CompetitorProfile[] = [
             shopee_category_total: 4200,
             tiktok_category_rank: 2,
             search_rank_keywords: [
-                { keyword: "baju raya 2026", your_rank: 28, their_rank: 1 },
-                { keyword: "kurung moden", your_rank: 31, their_rank: 4 },
-                { keyword: "modest fashion malaysia", your_rank: 19, their_rank: 2 },
-                { keyword: "hijab premium", your_rank: 45, their_rank: 6 },
+                { keyword: "hermo sunscreen sale", your_rank: 28, their_rank: 1 },
+                { keyword: "anessa malaysia", your_rank: 31, their_rank: 4 },
+                { keyword: "beauty flash sale shopee", your_rank: 19, their_rank: 2 },
+                { keyword: "cosrx official malaysia", your_rank: 45, their_rank: 6 },
             ],
         },
 
@@ -237,28 +237,28 @@ export const MOCK_COMPETITORS: CompetitorProfile[] = [
         },
 
         ai_insights: [
-            "FashionValet is in full Raya launch mode — 312 new SKUs in 30 days, highest catalog growth among all tracked competitors.",
-            "Their TikTok engagement exploded +34%. They ran 18 Shopee Live sessions with avg 4.2k viewers. Their creator collab with @nnajwazebra drove 3.2M views alone.",
-            "They RAISED prices 4.2% while growing — premium positioning is working. Your overlap products are priced 28% lower but getting 60% fewer reviews.",
-            "ALERT: They're now #1 for 'baju raya 2026' — you're at #28. This keyword has 142k monthly searches. Urgent SEO action needed.",
+            "Hermo added 890+ skincare SKUs in 30d — highest catalog churn among tracked beauty retailers.",
+            "TikTok engagement up sharply; flash-sale Lives are driving impulse SPF and serum bundles.",
+            "They win on assortment depth; you win on a tight hero line (Beauty Skincare ShopIntel) and education.",
+            "Watch their import timing — vitamin C promos often undercut indie brands before pay day.",
         ],
 
         active_promos: [
             {
-                title: "Raya 2026 Early Bird: 15% Off New Collection",
+                title: "12.12 Skincare: Up to 45% Off",
                 type: "seasonal",
                 started_at: "2026-03-10T00:00:00.000Z",
                 ends_at: "2026-03-25T23:59:59.000Z",
                 estimated_discount_pct: 15,
             },
             {
-                title: "TikTok Live Exclusive Bundles",
+                title: "TikTok Live — K-Beauty Bundle",
                 type: "live_sale",
                 started_at: "2026-03-18T00:00:00.000Z",
                 estimated_discount_pct: 20,
             },
             {
-                title: "Najwa Zebra x FV Collab Drop",
+                title: "Brand Takeover: Laneige x Hermo",
                 type: "collab",
                 started_at: "2026-03-14T00:00:00.000Z",
                 ends_at: "2026-04-14T23:59:59.000Z",
@@ -268,13 +268,13 @@ export const MOCK_COMPETITORS: CompetitorProfile[] = [
     },
 
     // ═══════════════════════════════════════
-    // 3. ZALORA MY — Direct rival, marketplace
+    // 3. SEPHORA MALAYSIA — Prestige beauty retail
     // ═══════════════════════════════════════
     {
-        id: "comp_zalora_003",
-        symbol: "ZLR",
-        name: "Zalora Malaysia",
-        description: "Southeast Asia's largest online fashion marketplace. Broad catalog, strong logistics, consistent promotions.",
+        id: "comp_sephora_003",
+        symbol: "SEP",
+        name: "Sephora Malaysia",
+        description: "Prestige beauty retailer. Strong in Western clinical and indie brands; sets perception anchor for serum and SPF pricing.",
         status: "ACTIVE",
         tier: "DIRECT",
         tracked_since: "2025-08-20T00:00:00.000Z",
@@ -283,8 +283,8 @@ export const MOCK_COMPETITORS: CompetitorProfile[] = [
         channels: [
             {
                 platform: "shopify",
-                store_name: "Zalora.com.my",
-                store_url: "https://zalora.com.my",
+                store_name: "sephora.my",
+                store_url: "https://www.sephora.my",
                 is_official: true,
                 followers: 0,
                 rating: 4.2,
@@ -293,7 +293,7 @@ export const MOCK_COMPETITORS: CompetitorProfile[] = [
             },
             {
                 platform: "shopee",
-                store_name: "ZALORA Official Store",
+                store_name: "Sephora Malaysia Official",
                 is_official: true,
                 followers: 1420000,
                 rating: 4.6,
@@ -302,7 +302,7 @@ export const MOCK_COMPETITORS: CompetitorProfile[] = [
             },
             {
                 platform: "instagram",
-                store_name: "@zaloramyofficial",
+                store_name: "@sephoramalaysia",
                 is_official: true,
                 followers: 890000,
                 rating: 0,
@@ -312,14 +312,14 @@ export const MOCK_COMPETITORS: CompetitorProfile[] = [
         ],
 
         catalog: {
-            total_skus: 28500,
-            new_skus_30d: 1240,
-            removed_skus_30d: 890,
-            top_categories: ["Women's Clothing", "Men's Clothing", "Shoes", "Sportswear", "Hijab Fashion"],
-            price_range: { min: 15, max: 1200, avg: 112, currency: "MYR" },
-            bestseller_price_avg: 79,
-            discount_rate_pct: 52,
-            avg_discount_depth_pct: 40,
+            total_skus: 8200,
+            new_skus_30d: 380,
+            removed_skus_30d: 120,
+            top_categories: ["Serums", "Moisturizers", "Sunscreen", "Masks", "Hair Care"],
+            price_range: { min: 35, max: 1200, avg: 185, currency: "MYR" },
+            bestseller_price_avg: 129,
+            discount_rate_pct: 35,
+            avg_discount_depth_pct: 22,
         },
 
         engagement: {
@@ -338,10 +338,10 @@ export const MOCK_COMPETITORS: CompetitorProfile[] = [
             shopee_category_total: 4200,
             lazada_category_rank: 2,
             search_rank_keywords: [
-                { keyword: "women dress online malaysia", your_rank: 11, their_rank: 1 },
-                { keyword: "baju kurung online", your_rank: 31, their_rank: 3 },
-                { keyword: "office wear women", your_rank: 8, their_rank: 1 },
-                { keyword: "plus size fashion malaysia", your_rank: 52, their_rank: 4 },
+                { keyword: "drunk elephant malaysia", your_rank: 11, their_rank: 1 },
+                { keyword: "tatcha sephora", your_rank: 31, their_rank: 3 },
+                { keyword: "skinceuticals malaysia", your_rank: 8, their_rank: 2 },
+                { keyword: "rare beauty malaysia", your_rank: 52, their_rank: 4 },
             ],
         },
 
@@ -362,22 +362,22 @@ export const MOCK_COMPETITORS: CompetitorProfile[] = [
         },
 
         ai_insights: [
-            "Zalora is #1 on Shopee fashion and dominates 'women dress online malaysia'. Their scale is hard to match — focus on niches they underserve.",
-            "52% of their catalog is on sale with avg 40% discount. They compete on price volume, not margin. Your higher-quality positioning is a differentiator.",
-            "Their engagement dropped 3.1% — review sentiment shows 11% negative (sizing issues, delivery complaints). Opportunity to highlight your quality and CS.",
-            "They added 1,240 new SKUs but removed 890 — high churn suggests aggressive testing. Monitor which categories they're doubling down on.",
+            "Sephora anchors prestige pricing — use them as a reference point, not a price match target.",
+            "Frequent GWP events train customers to wait for gifts; counter with transparent routine value (e.g. ShopIntel kit vs à la carte).",
+            "Review sentiment: 11% negative on stockouts and GWP eligibility — clear bundle rules on your site win trust.",
+            "They rotate brands aggressively; watch which clinical lines get endcap space in-app.",
         ],
 
         active_promos: [
             {
-                title: "Fashion Week: Extra 25% Off Everything",
+                title: "Beauty Pass: Extra 20% Selected Skincare",
                 type: "seasonal",
                 started_at: "2026-03-17T00:00:00.000Z",
                 ends_at: "2026-03-24T23:59:59.000Z",
                 estimated_discount_pct: 25,
             },
             {
-                title: "Free Returns on All Orders",
+                title: "Free Shipping Above RM130",
                 type: "free_shipping",
                 started_at: "2026-01-01T00:00:00.000Z",
                 estimated_discount_pct: 0,
@@ -386,13 +386,13 @@ export const MOCK_COMPETITORS: CompetitorProfile[] = [
     },
 
     // ═══════════════════════════════════════
-    // 4. PESTLE & MORTAR — Aspirational, premium streetwear
+    // 4. INNISFREE MALAYSIA — K-beauty flagship & retail
     // ═══════════════════════════════════════
     {
-        id: "comp_pmc_004",
-        symbol: "PSC",
-        name: "Pestle & Mortar Clothing",
-        description: "Malaysian premium streetwear brand. Strong brand identity, limited drops, cult following. Benchmark for brand-building.",
+        id: "comp_innisfree_004",
+        symbol: "INF",
+        name: "Innisfree Malaysia",
+        description: "Amorepacific-owned K-beauty brand with malls + online. Benchmark for green positioning, sheet masks, and sunscreen launches.",
         status: "ACTIVE",
         tier: "ASPIRATIONAL",
         tracked_since: "2025-11-01T00:00:00.000Z",
@@ -401,8 +401,8 @@ export const MOCK_COMPETITORS: CompetitorProfile[] = [
         channels: [
             {
                 platform: "shopify",
-                store_name: "pestlemortarclothing.com",
-                store_url: "https://pestlemortarclothing.com",
+                store_name: "innisfree.my",
+                store_url: "https://www.innisfree.com/my",
                 is_official: true,
                 followers: 0,
                 rating: 4.8,
@@ -411,7 +411,7 @@ export const MOCK_COMPETITORS: CompetitorProfile[] = [
             },
             {
                 platform: "instagram",
-                store_name: "@pestlemortarclothing",
+                store_name: "@innisfreemalaysia",
                 is_official: true,
                 followers: 298000,
                 rating: 0,
@@ -420,49 +420,58 @@ export const MOCK_COMPETITORS: CompetitorProfile[] = [
             },
             {
                 platform: "physical",
-                store_name: "PMC Flagship (APW Bangsar)",
+                store_name: "Innisfree boutiques (Malaysia)",
                 is_official: true,
                 followers: 0,
                 rating: 4.9,
                 total_reviews: 820,
                 response_rate_pct: 0,
             },
+            {
+                platform: "shopee",
+                store_name: "Innisfree Official MY",
+                is_official: true,
+                followers: 412000,
+                rating: 4.7,
+                total_reviews: 98100,
+                response_rate_pct: 94,
+            },
         ],
 
         catalog: {
-            total_skus: 180,
-            new_skus_30d: 24,
-            removed_skus_30d: 8,
-            top_categories: ["Graphic Tees", "Hoodies", "Caps", "Limited Drops", "Collabs"],
-            price_range: { min: 89, max: 450, avg: 179, currency: "MYR" },
-            bestseller_price_avg: 139,
-            discount_rate_pct: 5,
-            avg_discount_depth_pct: 15,
+            total_skus: 640,
+            new_skus_30d: 48,
+            removed_skus_30d: 14,
+            top_categories: ["Green Tea Line", "Sunscreen", "Sheet Masks", "Cleansers", "Volcanic Line"],
+            price_range: { min: 25, max: 259, avg: 72, currency: "MYR" },
+            bestseller_price_avg: 49,
+            discount_rate_pct: 22,
+            avg_discount_depth_pct: 18,
         },
 
         engagement: {
-            avg_monthly_reviews: 380,
+            avg_monthly_reviews: 3800,
             avg_review_rating: 4.8,
             review_sentiment_pct: { positive: 91, neutral: 6, negative: 3 },
             social_mentions_30d: 4200,
             tiktok_views_30d: 1800000,
             instagram_followers: 298000,
-            shopee_live_sessions_30d: 0,
-            avg_live_viewers: 0,
+            shopee_live_sessions_30d: 6,
+            avg_live_viewers: 1200,
         },
 
         rankings: {
             search_rank_keywords: [
-                { keyword: "malaysian streetwear", your_rank: 38, their_rank: 1 },
-                { keyword: "graphic tee malaysia", your_rank: 25, their_rank: 3 },
+                { keyword: "innisfree sunscreen malaysia", your_rank: 38, their_rank: 1 },
+                { keyword: "green tea seed serum", your_rank: 25, their_rank: 3 },
             ],
         },
 
         estimated: {
-            monthly_revenue: { amount: 420000, currency: "MYR", confidence: "LOW" },
-            monthly_orders: 2800,
+            monthly_revenue: { amount: 4200000, currency: "MYR", confidence: "MEDIUM" },
+            monthly_orders: 28000,
             avg_order_value: 150,
-            monthly_visitors: 85000,
+            monthly_visitors: 850000,
             conversion_rate_pct: 3.3,
         },
 
@@ -475,15 +484,15 @@ export const MOCK_COMPETITORS: CompetitorProfile[] = [
         },
 
         ai_insights: [
-            "PMC raised prices 3.2% and STILL grew engagement 11%. Their brand loyalty lets them command premium — study their drop model and community building.",
-            "Only 180 SKUs but 91% positive sentiment. Quality over quantity. Your catalog is 8x larger but your sentiment is 76% — room to improve.",
-            "Zero Shopee Live, zero marketplace presence — they sell purely D2C. If you capture their audience on Shopee, there's no competition there.",
-            "Their IG gets 4,200 organic mentions/month — almost entirely UGC. Consider a customer photo contest to build similar organic buzz.",
+            "Innisfree raised hero SPF prices ~3% while growing engagement — brand equity still strong in malls.",
+            "Sheet mask and sunscreen promos spike before travel seasons; align your ShopIntel travel minis to the same calendar.",
+            "Shopee official store adds marketplace pressure; differentiate with clinical copy and ingredient transparency.",
+            "High UGC on green tea line — seed similar community content around your barrier-focused story.",
         ],
 
         active_promos: [
             {
-                title: "Spring Drop: 'ROOTS' Collection",
+                title: "New Volcanic Clay Mask Drop",
                 type: "collab",
                 started_at: "2026-03-20T00:00:00.000Z",
                 estimated_discount_pct: 0,
@@ -492,13 +501,13 @@ export const MOCK_COMPETITORS: CompetitorProfile[] = [
     },
 
     // ═══════════════════════════════════════
-    // 5. SHEIN MY — Budget, international fast-fashion
+    // 5. GUARDIAN MALAYSIA — Budget pharmacy beauty
     // ═══════════════════════════════════════
     {
-        id: "comp_shein_005",
-        symbol: "SHN",
-        name: "SHEIN Malaysia",
-        description: "Ultra-fast fashion giant. Impossible to beat on price. Track for trend intelligence and catalog movement, not to compete head-on.",
+        id: "comp_guardian_005",
+        symbol: "GRD",
+        name: "Guardian Malaysia",
+        description: "Pharmacy-led beauty. Aggressive house-brand and BOGO on cleansers and SPF — price floor for mass market.",
         status: "ACTIVE",
         tier: "BUDGET",
         tracked_since: "2025-07-01T00:00:00.000Z",
@@ -507,108 +516,108 @@ export const MOCK_COMPETITORS: CompetitorProfile[] = [
         channels: [
             {
                 platform: "shopify",
-                store_name: "shein.com.my",
-                store_url: "https://shein.com.my",
+                store_name: "guardian.com.my",
+                store_url: "https://www.guardian.com.my",
                 is_official: true,
                 followers: 0,
-                rating: 3.9,
-                total_reviews: 890000,
-                response_rate_pct: 72,
+                rating: 4.1,
+                total_reviews: 186000,
+                response_rate_pct: 88,
             },
             {
                 platform: "shopee",
-                store_name: "SHEIN Official Store MY",
+                store_name: "Guardian Malaysia Official",
                 is_official: true,
-                followers: 2100000,
-                rating: 4.4,
-                total_reviews: 1240000,
-                response_rate_pct: 78,
+                followers: 890000,
+                rating: 4.5,
+                total_reviews: 412000,
+                response_rate_pct: 91,
             },
             {
-                platform: "tiktok_shop",
-                store_name: "SHEIN MY",
+                platform: "lazada",
+                store_name: "Guardian Malaysia",
                 is_official: true,
-                followers: 580000,
-                rating: 4.2,
-                total_reviews: 320000,
-                response_rate_pct: 65,
+                followers: 320000,
+                rating: 4.4,
+                total_reviews: 118000,
+                response_rate_pct: 87,
             },
         ],
 
         catalog: {
-            total_skus: 142000,
-            new_skus_30d: 8400,
-            removed_skus_30d: 6200,
-            top_categories: ["Women's Tops", "Dresses", "Swimwear", "Plus Size", "Modest Wear", "Accessories"],
-            price_range: { min: 5, max: 189, avg: 35, currency: "MYR" },
-            bestseller_price_avg: 25,
-            discount_rate_pct: 68,
-            avg_discount_depth_pct: 45,
+            total_skus: 9800,
+            new_skus_30d: 520,
+            removed_skus_30d: 310,
+            top_categories: ["Sunscreen", "Cleansers", "Acne Care", "Body Lotion", "Hair Care"],
+            price_range: { min: 4.9, max: 199, avg: 28, currency: "MYR" },
+            bestseller_price_avg: 19.9,
+            discount_rate_pct: 58,
+            avg_discount_depth_pct: 38,
         },
 
         engagement: {
-            avg_monthly_reviews: 142000,
-            avg_review_rating: 4.1,
-            review_sentiment_pct: { positive: 64, neutral: 19, negative: 17 },
-            social_mentions_30d: 28000,
-            tiktok_views_30d: 45000000,
-            instagram_followers: 3200000,
-            shopee_live_sessions_30d: 22,
-            avg_live_viewers: 8400,
+            avg_monthly_reviews: 42000,
+            avg_review_rating: 4.2,
+            review_sentiment_pct: { positive: 74, neutral: 17, negative: 9 },
+            social_mentions_30d: 8200,
+            tiktok_views_30d: 6200000,
+            instagram_followers: 210000,
+            shopee_live_sessions_30d: 14,
+            avg_live_viewers: 3200,
         },
 
         rankings: {
             shopee_category_rank: 2,
             shopee_category_total: 4200,
-            tiktok_category_rank: 1,
+            tiktok_category_rank: 4,
             lazada_category_rank: 5,
             search_rank_keywords: [
-                { keyword: "cheap dress", your_rank: 67, their_rank: 1 },
-                { keyword: "women blouse malaysia", your_rank: 14, their_rank: 3 },
-                { keyword: "plus size fashion malaysia", your_rank: 52, their_rank: 1 },
-                { keyword: "trendy outfit 2026", your_rank: 33, their_rank: 2 },
+                { keyword: "sunscreen murah", your_rank: 67, their_rank: 1 },
+                { keyword: "guardian buy 1 free 1", your_rank: 14, their_rank: 3 },
+                { keyword: "acne patch guardian", your_rank: 52, their_rank: 2 },
+                { keyword: "simple cleanser malaysia", your_rank: 33, their_rank: 4 },
             ],
         },
 
         estimated: {
-            monthly_revenue: { amount: 22000000, currency: "MYR", confidence: "LOW" },
-            monthly_orders: 620000,
-            avg_order_value: 35.5,
-            monthly_visitors: 12000000,
-            conversion_rate_pct: 5.2,
+            monthly_revenue: { amount: 8200000, currency: "MYR", confidence: "MEDIUM" },
+            monthly_orders: 290000,
+            avg_order_value: 28.2,
+            monthly_visitors: 4100000,
+            conversion_rate_pct: 7.1,
         },
 
         trends: {
-            price_index_change_pct: -14.55,
+            price_index_change_pct: -6.2,
             visibility_change_pct: 4.2,
-            engagement_change_pct: 8.8,
-            catalog_growth_pct: 1.5,
-            revenue_change_pct: 6.3,
+            engagement_change_pct: 5.1,
+            catalog_growth_pct: 2.8,
+            revenue_change_pct: 4.0,
         },
 
         ai_insights: [
-            "Do NOT compete with SHEIN on price — their avg product is RM 35, yours is RM 134. You'd destroy your margins. Instead, use them as a trend radar.",
-            "SHEIN added 8,400 new SKUs this month. 340 overlap with your categories. Monitor which designs gain traction and create quality alternatives.",
-            "Their negative review rate is 17% — mostly quality and sizing complaints. Your 'quality guarantee' messaging directly counters their weakness.",
-            "SHEIN's TikTok gets 45M views/month. Track their top-performing content formats — haul videos and OOTD perform best.",
+            "Guardian sets the promo floor — shoppers compare your SPF price to their BOGO cycles.",
+            "They rotate house-brand dupes fast; monitor ingredient claims vs your ShopIntel differentiators.",
+            "Negative reviews cluster around stock accuracy during mega sales — reliability messaging helps you stand out.",
+            "Use them for trend spotting (acne patches, mineral SPF) rather than margin matching.",
         ],
 
         active_promos: [
             {
-                title: "RM5 Deals — Flash Zone",
+                title: "Members Day: 50% Second Item — Skin",
                 type: "flash_sale",
                 started_at: "2026-03-21T00:00:00.000Z",
                 ends_at: "2026-03-21T23:59:59.000Z",
-                estimated_discount_pct: 70,
+                estimated_discount_pct: 50,
             },
             {
-                title: "Free Shipping on All Orders",
+                title: "Free Shipping Selected Stores",
                 type: "free_shipping",
                 started_at: "2026-03-01T00:00:00.000Z",
                 estimated_discount_pct: 0,
             },
             {
-                title: "Spring Must-Haves: Extra 20% Off",
+                title: "Hydration Week: Extra 20% Off",
                 type: "seasonal",
                 started_at: "2026-03-15T00:00:00.000Z",
                 ends_at: "2026-03-31T23:59:59.000Z",
@@ -618,13 +627,13 @@ export const MOCK_COMPETITORS: CompetitorProfile[] = [
     },
 
     // ═══════════════════════════════════════
-    // 6. UNIQLO MY — International, mid-range benchmark
+    // 6. LANEIGE MALAYSIA — Amorepacific, mid-premium benchmark
     // ═══════════════════════════════════════
     {
-        id: "comp_uniqlo_006",
-        symbol: "UNQ",
-        name: "Uniqlo Malaysia",
-        description: "Japanese basics giant. Clean brand, consistent pricing, huge physical footprint. Your closest international pricing benchmark.",
+        id: "comp_laneige_006",
+        symbol: "LNE",
+        name: "Laneige Malaysia",
+        description: "K-beauty sleep mask and lip sleeping mask leader. Strong mall + online presence — benchmark for texture marketing and GWP.",
         status: "ACTIVE",
         tier: "INTERNATIONAL",
         tracked_since: "2025-09-01T00:00:00.000Z",
@@ -633,72 +642,72 @@ export const MOCK_COMPETITORS: CompetitorProfile[] = [
         channels: [
             {
                 platform: "shopify",
-                store_name: "uniqlo.com/my",
-                store_url: "https://www.uniqlo.com/my",
-                is_official: true,
-                followers: 0,
-                rating: 4.5,
-                total_reviews: 42000,
-                response_rate_pct: 90,
-            },
-            {
-                platform: "shopee",
-                store_name: "UNIQLO Official Store",
-                is_official: true,
-                followers: 1680000,
-                rating: 4.8,
-                total_reviews: 289000,
-                response_rate_pct: 97,
-            },
-            {
-                platform: "physical",
-                store_name: "Uniqlo Malaysia (56 stores)",
+                store_name: "laneige.com/my",
+                store_url: "https://www.laneige.com/my",
                 is_official: true,
                 followers: 0,
                 rating: 4.6,
-                total_reviews: 34000,
+                total_reviews: 28000,
+                response_rate_pct: 92,
+            },
+            {
+                platform: "shopee",
+                store_name: "Laneige Official Malaysia",
+                is_official: true,
+                followers: 980000,
+                rating: 4.8,
+                total_reviews: 156000,
+                response_rate_pct: 96,
+            },
+            {
+                platform: "physical",
+                store_name: "Laneige counters (Malaysia)",
+                is_official: true,
+                followers: 0,
+                rating: 4.7,
+                total_reviews: 12000,
                 response_rate_pct: 0,
             },
         ],
 
         catalog: {
-            total_skus: 3200,
-            new_skus_30d: 218,
-            removed_skus_30d: 145,
-            top_categories: ["AIRism", "UT Graphic Tees", "Women's Basics", "Men's Basics", "Kids"],
-            price_range: { min: 29.9, max: 399, avg: 99, currency: "MYR" },
-            bestseller_price_avg: 59.9,
-            discount_rate_pct: 22,
-            avg_discount_depth_pct: 25,
+            total_skus: 420,
+            new_skus_30d: 36,
+            removed_skus_30d: 12,
+            top_categories: ["Water Bank", "Lip Sleeping Mask", "Neo Cushion", "Radian-C", "Cleansers"],
+            price_range: { min: 45, max: 329, avg: 112, currency: "MYR" },
+            bestseller_price_avg: 85,
+            discount_rate_pct: 28,
+            avg_discount_depth_pct: 22,
         },
 
         engagement: {
             avg_monthly_reviews: 9800,
             avg_review_rating: 4.7,
-            review_sentiment_pct: { positive: 85, neutral: 11, negative: 4 },
+            review_sentiment_pct: { positive: 88, neutral: 9, negative: 3 },
             social_mentions_30d: 6800,
             tiktok_views_30d: 3200000,
             instagram_followers: 520000,
-            shopee_live_sessions_30d: 4,
-            avg_live_viewers: 2100,
+            shopee_live_sessions_30d: 10,
+            avg_live_viewers: 4100,
         },
 
         rankings: {
             shopee_category_rank: 4,
             shopee_category_total: 4200,
             search_rank_keywords: [
-                { keyword: "basic tee malaysia", your_rank: 19, their_rank: 1 },
-                { keyword: "office wear women", your_rank: 8, their_rank: 2 },
-                { keyword: "linen pants", your_rank: 41, their_rank: 3 },
+                { keyword: "laneige lip sleeping mask", your_rank: 19, their_rank: 1 },
+                { keyword: "water bank moisturizer", your_rank: 8, their_rank: 2 },
+                { keyword: "laneige neo cushion", your_rank: 41, their_rank: 3 },
             ],
         },
 
         estimated: {
-            monthly_revenue: { amount: 15000000, currency: "MYR", confidence: "MEDIUM" },
-            monthly_orders: 180000,
+            monthly_revenue: { amount: 5200000, currency: "MYR", confidence: "MEDIUM" },
+            monthly_orders: 62000,
             avg_order_value: 83.3,
-            monthly_visitors: 3800000,
-            conversion_rate_pct: 4.7,
+            monthly_visitors: 980000,
+            conversion_rate_pct: 6.3,
         },
 
         trends: {
@@ -710,15 +719,15 @@ export const MOCK_COMPETITORS: CompetitorProfile[] = [
         },
 
         ai_insights: [
-            "Uniqlo barely moves prices — 0.5% change in 30 days. Their consistency builds trust. Your frequent promos may be training customers to wait for sales.",
-            "They dominate 'basic tee' and 'linen pants'. Don't compete on basics — win on trend-forward pieces and local cultural designs they can't replicate.",
-            "85% positive sentiment with only 4% negative — best-in-class quality perception. Study their product descriptions and sizing guides.",
-            "Spring/summer rollout added 218 SKUs focused on lightweight fabrics. Align your seasonal launches within 1-2 weeks of theirs to capture spillover traffic.",
+            "Laneige holds premium texture perception — lip and sleeping mask SKUs are category kings.",
+            "GWP-heavy promos; shoppers expect deluxe minis — consider ShopIntel mini-stacks as a counter-offer.",
+            "Strong counter + Shopee parity can blur pricing; highlight ingredient story where they lead with lifestyle.",
+            "Live commerce ramping; benchmark their demo length and shade-matching flow.",
         ],
 
         active_promos: [
             {
-                title: "Limited Price: Selected Items from RM29.90",
+                title: "GWP: Water Bank Set with RM220 Spend",
                 type: "seasonal",
                 started_at: "2026-03-14T00:00:00.000Z",
                 ends_at: "2026-03-27T23:59:59.000Z",
@@ -728,13 +737,13 @@ export const MOCK_COMPETITORS: CompetitorProfile[] = [
     },
 
     // ═══════════════════════════════════════
-    // 7. NITA — Direct rival, beauty-fashion crossover
+    // 7. b.liv — Malaysian skincare, pores & clarity
     // ═══════════════════════════════════════
     {
-        id: "comp_nita_007",
-        symbol: "NTA",
-        name: "Nita Cosmetics & Fashion",
-        description: "Fast-growing beauty-fashion hybrid on Shopee. Massive Shopee Live presence, viral TikTok content, aggressive pricing.",
+        id: "comp_bliv_007",
+        symbol: "BLV",
+        name: "b.liv",
+        description: "Homegrown Malaysian skincare focused on pores, blackheads, and clarity. Strong Shopee/TikTok velocity and price-aggressive bundles.",
         status: "ACTIVE",
         tier: "DIRECT",
         tracked_since: "2026-01-15T00:00:00.000Z",
@@ -743,7 +752,7 @@ export const MOCK_COMPETITORS: CompetitorProfile[] = [
         channels: [
             {
                 platform: "shopee",
-                store_name: "Nita Official MY",
+                store_name: "b.liv Official Store",
                 is_official: true,
                 followers: 445000,
                 rating: 4.7,
@@ -752,7 +761,7 @@ export const MOCK_COMPETITORS: CompetitorProfile[] = [
             },
             {
                 platform: "tiktok_shop",
-                store_name: "Nita Official",
+                store_name: "b.liv Skincare",
                 is_official: true,
                 followers: 320000,
                 rating: 4.6,
@@ -762,14 +771,14 @@ export const MOCK_COMPETITORS: CompetitorProfile[] = [
         ],
 
         catalog: {
-            total_skus: 680,
-            new_skus_30d: 92,
-            removed_skus_30d: 18,
-            top_categories: ["Blouses", "Telekung", "Beauty Sets", "Modest Casual", "Scarves"],
-            price_range: { min: 19.9, max: 229, avg: 69, currency: "MYR" },
-            bestseller_price_avg: 49.9,
-            discount_rate_pct: 42,
-            avg_discount_depth_pct: 30,
+            total_skus: 86,
+            new_skus_30d: 14,
+            removed_skus_30d: 4,
+            top_categories: ["Blackhead Serum", "Pore Strips", "Sub-Skin Cleanser", "Masks", "Sunscreen"],
+            price_range: { min: 19.9, max: 129, avg: 49, currency: "MYR" },
+            bestseller_price_avg: 39.9,
+            discount_rate_pct: 38,
+            avg_discount_depth_pct: 28,
         },
 
         engagement: {
@@ -788,9 +797,9 @@ export const MOCK_COMPETITORS: CompetitorProfile[] = [
             shopee_category_total: 4200,
             tiktok_category_rank: 3,
             search_rank_keywords: [
-                { keyword: "blouse murah", your_rank: 16, their_rank: 4 },
-                { keyword: "telekung premium", your_rank: 55, their_rank: 2 },
-                { keyword: "shopee live fashion", your_rank: 42, their_rank: 1 },
+                { keyword: "bliv blackhead serum", your_rank: 16, their_rank: 4 },
+                { keyword: "porphyrin skincare malaysia", your_rank: 55, their_rank: 2 },
+                { keyword: "shopee live skincare", your_rank: 42, their_rank: 1 },
             ],
         },
 
@@ -811,21 +820,21 @@ export const MOCK_COMPETITORS: CompetitorProfile[] = [
         },
 
         ai_insights: [
-            "FASTEST GROWING competitor. Engagement jumped 34% in one month — driven by 28 Shopee Live sessions (you did 3). Live commerce is their moat.",
-            "Their beauty + fashion bundle strategy drives higher AOV from beauty customers. Consider cross-category bundles with accessories or beauty partnerships.",
-            "Now #1 for 'shopee live fashion' — they stream almost daily. Avg replay views: 45k. Start with 2-3 lives/week minimum to compete.",
-            "Only 680 SKUs but top 20 products account for 60% of revenue. Depth over breadth strategy is working.",
+            "FASTEST GROWING local skincare competitor on Live — near-daily Shopee streams with high replay views.",
+            "Hero SKUs skew to pore and blackhead; your ShopIntel barrier and SPF story avoids head-on overlap if you position clearly.",
+            "Bundle-heavy AOV; counter with concise 3-step kits and education rather than SKU count.",
+            "Top 20 SKUs drive most revenue — depth on clarity concerns vs your breadth play.",
         ],
 
         active_promos: [
             {
-                title: "Daily Shopee Live: Up to 50% Off",
+                title: "Daily Shopee Live: Pore Kit Flash",
                 type: "live_sale",
                 started_at: "2026-03-01T00:00:00.000Z",
                 estimated_discount_pct: 35,
             },
             {
-                title: "Beauty + Fashion Bundle RM99",
+                title: "Sub-Skin + Sunscreen Bundle",
                 type: "bundle",
                 started_at: "2026-03-10T00:00:00.000Z",
                 ends_at: "2026-04-10T23:59:59.000Z",
@@ -835,13 +844,13 @@ export const MOCK_COMPETITORS: CompetitorProfile[] = [
     },
 
     // ═══════════════════════════════════════
-    // 8. CHARLES & KEITH — Inactive, paused
+    // 8. MAC COSMETICS MY — Inactive (color-led, low skincare overlap)
     // ═══════════════════════════════════════
     {
-        id: "comp_ck_008",
-        symbol: "CHT",
-        name: "Charles & Keith MY",
-        description: "Singapore-based fashion accessories brand. Tracking paused after pivot away from accessories category.",
+        id: "comp_mac_008",
+        symbol: "MAC",
+        name: "MAC Cosmetics Malaysia",
+        description: "Global color cosmetics leader. Tracking paused — limited overlap now that you are skincare-first.",
         status: "INACTIVE",
         tier: "ASPIRATIONAL",
         tracked_since: "2025-06-01T00:00:00.000Z",
@@ -850,8 +859,8 @@ export const MOCK_COMPETITORS: CompetitorProfile[] = [
         channels: [
             {
                 platform: "shopify",
-                store_name: "charleskeith.com/my",
-                store_url: "https://charleskeith.com/my",
+                store_name: "maccosmetics.com.my",
+                store_url: "https://www.maccosmetics.com.my",
                 is_official: true,
                 followers: 0,
                 rating: 4.4,
@@ -860,7 +869,7 @@ export const MOCK_COMPETITORS: CompetitorProfile[] = [
             },
             {
                 platform: "shopee",
-                store_name: "Charles & Keith Official",
+                store_name: "MAC Cosmetics Official MY",
                 is_official: true,
                 followers: 680000,
                 rating: 4.7,
@@ -870,12 +879,12 @@ export const MOCK_COMPETITORS: CompetitorProfile[] = [
         ],
 
         catalog: {
-            total_skus: 1200,
+            total_skus: 2100,
             new_skus_30d: 0,
             removed_skus_30d: 0,
-            top_categories: ["Bags", "Shoes", "Accessories", "Sunglasses"],
-            price_range: { min: 89, max: 599, avg: 219, currency: "MYR" },
-            bestseller_price_avg: 179,
+            top_categories: ["Lipstick", "Foundation", "Eyeshadow", "Brushes", "Skincare Prep"],
+            price_range: { min: 65, max: 299, avg: 119, currency: "MYR" },
+            bestseller_price_avg: 95,
             discount_rate_pct: 18,
             avg_discount_depth_pct: 20,
         },
@@ -913,8 +922,8 @@ export const MOCK_COMPETITORS: CompetitorProfile[] = [
         },
 
         ai_insights: [
-            "Tracking paused since Jan 2026. Charles & Keith primarily sells accessories — no longer overlaps with your clothing focus.",
-            "Consider reactivating if you expand into bags or accessories.",
+            "Tracking paused since Jan 2026. MAC remains color-forward; skincare prep SKUs are peripheral vs your Beauty Skincare ShopIntel core.",
+            "Reactivate if you launch complexion-adjacent primers or partner on counter events.",
         ],
 
         active_promos: [],

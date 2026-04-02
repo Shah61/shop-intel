@@ -170,7 +170,7 @@ const OverviewDataCard = ({
                 background: t.cardBg,
                 borderRadius: 16,
                 border: `1px solid ${t.cardBorder}`,
-                padding: "18px 20px 0 20px",
+                padding: "18px 20px 14px 20px",
                 display: "flex",
                 flexDirection: "column",
                 gap: 12,
@@ -194,11 +194,12 @@ const OverviewDataCard = ({
         >
             {/* Top row — icon + platform title (same line as Revenue label) */}
             <div
-                style={{
-                    display: "flex",
-                    alignItems: "center",
-                    gap: 10,
-                }}
+    style={{
+        display: "flex",
+        alignItems: "center",
+        gap: 10,
+        flexWrap: "wrap",
+    }}
             >
                 <div
                     className="platform-icon relative overflow-hidden"
@@ -230,25 +231,37 @@ const OverviewDataCard = ({
                         />
                     )}
                 </div>
-                <div style={{ display: "flex", flexDirection: "column", gap: 2 }}>
-                    <span
-                        style={{
-                            fontSize: 14,
-                            fontWeight: 600,
-                            color: t.title,
-                        }}
-                    >
-                        {displayTitle}
-                    </span>
-                    <span
-                        style={{
-                            fontSize: 11,
-                            color: t.subtitle,
-                        }}
-                    >
-                        {displayMetricSubtitle}
-                    </span>
-                </div>
+                <div style={{ display: "flex", flexDirection: "column", gap: 2, flex: 1, minWidth: 0 }}>
+                <span style={{ fontSize: 14, fontWeight: 600, color: t.title, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
+                {displayTitle}
+    </span>
+    <span style={{ fontSize: 11, color: t.subtitle, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
+    {displayMetricSubtitle}
+    </span>
+</div>
+
+{/* Inline stats beside title */}
+{!isLoading && (
+    <div style={{ display: "flex", gap: 16, alignItems: "center", flexShrink: 0, marginLeft: "auto" }}>
+        <div style={{ textAlign: "right" }}>
+            <div style={{ fontSize: 10, color: t.statLabel, fontWeight: 500, textTransform: "uppercase", letterSpacing: "0.4px" }}>
+                {ex1L}
+            </div>
+            <div style={{ fontSize: 14, fontWeight: 600, color: t.statValue }}>
+                {ex1V}
+            </div>
+        </div>
+        <div style={{ textAlign: "right" }}>
+            <div style={{ fontSize: 10, color: t.statLabel, fontWeight: 500, textTransform: "uppercase", letterSpacing: "0.4px" }}>
+                {ex2L}
+            </div>
+            <div style={{ fontSize: 14, fontWeight: 600, color: t.statValue }}>
+                {ex2V}
+            </div>
+        </div>
+    </div>
+)}
+
             </div>
 
             {/* Sales amount */}
@@ -293,117 +306,7 @@ const OverviewDataCard = ({
                 }}
             />
 
-            {/* Expandable stats */}
-            <div
-                style={{
-                    overflow: "hidden",
-                    maxHeight: expanded ? 80 : 0,
-                    opacity: expanded ? 1 : 0,
-                    transition: "max-height 0.3s ease, opacity 0.25s ease, padding 0.3s ease",
-                    paddingBottom: expanded ? 4 : 0,
-                }}
-            >
-                <div
-                    style={{
-                        display: "flex",
-                        gap: 28,
-                    }}
-                >
-                    <div>
-                        <div
-                            style={{
-                                fontSize: 10,
-                                color: t.statLabel,
-                                marginBottom: 4,
-                                fontWeight: 500,
-                                textTransform: "uppercase",
-                                letterSpacing: "0.4px",
-                            }}
-                        >
-                            {ex1L}
-                        </div>
-                        {isLoading ? (
-                            <div className="flex items-center gap-2 pt-0.5">
-                                <TinyLoader variant="bars" />
-                            </div>
-                        ) : (
-                            <div
-                                style={{
-                                    fontSize: 15,
-                                    fontWeight: 600,
-                                    color: t.statValue,
-                                }}
-                            >
-                                {ex1V}
-                            </div>
-                        )}
-                    </div>
-                    <div>
-                        <div
-                            style={{
-                                fontSize: 10,
-                                color: t.statLabel,
-                                marginBottom: 4,
-                                fontWeight: 500,
-                                textTransform: "uppercase",
-                                letterSpacing: "0.4px",
-                            }}
-                        >
-                            {ex2L}
-                        </div>
-                        {isLoading ? (
-                            <div className="flex items-center gap-2 pt-0.5">
-                                <TinyLoader variant="bars" />
-                            </div>
-                        ) : (
-                            <div
-                                style={{
-                                    fontSize: 15,
-                                    fontWeight: 600,
-                                    color: t.statValue,
-                                }}
-                            >
-                                {ex2V}
-                            </div>
-                        )}
-                    </div>
-                </div>
-            </div>
-
-            {/* Expand/collapse toggle */}
-            <button
-                className="platform-expand-btn"
-                onClick={() => onExpandToggle?.()}
-                style={{
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    gap: 4,
-                    width: "100%",
-                    padding: "8px 0",
-                    fontSize: 11,
-                    fontWeight: 500,
-                    color: t.expandBtnColor,
-                    background: "transparent",
-                    borderTop: "none",
-                    borderRight: "none",
-                    borderBottom: "none",
-                    borderLeft: "none",
-                    cursor: "pointer",
-                    transition: "color 0.2s ease",
-                    letterSpacing: "0.3px",
-                    textTransform: "uppercase",
-                }}
-                onMouseEnter={(e) => {
-                    e.currentTarget.style.color = t.accent;
-                }}
-                onMouseLeave={(e) => {
-                    e.currentTarget.style.color = t.expandBtnColor;
-                }}
-            >
-                {expanded ? "Less" : "Details"}
-                {expanded ? <ChevronUp size={13} /> : <ChevronDown size={13} />}
-            </button>
+          
 
             {/* Bottom glow */}
             <div

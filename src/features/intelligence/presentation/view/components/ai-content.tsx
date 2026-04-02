@@ -477,26 +477,26 @@ const AIContent: React.FC = () => {
         const input = userInput.toLowerCase();
         
         if (input.includes('blog') || input.includes('article')) {
-            return "📝 **Blog Post Content Created:**\n\n**Title:** \"The Ultimate Guide to Denim: Transform Your Wardrobe with Style-Backed Results\"\n\n**Introduction:**\nDenim has earned its reputation as the gold standard in versatile fashion, but understanding how to style it effectively can be the difference between a polished look and a fashion faux pas. In this comprehensive guide, we'll explore everything you need to know about incorporating denim into your wardrobe.\n\n**Key Sections:**\n• What is Denim and How Does it Work?\n• Benefits: From Casual to Formal\n• How to Start Building Your Denim Collection\n• Common Mistakes to Avoid\n• Product Recommendations by Style Type\n\n**Call-to-Action:**\nReady to start your denim journey? Browse our curated collection of designer-approved denim products.\n\n*Would you like me to expand on any section or adjust the tone?*";
+            return "📝 **Blog Post Content Created:**\n\n**Title:** \"Glass Skin in Humid Weather: A Science-Backed Routine for Malaysia\"\n\n**Introduction:**\nTropical heat and office air-con fight your barrier daily. This guide breaks down layering, humectants, and SPF so Beauty Skincare ShopIntel customers get glow without grease.\n\n**Key Sections:**\n• Why humidity changes product choice\n• Double cleanse without stripping\n• Serum order: niacinamide, vitamin C, hydration\n• SPF that layers under makeup\n• Weekly reset: exfoliation vs barrier repair\n\n**Call-to-Action:**\nBuild your routine with the Hydrating Cloud Cleanser and Daily UV Defense SPF 50 — shop the Shop-Intel lineup.\n\n*Would you like me to expand on any section or adjust the tone?*";
         }
         
         if (input.includes('instagram') || input.includes('social media') || input.includes('caption')) {
-            return "📱 **Instagram Content Package:**\n\n**Post 1 - Educational Carousel:**\n\"✨ DENIM 101: Everything you need to know ✨\n\nSwipe to learn:\n🔬 What denim actually is\n⏰ When to wear it (hint: any time!)\n🌟 Benefits you'll see\n⚠️ Styling mistakes to avoid\n💡 Pro tips for beginners\n\n#DenimEducation #FashionScience #StyleGuide #FashionRoutine #FashionTips\"\n\n**Post 2 - Product Feature:**\n\"Meet your new wardrobe essential 🌙\n\nOur Classic Denim Jeans are perfect for beginners:\n✅ Premium cotton blend\n✅ Comfortable stretch fabric\n✅ Designer-tested\n✅ Sustainable production\n\nStart simple, style steady 💫\n\n#NewProduct #DenimJeans #ClassicFashion #EverydayStyle\"\n\n*Need more variations or different platforms?*";
+            return "📱 **Instagram Content Package:**\n\n**Post 1 - Educational Carousel:**\n\"✨ SPF IN THE TROPICS ✨\n\nSwipe to learn:\n🔬 PA++++ vs SPF number\n⏰ When to reapply over makeup\n🌟 How much product (two fingers!)\n⚠️ Pilling fixes\n💡 Mineral vs chemical for sensitive skin\n\n#SPFEducation #SkincareMY #BeautyTips #ShopIntel #GlowSkin\"\n\n**Post 2 - Product Feature:**\n\"Meet your daily shield ☀️\n\nBeauty Skincare ShopIntel — Daily UV Defense SPF 50:\n✅ Lightweight fluid texture\n✅ Works under foundation\n✅ No white cast on deeper tones\n✅ Pairs with our Niacinamide Serum\n\nProtect first, glow always 💫\n\n#Sunscreen #SkincareRoutine #BeautySkincareShopIntel\"\n\n*Need more variations or different platforms?*";
         }
         
         if (input.includes('email') || input.includes('campaign') || input.includes('newsletter')) {
-            return "📧 **Email Campaign: Comfort Collection**\n\n**Subject Line:** \"Finally, clothing that loves you back 💚\"\n\n**Preview Text:** \"Comfortable fabrics, powerful style - designed for everyday wear\"\n\n**Email Body:**\n\nHi [Name],\n\nTired of clothing that promises the world but leaves you uncomfortable and restricted? We get it.\n\nThat's why we created our Comfort Collection - because everyone deserves effective clothing that feels like a gentle hug.\n\n**What makes it special:**\n🌿 Soft, breathable fabrics\n🧪 Quality tested for comfort\n💧 Stretch-enhancing materials\n✨ Visible style without discomfort\n\n**Featured Products:**\n• Comfortable T-Shirt - $24\n• Relaxed Fit Jeans - $32\n• Cozy Sweater - $28\n\n[SHOP THE COLLECTION - 20% OFF]\n\nYour wardrobe will thank you,\nThe Shop-Intel Team\n\n*Want me to adjust the tone or add more sections?*";
+            return "📧 **Email Campaign: Barrier Repair Week**\n\n**Subject Line:** \"Your skin barrier called — it wants ceramides 💚\"\n\n**Preview Text:** \"Ceramide cream, gentle cleanse, SPF — the ShopIntel 3-step reset\"\n\n**Email Body:**\n\nHi [Name],\n\nRedness, tightness, or makeup that won't sit right? Often it's a tired barrier — not \"bad\" skin.\n\nOur Barrier Repair edit stacks Beauty Skincare ShopIntel Ceramide Barrier Cream with the Hydrating Cloud Cleanser and Daily UV Defense SPF 50.\n\n**Why it works:**\n🌿 Ceramides + squalane mimic healthy lipid layers\n🧪 Low-pH cleanse removes SPF without squeak\n☀️ Photoprotection stops daytime damage\n\n**Featured:**\n• Cloud Cleanser — from RM XX\n• Ceramide Barrier Cream — from RM XX\n• UV Defense SPF 50 — from RM XX\n\n[SHOP BARRIER EDIT — 15% OFF KITS]\n\nGlow responsibly,\nThe Shop-Intel Team\n\n*Want me to adjust the tone or add more sections?*";
         }
         
         if (input.includes('product description') || input.includes('product copy')) {
-            return "🛍️ **Product Description: Classic T-Shirt**\n\n**Product Name:** Daily Wear Classic T-Shirt\n\n**Hero Description:**\n\"Unlock your wardrobe's natural versatility with our lightweight, breathable t-shirt that delivers all-day comfort without the heavy feel.\"\n\n**Key Benefits:**\n• Instantly comfortable and flattering fit\n• Strengthens durability with premium cotton\n• Lightweight, non-restrictive fabric\n• Suitable for all body types\n• Quality-tested and approved\n\n**Key Features:**\n🌊 **Premium Cotton** - Soft and breathable material\n🛡️ **Reinforced Seams** - Durable construction for longevity\n🌿 **Stretch Blend** - Comfortable fit that moves with you\n🍃 **Eco-Friendly Dye** - Gentle on fabric and environment\n\n**How to Style:**\nWear morning and evening for any occasion. Pair with jeans or dress up with a blazer.\n\n**Size:** S, M, L, XL\n**Price:** $32\n\n*Need variations for different products or platforms?*";
+            return "🛍️ **Product Description: Hero Cleanser**\n\n**Product Name:** Beauty Skincare ShopIntel — Hydrating Cloud Cleanser\n\n**Hero Description:**\n\"Low-pH gel cleanser that lifts sunscreen and sebum while leaving ceramides on the skin — cloud-soft, never squeaky.\"\n\n**Key Benefits:**\n• Removes SPF and light makeup in one pass (pair with oil cleanser for heavy glam)\n• Supports barrier-friendly daily washing\n• Non-stripping for humid climates\n\n**Key Features:**\n🌊 **pH-balanced surfactants** — gentle foam\n🛡️ **Ceramide-friendly** — follow with barrier cream\n🌿 **Humectant boost** — glycerin + panthenol\n\n**How to Use:**\n1–2 pumps, emulsify with water, massage 60 seconds, rinse. AM and PM.\n\n**Sizes:** 150ml, 400ml, travel 30ml\n\n*Need variations for different products or platforms?*";
         }
         
         if (input.includes('summer') || input.includes('seasonal')) {
-            return "☀️ **Summer Fashion Content Series:**\n\n**Post 1 - Educational:**\n\"Summer wardrobe switch-up time! ☀️\n\nAs temperatures rise, your style needs change:\n\n🌡️ **What happens:** Increased heat, more sweating, higher sun exposure\n\n💧 **What to adjust:**\n• Lighter fabrics\n• Breathable materials (minimum cotton blend)\n• Loose fits for comfort\n• Light colors for heat reflection\n\n🚫 **What to avoid:**\n• Heavy fabrics that trap heat\n• Skipping sun protection (your style still needs it!)\n• Forgetting to stay hydrated\n\nYour summer style starts with the right wardrobe ✨\n\n#SummerFashion #StyleGuide #LightweightFashion #FashionTips\"\n\n**Post 2 - Product Recommendations:**\n\"Your summer wardrobe essentials checklist ✅\n\n☀️ Lightweight cotton t-shirts\n💧 Breathable linen shirts\n🧴 Comfortable shorts\n✨ Lightweight dresses\n🌊 Sun hats and accessories\n\nSwipe for our top picks! 👉\"\n\n*Want more seasonal content or specific product focuses?*";
+            return "☀️ **Humid Season Skincare Series:**\n\n**Post 1 - Educational:**\n\"UV index is up — your routine needs a tweak ☀️\n\n🌡️ **What happens:** More sweat, more sebum, stronger UV\n\n💧 **What to add:**\n• Morning antioxidant (vitamin C)\n• Fluid SPF 50 reapplied\n• Lightweight gel-cream moisturizer\n\n🚫 **What to skip:**\n• Thick occlusives in daytime\n• Over-exfoliating when you're sweaty\n• SPF-only-from-makeup\n\n#HumidSkin #SPF #SkincareMY #ShopIntel\"\n\n**Post 2 - Product stack:**\n\"ShopIntel humid-day checklist ✅\n\n☀️ Daily UV Defense SPF 50\n💧 HA Rose Toner\n✨ Niacinamide 10% Serum\n🌙 Ceramide Barrier Cream (PM)\n\nSwipe for application order 👉\"\n\n*Want more seasonal content or specific product focuses?*";
         }
         
-        return "I'd love to help you create amazing clothing content! I can assist with:\n\n📝 **Blog Posts & Articles**\n• Educational content about fabrics and materials\n• How-to guides and tutorials\n• Product reviews and comparisons\n• Seasonal fashion advice\n\n📱 **Social Media Content**\n• Instagram captions and stories\n• TikTok scripts\n• Facebook posts\n• Pinterest descriptions\n\n📧 **Marketing Copy**\n• Email campaigns\n• Product descriptions\n• Landing page copy\n• Ad copy\n\n🎨 **Creative Content**\n• Brand storytelling\n• Customer testimonials\n• Educational infographics\n• Video scripts\n\nWhat specific type of content would you like me to create? Just let me know your target audience, tone, and key message! ✨";
+        return "I'd love to help you create beauty & skincare content for Beauty Skincare ShopIntel! I can assist with:\n\n📝 **Blog Posts & Articles**\n• Ingredient education (niacinamide, retinol, SPF)\n• Routine guides for humid climates\n• Comparisons vs drugstore (Watsons, Guardian) and prestige (Sephora)\n\n📱 **Social Media**\n• Instagram / TikTok scripts and carousels\n• Shopee Live talking points\n• Before/after story frameworks (compliant claims)\n\n📧 **Marketing Copy**\n• Email and SMS for launches and kits\n• PDP copy for Shopify\n• Meta ad angles\n\n🎨 **Creative**\n• Brand story for Shop-Intel beauty line\n• Testimonial prompts\n• Educational video outlines\n\nWhat should we write first? ✨";
     };
 
     const handleSuggestedPrompt = (prompt: string) => {
@@ -566,11 +566,11 @@ const AIContent: React.FC = () => {
     const generatePromptForSubcategory = (actionType: string, subcategory: any): string => {
         const prompts: Record<string, Record<string, string>> = {
             "Hook": {
-                "hook-emotional": "Create an emotional hook for a clothing product that addresses style concerns",
-                "hook-question": "Write compelling question hooks for social media posts about fashion routines",
-                "hook-statistic": "Create hooks using statistics about clothing benefits and results",
-                "hook-story": "Write story-based hooks that connect with fashion journey experiences",
-                "hook-problem": "Create problem-focused hooks that address common wardrobe issues"
+                "hook-emotional": "Create an emotional hook for a skincare product that addresses barrier and confidence",
+                "hook-question": "Write compelling question hooks for social posts about SPF and humid-skin routines",
+                "hook-statistic": "Create hooks using statistics about sun damage and barrier health",
+                "hook-story": "Write story-based hooks that connect with skincare journey moments",
+                "hook-problem": "Create problem-focused hooks for acne, pores, or sensitivity"
             },
             "Storyboard (Script & Images)": {
                 "script-tutorial": "Write a tutorial script for a styling routine video",
@@ -580,11 +580,11 @@ const AIContent: React.FC = () => {
                 "script-behind-scenes": "Write a behind-the-scenes script about product development"
             },
             "Call To Action": {
-                "cta-shop": "Create compelling 'Shop Now' call-to-action copy for clothing products",
-                "cta-learn": "Write 'Learn More' CTAs for educational fashion content",
-                "cta-subscribe": "Create newsletter subscription CTAs for style tips",
-                "cta-follow": "Write social media follow CTAs for clothing brand",
-                "cta-trial": "Create free trial CTAs for clothing sample campaigns"
+                "cta-shop": "Create compelling 'Shop Now' CTAs for Beauty Skincare ShopIntel kits",
+                "cta-learn": "Write 'Learn More' CTAs for ingredient education",
+                "cta-subscribe": "Create newsletter CTAs for routine tips and restock alerts",
+                "cta-follow": "Write follow CTAs for Shop-Intel beauty content",
+                "cta-trial": "Create trial / mini-size CTAs for first-time customers"
             }
         };
 
@@ -687,7 +687,7 @@ const AIContent: React.FC = () => {
                                                 Welcome to AI Content Writer
                                             </h3>
                                             <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
-                                                I'm your creative content companion, specializing in clothing marketing and educational content. 
+                                                I'm your creative content companion, specializing in beauty & skincare marketing and educational content.
                                                 Choose a content type below to get started.
                                             </p>
                                             

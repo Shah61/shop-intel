@@ -232,7 +232,7 @@ function SearchBar({
             {/* Suggestions */}
             <div className="p-3">
               <div className="grid grid-cols-3 gap-1.5 mb-3">
-                {['T-Shirts', 'Jeans', 'Dresses', 'Jackets', 'Accessories', 'Outfits'].map((suggestion) => (
+                {['SPF 50', 'Niacinamide', 'Retinol', 'Cleanser', 'Moisturizer', 'Glass skin'].map((suggestion) => (
                   <button
                     key={suggestion}
                     onClick={(e) => {
