@@ -404,10 +404,12 @@ const OverviewDataCard = ({
                             fontWeight: 600,
                             color: t.title,
                             lineHeight: 1.2,
-                            display: "block",
-                            whiteSpace: "nowrap",
-                            overflow: "hidden",
-                            textOverflow: "ellipsis",
+                            whiteSpace: "normal",
+wordBreak: "break-word",
+display: "-webkit-box",
+WebkitLineClamp: 2,
+WebkitBoxOrient: "vertical" as const,
+overflow: "hidden",
                         }}
                     >
                         {displayTitle}
