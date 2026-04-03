@@ -170,7 +170,6 @@
 @media (min-width: 768px) and (max-width: 1366px) {
   .protected-layout-root {
     min-height: 100dvh !important;
-    height: auto !important;
   }
 
   .main-content {
