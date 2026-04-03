@@ -196,7 +196,7 @@ const OverviewDataCard = ({
             <div
     style={{
         display: "flex",
-        alignItems: "center",
+        alignItems: "flex-start",
         gap: 10,
         flexWrap: "wrap",
     }}
@@ -231,18 +231,50 @@ const OverviewDataCard = ({
                         />
                     )}
                 </div>
-                <div style={{ display: "flex", flexDirection: "column", gap: 2, flex: 1, minWidth: 0 }}>
-                <span style={{ fontSize: 14, fontWeight: 600, color: t.title, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
-                {displayTitle}
-    </span>
-    <span style={{ fontSize: 11, color: t.subtitle, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
-    {displayMetricSubtitle}
-    </span>
-</div>
+                <div
+                    style={{
+                        display: "flex",
+                        flexDirection: "column",
+                        gap: 2,
+                        flex: "1 1 140px",
+                        minWidth: 0,
+                    }}
+                >
+                    <span
+                        style={{
+                            fontSize: 14,
+                            fontWeight: 600,
+                            color: t.title,
+                            lineHeight: 1.25,
+                            overflowWrap: "break-word",
+                        }}
+                    >
+                        {displayTitle}
+                    </span>
+                    <span
+                        style={{
+                            fontSize: 11,
+                            color: t.subtitle,
+                            lineHeight: 1.35,
+                            overflowWrap: "break-word",
+                        }}
+                    >
+                        {displayMetricSubtitle}
+                    </span>
+                </div>
 
 {/* Inline stats beside title */}
 {!isLoading && (
-    <div style={{ display: "flex", gap: 16, alignItems: "center", flexShrink: 0, marginLeft: "auto" }}>
+    <div
+        style={{
+            display: "flex",
+            gap: 16,
+            alignItems: "flex-start",
+            flexShrink: 0,
+            marginLeft: "auto",
+            paddingTop: 2,
+        }}
+    >
         <div style={{ textAlign: "right" }}>
             <div style={{ fontSize: 10, color: t.statLabel, fontWeight: 500, textTransform: "uppercase", letterSpacing: "0.4px" }}>
                 {ex1L}

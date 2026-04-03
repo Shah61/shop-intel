@@ -459,6 +459,7 @@ export default function AppSidebar() {
                 { id: "trends", label: "Trends", path: "/intelligence?tab=trends" },
                 { id: "analysis", label: "Analysis", path: "/intelligence?tab=analysis" },
                 { id: "competitors", label: "Competitors", path: "/intelligence/competitors" },
+                { id: "customer-service", label: "Customer Service", path: "/intelligence/customer-service" },
             ],
         },
         {
