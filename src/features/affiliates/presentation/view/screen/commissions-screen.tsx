@@ -1442,58 +1442,61 @@ const CommissionsScreen = () => {
                 style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 16, width: "100%" }}
                 className="overview-platform-grid !grid-cols-1 sm:!grid-cols-2 lg:!grid-cols-4"
             >
-                <OverviewDataCard
-                    customTitle="Total Commissions"
-                    customIcon={<DollarSign size={22} strokeWidth={2} />}
-                    metricSubtitle="All time commissions"
-                    primaryValueDisplay={revealedAmounts ? formatCurrency(meta.total_commissions) : "RM ••••••"}
-                    expandLabel1="Avg. Commission"
-                    expandValue1Display={revealedAmounts ? formatCurrency(meta.avg_commission) : "••••••"}
-                    expandLabel2="Avg. Rate"
-                    expandValue2Display={`${meta.avg_rate.toFixed(1)}%`}
-                    isLoading={isLoading}
-                    expanded={cardsExpanded}
-                    onExpandToggle={() => setCardsExpanded((e) => !e)}
-                />
-                <OverviewDataCard
-                    customTitle="Approved (Paid)"
-                    customIcon={<CheckCircle2 size={22} strokeWidth={2} />}
-                    metricSubtitle="Ready for payout"
-                    primaryValueDisplay={revealedAmounts ? formatCurrency(meta.approved) : "RM ••••••"}
-                    expandLabel1="Paid Count"
-                    expandValue1Display={String(meta.paid_count)}
-                    expandLabel2="Total Orders"
-                    expandValue2Display={String(meta.total_orders)}
-                    isLoading={isLoading}
-                    expanded={cardsExpanded}
-                    onExpandToggle={() => setCardsExpanded((e) => !e)}
-                />
-                <OverviewDataCard
-                    customTitle="Pending"
-                    customIcon={<Clock size={22} strokeWidth={2} />}
-                    metricSubtitle="Awaiting approval"
-                    primaryValueDisplay={revealedAmounts ? formatCurrency(meta.pending) : "RM ••••••"}
-                    expandLabel1="Pending Count"
-                    expandValue1Display={String(meta.pending_count)}
-                    expandLabel2="Items Sold"
-                    expandValue2Display={String(meta.total_quantity)}
-                    isLoading={isLoading}
-                    expanded={cardsExpanded}
-                    onExpandToggle={() => setCardsExpanded((e) => !e)}
-                />
-                <OverviewDataCard
-                    customTitle="Total Sales"
-                    customIcon={<TrendingUp size={22} strokeWidth={2} />}
-                    metricSubtitle="From affiliate sales"
-                    primaryValueDisplay={revealedAmounts ? formatCurrency(meta.total_sales) : "RM ••••••"}
-                    expandLabel1="Top Source"
-                    expandValue1Display={meta.topSource ? meta.topSource[0] : "—"}
-                    expandLabel2="Source Value"
-                    expandValue2Display={meta.topSource ? formatCurrency(meta.topSource[1]) : "—"}
-                    isLoading={isLoading}
-                    expanded={cardsExpanded}
-                    onExpandToggle={() => setCardsExpanded((e) => !e)}
-                />
+             {/* Card 1 — shorten labels */}
+<OverviewDataCard
+    variant="stat"
+    customTitle="Total Commissions"
+    customIcon={<DollarSign size={22} strokeWidth={2} />}
+    metricSubtitle="All time"
+    primaryValueDisplay={revealedAmounts ? formatCurrency(meta.total_commissions) : "RM ••••••"}
+    expandLabel1="Avg."
+    expandValue1Display={revealedAmounts ? formatCurrency(meta.avg_commission) : "••••••"}
+    expandLabel2="Rate"
+    expandValue2Display={`${meta.avg_rate.toFixed(1)}%`}
+    isLoading={isLoading}
+/>
+
+{/* Card 2 — shorten labels */}
+<OverviewDataCard
+    variant="stat"
+    customTitle="Approved (Paid)"
+    customIcon={<CheckCircle2 size={22} strokeWidth={2} />}
+    metricSubtitle="Ready for payout"
+    primaryValueDisplay={revealedAmounts ? formatCurrency(meta.approved) : "RM ••••••"}
+    expandLabel1="Paid"
+    expandValue1Display={String(meta.paid_count)}
+    expandLabel2="Orders"
+    expandValue2Display={String(meta.total_orders)}
+    isLoading={isLoading}
+/>
+
+{/* Card 3 — shorten labels */}
+<OverviewDataCard
+    variant="stat"
+    customTitle="Pending"
+    customIcon={<Clock size={22} strokeWidth={2} />}
+    metricSubtitle="Awaiting approval"
+    primaryValueDisplay={revealedAmounts ? formatCurrency(meta.pending) : "RM ••••••"}
+    expandLabel1="Count"
+    expandValue1Display={String(meta.pending_count)}
+    expandLabel2="Items"
+    expandValue2Display={String(meta.total_quantity)}
+    isLoading={isLoading}
+/>
+
+{/* Card 4 — this is the problematic one, shorten everything */}
+<OverviewDataCard
+    variant="stat"
+    customTitle="Total Sales"
+    customIcon={<TrendingUp size={22} strokeWidth={2} />}
+    metricSubtitle="Affiliate sales"
+    primaryValueDisplay={revealedAmounts ? formatCurrency(meta.total_sales) : "RM ••••••"}
+    expandLabel1="Top"
+    expandValue1Display={meta.topSource ? meta.topSource[0] : "—"}
+    expandLabel2="Value"
+    expandValue2Display={meta.topSource ? formatCurrency(meta.topSource[1]).replace(".00", "") : "—"}
+        isLoading={isLoading}
+/>
             </div>
 
             {/* ── Table Card ── */}
