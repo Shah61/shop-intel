@@ -341,7 +341,7 @@ const OverviewDataCard = ({
                 background: t.cardBg,
                 borderRadius: 14,
                 border: `1px solid ${t.cardBorder}`,
-                padding: "14px 16px",
+                padding: "12px 14px",
                 display: "flex",
                 flexDirection: "column",
                 gap: 8,
@@ -363,14 +363,14 @@ const OverviewDataCard = ({
                 e.currentTarget.style.boxShadow = "none";
             }}
         >
-            {/* Single row: Icon + Title/Subtitle + divider + Stats */}
+            {/* Top section: Icon + Title row */}
             <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
                 <div
                     className="platform-icon relative overflow-hidden"
                     style={{
-                        width: 36,
-                        height: 36,
-                        borderRadius: 10,
+                        width: 34,
+                        height: 34,
+                        borderRadius: 9,
                         background: t.iconWell,
                         display: "flex",
                         alignItems: "center",
@@ -381,17 +381,17 @@ const OverviewDataCard = ({
                     }}
                 >
                     {isCustom ? (
-                        <span className="flex h-[28px] w-[28px] items-center justify-center text-[var(--preset-primary)]">
+                        <span className="flex h-[26px] w-[26px] items-center justify-center text-[var(--preset-primary)]">
                             {customIcon}
                         </span>
                     ) : (
                         <Image
                             src={config.iconSrc}
                             alt={`${config.label} logo`}
-                            width={36}
-                            height={36}
-                            className="h-[28px] w-[28px] object-contain"
-                            sizes="36px"
+                            width={34}
+                            height={34}
+                            className="h-[26px] w-[26px] object-contain"
+                            sizes="34px"
                         />
                     )}
                 </div>
@@ -417,23 +417,23 @@ const OverviewDataCard = ({
                     </span>
                 </div>
 
-                {/* Inline stats — right side */}
+                {/* Inline stats — right side, uses container query-like approach via flex wrap */}
                 {!isLoading && (
-                    <div style={{ display: "flex", gap: 14, alignItems: "center", flexShrink: 0 }}>
+                    <div style={{ display: "flex", gap: 10, alignItems: "center", flexShrink: 0 }}>
                         <div style={{ textAlign: "right" }}>
-                            <div style={{ fontSize: 9, color: t.statLabel, fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.4px", lineHeight: 1.2 }}>
+                            <div style={{ fontSize: 8, color: t.statLabel, fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.3px", lineHeight: 1.2 }}>
                                 {ex1L}
                             </div>
-                            <div style={{ fontSize: 13, fontWeight: 700, color: t.statValue, lineHeight: 1.3 }}>
+                            <div style={{ fontSize: 12, fontWeight: 700, color: t.statValue, lineHeight: 1.3 }}>
                                 {ex1V}
                             </div>
                         </div>
-                        <div style={{ width: 1, height: 22, background: t.divider, flexShrink: 0 }} />
+                        <div style={{ width: 1, height: 20, background: t.divider, flexShrink: 0 }} />
                         <div style={{ textAlign: "right" }}>
-                            <div style={{ fontSize: 9, color: t.statLabel, fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.4px", lineHeight: 1.2 }}>
+                            <div style={{ fontSize: 8, color: t.statLabel, fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.3px", lineHeight: 1.2 }}>
                                 {ex2L}
                             </div>
-                            <div style={{ fontSize: 13, fontWeight: 700, color: t.statValue, lineHeight: 1.3 }}>
+                            <div style={{ fontSize: 12, fontWeight: 700, color: t.statValue, lineHeight: 1.3 }}>
                                 {ex2V}
                             </div>
                         </div>
@@ -446,7 +446,7 @@ const OverviewDataCard = ({
                 {isLoading ? (
                     <div
                         className="flex w-full items-center justify-center"
-                        style={{ minHeight: 48, paddingTop: 2, paddingBottom: 2 }}
+                        style={{ minHeight: 40, paddingTop: 2, paddingBottom: 2 }}
                     >
                         <SmallLoader
                             label="Fetching"
@@ -460,7 +460,7 @@ const OverviewDataCard = ({
                     <p
                         className="platform-sales-amount"
                         style={{
-                            fontSize: 22,
+                            fontSize: 20,
                             fontWeight: 700,
                             color: t.salesAmount,
                             margin: "2px 0 0 0",

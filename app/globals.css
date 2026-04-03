@@ -452,8 +452,9 @@ html:not(.dark) .recharts-tooltip-wrapper [style*="rgba(255, 255, 255"] {
     gap: 8px !important;
   }
   .overview-data-card {
-    padding: 10px 12px 0 12px !important;
-    gap: 6px !important;
+    padding-top: 17px !important;
+    padding-bottom: 17px !important;
+        gap: 6px !important;
     border-radius: 12px !important;
   }
   .platform-icon {
