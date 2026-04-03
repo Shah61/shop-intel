@@ -727,6 +727,7 @@ export default function AppSidebar() {
                 className="sidebar-scroll"
                 style={{
                     flex: 1,
+                    overscrollBehavior: "contain",  
                     overflowY: "auto",
                     overflowX: "hidden",
                     padding: collapsed ? "12px 8px" : "12px 14px",
@@ -855,12 +856,15 @@ export default function AppSidebar() {
 
             {/* Bottom section — inside scroll so it’s reachable on short viewports (e.g. iPad/phone) */}
             <div
-                className="sidebar-bottom-section"
-                style={{
-                    flexShrink: 0,
-                    padding: collapsed ? "12px 8px 16px" : "12px 14px 16px",
-                    paddingBottom: collapsed ? 16 : 20,
-                }}
+                    className="sidebar-bottom-section"
+                    style={{
+                        flexShrink: 0,
+                        padding: collapsed ? "12px 8px 16px" : "12px 14px 16px",
+                        paddingBottom: collapsed ? 16 : 20,
+                        overscrollBehavior: "contain",
+                    }}
+                    onTouchMove={(e) => e.stopPropagation()}  
+                
             >
                 <div style={{ height: 1, background: t.divider, marginBottom: 12 }} />
 

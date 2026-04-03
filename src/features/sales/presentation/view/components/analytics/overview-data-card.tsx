@@ -3,9 +3,8 @@
 import type { ReactNode } from "react";
 import Image from "next/image";
 import { useTheme } from "next-themes";
-import { ChevronDown, ChevronUp } from "lucide-react";
 import { formatCurrency } from "@/src/core/constant/helper";
-import { SmallLoader, TinyLoader } from "@/components/ui/shop-intel-loader";
+import { SmallLoader } from "@/components/ui/shop-intel-loader";
 
 interface OverviewDataCardProps {
     platform?: string;
@@ -15,7 +14,6 @@ interface OverviewDataCardProps {
     isLoading: boolean;
     expanded?: boolean;
     onExpandToggle?: () => void;
-    /** When set with customIcon, renders like platform cards but with your own title, primary line, and expand stats (Sales overview pattern). */
     customTitle?: string;
     customIcon?: ReactNode;
     metricSubtitle?: string;
@@ -24,6 +22,12 @@ interface OverviewDataCardProps {
     expandValue1Display?: string;
     expandLabel2?: string;
     expandValue2Display?: string;
+    /**
+     * "platform" — compact card: icon + title + inline stats in one row, revenue below (Sales page)
+     * "stat"    — hero number card: big number center-stage, pill stats at bottom (User Activity)
+     * Default: "platform"
+     */
+    variant?: "platform" | "stat";
 }
 
 const PLATFORM_CONFIG: Record<
@@ -102,6 +106,7 @@ const OverviewDataCard = ({
     expandValue1Display,
     expandLabel2,
     expandValue2Display,
+    variant = "platform",
 }: OverviewDataCardProps) => {
     const { resolvedTheme } = useTheme();
     const isDark = resolvedTheme === "dark";
@@ -132,14 +137,9 @@ const OverviewDataCard = ({
               divider: "rgba(var(--preset-primary-rgb), 0.1)",
               glow: config.darkGlow,
               iconWell: config.darkIconWell,
-              badgeBg: "rgba(var(--preset-primary-rgb), 0.08)",
-              badgeBorder: "rgba(var(--preset-primary-rgb), 0.15)",
-              expandBtnBg: "rgba(var(--preset-primary-rgb), 0.06)",
-              expandBtnBorder: "rgba(var(--preset-primary-rgb), 0.12)",
-              expandBtnColor: "hsl(var(--muted-foreground))",
-              trendUp: "var(--preset-lighter)",
-              trendDown: "#ef5350",
               accent: config.accentDark,
+              pillBg: "rgba(var(--preset-primary-rgb), 0.1)",
+              pillBorder: "rgba(var(--preset-primary-rgb), 0.15)",
           }
         : {
               cardBg: "rgba(250, 247, 255, 0.9)",
@@ -153,27 +153,198 @@ const OverviewDataCard = ({
               divider: "rgba(var(--preset-primary-rgb), 0.08)",
               glow: config.lightGlow,
               iconWell: config.lightIconWell,
-              badgeBg: "rgba(var(--preset-primary-rgb), 0.04)",
-              badgeBorder: "rgba(var(--preset-primary-rgb), 0.1)",
-              expandBtnBg: "rgba(var(--preset-primary-rgb), 0.04)",
-              expandBtnBorder: "rgba(var(--preset-primary-rgb), 0.1)",
-              expandBtnColor: "hsl(var(--muted-foreground))",
-              trendUp: "var(--preset-primary)",
-              trendDown: "#dc2626",
               accent: config.accentLight,
+              pillBg: "rgba(var(--preset-primary-rgb), 0.06)",
+              pillBorder: "rgba(var(--preset-primary-rgb), 0.1)",
           };
 
+    /* ═══════════════════════════════════════════════════════════
+       VARIANT: "stat" — User Activity style
+       Icon + title → Big hero number → Divider → Pill stats
+       ═══════════════════════════════════════════════════════════ */
+    if (variant === "stat") {
+        return (
+            <div
+                className="overview-data-card"
+                style={{
+                    background: t.cardBg,
+                    borderRadius: 16,
+                    border: `1px solid ${t.cardBorder}`,
+                    padding: "16px 18px",
+                    display: "flex",
+                    flexDirection: "column",
+                    position: "relative",
+                    overflow: "hidden",
+                    fontFamily: "'Outfit', sans-serif",
+                    backdropFilter: "blur(16px)",
+                    WebkitBackdropFilter: "blur(16px)",
+                    transition: "border-color 0.2s ease, box-shadow 0.2s ease",
+                    cursor: "default",
+                    minWidth: 0,
+                }}
+                onMouseEnter={(e) => {
+                    e.currentTarget.style.borderColor = t.cardHoverBorder;
+                    e.currentTarget.style.boxShadow = `0 4px 24px ${t.glow}`;
+                }}
+                onMouseLeave={(e) => {
+                    e.currentTarget.style.borderColor = t.cardBorder;
+                    e.currentTarget.style.boxShadow = "none";
+                }}
+            >
+                {/* Row 1: Icon + Title + Subtitle */}
+                <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 14 }}>
+                    <div
+                        className="platform-icon relative overflow-hidden"
+                        style={{
+                            width: 36,
+                            height: 36,
+                            borderRadius: 10,
+                            background: t.iconWell,
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "center",
+                            flexShrink: 0,
+                            boxShadow: `0 2px 10px ${t.glow}`,
+                            border: `1px solid rgba(var(--preset-primary-rgb), ${isDark ? 0.12 : 0.08})`,
+                        }}
+                    >
+                        {isCustom ? (
+                            <span className="flex h-[28px] w-[28px] items-center justify-center text-[var(--preset-primary)]">
+                                {customIcon}
+                            </span>
+                        ) : (
+                            <Image
+                                src={config.iconSrc}
+                                alt={`${config.label} logo`}
+                                width={36}
+                                height={36}
+                                className="h-[28px] w-[28px] object-contain"
+                                sizes="36px"
+                            />
+                        )}
+                    </div>
+                    <div style={{ flex: 1, minWidth: 0 }}>
+                        <span style={{ fontSize: 13, fontWeight: 600, color: t.title, lineHeight: 1.2, display: "block" }}>
+                            {displayTitle}
+                        </span>
+                        <span style={{ fontSize: 10, color: t.subtitle, lineHeight: 1.3 }}>
+                            {displayMetricSubtitle}
+                        </span>
+                    </div>
+                </div>
+
+                {/* Row 2: Hero number */}
+                {isLoading ? (
+                    <div
+                        className="flex w-full items-center justify-center"
+                        style={{ minHeight: 56, paddingBottom: 8 }}
+                    >
+                        <SmallLoader
+                            label="Fetching"
+                            size="large"
+                            labelColor={t.subtitle}
+                            centerPulseColor="rgba(var(--preset-primary-rgb), 0.38)"
+                            className="!py-0"
+                        />
+                    </div>
+                ) : (
+                    <p
+                        className="platform-sales-amount"
+                        style={{
+                            fontSize: 32,
+                            fontWeight: 700,
+                            color: t.salesAmount,
+                            margin: "0 0 14px 0",
+                            letterSpacing: "-0.5px",
+                            lineHeight: 1,
+                            fontFamily: "'Outfit', sans-serif",
+                        }}
+                    >
+                        {displayPrimary}
+                    </p>
+                )}
+
+                {/* Row 3: Divider */}
+                <div style={{ width: "100%", height: 1, background: t.divider, marginBottom: 12 }} />
+
+                {/* Row 4: Pill stats side by side */}
+                {!isLoading && (
+                    <div style={{ display: "flex", gap: 8 }}>
+                        <div
+                            style={{
+                                flex: 1,
+                                display: "flex",
+                                alignItems: "center",
+                                justifyContent: "center",
+                                gap: 6,
+                                padding: "7px 10px",
+                                borderRadius: 10,
+                                background: t.pillBg,
+                                border: `1px solid ${t.pillBorder}`,
+                            }}
+                        >
+                            <span style={{ fontSize: 9, color: t.statLabel, fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.3px" }}>
+                                {ex1L}
+                            </span>
+                            <span style={{ fontSize: 13, fontWeight: 700, color: t.statValue }}>
+                                {ex1V}
+                            </span>
+                        </div>
+                        <div
+                            style={{
+                                flex: 1,
+                                display: "flex",
+                                alignItems: "center",
+                                justifyContent: "center",
+                                gap: 6,
+                                padding: "7px 10px",
+                                borderRadius: 10,
+                                background: t.pillBg,
+                                border: `1px solid ${t.pillBorder}`,
+                            }}
+                        >
+                            <span style={{ fontSize: 9, color: t.statLabel, fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.3px" }}>
+                                {ex2L}
+                            </span>
+                            <span style={{ fontSize: 13, fontWeight: 700, color: t.statValue }}>
+                                {ex2V}
+                            </span>
+                        </div>
+                    </div>
+                )}
+
+                {/* Bottom glow */}
+                <div
+                    style={{
+                        position: "absolute",
+                        bottom: 0,
+                        left: 0,
+                        right: 0,
+                        height: 50,
+                        pointerEvents: "none",
+                        borderRadius: "0 0 16px 16px",
+                        background: `linear-gradient(to top, ${t.glow} 0%, transparent 100%)`,
+                    }}
+                />
+            </div>
+        );
+    }
+
+    /* ═══════════════════════════════════════════════════════════
+       VARIANT: "platform" (default) — Sales page style
+       Compact: icon + title + inline stats in one row, revenue below
+       ═══════════════════════════════════════════════════════════ */
     return (
         <div
             className="overview-data-card"
             style={{
                 background: t.cardBg,
-                borderRadius: 16,
+                borderRadius: 14,
                 border: `1px solid ${t.cardBorder}`,
-                padding: "18px 20px 14px 20px",
+                padding: "14px 16px",
                 display: "flex",
                 flexDirection: "column",
-                gap: 12,
+                gap: 8,
                 position: "relative",
                 overflow: "hidden",
                 fontFamily: "'Outfit', sans-serif",
@@ -192,116 +363,90 @@ const OverviewDataCard = ({
                 e.currentTarget.style.boxShadow = "none";
             }}
         >
-            {/* Top row — icon + platform title (same line as Revenue label) */}
-            <div
-    style={{
-        display: "flex",
-        alignItems: "flex-start",
-        gap: 10,
-        flexWrap: "wrap",
-    }}
-            >
+            {/* Single row: Icon + Title/Subtitle + divider + Stats */}
+            <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
                 <div
                     className="platform-icon relative overflow-hidden"
                     style={{
-                        width: 40,
-                        height: 40,
-                        borderRadius: 11,
+                        width: 36,
+                        height: 36,
+                        borderRadius: 10,
                         background: t.iconWell,
                         display: "flex",
                         alignItems: "center",
                         justifyContent: "center",
                         flexShrink: 0,
-                        boxShadow: `0 2px 12px ${t.glow}`,
+                        boxShadow: `0 2px 10px ${t.glow}`,
                         border: `1px solid rgba(var(--preset-primary-rgb), ${isDark ? 0.12 : 0.08})`,
                     }}
                 >
                     {isCustom ? (
-                        <span className="flex h-[34px] w-[34px] items-center justify-center text-[var(--preset-primary)]">
+                        <span className="flex h-[28px] w-[28px] items-center justify-center text-[var(--preset-primary)]">
                             {customIcon}
                         </span>
                     ) : (
                         <Image
                             src={config.iconSrc}
                             alt={`${config.label} logo`}
-                            width={40}
-                            height={40}
-                            className="h-[34px] w-[34px] object-contain"
-                            sizes="40px"
+                            width={36}
+                            height={36}
+                            className="h-[28px] w-[28px] object-contain"
+                            sizes="36px"
                         />
                     )}
                 </div>
-                <div
-                    style={{
-                        display: "flex",
-                        flexDirection: "column",
-                        gap: 2,
-                        flex: "1 1 140px",
-                        minWidth: 0,
-                    }}
-                >
+
+                {/* Title + subtitle */}
+                <div style={{ flex: 1, minWidth: 0 }}>
                     <span
                         style={{
-                            fontSize: 14,
+                            fontSize: 13,
                             fontWeight: 600,
                             color: t.title,
-                            lineHeight: 1.25,
-                            overflowWrap: "break-word",
+                            lineHeight: 1.2,
+                            display: "block",
+                            whiteSpace: "nowrap",
+                            overflow: "hidden",
+                            textOverflow: "ellipsis",
                         }}
                     >
                         {displayTitle}
                     </span>
-                    <span
-                        style={{
-                            fontSize: 11,
-                            color: t.subtitle,
-                            lineHeight: 1.35,
-                            overflowWrap: "break-word",
-                        }}
-                    >
+                    <span style={{ fontSize: 10, color: t.subtitle, lineHeight: 1.3 }}>
                         {displayMetricSubtitle}
                     </span>
                 </div>
 
-{/* Inline stats beside title */}
-{!isLoading && (
-    <div
-        style={{
-            display: "flex",
-            gap: 16,
-            alignItems: "flex-start",
-            flexShrink: 0,
-            marginLeft: "auto",
-            paddingTop: 2,
-        }}
-    >
-        <div style={{ textAlign: "right" }}>
-            <div style={{ fontSize: 10, color: t.statLabel, fontWeight: 500, textTransform: "uppercase", letterSpacing: "0.4px" }}>
-                {ex1L}
-            </div>
-            <div style={{ fontSize: 14, fontWeight: 600, color: t.statValue }}>
-                {ex1V}
-            </div>
-        </div>
-        <div style={{ textAlign: "right" }}>
-            <div style={{ fontSize: 10, color: t.statLabel, fontWeight: 500, textTransform: "uppercase", letterSpacing: "0.4px" }}>
-                {ex2L}
-            </div>
-            <div style={{ fontSize: 14, fontWeight: 600, color: t.statValue }}>
-                {ex2V}
-            </div>
-        </div>
-    </div>
-)}
-
+                {/* Inline stats — right side */}
+                {!isLoading && (
+                    <div style={{ display: "flex", gap: 14, alignItems: "center", flexShrink: 0 }}>
+                        <div style={{ textAlign: "right" }}>
+                            <div style={{ fontSize: 9, color: t.statLabel, fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.4px", lineHeight: 1.2 }}>
+                                {ex1L}
+                            </div>
+                            <div style={{ fontSize: 13, fontWeight: 700, color: t.statValue, lineHeight: 1.3 }}>
+                                {ex1V}
+                            </div>
+                        </div>
+                        <div style={{ width: 1, height: 22, background: t.divider, flexShrink: 0 }} />
+                        <div style={{ textAlign: "right" }}>
+                            <div style={{ fontSize: 9, color: t.statLabel, fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.4px", lineHeight: 1.2 }}>
+                                {ex2L}
+                            </div>
+                            <div style={{ fontSize: 13, fontWeight: 700, color: t.statValue, lineHeight: 1.3 }}>
+                                {ex2V}
+                            </div>
+                        </div>
+                    </div>
+                )}
             </div>
 
-            {/* Sales amount */}
+            {/* Revenue amount */}
             <div>
                 {isLoading ? (
                     <div
                         className="flex w-full items-center justify-center"
-                        style={{ minHeight: 108, paddingTop: 4, paddingBottom: 4 }}
+                        style={{ minHeight: 48, paddingTop: 2, paddingBottom: 2 }}
                     >
                         <SmallLoader
                             label="Fetching"
@@ -315,10 +460,10 @@ const OverviewDataCard = ({
                     <p
                         className="platform-sales-amount"
                         style={{
-                            fontSize: 24,
+                            fontSize: 22,
                             fontWeight: 700,
                             color: t.salesAmount,
-                            margin: "6px 0 0 0",
+                            margin: "2px 0 0 0",
                             letterSpacing: "-0.5px",
                             lineHeight: 1,
                             fontFamily: "'Outfit', sans-serif",
@@ -329,17 +474,6 @@ const OverviewDataCard = ({
                 )}
             </div>
 
-            {/* Divider */}
-            <div
-                style={{
-                    width: "100%",
-                    height: 1,
-                    background: t.divider,
-                }}
-            />
-
-          
-
             {/* Bottom glow */}
             <div
                 style={{
@@ -347,9 +481,9 @@ const OverviewDataCard = ({
                     bottom: 0,
                     left: 0,
                     right: 0,
-                    height: 70,
+                    height: 50,
                     pointerEvents: "none",
-                    borderRadius: "0 0 16px 16px",
+                    borderRadius: "0 0 14px 14px",
                     background: `linear-gradient(to top, ${t.glow} 0%, transparent 100%)`,
                 }}
             />
