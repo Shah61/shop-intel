@@ -1,0 +1,1982 @@
+================================================================================
+SHOP INTEL — SALES AREA DATA CATALOG (DUMMY / MOCK / STATIC)
+================================================================================
+Generated from codebase audit: /sales routes, dashboard screens, mock generators,
+and inline WooCommerce fixtures. Route: /sales with ?tab=overview | tiktok |
+shopee | shopify | woocommerce (default overview).
+
+Note: Many values come from Math.random() in src/features/sales/data/mock/dummy-data.ts
+— they change on each fetch. WooCommerce tab uses fixed objects in
+app/(routes)/(protected)/sales/woocommerce/page.tsx (copied below).
+
+After the human-readable sections, this file includes APPENDIX: one full JSON snapshot
+(same content as sales-dummy-snapshot.json) with every mock row: analyticsMetadata_daily,
+tiktokConversion30, tiktokSkus10, shopeeConversion30, shopeeSkus10, shopifyConversion30,
+shopifySkus10, shopifyStock10, overviewSku10, conversionSalesSample, historicalSalesSample.
+Regenerate both files by running from repo root:
+
+  npx tsx -e "
+  import { generateTikTokConversionRate, generateTikTokSkus, generateShopeeConversionRate, generateShopeeSkus, generateShopifyConversionRate, generateShopifySkus, generateShopifyStock, generateSKUData, generateConversionSalesData, generateHistoricalSalesData, generateAnalyticsMetadata } from './src/features/sales/data/mock/dummy-data.ts';
+  import { AnalysisTimeFrame } from './src/features/sales/data/model/analytics-entity.ts';
+  console.log(JSON.stringify({ generatedAt: new Date().toISOString(), analyticsMetadata_daily: generateAnalyticsMetadata(AnalysisTimeFrame.DAILY), tiktokConversion30: generateTikTokConversionRate(), tiktokSkus10: generateTikTokSkus(), shopeeConversion30: generateShopeeConversionRate(), shopeeSkus10: generateShopeeSkus(), shopifyConversion30: generateShopifyConversionRate(), shopifySkus10: generateShopifySkus(), shopifyStock10: generateShopifyStock(), overviewSku10: generateSKUData(), conversionSalesSample: generateConversionSalesData().slice(0,16), historicalSalesSample: generateHistoricalSalesData('2025','Q1').slice(0,12) }, null, 2));
+  " > sales-dummy-snapshot.json
+
+
+================================================================================
+1) OVERVIEW (OverviewDashboardScreen — tab default)
+================================================================================
+
+--- UI copy / labels ---
+- Greeting: time-based ("Good Morning/Afternoon/Evening, {name}!") or "Welcome Back"
+- Subtitle: "Here's your sales performance at a glance"
+- Total cumulative card title: "Total Cumulative Sales"; subtitle "All platforms • {today en-MY}"
+- 5-day segment bar: fixed distribution weights [28%, 22%, 20%, 18%, 12%] applied to total_sales (TOTAL) for segment RM amounts; labels: 3 days back, then "Yesterday", "Today"
+- SeasonalPerformanceBanner: ytdGrowthLabel hardcoded "+18.2%"; links /seasonal on open
+- Platform cards (TikTok, Shopee, Shopify, Physical Store): Revenue (primary), inline Orders count, Avg. Order
+
+--- Data sources (mock API) ---
+useAnalyticsMetadata(timeframe) → generateAnalyticsMetadata(timeFrame)
+  Per type (tiktok, shopee, shopify, physical, total), fields:
+  - date (today ISO date)
+  - total_sales, total_orders, total_items
+  - average_order_value, total_gross_revenue, conversion_rate, visitors
+  - total_average_order_value
+  - type (AnalyticsType)
+
+  Ranges (before timeframe multiplier on sales/revenue/visitors; orders/items use ceil(multiplier/7)):
+  - TIKTOK: total_sales 8000–15000 * m; orders 200–500 * ceil(m/7); items 300–800 * ceil(m/7);
+    AOV 25–45; gross 9000–16000 * m; conversion 3.5–6.5%; visitors 2000–5000 * ceil(m/3)
+  - SHOPEE: total_sales 12000–20000 * m; orders 300–700 * ceil(m/7); items 400–1000 * ceil(m/7);
+    AOV 28–50; gross 13000–22000 * m; conversion 3.2–5.8%; visitors 3000–7000 * ceil(m/3)
+  - SHOPIFY: total_sales 10000–18000 * m; orders 250–600 * ceil(m/7); items 350–900 * ceil(m/7);
+    AOV 30–55; gross 11000–19000 * m; conversion 2.8–5.2%; visitors 2500–6000 * ceil(m/3)
+  - PHYSICAL: total_sales 5000–12000 * m; orders 100–350 * ceil(m/7); items 150–500 * ceil(m/7);
+    AOV 35–65; gross 5500–13000 * m; conversion 4.5–8.5%; visitors 1000–3000 * ceil(m/3)
+  - TOTAL: total_sales 35000–65000 * m; orders 850–2150 * ceil(m/7); items 1200–3200 * ceil(m/7);
+    AOV 30–50; gross 38500–70000 * m; conversion 3.5–6.2%; visitors 8500–21000 * ceil(m/3)
+  Multiplier m: daily=1, weekly=7, monthly=30, yearly=365
+
+TotalCumulativeCard displays: total_sales for AnalyticsType.TOTAL only (totalOrders/avgOrderValue props passed but not shown in current component).
+
+--- Hardcoded platform extras (overview-dashboard-screen.tsx) ---
+- TikTok: conversionRate display 4.2%; trend +15.8% up
+- Shopee: conversionRate from API metadata; trend +8.3% up
+- Shopify: conversionRate 2.9%; trend -2.1% down
+- Physical: conversionRate 2.9%; trend -2.1% down
+
+--- Sales overview chart (SalesOverviewChart) ---
+- Data: useAnalyticsSalesHistoricalData → generateHistoricalSalesData(year, quarter)
+- 90 days of rows per channel: tiktok, shopee, shopify, physical
+- Per row fields: date, total_conversions, total_orders, total_visitors, total_revenues,
+  total_gross_revenues, type
+- Base random ranges per type (orders, visitors, sales) defined in dummy-data.ts
+  generateHistoricalSalesData (e.g. TikTok sales 4000–8000, orders 100–250, visitors 1500–3500; etc.)
+
+--- List Conversion table (AnalyticsSalesTable) ---
+- Title: "List Conversion"; subtitle: "Conversion rate for each date"
+- Columns: Date | Platform | Orders | Revenues
+- IMPORTANT: Table body uses internal DUMMY_ROWS (30 rows), NOT the `data` prop from parent.
+  Dummy row shape: { date: YYYY-MM-DD, platform: cycling physical→shopee→tiktok→shopify,
+  orders: random 3–42, revenue: random 200–4199 }
+- Revenue masked as ******** for non-admin users (isAdmin check)
+
+--- Fetched but not rendered on overview ---
+- useAnalyticsSKU() / skuData — loaded in screen, not used in JSX
+
+--- Seasonal banner dummy series (SeasonalPerformanceBanner / seasonal-performance-analysis) ---
+- SEASONAL_REVENUE_BY_YEAR: monthly MYR totals per calendar year 2020–2026
+  2020: [286000,298000,312000,305000,318000,329000,315000,308000,336000,352000,398000,428000]
+  2021: [312000,325000,338000,328000,345000,358000,342000,335000,362000,384000,428000,462000]
+  2022: [335000,348000,362000,352000,368000,382000,365000,358000,388000,412000,458000,492000]
+  2023: [368000,382000,398000,388000,405000,418000,402000,395000,425000,448000,498000,532000]
+  2024: [402000,418000,432000,422000,438000,452000,435000,428000,458000,485000,538000,572000]
+  2025: [438000,455000,472000,462000,478000,492000,475000,468000,498000,525000,582000,618000]
+  2026: [465000,488000,502000,null,null,null,null,null,null,null,null,null]
+
+
+================================================================================
+2) TIKTOK (TikTokDashboardScreen — tab=tiktok)
+================================================================================
+
+Tabs: Overview | Conversion | SKUs. Header: "TikTok Shop Financial Dashboard" /
+"TikTok Shop metrics & performance analysis". DateRangePickerPro + timeframe (daily/weekly/…).
+
+--- A) Overview metric cards (TiktokMetricCard × 4) — tiktokDashboardQuery → getTiktokMetadata → generateTikTokMetadata(timeframe) ---
+API object TiktokMetadata (all numeric fields random per load):
+  orders          — int, 150–400 * ceil(multiplier/7), multiplier from daily|weekly|monthly|yearly
+  item_order      — int, 200–600 * ceil(multiplier/7)  [NOT shown on cards; exists in API only]
+  conversion_rate — float %, 3.5–6.8
+  products        — int, 45–85
+  revenue         — int, 8000–18000 * multiplier
+  gross_revenue   — int, 9000–20000 * multiplier     [NOT shown on cards; exists in API only]
+
+Cards shown (label → bound field):
+  "Products" / "Total listed"     → products
+  "Total Sales" / "Revenue"       → formatCurrency(revenue)
+  "Orders" / "Total orders"       → orders
+  "Conversion Rate" / "Visitor to buyer" → "{conversion_rate}%"
+
+--- B) Conversion charts — TiktokConversionCharts (lg:col-span-5 on overview) ---
+Controls:
+  - Chart type pills: Line | Area | Bar | Stacked (values: line, area, bar, stackedArea)
+  - Year dropdown: 2023, 2024, 2025, 2026
+  - Quarter dropdown: Q1–Q4
+Data: tiktokConversionRateHistoricalDataQuery({ quarter, year }) → getConversionRateHistoricalData →
+  generateTikTokConversionRate() (same 30-day random series as list conversion; quarter/year only change query key).
+
+Chart config colors (chartConfig):
+  total_revenues      #1AC0BB — tooltip label "Revenues"
+  total_gross_revenues #E6173D — tooltip label "Gross"
+  total_orders        #333333 — tooltip label "Orders"
+
+After load, rows are sorted ascending by date, then mapped to chart rows:
+  { date: formatChartAxisDayNumber(iso), total_revenues, total_gross_revenues, total_orders }
+Tooltip: RM + formatCurrencyToShort for revenue-like keys; admin gating via session in chart code paths.
+
+Rendered series per chartType:
+  line: 3 Line series (total_revenues, total_gross_revenues, total_orders)
+  area: 3 Area + gradients colorTotalRevenues, colorGrossRevenues, colorOrders
+  bar:  3 Bar series, radius [4,4,0,0], maxBarSize 40
+  stackedArea: 3 Area stackId "1", fillOpacity 0.6
+
+--- C) List Conversion table — TiktokConversionTable ---
+Title "List Conversion" / subtitle "Conversion rate for each date".
+Sort: descending by date.
+Overview: first 7 rows only (isLimited=true); Conversion tab: all rows (isLimited=false).
+Columns (exact):
+  Date       — formatDateToMMDDYYYY(conversion.date)  e.g. 4/2/2026
+  Visitors   — conversion.total_visitors
+  Orders     — conversion.total_orders
+  Conversion — badge: "{conversion.conversion_rate}%" (no extra formatting; stored as 3–7 from mock)
+              Badge style: if conversion_rate <= 20 → normal purple badge; else → badgeHigh (red) styling.
+
+Hidden from table but present on each TiktokConversionRate row (API / export / debugging):
+  total_revenues, total_gross_revenues (used in charts, not in this table body)
+
+Reference UI capture (your session — values will differ on reload):
+  Date      Visitors  Orders  Conversion
+  4/2/2026   3052      120     5.33%
+  4/1/2026   2585      145     5.82%
+  3/31/2026  2618      249     6.56%
+  3/30/2026  2108      133     5.18%
+  3/29/2026  1841      170     6.19%
+  3/28/2026  3535      106     5.72%
+  3/27/2026  3385      131     3.6%
+  3/26/2026  3531      153     4.17%
+
+--- D) Top Performing SKUs — TiktokSkusTable ---
+Title "Top Performing SKUs" / "Best sellers by revenue". "View All" → switches tab to skus (unless full view).
+
+Column sets:
+  Overview / embedded:  SKU | Stock | Status | Quantity | Revenue   (max 5 rows)
+  Full SKUs tab:        Image | SKU | Stock | Status | Quantity | Revenue   (all rows)
+
+Row fields (TiktokSku — all from generateTikTokSkus):
+  sku, name, quantity, revenue, product_id, variant_id,
+  quantity_percentage, revenue_percentage, image, variant_title, stock
+Status: "In Stock" / "Out of Stock" from stock > 0 (gradient badges).
+Revenue: formatCurrency(revenue) if isAdmin(session); else "********".
+
+Fixed product names (10) — TT-2000 … TT-2009:
+  Glass Skin Essence Duo, SPF 50 Glow Milk, Lip Sleeping Mask Mini, Ceramide Repair Set,
+  Niacinamide + Zinc Bundle, Double Cleanse Kit, Vitamin C AM Routine, Retinol Starter Box,
+  Body Lotion Travel Trio, Eye Cream + Roller Set
+variant_title = "{name} - Popular"
+image = https://picsum.photos/200/200?random={100+index}
+
+Reference UI capture (one load — yours may differ):
+  TT-2000  Stock 11   IN STOCK   Qty 67   Revenue RM 7,738.00
+  TT-2001  Stock 18   IN STOCK   Qty 87   Revenue RM 2,820.00
+  TT-2002  Stock 141  IN STOCK   Qty 110  Revenue RM 1,449.00
+  TT-2003  Stock 158  IN STOCK   Qty 76   Revenue RM 7,814.00
+
+--- E) Other TikTok API helpers (not all visible on this page) ---
+getTiktokSkus({ limit_order, limit }) — slice of generateTikTokSkus if limit > 0
+getOrdersHistoricalData(period, year) — for other queries: per day { date, orders: 50–149, revenue: 2000–6999 }
+
+
+================================================================================
+3) SHOPEE (ShopeeDashboardScreen — tab=shopee)
+================================================================================
+
+Tabs: Overview | Conversion (tab value "campaigns") | SKUs.
+
+--- A) Overview metric cards ---
+  Products card: hardcoded value 10 (ignores metadata.products 50–120)
+  Total Sales: formatCurrency(metadata.sales) — sales 12000–25000 * m
+  Orders: metadata.orders — 200–500 * ceil(m/7)
+  Conversion: metadata.conversionRate.toFixed(2)% — 3.8–6.2
+  Hidden in API: visitors 3000–8000 * ceil(m/3), products 50–120
+
+--- B) ShopeeConversionCharts — synthetic quarterly series (NOT the 30-day table API) ---
+useMemo formattedData: for each month index in selected quarter (3 points per Q1–Q4),
+  iso = `${year}-${String(mi+1).padStart(2,'0')}-15`, date label = formatChartAxisDayNumber(iso)
+  ym = year===2023 ? 0.8 : year===2025 ? 1.3 : 1.0
+  seed = mi + year * 0.001
+  visitors   = round((2500 + sin(seed)*800) * ym)
+  orders     = round((130 + sin(seed*2)*40) * ym)
+  conversion = round((4.8 + sin(seed*3)*1.2) * 10) / 10
+  revenues   = round((6000 + sin(seed*1.5)*2000) * ym)
+Chart series: visitors, orders, conversion, revenues (colors in chartConfig — orange family).
+Chart types: same four as TikTok (line / area / bar / stackedArea). Years dropdown: 2023,2024,2025.
+
+Static array monthlyData2024 (Jan–Dec) exists in file for legacy/alternate paths; the live chart uses the sin formula above.
+
+--- C) List Conversion table — ShopeeConversionTable ---
+Columns: Date | Revenue | Orders  (NO visitors / conversion % columns in UI)
+Date: formatDateToMMDDYYYY
+Revenue: formatCurrency(total_revenues) for admin
+Overview: first 7 rows; Campaigns tab: pagination 20 rows, Previous / Next, "Page X of Y",
+  Next on last page calls onLoadMore → parent decrements month range (more historical chunks).
+Data: useShopeeConversionRate → generateShopeeConversionRate() — 30 rows:
+  date, conversion_rate (3.2–6.5), total_orders (120–350), total_visitors (2500–6000),
+  total_revenues (6000–15000)  [visitors & conversion_rate not displayed in this table]
+
+--- D) Top Performing SKUs — ShopeeSkusTable ---
+Columns (full tab adds Image first): Image? | SKU | Quantity | Revenue | Views | Stock | Status
+  (Product name is NOT a column — only SKU code shown; name exists on entity for other use)
+Per ShopeeSku: views, conversion_rate (2.5–8.5), stocks — views shown; conversion_rate not in table
+Fixed 10 product names — SP-3000..SP-3009 (see dummy-data generateShopeeSkus)
+
+
+================================================================================
+4) SHOPIFY (ShopifyDashboardScreen — tab=shopify)
+================================================================================
+
+--- A) Overview cards — shopifyDashboardQuery → generateShopifyMetadata ---
+  products, sales, orders, conversionRate (no visitors field in ShopifyMetadata)
+
+--- B) ShopifyConversionCharts ---
+useConversionRateHistoricalData(quarter, year) → formattedData maps:
+  date: formatChartAxisDayNumber(item.date)
+  revenue: item.total_revenues
+  orders: item.total_orders
+  conversion: item.conversion_rate ?? item.total_conversions ?? 0
+chartConfig: revenue #008060, orders #5C6AC4, conversion #212B36
+Same four chart types + year 2023–2026 + Q1–Q4 as TikTok pattern.
+
+--- C) ShopifyConversionTable ---
+Columns: Date | Revenue | Orders
+  (ShopifyConversionRate has conversion_rate & total_visitors but they are NOT rendered here)
+Overview: first 7 rows; campaigns tab: full conversionRate array.
+
+--- D) ShopifySkusTable + stock ---
+getStockQuantity(skuCode): sums inventory_quantity from ShopifyStock[] where item.sku === sku name.
+Same column layout as TikTok SKU table. ShopifySku lacks per-row stock; stock comes from parallel generateShopifyStock.
+
+
+================================================================================
+5) WOOCOMMERCE (WooCommerceDashboard — tab=woocommerce) — STATIC FIXTURES
+================================================================================
+
+Currency display: MYR (en-MY). Domain filter options: all | clothing.com | clothing.sg
+
+--- Key metrics object (wooCommerceData) ---
+revenue: 125000
+orders: 1250
+averageOrderValue: 100
+topDomain: "clothing.com"
+marketingSpend: 45000
+purchases: 890
+totalReach: 125000
+netProfit: 80000
+roi: 177.78
+roas: 2.78
+
+Derived in UI:
+- CPA = marketingSpend / purchases = 45000 / 890 ≈ 50.56 MYR
+- Conversion from reach = (purchases / totalReach) * 100 ≈ 0.71%
+
+--- revenueTrendData (line chart) ---
+date,revenue,orders
+Jan 01,4200,42
+Jan 02,3800,38
+Jan 03,4500,45
+Jan 04,5200,52
+Jan 05,4800,48
+Jan 06,6100,61
+Jan 07,5500,55
+Jan 08,6800,68
+Jan 09,7200,72
+Jan 10,6500,65
+Jan 11,7800,78
+Jan 12,8200,82
+Jan 13,7500,75
+Jan 14,8900,89
+Jan 15,9200,92
+
+--- performanceSummaryData (table + feeds revenue vs marketing chart) ---
+date,platform,type,amount,units,currency
+2025-01-15,WooCommerce,Revenue,9200,92,MYR
+2025-01-15,Facebook,Marketing Spend,3200,0,MYR
+2025-01-14,WooCommerce,Revenue,8900,89,MYR
+2025-01-14,Facebook,Marketing Spend,2800,0,MYR
+2025-01-13,WooCommerce,Revenue,7500,75,MYR
+2025-01-13,Facebook,Marketing Spend,2500,0,MYR
+
+--- revenueVsMarketingData (aggregated by date for bar chart) ---
+Jan 13: revenue 7500, marketingSpend 2500
+Jan 14: revenue 8900, marketingSpend 2800
+Jan 15: revenue 9200, marketingSpend 3200
+
+--- topSellersData ---
+id,name,quantity,domain
+1,Hydrating Face Serum,245,clothing.com
+2,Anti-Aging Night Cream,198,clothing.com
+3,Vitamin C Brightening Serum,167,clothing.com
+4,Gentle Facial Cleanser,156,clothing.com
+5,Moisturizing Day Cream,134,clothing.com
+6,Eye Contour Gel,123,clothing.com
+7,Exfoliating Face Scrub,98,clothing.com
+8,Facial Toner,87,clothing.com
+
+--- ordersData ---
+id,status,total,date,domain,items
+#1001,Completed,125.50,2025-01-15,clothing.com,"Hydrating Face Serum; Gentle Facial Cleanser"
+#1002,Processing,89.90,2025-01-15,clothing.com,"Anti-Aging Night Cream"
+#1003,Completed,156.75,2025-01-14,clothing.com,"Vitamin C Brightening Serum; Eye Contour Gel"
+#1004,Shipped,67.25,2025-01-14,clothing.com,"Moisturizing Day Cream"
+#1005,Completed,198.00,2025-01-13,clothing.com,"Hydrating Face Serum; Anti-Aging Night Cream; Facial Toner"
+
+--- dailySalesData ---
+date,sales,orders,currency,domain
+2025-01-15,9200,92,MYR,clothing.com
+2025-01-14,8900,89,MYR,clothing.com
+2025-01-13,7500,75,MYR,clothing.com
+2025-01-12,8200,82,MYR,clothing.com
+2025-01-11,7800,78,MYR,clothing.com
+2025-01-10,6500,65,MYR,clothing.com
+2025-01-09,7200,72,MYR,clothing.com
+
+--- Tabs ---
+Overview (charts, performance summary table, marketing insights)
+Top Sellers | Orders | Daily Sales
+
+--- Other UI ---
+- Card "TikTok Integration": title "Coming Soon", badge "In Development"
+- Marketing insights paragraph references roas and Facebook conversion rate (computed from static object)
+
+
+================================================================================
+6) CROSS-CUTTING: OVERVIEW-LEVEL SKU MOCK (generateSKUData) — NOT ON OVERVIEW UI
+================================================================================
+Used by mock analytics API for SKU endpoints; 10 generic skincare names SKU-1000..1009,
+quantity 50–500, revenue 1000–15000, alternating type shopify/physical, etc.
+(Used elsewhere in app if those hooks are mounted.)
+
+Full product title list (generateSKUData names):
+  Beauty Skincare ShopIntel — Hydrating Cloud Cleanser
+  Beauty Skincare ShopIntel — Niacinamide 10% Serum
+  Beauty Skincare ShopIntel — Daily UV Defense SPF 50
+  Beauty Skincare ShopIntel — Retinol Night Renewal Cream
+  Beauty Skincare ShopIntel — Ceramide Barrier Cream
+  Beauty Skincare ShopIntel — HA Rose Toner
+  Beauty Skincare ShopIntel — Vitamin C Glow Essence
+  Beauty Skincare ShopIntel — Overnight Lip Recovery Balm
+  Beauty Skincare ShopIntel — Rice Milk Body Lotion
+  Beauty Skincare ShopIntel — Peptide Eye Revive Cream
+
+================================================================================
+7) SHOPEE & SHOPIFY — FULL MOCK PRODUCT / SKU LISTS (names as in dummy-data.ts)
+================================================================================
+Shopee (SP-3000..): Centella Soothing Gel; Snail Mucin Essence; Rice Toner Jumbo; SPF Stick Multipack;
+  Hydrating Serum Trial Set; Barrier Cream Refill; Lip Oil Tint Bundle; Body Scrub Coconut;
+  Peptide Sheet Mask 10pc; Brightening Eye Patches.
+
+Shopify (SH-4000..): Beauty Skincare ShopIntel — Full Routine Kit; Sensitive Skin Set; Acne Care System;
+  Anti-Aging Night Kit; Travel Minis 8pc; Gua Sha + Oil Duo; Cotton Pads Refill; Cleansing Headband;
+  Reusable Sheet Mask; Routine Card Deck.
+
+
+================================================================================
+END OF HUMAN DOCUMENTATION — JSON SNAPSHOT APPENDS BELOW (same as sales-dummy-snapshot.json)
+================================================================================
+
+
+{
+  "generatedAt": "2026-04-02T16:23:25.996Z",
+  "analyticsMetadata_daily": [
+    {
+      "date": "2026-04-02",
+      "total_sales": 8033,
+      "total_orders": 218,
+      "total_items": 406,
+      "average_order_value": 42.62,
+      "total_gross_revenue": 14001,
+      "conversion_rate": 4.63,
+      "visitors": 4934,
+      "total_average_order_value": 32.14,
+      "type": "tiktok"
+    },
+    {
+      "date": "2026-04-02",
+      "total_sales": 15835,
+      "total_orders": 570,
+      "total_items": 625,
+      "average_order_value": 37.53,
+      "total_gross_revenue": 18458,
+      "conversion_rate": 4.86,
+      "visitors": 4038,
+      "total_average_order_value": 37.87,
+      "type": "shopee"
+    },
+    {
+      "date": "2026-04-02",
+      "total_sales": 16532,
+      "total_orders": 488,
+      "total_items": 793,
+      "average_order_value": 35.99,
+      "total_gross_revenue": 12808,
+      "conversion_rate": 3.23,
+      "visitors": 4694,
+      "total_average_order_value": 51.23,
+      "type": "shopify"
+    },
+    {
+      "date": "2026-04-02",
+      "total_sales": 9597,
+      "total_orders": 234,
+      "total_items": 252,
+      "average_order_value": 49.51,
+      "total_gross_revenue": 5621,
+      "conversion_rate": 6.99,
+      "visitors": 2163,
+      "total_average_order_value": 40.03,
+      "type": "physical"
+    },
+    {
+      "date": "2026-04-02",
+      "total_sales": 36787,
+      "total_orders": 1514,
+      "total_items": 2315,
+      "average_order_value": 39.65,
+      "total_gross_revenue": 39792,
+      "conversion_rate": 4.82,
+      "visitors": 12807,
+      "total_average_order_value": 47.27,
+      "type": "total"
+    }
+  ],
+  "tiktokConversion30": [
+    {
+      "date": "2026-03-04",
+      "conversion_rate": 6.35,
+      "total_orders": 190,
+      "total_visitors": 2694,
+      "total_revenues": 7851,
+      "total_gross_revenues": 3364
+    },
+    {
+      "date": "2026-03-05",
+      "conversion_rate": 5.21,
+      "total_orders": 180,
+      "total_visitors": 1645,
+      "total_revenues": 5780,
+      "total_gross_revenues": 4830
+    },
+    {
+      "date": "2026-03-06",
+      "conversion_rate": 6.02,
+      "total_orders": 225,
+      "total_visitors": 1989,
+      "total_revenues": 6068,
+      "total_gross_revenues": 3871
+    },
+    {
+      "date": "2026-03-07",
+      "conversion_rate": 5.65,
+      "total_orders": 223,
+      "total_visitors": 2680,
+      "total_revenues": 3453,
+      "total_gross_revenues": 5027
+    },
+    {
+      "date": "2026-03-08",
+      "conversion_rate": 5.25,
+      "total_orders": 142,
+      "total_visitors": 2109,
+      "total_revenues": 8054,
+      "total_gross_revenues": 7407
+    },
+    {
+      "date": "2026-03-09",
+      "conversion_rate": 3.2,
+      "total_orders": 149,
+      "total_visitors": 3320,
+      "total_revenues": 5783,
+      "total_gross_revenues": 4811
+    },
+    {
+      "date": "2026-03-10",
+      "conversion_rate": 4.81,
+      "total_orders": 98,
+      "total_visitors": 3327,
+      "total_revenues": 5982,
+      "total_gross_revenues": 7735
+    },
+    {
+      "date": "2026-03-11",
+      "conversion_rate": 6.29,
+      "total_orders": 109,
+      "total_visitors": 3786,
+      "total_revenues": 7409,
+      "total_gross_revenues": 5239
+    },
+    {
+      "date": "2026-03-12",
+      "conversion_rate": 3.1,
+      "total_orders": 247,
+      "total_visitors": 1817,
+      "total_revenues": 6718,
+      "total_gross_revenues": 7419
+    },
+    {
+      "date": "2026-03-13",
+      "conversion_rate": 6.72,
+      "total_orders": 156,
+      "total_visitors": 2970,
+      "total_revenues": 5596,
+      "total_gross_revenues": 8914
+    },
+    {
+      "date": "2026-03-14",
+      "conversion_rate": 5.31,
+      "total_orders": 215,
+      "total_visitors": 1528,
+      "total_revenues": 3777,
+      "total_gross_revenues": 6131
+    },
+    {
+      "date": "2026-03-15",
+      "conversion_rate": 6.61,
+      "total_orders": 102,
+      "total_visitors": 3161,
+      "total_revenues": 3546,
+      "total_gross_revenues": 4292
+    },
+    {
+      "date": "2026-03-16",
+      "conversion_rate": 6.32,
+      "total_orders": 214,
+      "total_visitors": 3007,
+      "total_revenues": 5818,
+      "total_gross_revenues": 6604
+    },
+    {
+      "date": "2026-03-17",
+      "conversion_rate": 4.41,
+      "total_orders": 112,
+      "total_visitors": 3948,
+      "total_revenues": 3411,
+      "total_gross_revenues": 8000
+    },
+    {
+      "date": "2026-03-18",
+      "conversion_rate": 4.58,
+      "total_orders": 113,
+      "total_visitors": 2578,
+      "total_revenues": 7899,
+      "total_gross_revenues": 7419
+    },
+    {
+      "date": "2026-03-19",
+      "conversion_rate": 4.15,
+      "total_orders": 196,
+      "total_visitors": 3627,
+      "total_revenues": 4178,
+      "total_gross_revenues": 4060
+    },
+    {
+      "date": "2026-03-20",
+      "conversion_rate": 4.09,
+      "total_orders": 222,
+      "total_visitors": 1512,
+      "total_revenues": 3441,
+      "total_gross_revenues": 7232
+    },
+    {
+      "date": "2026-03-21",
+      "conversion_rate": 4.63,
+      "total_orders": 199,
+      "total_visitors": 1713,
+      "total_revenues": 5726,
+      "total_gross_revenues": 8512
+    },
+    {
+      "date": "2026-03-22",
+      "conversion_rate": 4.8,
+      "total_orders": 117,
+      "total_visitors": 3834,
+      "total_revenues": 4367,
+      "total_gross_revenues": 5353
+    },
+    {
+      "date": "2026-03-23",
+      "conversion_rate": 4.52,
+      "total_orders": 215,
+      "total_visitors": 3933,
+      "total_revenues": 4784,
+      "total_gross_revenues": 3327
+    },
+    {
+      "date": "2026-03-24",
+      "conversion_rate": 3.96,
+      "total_orders": 170,
+      "total_visitors": 3281,
+      "total_revenues": 3577,
+      "total_gross_revenues": 4847
+    },
+    {
+      "date": "2026-03-25",
+      "conversion_rate": 3.63,
+      "total_orders": 147,
+      "total_visitors": 3164,
+      "total_revenues": 5195,
+      "total_gross_revenues": 9019
+    },
+    {
+      "date": "2026-03-26",
+      "conversion_rate": 6.81,
+      "total_orders": 199,
+      "total_visitors": 2480,
+      "total_revenues": 6970,
+      "total_gross_revenues": 3738
+    },
+    {
+      "date": "2026-03-27",
+      "conversion_rate": 3.87,
+      "total_orders": 138,
+      "total_visitors": 3063,
+      "total_revenues": 5845,
+      "total_gross_revenues": 3994
+    },
+    {
+      "date": "2026-03-28",
+      "conversion_rate": 3.31,
+      "total_orders": 154,
+      "total_visitors": 3273,
+      "total_revenues": 3562,
+      "total_gross_revenues": 8087
+    },
+    {
+      "date": "2026-03-29",
+      "conversion_rate": 4.41,
+      "total_orders": 136,
+      "total_visitors": 1644,
+      "total_revenues": 5896,
+      "total_gross_revenues": 4215
+    },
+    {
+      "date": "2026-03-30",
+      "conversion_rate": 3.22,
+      "total_orders": 115,
+      "total_visitors": 2679,
+      "total_revenues": 7153,
+      "total_gross_revenues": 4108
+    },
+    {
+      "date": "2026-03-31",
+      "conversion_rate": 6.04,
+      "total_orders": 125,
+      "total_visitors": 2574,
+      "total_revenues": 4558,
+      "total_gross_revenues": 7447
+    },
+    {
+      "date": "2026-04-01",
+      "conversion_rate": 3.22,
+      "total_orders": 104,
+      "total_visitors": 3365,
+      "total_revenues": 5444,
+      "total_gross_revenues": 3717
+    },
+    {
+      "date": "2026-04-02",
+      "conversion_rate": 5.29,
+      "total_orders": 244,
+      "total_visitors": 3490,
+      "total_revenues": 4184,
+      "total_gross_revenues": 5427
+    }
+  ],
+  "tiktokSkus10": [
+    {
+      "sku": "TT-2000",
+      "name": "Glass Skin Essence Duo",
+      "quantity": 177,
+      "revenue": 3033,
+      "product_id": 300,
+      "variant_id": 400,
+      "quantity_percentage": "4.7%",
+      "revenue_percentage": "5.3%",
+      "image": "https://picsum.photos/200/200?random=100",
+      "variant_title": "Glass Skin Essence Duo - Popular",
+      "stock": 149
+    },
+    {
+      "sku": "TT-2001",
+      "name": "SPF 50 Glow Milk",
+      "quantity": 198,
+      "revenue": 8731,
+      "product_id": 301,
+      "variant_id": 401,
+      "quantity_percentage": "13.9%",
+      "revenue_percentage": "5.9%",
+      "image": "https://picsum.photos/200/200?random=101",
+      "variant_title": "SPF 50 Glow Milk - Popular",
+      "stock": 152
+    },
+    {
+      "sku": "TT-2002",
+      "name": "Lip Sleeping Mask Mini",
+      "quantity": 65,
+      "revenue": 2301,
+      "product_id": 302,
+      "variant_id": 402,
+      "quantity_percentage": "7.5%",
+      "revenue_percentage": "10%",
+      "image": "https://picsum.photos/200/200?random=102",
+      "variant_title": "Lip Sleeping Mask Mini - Popular",
+      "stock": 166
+    },
+    {
+      "sku": "TT-2003",
+      "name": "Ceramide Repair Set",
+      "quantity": 253,
+      "revenue": 2875,
+      "product_id": 303,
+      "variant_id": 403,
+      "quantity_percentage": "13.1%",
+      "revenue_percentage": "23%",
+      "image": "https://picsum.photos/200/200?random=103",
+      "variant_title": "Ceramide Repair Set - Popular",
+      "stock": 154
+    },
+    {
+      "sku": "TT-2004",
+      "name": "Niacinamide + Zinc Bundle",
+      "quantity": 153,
+      "revenue": 9432,
+      "product_id": 304,
+      "variant_id": 404,
+      "quantity_percentage": "19.6%",
+      "revenue_percentage": "5.2%",
+      "image": "https://picsum.photos/200/200?random=104",
+      "variant_title": "Niacinamide + Zinc Bundle - Popular",
+      "stock": 41
+    },
+    {
+      "sku": "TT-2005",
+      "name": "Double Cleanse Kit",
+      "quantity": 31,
+      "revenue": 10687,
+      "product_id": 305,
+      "variant_id": 405,
+      "quantity_percentage": "6.3%",
+      "revenue_percentage": "20.1%",
+      "image": "https://picsum.photos/200/200?random=105",
+      "variant_title": "Double Cleanse Kit - Popular",
+      "stock": 138
+    },
+    {
+      "sku": "TT-2006",
+      "name": "Vitamin C AM Routine",
+      "quantity": 253,
+      "revenue": 3644,
+      "product_id": 306,
+      "variant_id": 406,
+      "quantity_percentage": "13.9%",
+      "revenue_percentage": "10.3%",
+      "image": "https://picsum.photos/200/200?random=106",
+      "variant_title": "Vitamin C AM Routine - Popular",
+      "stock": 180
+    },
+    {
+      "sku": "TT-2007",
+      "name": "Retinol Starter Box",
+      "quantity": 38,
+      "revenue": 3099,
+      "product_id": 307,
+      "variant_id": 407,
+      "quantity_percentage": "8.5%",
+      "revenue_percentage": "13.4%",
+      "image": "https://picsum.photos/200/200?random=107",
+      "variant_title": "Retinol Starter Box - Popular",
+      "stock": 123
+    },
+    {
+      "sku": "TT-2008",
+      "name": "Body Lotion Travel Trio",
+      "quantity": 41,
+      "revenue": 7930,
+      "product_id": 308,
+      "variant_id": 408,
+      "quantity_percentage": "4.7%",
+      "revenue_percentage": "20.2%",
+      "image": "https://picsum.photos/200/200?random=108",
+      "variant_title": "Body Lotion Travel Trio - Popular",
+      "stock": 159
+    },
+    {
+      "sku": "TT-2009",
+      "name": "Eye Cream + Roller Set",
+      "quantity": 76,
+      "revenue": 11206,
+      "product_id": 309,
+      "variant_id": 409,
+      "quantity_percentage": "8.5%",
+      "revenue_percentage": "22.4%",
+      "image": "https://picsum.photos/200/200?random=109",
+      "variant_title": "Eye Cream + Roller Set - Popular",
+      "stock": 81
+    }
+  ],
+  "shopeeConversion30": [
+    {
+      "date": "2026-03-04",
+      "conversion_rate": 4.9,
+      "total_orders": 160,
+      "total_visitors": 4401,
+      "total_revenues": 8962
+    },
+    {
+      "date": "2026-03-05",
+      "conversion_rate": 6.3,
+      "total_orders": 247,
+      "total_visitors": 5341,
+      "total_revenues": 9363
+    },
+    {
+      "date": "2026-03-06",
+      "conversion_rate": 6.4,
+      "total_orders": 281,
+      "total_visitors": 3247,
+      "total_revenues": 11222
+    },
+    {
+      "date": "2026-03-07",
+      "conversion_rate": 6.35,
+      "total_orders": 273,
+      "total_visitors": 5212,
+      "total_revenues": 13897
+    },
+    {
+      "date": "2026-03-08",
+      "conversion_rate": 5.19,
+      "total_orders": 299,
+      "total_visitors": 2755,
+      "total_revenues": 6790
+    },
+    {
+      "date": "2026-03-09",
+      "conversion_rate": 6.14,
+      "total_orders": 121,
+      "total_visitors": 3000,
+      "total_revenues": 13926
+    },
+    {
+      "date": "2026-03-10",
+      "conversion_rate": 6.14,
+      "total_orders": 121,
+      "total_visitors": 2637,
+      "total_revenues": 9827
+    },
+    {
+      "date": "2026-03-11",
+      "conversion_rate": 6.5,
+      "total_orders": 127,
+      "total_visitors": 4900,
+      "total_revenues": 10919
+    },
+    {
+      "date": "2026-03-12",
+      "conversion_rate": 4.2,
+      "total_orders": 184,
+      "total_visitors": 4275,
+      "total_revenues": 12822
+    },
+    {
+      "date": "2026-03-13",
+      "conversion_rate": 5.17,
+      "total_orders": 225,
+      "total_visitors": 4147,
+      "total_revenues": 8614
+    },
+    {
+      "date": "2026-03-14",
+      "conversion_rate": 4.84,
+      "total_orders": 236,
+      "total_visitors": 3039,
+      "total_revenues": 13265
+    },
+    {
+      "date": "2026-03-15",
+      "conversion_rate": 5.43,
+      "total_orders": 252,
+      "total_visitors": 3920,
+      "total_revenues": 7232
+    },
+    {
+      "date": "2026-03-16",
+      "conversion_rate": 3.29,
+      "total_orders": 342,
+      "total_visitors": 5306,
+      "total_revenues": 8629
+    },
+    {
+      "date": "2026-03-17",
+      "conversion_rate": 5.6,
+      "total_orders": 169,
+      "total_visitors": 3701,
+      "total_revenues": 6415
+    },
+    {
+      "date": "2026-03-18",
+      "conversion_rate": 3.4,
+      "total_orders": 163,
+      "total_visitors": 4552,
+      "total_revenues": 13174
+    },
+    {
+      "date": "2026-03-19",
+      "conversion_rate": 3.7,
+      "total_orders": 350,
+      "total_visitors": 2646,
+      "total_revenues": 10688
+    },
+    {
+      "date": "2026-03-20",
+      "conversion_rate": 4.87,
+      "total_orders": 123,
+      "total_visitors": 2762,
+      "total_revenues": 8707
+    },
+    {
+      "date": "2026-03-21",
+      "conversion_rate": 3.38,
+      "total_orders": 152,
+      "total_visitors": 4749,
+      "total_revenues": 14760
+    },
+    {
+      "date": "2026-03-22",
+      "conversion_rate": 4.91,
+      "total_orders": 162,
+      "total_visitors": 2618,
+      "total_revenues": 6203
+    },
+    {
+      "date": "2026-03-23",
+      "conversion_rate": 3.45,
+      "total_orders": 182,
+      "total_visitors": 4376,
+      "total_revenues": 12199
+    },
+    {
+      "date": "2026-03-24",
+      "conversion_rate": 4.75,
+      "total_orders": 194,
+      "total_visitors": 2740,
+      "total_revenues": 7413
+    },
+    {
+      "date": "2026-03-25",
+      "conversion_rate": 3.29,
+      "total_orders": 235,
+      "total_visitors": 5141,
+      "total_revenues": 8987
+    },
+    {
+      "date": "2026-03-26",
+      "conversion_rate": 4.09,
+      "total_orders": 201,
+      "total_visitors": 2693,
+      "total_revenues": 9540
+    },
+    {
+      "date": "2026-03-27",
+      "conversion_rate": 4.57,
+      "total_orders": 269,
+      "total_visitors": 5320,
+      "total_revenues": 11446
+    },
+    {
+      "date": "2026-03-28",
+      "conversion_rate": 3.28,
+      "total_orders": 277,
+      "total_visitors": 3562,
+      "total_revenues": 9592
+    },
+    {
+      "date": "2026-03-29",
+      "conversion_rate": 5.83,
+      "total_orders": 342,
+      "total_visitors": 3317,
+      "total_revenues": 14066
+    },
+    {
+      "date": "2026-03-30",
+      "conversion_rate": 6.08,
+      "total_orders": 311,
+      "total_visitors": 4015,
+      "total_revenues": 8577
+    },
+    {
+      "date": "2026-03-31",
+      "conversion_rate": 4.81,
+      "total_orders": 213,
+      "total_visitors": 2901,
+      "total_revenues": 13765
+    },
+    {
+      "date": "2026-04-01",
+      "conversion_rate": 4.85,
+      "total_orders": 191,
+      "total_visitors": 3679,
+      "total_revenues": 14656
+    },
+    {
+      "date": "2026-04-02",
+      "conversion_rate": 5.89,
+      "total_orders": 181,
+      "total_visitors": 3912,
+      "total_revenues": 14471
+    }
+  ],
+  "shopeeSkus10": [
+    {
+      "sku": "SP-3000",
+      "name": "Centella Soothing Gel",
+      "quantity": 192,
+      "revenue": 3256,
+      "product_id": 500,
+      "variant_id": 600,
+      "quantity_percentage": "15.7%",
+      "revenue_percentage": "13.9%",
+      "image": "https://picsum.photos/200/200?random=200",
+      "variant_title": "Centella Soothing Gel - Standard",
+      "views": 1614,
+      "conversion_rate": 8.36,
+      "stocks": 106
+    },
+    {
+      "sku": "SP-3001",
+      "name": "Snail Mucin Essence",
+      "quantity": 170,
+      "revenue": 12690,
+      "product_id": 501,
+      "variant_id": 601,
+      "quantity_percentage": "8.3%",
+      "revenue_percentage": "21.7%",
+      "image": "https://picsum.photos/200/200?random=201",
+      "variant_title": "Snail Mucin Essence - Standard",
+      "views": 876,
+      "conversion_rate": 7.72,
+      "stocks": 205
+    },
+    {
+      "sku": "SP-3002",
+      "name": "Rice Toner Jumbo",
+      "quantity": 221,
+      "revenue": 3968,
+      "product_id": 502,
+      "variant_id": 602,
+      "quantity_percentage": "7.9%",
+      "revenue_percentage": "20.5%",
+      "image": "https://picsum.photos/200/200?random=202",
+      "variant_title": "Rice Toner Jumbo - Standard",
+      "views": 1442,
+      "conversion_rate": 4.61,
+      "stocks": 193
+    },
+    {
+      "sku": "SP-3003",
+      "name": "SPF Stick Multipack",
+      "quantity": 172,
+      "revenue": 14899,
+      "product_id": 503,
+      "variant_id": 603,
+      "quantity_percentage": "13.3%",
+      "revenue_percentage": "12%",
+      "image": "https://picsum.photos/200/200?random=203",
+      "variant_title": "SPF Stick Multipack - Standard",
+      "views": 2550,
+      "conversion_rate": 2.96,
+      "stocks": 45
+    },
+    {
+      "sku": "SP-3004",
+      "name": "Hydrating Serum Trial Set",
+      "quantity": 264,
+      "revenue": 1958,
+      "product_id": 504,
+      "variant_id": 604,
+      "quantity_percentage": "14%",
+      "revenue_percentage": "7.1%",
+      "image": "https://picsum.photos/200/200?random=204",
+      "variant_title": "Hydrating Serum Trial Set - Standard",
+      "views": 2500,
+      "conversion_rate": 5.54,
+      "stocks": 247
+    },
+    {
+      "sku": "SP-3005",
+      "name": "Barrier Cream Refill",
+      "quantity": 130,
+      "revenue": 9678,
+      "product_id": 505,
+      "variant_id": 605,
+      "quantity_percentage": "20.9%",
+      "revenue_percentage": "22%",
+      "image": "https://picsum.photos/200/200?random=205",
+      "variant_title": "Barrier Cream Refill - Standard",
+      "views": 1287,
+      "conversion_rate": 8.08,
+      "stocks": 102
+    },
+    {
+      "sku": "SP-3006",
+      "name": "Lip Oil Tint Bundle",
+      "quantity": 105,
+      "revenue": 15950,
+      "product_id": 506,
+      "variant_id": 606,
+      "quantity_percentage": "17.8%",
+      "revenue_percentage": "9.8%",
+      "image": "https://picsum.photos/200/200?random=206",
+      "variant_title": "Lip Oil Tint Bundle - Standard",
+      "views": 2604,
+      "conversion_rate": 4.95,
+      "stocks": 76
+    },
+    {
+      "sku": "SP-3007",
+      "name": "Body Scrub Coconut",
+      "quantity": 292,
+      "revenue": 16854,
+      "product_id": 507,
+      "variant_id": 607,
+      "quantity_percentage": "4.2%",
+      "revenue_percentage": "23.8%",
+      "image": "https://picsum.photos/200/200?random=207",
+      "variant_title": "Body Scrub Coconut - Standard",
+      "views": 550,
+      "conversion_rate": 2.74,
+      "stocks": 224
+    },
+    {
+      "sku": "SP-3008",
+      "name": "Peptide Sheet Mask 10pc",
+      "quantity": 282,
+      "revenue": 9260,
+      "product_id": 508,
+      "variant_id": 608,
+      "quantity_percentage": "9.5%",
+      "revenue_percentage": "26.4%",
+      "image": "https://picsum.photos/200/200?random=208",
+      "variant_title": "Peptide Sheet Mask 10pc - Standard",
+      "views": 1245,
+      "conversion_rate": 3.7,
+      "stocks": 131
+    },
+    {
+      "sku": "SP-3009",
+      "name": "Brightening Eye Patches",
+      "quantity": 127,
+      "revenue": 13510,
+      "product_id": 509,
+      "variant_id": 609,
+      "quantity_percentage": "10.2%",
+      "revenue_percentage": "26.8%",
+      "image": "https://picsum.photos/200/200?random=209",
+      "variant_title": "Brightening Eye Patches - Standard",
+      "views": 1317,
+      "conversion_rate": 2.76,
+      "stocks": 160
+    }
+  ],
+  "shopifyConversion30": [
+    {
+      "date": "2026-03-04",
+      "conversion_rate": 2.74,
+      "total_orders": 259,
+      "total_visitors": 5239,
+      "total_revenues": 9179
+    },
+    {
+      "date": "2026-03-05",
+      "conversion_rate": 4.47,
+      "total_orders": 182,
+      "total_visitors": 4643,
+      "total_revenues": 5483
+    },
+    {
+      "date": "2026-03-06",
+      "conversion_rate": 3.65,
+      "total_orders": 248,
+      "total_visitors": 3815,
+      "total_revenues": 6713
+    },
+    {
+      "date": "2026-03-07",
+      "conversion_rate": 4.09,
+      "total_orders": 283,
+      "total_visitors": 4905,
+      "total_revenues": 10550
+    },
+    {
+      "date": "2026-03-08",
+      "conversion_rate": 5.52,
+      "total_orders": 221,
+      "total_visitors": 3686,
+      "total_revenues": 11371
+    },
+    {
+      "date": "2026-03-09",
+      "conversion_rate": 5.64,
+      "total_orders": 170,
+      "total_visitors": 3053,
+      "total_revenues": 8429
+    },
+    {
+      "date": "2026-03-10",
+      "conversion_rate": 2.82,
+      "total_orders": 269,
+      "total_visitors": 5221,
+      "total_revenues": 9981
+    },
+    {
+      "date": "2026-03-11",
+      "conversion_rate": 4.97,
+      "total_orders": 256,
+      "total_visitors": 4739,
+      "total_revenues": 5441
+    },
+    {
+      "date": "2026-03-12",
+      "conversion_rate": 5.07,
+      "total_orders": 299,
+      "total_visitors": 3522,
+      "total_revenues": 7615
+    },
+    {
+      "date": "2026-03-13",
+      "conversion_rate": 3.75,
+      "total_orders": 263,
+      "total_visitors": 3369,
+      "total_revenues": 10925
+    },
+    {
+      "date": "2026-03-14",
+      "conversion_rate": 4.09,
+      "total_orders": 136,
+      "total_visitors": 4682,
+      "total_revenues": 7480
+    },
+    {
+      "date": "2026-03-15",
+      "conversion_rate": 2.75,
+      "total_orders": 210,
+      "total_visitors": 4815,
+      "total_revenues": 6533
+    },
+    {
+      "date": "2026-03-16",
+      "conversion_rate": 5.34,
+      "total_orders": 205,
+      "total_visitors": 3075,
+      "total_revenues": 5760
+    },
+    {
+      "date": "2026-03-17",
+      "conversion_rate": 3.22,
+      "total_orders": 250,
+      "total_visitors": 2466,
+      "total_revenues": 8503
+    },
+    {
+      "date": "2026-03-18",
+      "conversion_rate": 2.83,
+      "total_orders": 292,
+      "total_visitors": 2647,
+      "total_revenues": 6851
+    },
+    {
+      "date": "2026-03-19",
+      "conversion_rate": 3.91,
+      "total_orders": 170,
+      "total_visitors": 5175,
+      "total_revenues": 9309
+    },
+    {
+      "date": "2026-03-20",
+      "conversion_rate": 5.13,
+      "total_orders": 230,
+      "total_visitors": 5045,
+      "total_revenues": 12747
+    },
+    {
+      "date": "2026-03-21",
+      "conversion_rate": 2.51,
+      "total_orders": 246,
+      "total_visitors": 4832,
+      "total_revenues": 10829
+    },
+    {
+      "date": "2026-03-22",
+      "conversion_rate": 3.8,
+      "total_orders": 264,
+      "total_visitors": 3867,
+      "total_revenues": 6543
+    },
+    {
+      "date": "2026-03-23",
+      "conversion_rate": 2.93,
+      "total_orders": 172,
+      "total_visitors": 2299,
+      "total_revenues": 10275
+    },
+    {
+      "date": "2026-03-24",
+      "conversion_rate": 5.36,
+      "total_orders": 111,
+      "total_visitors": 2406,
+      "total_revenues": 9681
+    },
+    {
+      "date": "2026-03-25",
+      "conversion_rate": 3.82,
+      "total_orders": 176,
+      "total_visitors": 4015,
+      "total_revenues": 10690
+    },
+    {
+      "date": "2026-03-26",
+      "conversion_rate": 4.6,
+      "total_orders": 132,
+      "total_visitors": 3278,
+      "total_revenues": 7137
+    },
+    {
+      "date": "2026-03-27",
+      "conversion_rate": 3.27,
+      "total_orders": 226,
+      "total_visitors": 4008,
+      "total_revenues": 5738
+    },
+    {
+      "date": "2026-03-28",
+      "conversion_rate": 3.71,
+      "total_orders": 285,
+      "total_visitors": 3065,
+      "total_revenues": 10912
+    },
+    {
+      "date": "2026-03-29",
+      "conversion_rate": 2.84,
+      "total_orders": 152,
+      "total_visitors": 2225,
+      "total_revenues": 5448
+    },
+    {
+      "date": "2026-03-30",
+      "conversion_rate": 4.58,
+      "total_orders": 103,
+      "total_visitors": 3588,
+      "total_revenues": 10194
+    },
+    {
+      "date": "2026-03-31",
+      "conversion_rate": 2.69,
+      "total_orders": 104,
+      "total_visitors": 2869,
+      "total_revenues": 5773
+    },
+    {
+      "date": "2026-04-01",
+      "conversion_rate": 4.86,
+      "total_orders": 260,
+      "total_visitors": 2642,
+      "total_revenues": 6665
+    },
+    {
+      "date": "2026-04-02",
+      "conversion_rate": 5.15,
+      "total_orders": 279,
+      "total_visitors": 3768,
+      "total_revenues": 11034
+    }
+  ],
+  "shopifySkus10": [
+    {
+      "sku": "SH-4000",
+      "name": "Beauty Skincare ShopIntel — Full Routine Kit",
+      "quantity": 180,
+      "revenue": 4977,
+      "product_id": 700,
+      "variant_id": 800,
+      "quantity_percentage": "8.1%",
+      "revenue_percentage": "9.7%",
+      "image": "https://picsum.photos/200/200?random=300",
+      "variant_title": "Beauty Skincare ShopIntel — Full Routine Kit - Premium"
+    },
+    {
+      "sku": "SH-4001",
+      "name": "Beauty Skincare ShopIntel — Sensitive Skin Set",
+      "quantity": 146,
+      "revenue": 14935,
+      "product_id": 701,
+      "variant_id": 801,
+      "quantity_percentage": "14.3%",
+      "revenue_percentage": "20.3%",
+      "image": "https://picsum.photos/200/200?random=301",
+      "variant_title": "Beauty Skincare ShopIntel — Sensitive Skin Set - Premium"
+    },
+    {
+      "sku": "SH-4002",
+      "name": "Beauty Skincare ShopIntel — Acne Care System",
+      "quantity": 146,
+      "revenue": 14275,
+      "product_id": 702,
+      "variant_id": 802,
+      "quantity_percentage": "10%",
+      "revenue_percentage": "10.3%",
+      "image": "https://picsum.photos/200/200?random=302",
+      "variant_title": "Beauty Skincare ShopIntel — Acne Care System - Premium"
+    },
+    {
+      "sku": "SH-4003",
+      "name": "Beauty Skincare ShopIntel — Anti-Aging Night Kit",
+      "quantity": 149,
+      "revenue": 13509,
+      "product_id": 703,
+      "variant_id": 803,
+      "quantity_percentage": "11.4%",
+      "revenue_percentage": "12.3%",
+      "image": "https://picsum.photos/200/200?random=303",
+      "variant_title": "Beauty Skincare ShopIntel — Anti-Aging Night Kit - Premium"
+    },
+    {
+      "sku": "SH-4004",
+      "name": "Beauty Skincare ShopIntel — Travel Minis 8pc",
+      "quantity": 143,
+      "revenue": 5827,
+      "product_id": 704,
+      "variant_id": 804,
+      "quantity_percentage": "6.1%",
+      "revenue_percentage": "12.5%",
+      "image": "https://picsum.photos/200/200?random=304",
+      "variant_title": "Beauty Skincare ShopIntel — Travel Minis 8pc - Premium"
+    },
+    {
+      "sku": "SH-4005",
+      "name": "Beauty Skincare ShopIntel — Gua Sha + Oil Duo",
+      "quantity": 174,
+      "revenue": 1478,
+      "product_id": 705,
+      "variant_id": 805,
+      "quantity_percentage": "4.1%",
+      "revenue_percentage": "7.6%",
+      "image": "https://picsum.photos/200/200?random=305",
+      "variant_title": "Beauty Skincare ShopIntel — Gua Sha + Oil Duo - Premium"
+    },
+    {
+      "sku": "SH-4006",
+      "name": "Beauty Skincare ShopIntel — Cotton Pads Refill",
+      "quantity": 64,
+      "revenue": 13785,
+      "product_id": 706,
+      "variant_id": 806,
+      "quantity_percentage": "15.1%",
+      "revenue_percentage": "19.7%",
+      "image": "https://picsum.photos/200/200?random=306",
+      "variant_title": "Beauty Skincare ShopIntel — Cotton Pads Refill - Premium"
+    },
+    {
+      "sku": "SH-4007",
+      "name": "Beauty Skincare ShopIntel — Cleansing Headband",
+      "quantity": 219,
+      "revenue": 5398,
+      "product_id": 707,
+      "variant_id": 807,
+      "quantity_percentage": "12.2%",
+      "revenue_percentage": "16.1%",
+      "image": "https://picsum.photos/200/200?random=307",
+      "variant_title": "Beauty Skincare ShopIntel — Cleansing Headband - Premium"
+    },
+    {
+      "sku": "SH-4008",
+      "name": "Beauty Skincare ShopIntel — Reusable Sheet Mask",
+      "quantity": 261,
+      "revenue": 1483,
+      "product_id": 708,
+      "variant_id": 808,
+      "quantity_percentage": "15%",
+      "revenue_percentage": "8.7%",
+      "image": "https://picsum.photos/200/200?random=308",
+      "variant_title": "Beauty Skincare ShopIntel — Reusable Sheet Mask - Premium"
+    },
+    {
+      "sku": "SH-4009",
+      "name": "Beauty Skincare ShopIntel — Routine Card Deck",
+      "quantity": 170,
+      "revenue": 7542,
+      "product_id": 709,
+      "variant_id": 809,
+      "quantity_percentage": "17.3%",
+      "revenue_percentage": "19.1%",
+      "image": "https://picsum.photos/200/200?random=309",
+      "variant_title": "Beauty Skincare ShopIntel — Routine Card Deck - Premium"
+    }
+  ],
+  "shopifyStock10": [
+    {
+      "id": 900,
+      "sku": "SH-4000",
+      "inventory_quantity": 411
+    },
+    {
+      "id": 901,
+      "sku": "SH-4001",
+      "inventory_quantity": 481
+    },
+    {
+      "id": 902,
+      "sku": "SH-4002",
+      "inventory_quantity": 344
+    },
+    {
+      "id": 903,
+      "sku": "SH-4003",
+      "inventory_quantity": 32
+    },
+    {
+      "id": 904,
+      "sku": "SH-4004",
+      "inventory_quantity": 60
+    },
+    {
+      "id": 905,
+      "sku": "SH-4005",
+      "inventory_quantity": 431
+    },
+    {
+      "id": 906,
+      "sku": "SH-4006",
+      "inventory_quantity": 98
+    },
+    {
+      "id": 907,
+      "sku": "SH-4007",
+      "inventory_quantity": 83
+    },
+    {
+      "id": 908,
+      "sku": "SH-4008",
+      "inventory_quantity": 49
+    },
+    {
+      "id": 909,
+      "sku": "SH-4009",
+      "inventory_quantity": 387
+    }
+  ],
+  "overviewSku10": [
+    {
+      "sku": "SKU-1000",
+      "name": "Beauty Skincare ShopIntel — Hydrating Cloud Cleanser",
+      "quantity": 357,
+      "revenue": 7914,
+      "product_id": 100,
+      "variant_id": 200,
+      "quantity_percentage": "24.7%",
+      "revenue_percentage": "26.3%",
+      "image": "https://picsum.photos/200/200?random=0",
+      "variant_title": "Beauty Skincare ShopIntel — Hydrating Cloud Cleanser - Standard",
+      "type": "shopify",
+      "created_at": "2025-04-23T16:23:25.998Z"
+    },
+    {
+      "sku": "SKU-1001",
+      "name": "Beauty Skincare ShopIntel — Niacinamide 10% Serum",
+      "quantity": 399,
+      "revenue": 7745,
+      "product_id": 101,
+      "variant_id": 201,
+      "quantity_percentage": "21.8%",
+      "revenue_percentage": "25.3%",
+      "image": "https://picsum.photos/200/200?random=1",
+      "variant_title": "Beauty Skincare ShopIntel — Niacinamide 10% Serum - Standard",
+      "type": "physical",
+      "created_at": "2025-09-26T16:23:25.998Z"
+    },
+    {
+      "sku": "SKU-1002",
+      "name": "Beauty Skincare ShopIntel — Daily UV Defense SPF 50",
+      "quantity": 400,
+      "revenue": 9068,
+      "product_id": 102,
+      "variant_id": 202,
+      "quantity_percentage": "12.1%",
+      "revenue_percentage": "21.8%",
+      "image": "https://picsum.photos/200/200?random=2",
+      "variant_title": "Beauty Skincare ShopIntel — Daily UV Defense SPF 50 - Standard",
+      "type": "shopify",
+      "created_at": "2025-12-23T16:23:25.998Z"
+    },
+    {
+      "sku": "SKU-1003",
+      "name": "Beauty Skincare ShopIntel — Retinol Night Renewal Cream",
+      "quantity": 481,
+      "revenue": 5768,
+      "product_id": 103,
+      "variant_id": 203,
+      "quantity_percentage": "19.8%",
+      "revenue_percentage": "20.1%",
+      "image": "https://picsum.photos/200/200?random=3",
+      "variant_title": "Beauty Skincare ShopIntel — Retinol Night Renewal Cream - Standard",
+      "type": "physical",
+      "created_at": "2025-11-03T16:23:25.998Z"
+    },
+    {
+      "sku": "SKU-1004",
+      "name": "Beauty Skincare ShopIntel — Ceramide Barrier Cream",
+      "quantity": 303,
+      "revenue": 4880,
+      "product_id": 104,
+      "variant_id": 204,
+      "quantity_percentage": "9.7%",
+      "revenue_percentage": "16.3%",
+      "image": "https://picsum.photos/200/200?random=4",
+      "variant_title": "Beauty Skincare ShopIntel — Ceramide Barrier Cream - Standard",
+      "type": "shopify",
+      "created_at": "2025-10-27T16:23:25.998Z"
+    },
+    {
+      "sku": "SKU-1005",
+      "name": "Beauty Skincare ShopIntel — HA Rose Toner",
+      "quantity": 360,
+      "revenue": 7582,
+      "product_id": 105,
+      "variant_id": 205,
+      "quantity_percentage": "10.9%",
+      "revenue_percentage": "10.1%",
+      "image": "https://picsum.photos/200/200?random=5",
+      "variant_title": "Beauty Skincare ShopIntel — HA Rose Toner - Standard",
+      "type": "physical",
+      "created_at": "2025-12-28T16:23:25.998Z"
+    },
+    {
+      "sku": "SKU-1006",
+      "name": "Beauty Skincare ShopIntel — Vitamin C Glow Essence",
+      "quantity": 322,
+      "revenue": 7948,
+      "product_id": 106,
+      "variant_id": 206,
+      "quantity_percentage": "17.9%",
+      "revenue_percentage": "20.8%",
+      "image": "https://picsum.photos/200/200?random=6",
+      "variant_title": "Beauty Skincare ShopIntel — Vitamin C Glow Essence - Standard",
+      "type": "shopify",
+      "created_at": "2025-10-30T16:23:25.998Z"
+    },
+    {
+      "sku": "SKU-1007",
+      "name": "Beauty Skincare ShopIntel — Overnight Lip Recovery Balm",
+      "quantity": 387,
+      "revenue": 2012,
+      "product_id": 107,
+      "variant_id": 207,
+      "quantity_percentage": "10.3%",
+      "revenue_percentage": "9.3%",
+      "image": "https://picsum.photos/200/200?random=7",
+      "variant_title": "Beauty Skincare ShopIntel — Overnight Lip Recovery Balm - Standard",
+      "type": "physical",
+      "created_at": "2025-10-31T16:23:25.998Z"
+    },
+    {
+      "sku": "SKU-1008",
+      "name": "Beauty Skincare ShopIntel — Rice Milk Body Lotion",
+      "quantity": 356,
+      "revenue": 13278,
+      "product_id": 108,
+      "variant_id": 208,
+      "quantity_percentage": "9.6%",
+      "revenue_percentage": "13.5%",
+      "image": "https://picsum.photos/200/200?random=8",
+      "variant_title": "Beauty Skincare ShopIntel — Rice Milk Body Lotion - Standard",
+      "type": "shopify",
+      "created_at": "2026-01-02T16:23:25.998Z"
+    },
+    {
+      "sku": "SKU-1009",
+      "name": "Beauty Skincare ShopIntel — Peptide Eye Revive Cream",
+      "quantity": 364,
+      "revenue": 13886,
+      "product_id": 109,
+      "variant_id": 209,
+      "quantity_percentage": "6.9%",
+      "revenue_percentage": "22.2%",
+      "image": "https://picsum.photos/200/200?random=9",
+      "variant_title": "Beauty Skincare ShopIntel — Peptide Eye Revive Cream - Standard",
+      "type": "physical",
+      "created_at": "2026-03-17T16:23:25.998Z"
+    }
+  ],
+  "conversionSalesSample": [
+    {
+      "date": "2026-03-04",
+      "total_revenues": 5274,
+      "total_orders": 121,
+      "total_visitors": 1845,
+      "total_conversions": 111,
+      "total_gross_revenues": 5906,
+      "type": "tiktok"
+    },
+    {
+      "date": "2026-03-05",
+      "total_revenues": 3178,
+      "total_orders": 98,
+      "total_visitors": 2338,
+      "total_conversions": 108,
+      "total_gross_revenues": 3559,
+      "type": "tiktok"
+    },
+    {
+      "date": "2026-03-06",
+      "total_revenues": 3285,
+      "total_orders": 192,
+      "total_visitors": 1703,
+      "total_conversions": 199,
+      "total_gross_revenues": 3679,
+      "type": "tiktok"
+    },
+    {
+      "date": "2026-03-07",
+      "total_revenues": 5203,
+      "total_orders": 127,
+      "total_visitors": 2737,
+      "total_conversions": 146,
+      "total_gross_revenues": 5723,
+      "type": "tiktok"
+    },
+    {
+      "date": "2026-03-08",
+      "total_revenues": 3972,
+      "total_orders": 186,
+      "total_visitors": 1649,
+      "total_conversions": 215,
+      "total_gross_revenues": 4686,
+      "type": "tiktok"
+    },
+    {
+      "date": "2026-03-09",
+      "total_revenues": 5006,
+      "total_orders": 133,
+      "total_visitors": 1755,
+      "total_conversions": 109,
+      "total_gross_revenues": 5556,
+      "type": "tiktok"
+    },
+    {
+      "date": "2026-03-10",
+      "total_revenues": 6522,
+      "total_orders": 160,
+      "total_visitors": 1244,
+      "total_conversions": 156,
+      "total_gross_revenues": 7500,
+      "type": "tiktok"
+    },
+    {
+      "date": "2026-03-11",
+      "total_revenues": 4277,
+      "total_orders": 90,
+      "total_visitors": 1579,
+      "total_conversions": 107,
+      "total_gross_revenues": 5046,
+      "type": "tiktok"
+    },
+    {
+      "date": "2026-03-12",
+      "total_revenues": 4345,
+      "total_orders": 101,
+      "total_visitors": 2052,
+      "total_conversions": 116,
+      "total_gross_revenues": 4866,
+      "type": "tiktok"
+    },
+    {
+      "date": "2026-03-13",
+      "total_revenues": 3742,
+      "total_orders": 156,
+      "total_visitors": 1281,
+      "total_conversions": 185,
+      "total_gross_revenues": 4228,
+      "type": "tiktok"
+    },
+    {
+      "date": "2026-03-14",
+      "total_revenues": 4237,
+      "total_orders": 157,
+      "total_visitors": 2511,
+      "total_conversions": 130,
+      "total_gross_revenues": 5042,
+      "type": "tiktok"
+    },
+    {
+      "date": "2026-03-15",
+      "total_revenues": 4055,
+      "total_orders": 108,
+      "total_visitors": 2437,
+      "total_conversions": 91,
+      "total_gross_revenues": 4663,
+      "type": "tiktok"
+    },
+    {
+      "date": "2026-03-16",
+      "total_revenues": 6858,
+      "total_orders": 185,
+      "total_visitors": 2536,
+      "total_conversions": 218,
+      "total_gross_revenues": 8092,
+      "type": "tiktok"
+    },
+    {
+      "date": "2026-03-17",
+      "total_revenues": 4107,
+      "total_orders": 181,
+      "total_visitors": 1318,
+      "total_conversions": 150,
+      "total_gross_revenues": 4887,
+      "type": "tiktok"
+    },
+    {
+      "date": "2026-03-18",
+      "total_revenues": 6417,
+      "total_orders": 127,
+      "total_visitors": 2065,
+      "total_conversions": 128,
+      "total_gross_revenues": 7572,
+      "type": "tiktok"
+    },
+    {
+      "date": "2026-03-19",
+      "total_revenues": 3202,
+      "total_orders": 187,
+      "total_visitors": 2529,
+      "total_conversions": 207,
+      "total_gross_revenues": 3586,
+      "type": "tiktok"
+    }
+  ],
+  "historicalSalesSample": [
+    {
+      "date": "2026-01-03",
+      "total_conversions": 113,
+      "total_orders": 185,
+      "total_visitors": 2147,
+      "total_revenues": 5548,
+      "total_gross_revenues": 8521,
+      "type": "tiktok"
+    },
+    {
+      "date": "2026-01-04",
+      "total_conversions": 197,
+      "total_orders": 240,
+      "total_visitors": 2526,
+      "total_revenues": 6504,
+      "total_gross_revenues": 5450,
+      "type": "tiktok"
+    },
+    {
+      "date": "2026-01-05",
+      "total_conversions": 102,
+      "total_orders": 211,
+      "total_visitors": 2049,
+      "total_revenues": 6791,
+      "total_gross_revenues": 6954,
+      "type": "tiktok"
+    },
+    {
+      "date": "2026-01-06",
+      "total_conversions": 183,
+      "total_orders": 206,
+      "total_visitors": 3477,
+      "total_revenues": 5525,
+      "total_gross_revenues": 5008,
+      "type": "tiktok"
+    },
+    {
+      "date": "2026-01-07",
+      "total_conversions": 91,
+      "total_orders": 133,
+      "total_visitors": 2888,
+      "total_revenues": 7768,
+      "total_gross_revenues": 4933,
+      "type": "tiktok"
+    },
+    {
+      "date": "2026-01-08",
+      "total_conversions": 99,
+      "total_orders": 220,
+      "total_visitors": 2998,
+      "total_revenues": 4783,
+      "total_gross_revenues": 8455,
+      "type": "tiktok"
+    },
+    {
+      "date": "2026-01-09",
+      "total_conversions": 176,
+      "total_orders": 174,
+      "total_visitors": 3045,
+      "total_revenues": 7351,
+      "total_gross_revenues": 6072,
+      "type": "tiktok"
+    },
+    {
+      "date": "2026-01-10",
+      "total_conversions": 129,
+      "total_orders": 124,
+      "total_visitors": 2374,
+      "total_revenues": 5477,
+      "total_gross_revenues": 6492,
+      "type": "tiktok"
+    },
+    {
+      "date": "2026-01-11",
+      "total_conversions": 117,
+      "total_orders": 123,
+      "total_visitors": 2002,
+      "total_revenues": 6160,
+      "total_gross_revenues": 4682,
+      "type": "tiktok"
+    },
+    {
+      "date": "2026-01-12",
+      "total_conversions": 93,
+      "total_orders": 217,
+      "total_visitors": 2142,
+      "total_revenues": 6851,
+      "total_gross_revenues": 5770,
+      "type": "tiktok"
+    },
+    {
+      "date": "2026-01-13",
+      "total_conversions": 181,
+      "total_orders": 112,
+      "total_visitors": 2633,
+      "total_revenues": 4526,
+      "total_gross_revenues": 5293,
+      "type": "tiktok"
+    },
+    {
+      "date": "2026-01-14",
+      "total_conversions": 170,
+      "total_orders": 224,
+      "total_visitors": 2790,
+      "total_revenues": 6359,
+      "total_gross_revenues": 4729,
+      "type": "tiktok"
+    }
+  ]
+}

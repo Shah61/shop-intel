@@ -641,7 +641,7 @@ const TopPerformersSection: React.FC<{
         </div>
       </div>
 
-      {/* Your brand — aggregate engagement from overview API (fallback: owner row in list) */}
+      {/* Your brands — aggregate engagement from overview API (fallback: owner row in list) */}
       {!isLoading && !error && (
         <div style={{ margin: '0 20px', marginTop: 12, padding: '10px 14px', borderRadius: 11, background: `linear-gradient(135deg, ${presetRgba(0.12)}, rgba(245,158,11,.08))`, border: `1px solid ${presetRgba(0.22)}`, display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 8 }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
