@@ -1370,7 +1370,7 @@ const PayoutsScreen = () => {
                 className="overview-platform-grid !grid-cols-1 sm:!grid-cols-2 lg:!grid-cols-4"
             >
                 <OverviewDataCard
-                    customTitle="Total Payouts"
+                    variant="stat" customTitle="Total Payouts"
                     customIcon={<DollarSign size={22} strokeWidth={2} />}
                     metricSubtitle="All time payouts"
                     primaryValueDisplay={revealedAmounts ? formatCurrency(meta.total_payout) : "RM ••••••"}
@@ -1383,7 +1383,7 @@ const PayoutsScreen = () => {
                     onExpandToggle={() => setCardsExpanded((e) => !e)}
                 />
                 <OverviewDataCard
-                    customTitle="Pending Payouts"
+                    variant="stat" customTitle="Pending Payouts"
                     customIcon={<Clock size={22} strokeWidth={2} />}
                     metricSubtitle="Awaiting processing"
                     primaryValueDisplay={revealedAmounts ? formatCurrency(meta.pending_payout) : "RM ••••••"}
@@ -1396,7 +1396,7 @@ const PayoutsScreen = () => {
                     onExpandToggle={() => setCardsExpanded((e) => !e)}
                 />
                 <OverviewDataCard
-                    customTitle="Paid This Month"
+                    variant="stat" customTitle="Paid This Month"
                     customIcon={<TrendingUp size={22} strokeWidth={2} />}
                     metricSubtitle="Current month payouts"
                     primaryValueDisplay={revealedAmounts ? formatCurrency(meta.paid_this_month) : "RM ••••••"}
@@ -1409,7 +1409,7 @@ const PayoutsScreen = () => {
                     onExpandToggle={() => setCardsExpanded((e) => !e)}
                 />
                 <OverviewDataCard
-                    customTitle="Total Transactions"
+                    variant="stat" customTitle="Total Transactions"
                     customIcon={<ArrowDownUp size={22} strokeWidth={2} />}
                     metricSubtitle="Processed transactions"
                     primaryValueDisplay={String(meta.total_transactions)}
