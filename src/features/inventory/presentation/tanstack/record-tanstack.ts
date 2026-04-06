@@ -19,20 +19,21 @@ const generateMockInventoryLogs = (): InventoryLog[] => {
         { sku_no: "BSI-RTN-30ML", name: "Retinol Night Cream — 30ml" },
         { sku_no: "BSI-LIP-10G", name: "Lip Recovery Balm — 10g" },
         { sku_no: "BSI-EYE-15ML", name: "Peptide Eye Cream — 15ml" },
-        { sku_no: "BSI-BDY-250ML", name: "Rice Milk Body Lotion — 250ml" }
+        { sku_no: "BSI-BDY-250ML", name: "Rice Milk Body Lotion — 250ml" },
+        { sku_no: "BSI-MSC-12ML", name: "Waterproof Lash Mascara — Black 12ml" }
     ];
 
     const warehouses = [
         { name: "Sepang Warehouse" },
-        { name: "Physical Store KL" },
+        { name: "KL Flagship Store" },
         { name: "iStore Pavilion" }
     ];
 
     const users = [
-        { email: "john.smith@shopintel.com" },
-        { email: "jane.doe@shopintel.com" },
-        { email: "mike.wilson@shopintel.com" },
-        { email: "sarah.connor@shopintel.com" }
+        { email: "ops@beautylab.my" },
+        { email: "retail@beautylab.my" },
+        { email: "system@beautylab.my" },
+        { email: "merch@beautylab.my" }
     ];
 
     const logTypes = [

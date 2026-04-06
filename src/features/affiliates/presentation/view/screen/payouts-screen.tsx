@@ -937,7 +937,6 @@ const PayoutsScreen = () => {
 
     const [statusFilter, setStatusFilter] = useState<string>("all");
     const [revealedAmounts, setRevealedAmounts] = useState(true);
-    const [cardsExpanded, setCardsExpanded] = useState(false);
     const [payouts, setPayouts] = useState<PayoutRecord[]>([]);
     const [isLoading, setIsLoading] = useState(true);
 
@@ -1370,56 +1369,40 @@ const PayoutsScreen = () => {
                 className="overview-platform-grid !grid-cols-1 sm:!grid-cols-2 lg:!grid-cols-4"
             >
                 <OverviewDataCard
-                    variant="stat" customTitle="Total Payouts"
+                    variant="stat"
+                    hideSecondaryStats
+                    customTitle="Total Payouts"
                     customIcon={<DollarSign size={22} strokeWidth={2} />}
                     metricSubtitle="All time payouts"
                     primaryValueDisplay={revealedAmounts ? formatCurrency(meta.total_payout) : "RM ••••••"}
-                    expandLabel1="Paid Count"
-                    expandValue1Display={String(meta.paid_count)}
-                    expandLabel2="Avg. Payout"
-                    expandValue2Display={revealedAmounts ? formatCurrency(meta.avg_payout) : "••••••"}
                     isLoading={isLoading}
-                    expanded={cardsExpanded}
-                    onExpandToggle={() => setCardsExpanded((e) => !e)}
                 />
                 <OverviewDataCard
-                    variant="stat" customTitle="Pending Payouts"
+                    variant="stat"
+                    hideSecondaryStats
+                    customTitle="Pending Payouts"
                     customIcon={<Clock size={22} strokeWidth={2} />}
                     metricSubtitle="Awaiting processing"
                     primaryValueDisplay={revealedAmounts ? formatCurrency(meta.pending_payout) : "RM ••••••"}
-                    expandLabel1="Pending"
-                    expandValue1Display={String(meta.pending_count)}
-                    expandLabel2="Processing"
-                    expandValue2Display={String(meta.processing_count)}
                     isLoading={isLoading}
-                    expanded={cardsExpanded}
-                    onExpandToggle={() => setCardsExpanded((e) => !e)}
                 />
                 <OverviewDataCard
-                    variant="stat" customTitle="Paid This Month"
+                    variant="stat"
+                    hideSecondaryStats
+                    customTitle="Paid This Month"
                     customIcon={<TrendingUp size={22} strokeWidth={2} />}
                     metricSubtitle="Current month payouts"
                     primaryValueDisplay={revealedAmounts ? formatCurrency(meta.paid_this_month) : "RM ••••••"}
-                    expandLabel1="All Transactions"
-                    expandValue1Display={String(meta.total_transactions)}
-                    expandLabel2="Failed"
-                    expandValue2Display={String(meta.failed_count)}
                     isLoading={isLoading}
-                    expanded={cardsExpanded}
-                    onExpandToggle={() => setCardsExpanded((e) => !e)}
                 />
                 <OverviewDataCard
-                    variant="stat" customTitle="Total Transactions"
+                    variant="stat"
+                    hideSecondaryStats
+                    customTitle="Total Transactions"
                     customIcon={<ArrowDownUp size={22} strokeWidth={2} />}
                     metricSubtitle="Processed transactions"
                     primaryValueDisplay={String(meta.total_transactions)}
-                    expandLabel1="Paid"
-                    expandValue1Display={String(meta.paid_count)}
-                    expandLabel2="Failed"
-                    expandValue2Display={String(meta.failed_count)}
                     isLoading={isLoading}
-                    expanded={cardsExpanded}
-                    onExpandToggle={() => setCardsExpanded((e) => !e)}
                 />
             </div>
 

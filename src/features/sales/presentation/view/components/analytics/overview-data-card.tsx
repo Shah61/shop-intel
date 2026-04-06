@@ -22,6 +22,8 @@ interface OverviewDataCardProps {
     expandValue1Display?: string;
     expandLabel2?: string;
     expandValue2Display?: string;
+    /** When variant is "stat", hide the divider and bottom pill stats (icon, title, hero number only). */
+    hideSecondaryStats?: boolean;
     /**
      * "platform" — compact card: icon + title + inline stats in one row, revenue below (Sales page)
      * "stat"    — hero number card: big number center-stage, pill stats at bottom (User Activity)
@@ -106,6 +108,7 @@ const OverviewDataCard = ({
     expandValue1Display,
     expandLabel2,
     expandValue2Display,
+    hideSecondaryStats = false,
     variant = "platform",
 }: OverviewDataCardProps) => {
     const { resolvedTheme } = useTheme();
@@ -254,7 +257,7 @@ const OverviewDataCard = ({
                             fontSize: 32,
                             fontWeight: 700,
                             color: t.salesAmount,
-                            margin: "0 0 14px 0",
+                            margin: hideSecondaryStats ? "0" : "0 0 14px 0",
                             letterSpacing: "-0.5px",
                             lineHeight: 1,
                             fontFamily: "'Outfit', sans-serif",
@@ -264,53 +267,56 @@ const OverviewDataCard = ({
                     </p>
                 )}
 
-                {/* Row 3: Divider */}
-                <div style={{ width: "100%", height: 1, background: t.divider, marginBottom: 12 }} />
+                {/* Row 3–4: Divider + pill stats (optional) */}
+                {!hideSecondaryStats && (
+                    <>
+                        <div style={{ width: "100%", height: 1, background: t.divider, marginBottom: 12 }} />
 
-                {/* Row 4: Pill stats side by side */}
-                {!isLoading && (
-                    <div style={{ display: "flex", gap: 8 }}>
-                        <div
-                            style={{
-                                flex: 1,
-                                display: "flex",
-                                alignItems: "center",
-                                justifyContent: "center",
-                                gap: 6,
-                                padding: "7px 10px",
-                                borderRadius: 10,
-                                background: t.pillBg,
-                                border: `1px solid ${t.pillBorder}`,
-                            }}
-                        >
-                            <span style={{ fontSize: 9, color: t.statLabel, fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.3px" }}>
-                                {ex1L}
-                            </span>
-                            <span style={{ fontSize: 13, fontWeight: 700, color: t.statValue }}>
-                                {ex1V}
-                            </span>
-                        </div>
-                        <div
-                            style={{
-                                flex: 1,
-                                display: "flex",
-                                alignItems: "center",
-                                justifyContent: "center",
-                                gap: 6,
-                                padding: "7px 10px",
-                                borderRadius: 10,
-                                background: t.pillBg,
-                                border: `1px solid ${t.pillBorder}`,
-                            }}
-                        >
-                            <span style={{ fontSize: 9, color: t.statLabel, fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.3px" }}>
-                                {ex2L}
-                            </span>
-                            <span style={{ fontSize: 13, fontWeight: 700, color: t.statValue }}>
-                                {ex2V}
-                            </span>
-                        </div>
-                    </div>
+                        {!isLoading && (
+                            <div style={{ display: "flex", gap: 8 }}>
+                                <div
+                                    style={{
+                                        flex: 1,
+                                        display: "flex",
+                                        alignItems: "center",
+                                        justifyContent: "center",
+                                        gap: 6,
+                                        padding: "7px 10px",
+                                        borderRadius: 10,
+                                        background: t.pillBg,
+                                        border: `1px solid ${t.pillBorder}`,
+                                    }}
+                                >
+                                    <span style={{ fontSize: 9, color: t.statLabel, fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.3px" }}>
+                                        {ex1L}
+                                    </span>
+                                    <span style={{ fontSize: 13, fontWeight: 700, color: t.statValue }}>
+                                        {ex1V}
+                                    </span>
+                                </div>
+                                <div
+                                    style={{
+                                        flex: 1,
+                                        display: "flex",
+                                        alignItems: "center",
+                                        justifyContent: "center",
+                                        gap: 6,
+                                        padding: "7px 10px",
+                                        borderRadius: 10,
+                                        background: t.pillBg,
+                                        border: `1px solid ${t.pillBorder}`,
+                                    }}
+                                >
+                                    <span style={{ fontSize: 9, color: t.statLabel, fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.3px" }}>
+                                        {ex2L}
+                                    </span>
+                                    <span style={{ fontSize: 13, fontWeight: 700, color: t.statValue }}>
+                                        {ex2V}
+                                    </span>
+                                </div>
+                            </div>
+                        )}
+                    </>
                 )}
 
                 {/* Bottom glow */}

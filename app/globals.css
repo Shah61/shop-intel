@@ -408,6 +408,7 @@ html:not(.dark) .recharts-tooltip-wrapper [style*="rgba(255, 255, 255"] {
     padding: 3px 5px 5px !important;
     font-size: 9px !important;
   }
+  
 }
 
 /* iPad landscape (1024px–1366px) — desktop sidebar visible, no bottom nav */

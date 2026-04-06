@@ -20,8 +20,8 @@ const mockInventoryStocks: InventoryStock[] = [
     { storageClientNo: "CLI001", skuNo: "BSI-CLN-150ML", skuDesc: "Cloud Cleanser — 150ml", storageClientSkuNo: "BSI-CLN-150ML", goodQty: 150, damagedQty: 2, allocatingQty: 5, processingQty: 3, availableQty: 140, country: "MY", skuStatus: "ACTIVE", reservedQty: 0, thresholdQty: 20 },
     { storageClientNo: "CLI002", skuNo: "BSI-NIA-30ML", skuDesc: "Niacinamide Serum — 30ml", storageClientSkuNo: "BSI-NIA-30ML", goodQty: 200, damagedQty: 1, allocatingQty: 8, processingQty: 2, availableQty: 189, country: "MY", skuStatus: "ACTIVE", reservedQty: 0, thresholdQty: 25 },
     { storageClientNo: "CLI003", skuNo: "BSI-SPF-50ML", skuDesc: "UV Defense SPF 50 — 50ml", storageClientSkuNo: "BSI-SPF-50ML", goodQty: 60, damagedQty: 0, allocatingQty: 2, processingQty: 1, availableQty: 57, country: "MY", skuStatus: "ACTIVE", reservedQty: 0, thresholdQty: 10 },
-    { storageClientNo: "CLI004", skuNo: "PL-BL-M", skuDesc: "Blue Polo - Medium", storageClientSkuNo: "PL-BL-M", goodQty: 85, damagedQty: 1, allocatingQty: 3, processingQty: 1, availableQty: 80, country: "MY", skuStatus: "ACTIVE", reservedQty: 0, thresholdQty: 15 },
-    { storageClientNo: "CLI005", skuNo: "LJ-BK-M", skuDesc: "Black Leather - Medium", storageClientSkuNo: "LJ-BK-M", goodQty: 25, damagedQty: 0, allocatingQty: 1, processingQty: 0, availableQty: 24, country: "MY", skuStatus: "ACTIVE", reservedQty: 0, thresholdQty: 5 },
+    { storageClientNo: "CLI004", skuNo: "BSI-EYE-15ML", skuDesc: "Peptide Eye Cream — 15ml", storageClientSkuNo: "BSI-EYE-15ML", goodQty: 85, damagedQty: 1, allocatingQty: 3, processingQty: 1, availableQty: 80, country: "MY", skuStatus: "ACTIVE", reservedQty: 0, thresholdQty: 15 },
+    { storageClientNo: "CLI005", skuNo: "BSI-RTN-30ML", skuDesc: "Retinol Night Cream — 30ml", storageClientSkuNo: "BSI-RTN-30ML", goodQty: 25, damagedQty: 0, allocatingQty: 1, processingQty: 0, availableQty: 24, country: "MY", skuStatus: "ACTIVE", reservedQty: 0, thresholdQty: 5 },
 ];
 
 // Mock implementations
@@ -179,7 +179,7 @@ const updateInventoryQuantity = async (
                 updated_at: new Date().toISOString(),
                 warehouse: {
                     id: "warehouse_1",
-                    name: "Main Warehouse",
+                    name: "Sepang Warehouse",
                     location: "Kuala Lumpur",
                     created_at: new Date().toISOString(),
                     updated_at: new Date().toISOString()

@@ -34,7 +34,7 @@ const generateNinjaVanLocations = () => {
       const serviceSet = services[Math.floor(Math.random() * services.length)];
       const sizeSet = acceptedSizes[Math.floor(Math.random() * acceptedSizes.length)];
       const operatingHours = type === "Locker" ? {monday:"24/7",tuesday:"24/7",wednesday:"24/7",thursday:"24/7",friday:"24/7",saturday:"24/7",sunday:"24/7"} : {monday:"09:00-22:00",tuesday:"09:00-22:00",wednesday:"09:00-22:00",thursday:"09:00-22:00",friday:"09:00-22:00",saturday:"10:00-22:00",sunday:"10:00-20:00"};
-      locations.push({id:id++,name:`Shop-Intel ${type} ${mall}`,partner,type,address:`Level ${Math.floor(Math.random()*5)+1}, ${mall}, ${city.name}, Malaysia`,coordinates:{lat:city.lat+(Math.random()-.5)*.1,lng:city.lng+(Math.random()-.5)*.1},acceptedSizes:sizeSet,operatingDays:7,services:serviceSet,operatingHours});
+      locations.push({id:id++,name:`BeautyLab ${type} ${mall}`,partner,type,address:`Level ${Math.floor(Math.random()*5)+1}, ${mall}, ${city.name}, Malaysia`,coordinates:{lat:city.lat+(Math.random()-.5)*.1,lng:city.lng+(Math.random()-.5)*.1},acceptedSizes:sizeSet,operatingDays:7,services:serviceSet,operatingHours});
     });
   });
   return locations;
@@ -45,7 +45,7 @@ const generateNinjaVanOrders = () => {
   const orders: any[] = [];
   const statuses = ["Delivered","In Transit","Pending Pickup","Out for Delivery","Failed Delivery","Returned"];
   const names = ["Ahmad bin Ismail","Sarah Tan","Mohammed Ali","Jennifer Lee","Raj Kumar","Fatimah binti Hassan","David Chen","Priya Sharma","Hassan Abdullah","Lisa Wong","Kumar Rajan","Aisha Rahman","Michael Tan","Nurul Huda","James Lim","Siti Aminah","Robert Ng","Zainab Ibrahim","Kevin Ooi","Mariam Ali"];
-  const itemSets = [["Hydrating Cloud Cleanser","Niacinamide Serum"],["Daily UV Defense SPF 50"],["Retinol Night Cream","Ceramide Barrier Cream","Lip Recovery Balm"],["Vitamin C Essence","HA Rose Toner"],["Peptide Eye Cream","Overnight Lip Balm"],["Rice Milk Body Lotion","Gua Sha Tool"],["Barrier Repair Kit","Sheet Mask 5pc"],["Travel Minis Set","Cotton Pads"],["Double Cleanse Duo","Micellar Refill"],["Beauty Skincare ShopIntel — Full Routine Kit"]];
+  const itemSets = [["Cloud Cleanser 150ml","Niacinamide Serum 30ml"],["UV Defense SPF 50 — 50ml"],["Retinol Night Cream 30ml","Ceramide Barrier Cream 50ml","Lip Recovery Balm 10g"],["Vitamin C Glow Essence 30ml","HA Rose Toner 200ml"],["Peptide Eye Cream 15ml","Velvet Matte Lipstick — Rose"],["Rice Milk Body Lotion 250ml","Rose Quartz Gua Sha"],["Barrier Repair Mini Kit","Hydrating Sheet Mask 5pc"],["Travel Minis Set","Biodegradable Cotton Rounds"],["Double Cleanse Duo","Micellar Water Refill 400ml"],["BeautyLab — Full Face & Body Routine Kit"]];
   const streets = ["Jalan Ampang","Jalan Bukit Bintang","Jalan Petaling","Jalan Sultan Ismail","Jalan Tun Razak","Jalan Pudu","Jalan Imbi","Jalan Raja Chulan","Jalan Tuanku Abdul Rahman","Jalan Masjid India"];
   const areas = ["Kuala Lumpur","Petaling Jaya","Shah Alam","Subang Jaya","Klang","Kajang","Seremban","Malacca","Johor Bahru","Ipoh","Penang"];
   let oid = 1;

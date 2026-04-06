@@ -49,36 +49,36 @@ const fmt = (n: number) => { if (n >= 1e6) return `${(n / 1e6).toFixed(1)}M`; if
 // DUMMY DATA
 // ─────────────────────────────────────────────────────────────────────────────
 const DUMMY_ISTORE: InventoryStock[] = [
-  { skuNo: "SKU-HJB-001", skuDesc: "Premium Bawal Hijab — Dusty Rose", availableQty: 145, processingQty: 12, allocatingQty: 8, reservedQty: 5, goodQty: 170, damagedQty: 2, thresholdQty: 20, storageClientSkuNo: "CLI-001", country: "MY", skuStatus: "ACTIVE" },
-  { skuNo: "SKU-HJB-002", skuDesc: "Cotton Voile Shawl — Navy", availableQty: 8, processingQty: 3, allocatingQty: 2, reservedQty: 0, goodQty: 13, damagedQty: 0, thresholdQty: 15, storageClientSkuNo: "CLI-002", country: "MY", skuStatus: "ACTIVE" },
-  { skuNo: "SKU-TLK-003", skuDesc: "Silk Telekung Premium — White", availableQty: 0, processingQty: 0, allocatingQty: 0, reservedQty: 0, goodQty: 0, damagedQty: 1, thresholdQty: 10, storageClientSkuNo: "CLI-003", country: "MY", skuStatus: "ACTIVE" },
-  { skuNo: "SKU-ACC-004", skuDesc: "Brooch Set — Gold Pearl (3pcs)", availableQty: 320, processingQty: 0, allocatingQty: 15, reservedQty: 10, goodQty: 345, damagedQty: 0, thresholdQty: 30, storageClientSkuNo: "CLI-004", country: "MY", skuStatus: "ACTIVE" },
-  { skuNo: "SKU-HJB-005", skuDesc: "Jersey Instant Hijab — Black", availableQty: 52, processingQty: 8, allocatingQty: 0, reservedQty: 3, goodQty: 63, damagedQty: 0, thresholdQty: 25, storageClientSkuNo: "CLI-005", country: "MY", skuStatus: "ACTIVE" },
-  { skuNo: "SKU-TLK-006", skuDesc: "Travel Prayer Set — Compact", availableQty: 3, processingQty: 0, allocatingQty: 0, reservedQty: 0, goodQty: 3, damagedQty: 0, thresholdQty: 10, storageClientSkuNo: "CLI-006", country: "MY", skuStatus: "ACTIVE" },
+  { skuNo: "BSI-CLN-150ML", skuDesc: "Cloud Cleanser — 150ml", availableQty: 145, processingQty: 12, allocatingQty: 8, reservedQty: 5, goodQty: 170, damagedQty: 2, thresholdQty: 20, storageClientSkuNo: "BSI-CLN-150ML", country: "MY", skuStatus: "ACTIVE" },
+  { skuNo: "BSI-NIA-30ML", skuDesc: "Niacinamide Serum — 30ml", availableQty: 8, processingQty: 3, allocatingQty: 2, reservedQty: 0, goodQty: 13, damagedQty: 0, thresholdQty: 15, storageClientSkuNo: "BSI-NIA-30ML", country: "MY", skuStatus: "ACTIVE" },
+  { skuNo: "BSI-SPF-50ML", skuDesc: "UV Defense SPF 50 — 50ml", availableQty: 0, processingQty: 0, allocatingQty: 0, reservedQty: 0, goodQty: 0, damagedQty: 1, thresholdQty: 10, storageClientSkuNo: "BSI-SPF-50ML", country: "MY", skuStatus: "ACTIVE" },
+  { skuNo: "BSI-MSC-12ML", skuDesc: "Waterproof Lash Mascara — Black 12ml", availableQty: 320, processingQty: 0, allocatingQty: 15, reservedQty: 10, goodQty: 345, damagedQty: 0, thresholdQty: 30, storageClientSkuNo: "BSI-MSC-12ML", country: "MY", skuStatus: "ACTIVE" },
+  { skuNo: "BSI-LIP-10G", skuDesc: "Lip Recovery Balm — 10g", availableQty: 52, processingQty: 8, allocatingQty: 0, reservedQty: 3, goodQty: 63, damagedQty: 0, thresholdQty: 25, storageClientSkuNo: "BSI-LIP-10G", country: "MY", skuStatus: "ACTIVE" },
+  { skuNo: "BSI-TON-200ML", skuDesc: "HA Rose Toner — 200ml", availableQty: 3, processingQty: 0, allocatingQty: 0, reservedQty: 0, goodQty: 3, damagedQty: 0, thresholdQty: 10, storageClientSkuNo: "BSI-TON-200ML", country: "MY", skuStatus: "ACTIVE" },
 ];
 
 const DUMMY_WAREHOUSE: SkuItem[] = [
-  { id: "wh-001", sku: { sku_no: "SKU-HJB-001", sku_name: "Premium Bawal Hijab — Dusty Rose" }, quantity: 580, threshold_quantity: 100, warehouse: { name: "Sepang Warehouse" }, updated_at: "2025-03-28T10:00:00Z" },
-  { id: "wh-002", sku: { sku_no: "SKU-HJB-002", sku_name: "Cotton Voile Shawl — Navy" }, quantity: 42, threshold_quantity: 50, warehouse: { name: "Sepang Warehouse" }, updated_at: "2025-03-27T14:00:00Z" },
-  { id: "wh-003", sku: { sku_no: "SKU-TLK-003", sku_name: "Silk Telekung Premium — White" }, quantity: 0, threshold_quantity: 30, warehouse: { name: "Sepang Warehouse" }, updated_at: "2025-03-26T09:00:00Z" },
-  { id: "wh-004", sku: { sku_no: "SKU-ACC-004", sku_name: "Brooch Set — Gold Pearl (3pcs)" }, quantity: 1200, threshold_quantity: 200, warehouse: { name: "Sepang Warehouse" }, updated_at: "2025-03-29T08:00:00Z" },
-  { id: "wh-005", sku: { sku_no: "SKU-HJB-005", sku_name: "Jersey Instant Hijab — Black" }, quantity: 15, threshold_quantity: 50, warehouse: { name: "Sepang Warehouse" }, updated_at: "2025-03-25T16:00:00Z" },
+  { id: "wh-001", sku: { sku_no: "BSI-CLN-150ML", sku_name: "Cloud Cleanser — 150ml" }, quantity: 580, threshold_quantity: 100, warehouse: { name: "Sepang Warehouse" }, updated_at: "2025-03-28T10:00:00Z" },
+  { id: "wh-002", sku: { sku_no: "BSI-NIA-30ML", sku_name: "Niacinamide Serum — 30ml" }, quantity: 42, threshold_quantity: 50, warehouse: { name: "Sepang Warehouse" }, updated_at: "2025-03-27T14:00:00Z" },
+  { id: "wh-003", sku: { sku_no: "BSI-SPF-50ML", sku_name: "UV Defense SPF 50 — 50ml" }, quantity: 0, threshold_quantity: 30, warehouse: { name: "Sepang Warehouse" }, updated_at: "2025-03-26T09:00:00Z" },
+  { id: "wh-004", sku: { sku_no: "BSI-MSC-12ML", sku_name: "Waterproof Lash Mascara — Black 12ml" }, quantity: 1200, threshold_quantity: 200, warehouse: { name: "Sepang Warehouse" }, updated_at: "2025-03-29T08:00:00Z" },
+  { id: "wh-005", sku: { sku_no: "BSI-LIP-10G", sku_name: "Lip Recovery Balm — 10g" }, quantity: 15, threshold_quantity: 50, warehouse: { name: "Sepang Warehouse" }, updated_at: "2025-03-25T16:00:00Z" },
 ];
 
 const DUMMY_PHYSICAL: SkuItem[] = [
-  { id: "ps-001", sku: { sku_no: "SKU-HJB-001", sku_name: "Premium Bawal Hijab — Dusty Rose" }, quantity: 35, threshold_quantity: 10, warehouse: { name: "KL Flagship Store" }, updated_at: "2025-03-29T09:00:00Z" },
-  { id: "ps-002", sku: { sku_no: "SKU-HJB-002", sku_name: "Cotton Voile Shawl — Navy" }, quantity: 4, threshold_quantity: 8, warehouse: { name: "KL Flagship Store" }, updated_at: "2025-03-28T15:00:00Z" },
-  { id: "ps-003", sku: { sku_no: "SKU-ACC-004", sku_name: "Brooch Set — Gold Pearl (3pcs)" }, quantity: 88, threshold_quantity: 15, warehouse: { name: "KL Flagship Store" }, updated_at: "2025-03-29T07:00:00Z" },
-  { id: "ps-004", sku: { sku_no: "SKU-TLK-006", sku_name: "Travel Prayer Set — Compact" }, quantity: 0, threshold_quantity: 5, warehouse: { name: "Johor Pop-up" }, updated_at: "2025-03-27T10:00:00Z" },
+  { id: "ps-001", sku: { sku_no: "BSI-CLN-150ML", sku_name: "Cloud Cleanser — 150ml" }, quantity: 35, threshold_quantity: 10, warehouse: { name: "KL Flagship Store" }, updated_at: "2025-03-29T09:00:00Z" },
+  { id: "ps-002", sku: { sku_no: "BSI-NIA-30ML", sku_name: "Niacinamide Serum — 30ml" }, quantity: 4, threshold_quantity: 8, warehouse: { name: "KL Flagship Store" }, updated_at: "2025-03-28T15:00:00Z" },
+  { id: "ps-003", sku: { sku_no: "BSI-MSC-12ML", sku_name: "Waterproof Lash Mascara — Black 12ml" }, quantity: 88, threshold_quantity: 15, warehouse: { name: "KL Flagship Store" }, updated_at: "2025-03-29T07:00:00Z" },
+  { id: "ps-004", sku: { sku_no: "BSI-TON-200ML", sku_name: "HA Rose Toner — 200ml" }, quantity: 0, threshold_quantity: 5, warehouse: { name: "Johor Pop-up" }, updated_at: "2025-03-27T10:00:00Z" },
 ];
 
 const DUMMY_RECORDS: InventoryLog[] = [
-  { id: "log-001", log_type: "ADDED", quantity_change: 50, quantity_before: 530, quantity_after: 580, notes: "New shipment received from supplier", user_id: "usr-001", user: { email: "sarah@store.com" }, inventory: { sku: { sku_no: "SKU-HJB-001" }, warehouse: { name: "Sepang Warehouse" }, quantity: 580 }, metadata: { title: "Stock Replenishment" }, created_at: "2025-03-28T10:00:00Z" },
-  { id: "log-002", log_type: "SOLD", quantity_change: -3, quantity_before: 45, quantity_after: 42, notes: "Online order #ORD-4821", user_id: "usr-002", user: { email: "system@store.com" }, inventory: { sku: { sku_no: "SKU-HJB-002" }, warehouse: { name: "Sepang Warehouse" }, quantity: 42 }, metadata: { title: "Order Fulfillment" }, created_at: "2025-03-27T14:00:00Z" },
-  { id: "log-003", log_type: "REMOVED", quantity_change: -5, quantity_before: 5, quantity_after: 0, notes: "Damaged items removed from inventory", user_id: "usr-001", user: { email: "sarah@store.com" }, inventory: { sku: { sku_no: "SKU-TLK-003" }, warehouse: { name: "Sepang Warehouse" }, quantity: 0 }, metadata: { title: "Damage Write-off" }, created_at: "2025-03-26T09:00:00Z" },
-  { id: "log-004", log_type: "RESTOCKED", quantity_change: 200, quantity_before: 1000, quantity_after: 1200, notes: "Bulk restock — Raya preparation", user_id: "usr-001", user: { email: "sarah@store.com" }, inventory: { sku: { sku_no: "SKU-ACC-004" }, warehouse: { name: "Sepang Warehouse" }, quantity: 1200 }, metadata: { title: "Raya 2025 Restock" }, created_at: "2025-03-29T08:00:00Z" },
-  { id: "log-005", log_type: "SOLD", quantity_change: -2, quantity_before: 37, quantity_after: 35, notes: "Walk-in customer purchase", user_id: "usr-003", user: { email: "staff@store.com" }, inventory: { sku: { sku_no: "SKU-HJB-001" }, warehouse: { name: "KL Flagship Store" }, quantity: 35 }, metadata: { title: "In-Store Sale" }, created_at: "2025-03-29T09:00:00Z" },
-  { id: "log-006", log_type: "ADDED", quantity_change: 15, quantity_before: 0, quantity_after: 15, notes: "Transfer from Sepang warehouse", user_id: "usr-001", user: { email: "sarah@store.com" }, inventory: { sku: { sku_no: "SKU-HJB-005" }, warehouse: { name: "Sepang Warehouse" }, quantity: 15 }, metadata: { title: "Inter-warehouse Transfer" }, created_at: "2025-03-25T16:00:00Z" },
+  { id: "log-001", log_type: "ADDED", quantity_change: 50, quantity_before: 530, quantity_after: 580, notes: "Contract manufacturer batch — Cloud Cleanser", user_id: "usr-001", user: { email: "ops@beautylab.my" }, inventory: { sku: { sku_no: "BSI-CLN-150ML" }, warehouse: { name: "Sepang Warehouse" }, quantity: 580 }, metadata: { title: "Stock Replenishment" }, created_at: "2025-03-28T10:00:00Z" },
+  { id: "log-002", log_type: "SOLD", quantity_change: -3, quantity_before: 45, quantity_after: 42, notes: "Shopee order #ORD-4821 — Niacinamide Serum", user_id: "usr-002", user: { email: "system@beautylab.my" }, inventory: { sku: { sku_no: "BSI-NIA-30ML" }, warehouse: { name: "Sepang Warehouse" }, quantity: 42 }, metadata: { title: "Order Fulfillment" }, created_at: "2025-03-27T14:00:00Z" },
+  { id: "log-003", log_type: "REMOVED", quantity_change: -5, quantity_before: 5, quantity_after: 0, notes: "Leaking SPF bottles — QC hold removed", user_id: "usr-001", user: { email: "ops@beautylab.my" }, inventory: { sku: { sku_no: "BSI-SPF-50ML" }, warehouse: { name: "Sepang Warehouse" }, quantity: 0 }, metadata: { title: "Damage Write-off" }, created_at: "2025-03-26T09:00:00Z" },
+  { id: "log-004", log_type: "RESTOCKED", quantity_change: 200, quantity_before: 1000, quantity_after: 1200, notes: "Holiday kitting — mascaras for gift sets", user_id: "usr-001", user: { email: "ops@beautylab.my" }, inventory: { sku: { sku_no: "BSI-MSC-12ML" }, warehouse: { name: "Sepang Warehouse" }, quantity: 1200 }, metadata: { title: "Seasonal Restock" }, created_at: "2025-03-29T08:00:00Z" },
+  { id: "log-005", log_type: "SOLD", quantity_change: -2, quantity_before: 37, quantity_after: 35, notes: "Walk-in — double cleanser + lip balm bundle", user_id: "usr-003", user: { email: "retail@beautylab.my" }, inventory: { sku: { sku_no: "BSI-CLN-150ML" }, warehouse: { name: "KL Flagship Store" }, quantity: 35 }, metadata: { title: "In-Store Sale" }, created_at: "2025-03-29T09:00:00Z" },
+  { id: "log-006", log_type: "ADDED", quantity_change: 15, quantity_before: 0, quantity_after: 15, notes: "Transfer from Sepang — lip balm display refill", user_id: "usr-001", user: { email: "ops@beautylab.my" }, inventory: { sku: { sku_no: "BSI-LIP-10G" }, warehouse: { name: "Sepang Warehouse" }, quantity: 15 }, metadata: { title: "Inter-warehouse Transfer" }, created_at: "2025-03-25T16:00:00Z" },
 ];
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -255,10 +255,10 @@ function AddIStoreDialog({ onClose, onSubmit }: { onClose: () => void; onSubmit:
           <button onClick={onClose} style={clBtn}><X size={16} /></button>
         </div>
         <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12, marginBottom: 16 }}>
-          <div><label style={lSt}>SKU Number</label><input value={skuNo} onChange={(e) => setSkuNo(e.target.value)} placeholder="SKU-XXX-001" style={iSt} /></div>
-          <div><label style={lSt}>Client SKU</label><input value={clientSku} onChange={(e) => setClientSku(e.target.value)} placeholder="CLI-001" style={iSt} /></div>
+          <div><label style={lSt}>SKU Number</label><input value={skuNo} onChange={(e) => setSkuNo(e.target.value)} placeholder="BSI-SPF-50ML" style={iSt} /></div>
+          <div><label style={lSt}>Client SKU</label><input value={clientSku} onChange={(e) => setClientSku(e.target.value)} placeholder="BSI-SPF-50ML" style={iSt} /></div>
         </div>
-        <div style={{ marginBottom: 16 }}><label style={lSt}>Description</label><input value={skuDesc} onChange={(e) => setSkuDesc(e.target.value)} placeholder="Product description..." style={iSt} /></div>
+        <div style={{ marginBottom: 16 }}><label style={lSt}>Description</label><input value={skuDesc} onChange={(e) => setSkuDesc(e.target.value)} placeholder="e.g. Peptide Eye Cream — 15ml" style={iSt} /></div>
         <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 12, marginBottom: 16 }}>
           <div><label style={lSt}>Available Qty</label><input type="number" value={availableQty} onChange={(e) => setAvailableQty(e.target.value)} placeholder="0" style={iSt} min="0" /></div>
           <div><label style={lSt}>Good Qty</label><input type="number" value={goodQty} onChange={(e) => setGoodQty(e.target.value)} placeholder="0" style={iSt} min="0" /></div>
@@ -346,10 +346,10 @@ function AddWarehouseDialog({ onClose, onSubmit, title, defaultWarehouse }: { on
           <button onClick={onClose} style={clBtn}><X size={16} /></button>
         </div>
         <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12, marginBottom: 16 }}>
-          <div><label style={lSt}>SKU Number</label><input value={skuNo} onChange={(e) => setSkuNo(e.target.value)} placeholder="SKU-XXX-001" style={iSt} /></div>
+          <div><label style={lSt}>SKU Number</label><input value={skuNo} onChange={(e) => setSkuNo(e.target.value)} placeholder="BSI-VCE-30ML" style={iSt} /></div>
           <div><label style={lSt}>Warehouse / Store</label><input value={warehouse} onChange={(e) => setWarehouse(e.target.value)} style={iSt} /></div>
         </div>
-        <div style={{ marginBottom: 16 }}><label style={lSt}>SKU Name</label><input value={skuName} onChange={(e) => setSkuName(e.target.value)} placeholder="Product name..." style={iSt} /></div>
+        <div style={{ marginBottom: 16 }}><label style={lSt}>SKU Name</label><input value={skuName} onChange={(e) => setSkuName(e.target.value)} placeholder="e.g. Vitamin C Glow Essence — 30ml" style={iSt} /></div>
         <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12, marginBottom: 20 }}>
           <div><label style={lSt}>Quantity</label><input type="number" value={quantity} onChange={(e) => setQuantity(e.target.value)} placeholder="0" style={iSt} min="0" /></div>
           <div><label style={lSt}>Threshold</label><input type="number" value={threshold} onChange={(e) => setThreshold(e.target.value)} placeholder="10" style={iSt} min="0" /></div>

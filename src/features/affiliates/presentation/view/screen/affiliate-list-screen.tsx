@@ -1835,7 +1835,6 @@ const AffiliateListScreen = () => {
 
     const [statusFilter, setStatusFilter] = useState<string>("all");
     const [revealedAmounts, setRevealedAmounts] = useState(true);
-    const [cardsExpanded, setCardsExpanded] = useState(false);
     const [payoutAffiliate, setPayoutAffiliate] = useState<DummyAffiliate | null>(null);
     const [deleteAffiliate, setDeleteAffiliate] = useState<DummyAffiliate | null>(null);
     const [quickViewAffiliate, setQuickViewAffiliate] = useState<DummyAffiliate | null>(null);
@@ -2203,10 +2202,10 @@ const AffiliateListScreen = () => {
                         style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 16, width: "100%" }}
                         className="overview-platform-grid !grid-cols-1 sm:!grid-cols-2 lg:!grid-cols-4"
                     >
-                        <OverviewDataCard variant="stat" customTitle="Total Affiliates" customIcon={<Users size={22} strokeWidth={2} />} metricSubtitle="Registered affiliates" primaryValueDisplay={String(meta.total)} expandLabel1="Active" expandValue1Display={String(meta.active)} expandLabel2="Inactive" expandValue2Display={String(meta.inactive)} isLoading={isLoading} expanded={cardsExpanded} onExpandToggle={() => setCardsExpanded((e) => !e)} />
-                        <OverviewDataCard variant="stat" customTitle="Active Affiliates" customIcon={<UserCheck size={22} strokeWidth={2} />} metricSubtitle="Currently active" primaryValueDisplay={String(meta.active)} expandLabel1="Pending" expandValue1Display={String(meta.pending)} expandLabel2="Inactive" expandValue2Display={String(meta.inactive)} isLoading={isLoading} expanded={cardsExpanded} onExpandToggle={() => setCardsExpanded((e) => !e)} />
-                        <OverviewDataCard variant="stat" customTitle="Total Commissions" customIcon={<Wallet size={22} strokeWidth={2} />} metricSubtitle="Total commissions paid" primaryValueDisplay={revealedAmounts ? formatCurrency(meta.total_commission) : "RM ••••••"} expandLabel1="Avg. per affiliate" expandValue1Display={revealedAmounts ? formatCurrency(meta.avgPaidPerAff) : "••••••"} expandLabel2="With payouts" expandValue2Display={String(meta.paidPositive)} isLoading={isLoading} expanded={cardsExpanded} onExpandToggle={() => setCardsExpanded((e) => !e)} />
-                        <OverviewDataCard variant="stat" customTitle="Unpaid Commissions" customIcon={<DollarSign size={22} strokeWidth={2} />} metricSubtitle="Awaiting payout" primaryValueDisplay={revealedAmounts ? formatCurrency(meta.total_unpaid) : "RM ••••••"} expandLabel1="Affiliates owed" expandValue1Display={String(meta.withUnpaid)} expandLabel2="Avg. owed" expandValue2Display={revealedAmounts ? formatCurrency(meta.avgUnpaidAmongOwed) : "••••••"} isLoading={isLoading} expanded={cardsExpanded} onExpandToggle={() => setCardsExpanded((e) => !e)} />
+                        <OverviewDataCard variant="stat" hideSecondaryStats customTitle="Total Affiliates" customIcon={<Users size={22} strokeWidth={2} />} metricSubtitle="Registered affiliates" primaryValueDisplay={String(meta.total)} isLoading={isLoading} />
+                        <OverviewDataCard variant="stat" hideSecondaryStats customTitle="Active Affiliates" customIcon={<UserCheck size={22} strokeWidth={2} />} metricSubtitle="Currently active" primaryValueDisplay={String(meta.active)} isLoading={isLoading} />
+                        <OverviewDataCard variant="stat" hideSecondaryStats customTitle="Total Commissions" customIcon={<Wallet size={22} strokeWidth={2} />} metricSubtitle="Total commissions paid" primaryValueDisplay={revealedAmounts ? formatCurrency(meta.total_commission) : "RM ••••••"} isLoading={isLoading} />
+                        <OverviewDataCard variant="stat" hideSecondaryStats customTitle="Unpaid Commissions" customIcon={<DollarSign size={22} strokeWidth={2} />} metricSubtitle="Awaiting payout" primaryValueDisplay={revealedAmounts ? formatCurrency(meta.total_unpaid) : "RM ••••••"} isLoading={isLoading} />
                     </div>
 
                     {/* Table Card */}
