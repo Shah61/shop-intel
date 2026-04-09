@@ -623,11 +623,10 @@ const BranchesPage: React.FC = () => {
         .branches-theme.light-mode .maplibregl-ctrl-group button span{filter:invert(0)!important}
       `}</style>
 
-<div className={`branches-theme ${isLight ? "light-mode" : ""}`} style={{color:isLight?"#0f172a":"rgba(255,255,255,.88)",display:"flex",flexDirection:"column",gap:18,width:"100%",minHeight:"100vh",fontFamily:"-apple-system,BlinkMacSystemFont,'Segoe UI','Helvetica Neue',sans-serif"}}>
+<div className={`branches-theme ${isLight ? "light-mode" : ""}`} style={{color:isLight?"#0f172a":"rgba(255,255,255,.88)",display:"flex",flexDirection:"column",gap:14,width:"100%",height:"100vh",overflow:"hidden",padding:16,boxSizing:"border-box",fontFamily:"-apple-system,BlinkMacSystemFont,'Segoe UI','Helvetica Neue',sans-serif"}}>
 
         {/* HEADER */}
-        <div style={{display:"flex",alignItems:"flex-start",justifyContent:"space-between",gap:16,flexWrap:"wrap"}}>
-          <div>
+        <div style={{display:"flex",alignItems:"flex-start",justifyContent:"space-between",gap:16,flexWrap:"wrap",flexShrink:0}}>          <div>
             <div style={{display:"flex",alignItems:"center",gap:10,marginBottom:5}}>
               <div style={{width:40,height:40,borderRadius:12,background:"linear-gradient(135deg,var(--preset-primary),var(--preset-lighter))",display:"flex",alignItems:"center",justifyContent:"center",boxShadow:"0 4px 20px rgba(var(--preset-primary-rgb),.35)",flexShrink:0}}><Building2 style={{width:18,height:18,color:"#fff"}} /></div>
               <div>
@@ -648,8 +647,7 @@ const BranchesPage: React.FC = () => {
         </div>
 
         {/* KPI STRIP */}
-        <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fit,minmax(148px,1fr))",gap:10}}>
-          {[
+        <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fit,minmax(148px,1fr))",gap:10,flexShrink:0}}>          {[
             {l:"Today Revenue",v:fmtRM(net.rev),ic:<DollarSign style={{width:14,height:14}} />,ac:"var(--preset-primary)"},
             {l:"Today Orders",v:net.orders.toLocaleString(),ic:<ShoppingBag style={{width:14,height:14}} />,ac:"#6366f1"},
             {l:"Foot Traffic",v:net.traffic.toLocaleString(),ic:<Footprints style={{width:14,height:14}} />,ac:"#10b981"},
@@ -672,9 +670,9 @@ const BranchesPage: React.FC = () => {
         {detailBranch ? (
           <BranchDetail branch={detailBranch} allBranches={BRANCHES} onClose={handleCloseDetail} />
         ) : (
-<div style={{display:"grid",gridTemplateColumns:"1fr 330px",gap:14,alignItems:"stretch",flex:1,minHeight:0}}>
-{/* MAP */}
-<div style={{position:"relative",borderRadius:16,overflow:"hidden",border:"1px solid rgba(255,255,255,.06)",minHeight:500}}>              <Map ref={mapRef} initialViewState={{longitude:101.5,latitude:3.5,zoom:8,pitch:30,bearing:0}} style={{width:"100%",height:"100%",minHeight:500}} mapStyle={isLight ? MAP_STYLE_LIGHT : MAP_STYLE_DARK} maxZoom={18} minZoom={6} maxBounds={[[99.5,1.0],[104.5,7.5]]} attributionControl={false}>
+<div style={{display:"grid",gridTemplateColumns:"1fr 330px",gap:14,alignItems:"stretch",flex:1,minHeight:0,overflow:"hidden"}}>{/* MAP */}
+<div style={{position:"relative",borderRadius:16,overflow:"hidden",border:"1px solid rgba(255,255,255,.06)"}}>
+     <Map ref={mapRef} initialViewState={{longitude:101.5,latitude:3.5,zoom:8,pitch:30,bearing:0}} style={{width:"100%",height:"100%"}} mapStyle={isLight ? MAP_STYLE_LIGHT : MAP_STYLE_DARK} maxZoom={18} minZoom={6} maxBounds={[[99.5,1.0],[104.5,7.5]]} attributionControl={false}>
                 <NavigationControl position="bottom-right" showCompass showZoom />
                 <ScaleControl position="bottom-left" />
                 {BRANCHES.map(b=>(
@@ -703,8 +701,7 @@ const BranchesPage: React.FC = () => {
             </div>
 
             {/* BRANCH LIST */}
-            <div style={{display:"flex",flexDirection:"column",gap:8,overflowY:"auto",paddingRight:4}}>              <div style={{fontSize:11,fontWeight:800,color:"rgba(255,255,255,.4)",padding:"0 4px",marginBottom:2}}>{sorted.length} Branches</div>
-              {sorted.map((b,i)=>(
+            <div style={{display:"flex",flexDirection:"column",gap:8,overflowY:"auto",paddingRight:4,minHeight:0}}>              {sorted.map((b,i)=>(
                 <BranchCard key={b.id} branch={b} isSelected={selectedId===b.id} rank={i+1} onClick={()=>handleCardClick(b)} onHover={setHoveredId} />
               ))}
             </div>
