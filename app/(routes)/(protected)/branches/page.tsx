@@ -623,7 +623,7 @@ const BranchesPage: React.FC = () => {
         .branches-theme.light-mode .maplibregl-ctrl-group button span{filter:invert(0)!important}
       `}</style>
 
-      <div className={`branches-theme ${isLight ? "light-mode" : ""}`} style={{color:isLight?"#0f172a":"rgba(255,255,255,.88)",display:"flex",flexDirection:"column",gap:18,width:"100%",fontFamily:"-apple-system,BlinkMacSystemFont,'Segoe UI','Helvetica Neue',sans-serif"}}>
+<div className={`branches-theme ${isLight ? "light-mode" : ""}`} style={{color:isLight?"#0f172a":"rgba(255,255,255,.88)",display:"flex",flexDirection:"column",gap:18,width:"100%",minHeight:"100vh",fontFamily:"-apple-system,BlinkMacSystemFont,'Segoe UI','Helvetica Neue',sans-serif"}}>
 
         {/* HEADER */}
         <div style={{display:"flex",alignItems:"flex-start",justifyContent:"space-between",gap:16,flexWrap:"wrap"}}>
@@ -672,10 +672,9 @@ const BranchesPage: React.FC = () => {
         {detailBranch ? (
           <BranchDetail branch={detailBranch} allBranches={BRANCHES} onClose={handleCloseDetail} />
         ) : (
-          <div style={{display:"grid",gridTemplateColumns:"1fr 330px",gap:14,alignItems:"start"}}>
-            {/* MAP */}
-            <div style={{position:"relative",borderRadius:16,overflow:"hidden",border:"1px solid rgba(255,255,255,.06)"}}>
-              <Map ref={mapRef} initialViewState={{longitude:101.5,latitude:3.5,zoom:8,pitch:30,bearing:0}} style={{width:"100%",height:500}} mapStyle={isLight ? MAP_STYLE_LIGHT : MAP_STYLE_DARK} maxZoom={18} minZoom={6} maxBounds={[[99.5,1.0],[104.5,7.5]]} attributionControl={false}>
+<div style={{display:"grid",gridTemplateColumns:"1fr 330px",gap:14,alignItems:"stretch",flex:1,minHeight:0}}>
+{/* MAP */}
+<div style={{position:"relative",borderRadius:16,overflow:"hidden",border:"1px solid rgba(255,255,255,.06)",minHeight:500}}>              <Map ref={mapRef} initialViewState={{longitude:101.5,latitude:3.5,zoom:8,pitch:30,bearing:0}} style={{width:"100%",height:"100%",minHeight:500}} mapStyle={isLight ? MAP_STYLE_LIGHT : MAP_STYLE_DARK} maxZoom={18} minZoom={6} maxBounds={[[99.5,1.0],[104.5,7.5]]} attributionControl={false}>
                 <NavigationControl position="bottom-right" showCompass showZoom />
                 <ScaleControl position="bottom-left" />
                 {BRANCHES.map(b=>(
@@ -704,8 +703,7 @@ const BranchesPage: React.FC = () => {
             </div>
 
             {/* BRANCH LIST */}
-            <div style={{display:"flex",flexDirection:"column",gap:8,maxHeight:520,overflowY:"auto",paddingRight:4}}>
-              <div style={{fontSize:11,fontWeight:800,color:"rgba(255,255,255,.4)",padding:"0 4px",marginBottom:2}}>{sorted.length} Branches</div>
+            <div style={{display:"flex",flexDirection:"column",gap:8,overflowY:"auto",paddingRight:4}}>              <div style={{fontSize:11,fontWeight:800,color:"rgba(255,255,255,.4)",padding:"0 4px",marginBottom:2}}>{sorted.length} Branches</div>
               {sorted.map((b,i)=>(
                 <BranchCard key={b.id} branch={b} isSelected={selectedId===b.id} rank={i+1} onClick={()=>handleCardClick(b)} onHover={setHoveredId} />
               ))}
