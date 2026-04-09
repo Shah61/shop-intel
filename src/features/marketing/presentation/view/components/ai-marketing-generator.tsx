@@ -596,42 +596,85 @@ function ShootingStarAnimation({ template, onComplete, isDark, screen }: {
 /* ════════════════════════════════════════════
    Template Card - ALL BIG
    ════════════════════════════════════════════ */
-function TemplateCard({ template, onClick, isDark }: {
+   function TemplateCard({ template, onClick, isDark }: {
     template: SceneTemplate; onClick: () => void; isDark: boolean
 }) {
     const [hovered, setHovered] = useState(false)
     const [imgLoaded, setImgLoaded] = useState(false)
+    const [isTouchDevice, setIsTouchDevice] = useState(false)
+    const [touchRevealed, setTouchRevealed] = useState(false)
     const borderColor = isDark ? "rgba(255,255,255,0.08)" : "rgba(0,0,0,0.08)"
     const accent = getAccent()
 
+    useEffect(() => {
+        setIsTouchDevice("ontouchstart" in window || navigator.maxTouchPoints > 0)
+    }, [])
+
+    // Close overlay when tapping outside
+    useEffect(() => {
+        if (!touchRevealed) return
+        const handleOutside = (e: TouchEvent) => {
+            const target = e.target as HTMLElement
+            if (!target.closest(`[data-card-id="${template.id}"]`)) {
+                setTouchRevealed(false)
+            }
+        }
+        document.addEventListener("touchstart", handleOutside)
+        return () => document.removeEventListener("touchstart", handleOutside)
+    }, [touchRevealed, template.id])
+
+    const handleClick = () => {
+        if (isTouchDevice) {
+            if (!touchRevealed) {
+                setTouchRevealed(true)
+                return
+            }
+            // Second tap — open
+            setTouchRevealed(false)
+            onClick()
+        } else {
+            onClick()
+        }
+    }
+
+    const showOverlay = isTouchDevice ? touchRevealed : hovered
+
     return (
-        <div onClick={onClick} onMouseEnter={() => setHovered(true)} onMouseLeave={() => setHovered(false)}
+        <div data-card-id={template.id} onClick={handleClick} onMouseEnter={() => setHovered(true)} onMouseLeave={() => setHovered(false)}
             style={{
                 position: "relative", borderRadius: 18, overflow: "hidden", cursor: "pointer",
-                border: `1px solid ${hovered ? (isDark ? "rgba(255,255,255,0.15)" : "rgba(0,0,0,0.12)") : borderColor}`,
-                transition: "all 0.35s cubic-bezier(0.4, 0, 0.2, 1)", transform: hovered ? "translateY(-2px)" : "none",
-                boxShadow: hovered ? (isDark ? "0 12px 40px rgba(0,0,0,0.4)" : "0 12px 40px rgba(0,0,0,0.12)") : "none",
+                border: `1px solid ${showOverlay ? (isDark ? "rgba(255,255,255,0.15)" : "rgba(0,0,0,0.12)") : borderColor}`,
+                transition: "all 0.35s cubic-bezier(0.4, 0, 0.2, 1)", transform: showOverlay ? "translateY(-2px)" : "none",
+                boxShadow: showOverlay ? (isDark ? "0 12px 40px rgba(0,0,0,0.4)" : "0 12px 40px rgba(0,0,0,0.12)") : "none",
                 aspectRatio: "4 / 3",
             }}>
             <img src={template.imageUrl} alt={template.title} onLoad={() => setImgLoaded(true)} style={{
                 position: "absolute", top: 0, left: 0, width: "100%", height: "100%", objectFit: "cover",
-                transition: "transform 0.5s ease, filter 0.5s ease", transform: hovered ? "scale(1.05)" : "scale(1)",
-                filter: hovered ? "brightness(0.35)" : "brightness(0.75)", opacity: imgLoaded ? 1 : 0,
+                transition: "transform 0.5s ease, filter 0.5s ease", transform: showOverlay ? "scale(1.05)" : "scale(1)",
+                filter: showOverlay ? "brightness(0.35)" : "brightness(0.75)", opacity: imgLoaded ? 1 : 0,
             }} />
             {!imgLoaded && <div style={{ position: "absolute", inset: 0, background: isDark ? "#1a1a2e" : "#e5e5e5" }} />}
             <div style={{ position: "absolute", top: 12, left: 12, zIndex: 3, padding: "4px 10px", borderRadius: 8, background: "rgba(255,255,255,0.18)", backdropFilter: "blur(8px)", fontSize: 10, fontWeight: 700, color: "#fff", letterSpacing: "0.04em", textTransform: "uppercase" }}>{template.category}</div>
             <div style={{ position: "absolute", top: 12, right: 12, zIndex: 3, display: "flex", alignItems: "center", gap: 3, padding: "4px 8px", borderRadius: 6, background: "rgba(0,0,0,0.3)", backdropFilter: "blur(8px)", fontSize: 10, fontWeight: 600, color: "rgba(255,255,255,0.8)" }}><Star size={9} fill="rgba(255,255,255,0.8)" color="rgba(255,255,255,0.8)" />{template.rating}</div>
-            <div style={{ position: "absolute", bottom: 0, left: 0, right: 0, zIndex: 2, padding: "50px 18px 16px", background: "linear-gradient(to top, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0.4) 50%, transparent 100%)" }}>
+            {/* Bottom info — visible when overlay is hidden */}
+            <div style={{
+                position: "absolute", bottom: 0, left: 0, right: 0, zIndex: 2, padding: "50px 18px 16px",
+                background: "linear-gradient(to top, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0.4) 50%, transparent 100%)",
+                opacity: showOverlay ? 0 : 1, transition: "opacity 0.3s ease",
+            }}>
                 <h3 style={{ margin: 0, fontSize: 17, fontWeight: 700, color: "#fff", lineHeight: 1.3 }}>{template.title}</h3>
                 <p style={{ margin: "4px 0 0", fontSize: 12, color: "rgba(255,255,255,0.55)", fontWeight: 500 }}>{template.subtitle}</p>
             </div>
+            {/* Overlay with description + CTA */}
             <div style={{
                 position: "absolute", inset: 0, zIndex: 4, display: "flex", flexDirection: "column", justifyContent: "center",
-                padding: "24px 22px", opacity: hovered ? 1 : 0, transition: "opacity 0.3s ease",
-                pointerEvents: hovered ? "auto" : "none",
+                padding: "24px 22px", opacity: showOverlay ? 1 : 0, transition: "opacity 0.3s ease",
+                pointerEvents: showOverlay ? "auto" : "none",
             }}>
                 <p style={{ fontSize: 14, color: "#fff", lineHeight: 1.65, fontWeight: 500, margin: "0 0 16px", overflow: "hidden", display: "-webkit-box", WebkitLineClamp: 5, WebkitBoxOrient: "vertical" as const }}>{template.prompt}</p>
-                <div style={{ display: "inline-flex", alignItems: "center", gap: 6, padding: "9px 18px", borderRadius: 10, background: accent, color: "#fff", fontSize: 13, fontWeight: 700, width: "fit-content", boxShadow: `0 4px 14px ${accent}40` }}><Sparkles size={14} /> Use this scene</div>
+                <div style={{ display: "inline-flex", alignItems: "center", gap: 6, padding: "9px 18px", borderRadius: 10, background: accent, color: "#fff", fontSize: 13, fontWeight: 700, width: "fit-content", boxShadow: `0 4px 14px ${accent}40` }}>
+                    <Sparkles size={14} /> {isTouchDevice ? "Tap again to use" : "Use this scene"}
+                </div>
             </div>
         </div>
     )
