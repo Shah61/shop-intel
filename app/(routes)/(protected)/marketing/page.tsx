@@ -1,6 +1,6 @@
 "use client";
 
-import { Suspense } from "react";
+import { Suspense, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import MarketingScreen from "../../../../src/features/marketing/presentation/view/screen/marketing-screen";
 import FacebookMarketingTab from "./facebook-marketing";
@@ -9,6 +9,7 @@ import AIMarketingGenerator from "../../../../src/features/marketing/presentatio
 function MarketingContent() {
     const searchParams = useSearchParams();
     const tab = searchParams.get("tab") || "personal";
+    const [aiLocked, setAiLocked] = useState(false);
 
     const titles: Record<string, { heading: string; sub: string }> = {
         personal: { heading: "", sub: "" },
@@ -17,16 +18,18 @@ function MarketingContent() {
     }
     const { heading, sub } = titles[tab] || titles.personal
 
+    const isLocked = tab === "ai" && aiLocked
+
     return (
-        <div className="space-y-4 sm:space-y-6 -mt-4 sm:-mt-6 lg:-mt-8">
+        <div
+            className={`-mt-4 sm:-mt-6 lg:-mt-8 ${isLocked ? "flex flex-col h-[calc(100vh-var(--header-height,64px))] overflow-hidden" : "space-y-4 sm:space-y-6"}`}
+        >
             {(heading || sub) && (
-                <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 sm:gap-0">
+                <div className={`flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 sm:gap-0 flex-shrink-0 ${tab === "ai" ? "pt-4" : ""}`}>
                     <div>
                         <h1
-                            className="text-xl sm:text-2xl md:text-3xl font-bold bg-clip-text text-transparent"
-                            style={{
-                                backgroundImage: "linear-gradient(90deg, var(--preset-primary), var(--preset-lighter))",
-                            }}
+                            className="text-xl sm:text-2xl md:text-3xl font-bold"
+                            style={tab === "ai" ? { color: "var(--preset-primary)" } : undefined}
                         >
                             {heading}
                         </h1>
@@ -35,8 +38,14 @@ function MarketingContent() {
                 </div>
             )}
 
-            <div className="space-y-4 sm:space-y-6">
-                {tab === "facebook" ? <FacebookMarketingTab /> : tab === "ai" ? <AIMarketingGenerator /> : <MarketingScreen />}
+            <div className={isLocked ? "flex-1 min-h-0 overflow-hidden" : "space-y-4 sm:space-y-6"}>
+                {tab === "facebook" ? (
+                    <FacebookMarketingTab />
+                ) : tab === "ai" ? (
+                    <AIMarketingGenerator onLayoutChange={setAiLocked} />
+                ) : (
+                    <MarketingScreen />
+                )}
             </div>
         </div>
     );

@@ -101,6 +101,8 @@ const SCENE_TEMPLATES: SceneTemplate[] = [
     },
 ]
 
+
+
 /* ════════════════════════════════════════════
    useMediaQuery hook
    ════════════════════════════════════════════ */
@@ -430,7 +432,7 @@ function ShootingStarAnimation({ template, onComplete, isDark, screen }: {
     const textSecondary = "hsl(var(--muted-foreground))"
     const isMobile = screen === "mobile"
     const isTablet = screen === "tablet"
-
+    
     const canvasW = isMobile ? Math.min(340, (typeof window !== "undefined" ? window.innerWidth : 400) - 48)
         : isTablet ? Math.min(420, (typeof window !== "undefined" ? window.innerWidth : 600) - 64)
         : 480
@@ -650,6 +652,7 @@ function UploadScreen({ template, onGenerate, onBack, isDark, screen }: {
     const cardBg = isDark ? "rgba(255,255,255,0.03)" : "rgba(0,0,0,0.02)"
     const isMobile = screen === "mobile"
     const isTablet = screen === "tablet"
+    
     const handleFile = (file: File) => {
         if (!file.type.startsWith("image/")) return
         const reader = new FileReader(); reader.onload = (e) => setUploadedImage(e.target?.result as string); reader.readAsDataURL(file)
@@ -776,7 +779,7 @@ function ResultScreen({ template, onBack, onRegenerate, isDark, screen }: {
 /* ════════════════════════════════════════════
    Main Export
    ════════════════════════════════════════════ */
-export default function AIMarketingGenerator() {
+export default function AIMarketingGenerator({ onLayoutChange }: { onLayoutChange?: (locked: boolean) => void } = {}) {
     const { resolvedTheme } = useTheme()
     const isDark = resolvedTheme === "dark"
     const screen = useMediaQuery()
@@ -792,6 +795,11 @@ export default function AIMarketingGenerator() {
     const textPrimary = "hsl(var(--foreground))"; const textSecondary = "hsl(var(--muted-foreground))"
     const isMobile = screen === "mobile"
     const isTablet = screen === "tablet"
+    const isEmptyDrawing = mode === "drawing" && panels.length === 0
+
+useEffect(() => {
+    onLayoutChange?.(isEmptyDrawing)
+}, [isEmptyDrawing, onLayoutChange])
 
     const addPanel = () => { setPanels(prev => [...prev, { id: `panel-${Date.now()}`, title: `Scene ${prev.length + 1}`, description: "", dataUrl: null, enhancedUrl: null, isEnhancing: false }]) }
     const updatePanel = (id: string, updates: Partial<CanvasPanel>) => { setPanels(prev => prev.map(p => p.id === id ? { ...p, ...updates } : p)) }
@@ -807,12 +815,14 @@ export default function AIMarketingGenerator() {
     useEffect(() => { if (mode === "text") { setTextView("gallery"); setSelectedTemplate(null) } }, [mode])
 
     // 2x2 on desktop, 2 on tablet, 1 on mobile
-    const galleryGridCols = isMobile ? "1fr" : "1fr 1fr"
-
+    const galleryGridCols = isMobile ? "1fr" : "repeat(auto-fill, minmax(420px, 1fr))"
     return (
         <div style={{
             fontFamily: "inherit", display: "flex", flexDirection: "column",
-            height: "100vh", maxHeight: "100vh", overflow: "hidden",
+            ...(isEmptyDrawing
+                ? { height: "100%", maxHeight: "100%", overflow: "hidden" }
+                : { minHeight: "100%" }
+            ),
             padding: isMobile ? "12px" : isTablet ? "16px" : "20px", boxSizing: "border-box",
         }}>
             <style>{`
@@ -861,8 +871,8 @@ export default function AIMarketingGenerator() {
                 ))}
             </div>
 
-            {/* Content */}
-            <div style={{ flex: 1, minHeight: 0, overflow: "hidden", display: "flex", flexDirection: "column" }}>
+{/* Content */}
+<div style={{ flex: 1, minHeight: 0, overflow: isEmptyDrawing ? "hidden" : "auto", display: "flex", flexDirection: "column" }}>
                 {mode === "drawing" && (
                     <div style={{ height: "100%", display: "flex", flexDirection: "column" }}>
                         {panels.length === 0 ? (
