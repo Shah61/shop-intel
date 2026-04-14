@@ -126,6 +126,7 @@
   html, body {
     @apply bg-background text-foreground;
     overscroll-behavior: none;
+    
   }
 }
 
@@ -678,3 +679,8 @@ html:not(.dark) .recharts-tooltip-wrapper [style*="rgba(255, 255, 255"] {
       transform: none !important;
     }
   }
+
+  .font-dm-sans {
+    overflow-x: clip;
+  }
+  
