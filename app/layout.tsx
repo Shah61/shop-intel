@@ -1,34 +1,46 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { GeistSans } from "geist/font/sans";
 import { GeistMono } from "geist/font/mono";
 import "./globals.css";
 import { ThemeProvider } from "@/src/core/theme/theme-provider";
 import TanstackQueryClientProvider from "@/src/core/lib/query-client-provider";
 import { DummySessionProvider } from "@/src/core/lib/dummy-session-provider";
-import toast, { Toaster } from 'react-hot-toast';
+import { Toaster } from 'react-hot-toast';
 
 export const metadata: Metadata = {
-  title: "Shop-Intel Admin",
-  description: "Shop-Intel Admin Dashboard",
+  title: {
+    default: "Pulse | AI-Powered E-Commerce Intelligence",
+    template: "%s | Pulse",
+  },
+  description: "Pulse unifies your sales channels, marketing, inventory, and AI intelligence into one command center. Built for e-commerce operators who outgrow spreadsheets.",
+  keywords: ["pulsetech", "pulse", "pulse tech", "ecommerce analytics", "AI commerce", "shopee analytics", "tiktok shop analytics", "inventory management", "marketing intelligence", "ecommerce dashboard"],
+  authors: [{ name: "Haris AI Solutions" }],
+  creator: "Haris AI Solutions",
   openGraph: {
-    title: "Shop-Intel Admin",
-    description: "Shop-Intel Admin Dashboard",
+    title: "Pulse | AI-Powered E-Commerce Intelligence",
+    description: "One workspace for revenue, campaigns, inventory, and AI that turns noise into next actions.",
     type: "website",
+    siteName: "Pulse",
+    locale: "en_US",
   },
   twitter: {
     card: "summary_large_image",
-    title: "Shop-Intel Admin",
-    description: "Shop-Intel Admin Dashboard",
+    title: "Pulse | AI-Powered E-Commerce Intelligence",
+    description: "One workspace for revenue, campaigns, inventory, and AI that turns noise into next actions.",
   },
-  viewport: "width=device-width, initial-scale=1",
   robots: "index, follow",
-  themeColor: [
-    { media: "(prefers-color-scheme: light)", color: "white" },
-    { media: "(prefers-color-scheme: dark)", color: "black" }
-  ],
   icons: {
     icon: "/Icon.png",
   },
+};
+
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  themeColor: [
+    { media: "(prefers-color-scheme: light)", color: "white" },
+    { media: "(prefers-color-scheme: dark)", color: "#0a0815" },
+  ],
 };
 
 export default function RootLayout({
@@ -41,7 +53,6 @@ export default function RootLayout({
       <body
         className={`${GeistSans.variable} ${GeistMono.variable} antialiased`}
       >
-
         <DummySessionProvider>
           <ThemeProvider>
             <TanstackQueryClientProvider>
@@ -50,10 +61,7 @@ export default function RootLayout({
             <Toaster />
           </ThemeProvider>
         </DummySessionProvider>
-
       </body>
     </html>
   );
 }
-
-//test
