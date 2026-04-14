@@ -101,19 +101,25 @@ export function LandingNavBar() {
             {/* Demo Button */}
             <Link
               href="/sign-in"
-              className="landing-header-in relative overflow-hidden rounded-full px-6 py-2 text-[13px] font-semibold text-white transition-all duration-300"
+              className={`relative overflow-hidden rounded-full px-6 py-2 text-[13px] font-semibold text-white transition-all duration-300 ${demoHovered ? "demo-btn-hover" : ""}`}
               style={{
+                animationName: "landing-header-in",
+                animationDuration: "0.55s",
+                animationTimingFunction: "cubic-bezier(0.22, 1, 0.36, 1)",
+                animationFillMode: "forwards",
                 animationDelay: `${DEMO_BUTTON_DELAY_MS}ms`,
+                opacity: 0,
                 background: demoHovered
                   ? "linear-gradient(135deg, #8b5cf6, #d946ef, #8b5cf6)"
                   : "linear-gradient(135deg, #7c3aed, #c026d3)",
                 backgroundSize: demoHovered ? "200% auto" : "100% auto",
-                animation: demoHovered ? "demo-shimmer 1.5s linear infinite, demo-glow-pulse 2s ease-in-out infinite" : "none",
                 boxShadow: demoHovered
                   ? "0 0 20px rgba(167,139,250,0.5), 0 0 40px rgba(232,121,249,0.25)"
                   : "0 4px 16px rgba(124,58,237,0.3)",
                 transform: demoHovered ? "scale(1.05)" : "scale(1)",
               }}
+              
+              
               onMouseEnter={() => setDemoHovered(true)}
               onMouseLeave={() => setDemoHovered(false)}
             >

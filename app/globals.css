@@ -683,4 +683,8 @@ html:not(.dark) .recharts-tooltip-wrapper [style*="rgba(255, 255, 255"] {
   .font-dm-sans {
     overflow-x: clip;
   }
+
+  .demo-btn-hover {
+    animation: demo-shimmer 1.5s linear infinite, demo-glow-pulse 2s ease-in-out infinite;
+  }
   
