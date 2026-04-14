@@ -564,3 +564,117 @@ html:not(.dark) .recharts-tooltip-wrapper [style*="rgba(255, 255, 255"] {
     }
   }
 }
+
+/* ═══════════════════════════════════════════
+   Landing page fonts & animations
+   ═══════════════════════════════════════════ */
+
+   @keyframes float-up {
+    from { opacity: 0; transform: translateY(30px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  
+  @keyframes marquee {
+    0% { transform: translateX(0%); }
+    100% { transform: translateX(-50%); }
+  }
+  
+  .marquee {
+    animation: marquee 220s linear infinite;
+  }
+  
+  /* —— Landing page load sequence —— */
+  
+  @keyframes landing-header-in {
+    from { opacity: 0; filter: blur(8px); transform: translateY(12px); }
+    to { opacity: 1; filter: blur(0); transform: translateY(0); }
+  }
+  .landing-header-in {
+    opacity: 0;
+    animation: landing-header-in 0.55s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  }
+  
+  @keyframes landing-letter-in {
+    from { opacity: 0; transform: translateY(0.2em); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .landing-letter-in {
+    opacity: 0;
+    animation: landing-letter-in 0.48s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  }
+  
+  @keyframes landing-slide-up {
+    from { opacity: 0; transform: translateY(56px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .landing-slide-up {
+    opacity: 0;
+    animation: landing-slide-up 0.78s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  }
+  
+  @keyframes landing-from-left {
+    from { opacity: 0; transform: translateX(-44px); }
+    to { opacity: 1; transform: translateX(0); }
+  }
+  .landing-from-left {
+    opacity: 0;
+    animation: landing-from-left 0.68s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  }
+  
+  @keyframes landing-from-right {
+    from { opacity: 0; transform: translateX(44px); }
+    to { opacity: 1; transform: translateX(0); }
+  }
+  .landing-from-right {
+    opacity: 0;
+    animation: landing-from-right 0.68s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  }
+  
+  @keyframes landing-fade-in {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+  .landing-bottom-fade {
+    opacity: 0;
+    animation: landing-fade-in 0.65s ease forwards;
+  }
+  
+  /* Real Time Intelligence section */
+  @keyframes rti-fade-in-up {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes rti-fade-in {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+  .rti-headline { animation: rti-fade-in-up 0.8s ease both; }
+  .rti-description { animation: rti-fade-in-up 0.8s ease 0.15s both; }
+  .rti-stat-1 { animation: rti-fade-in-up 0.6s ease 0.3s both; }
+  .rti-stat-2 { animation: rti-fade-in-up 0.6s ease 0.4s both; }
+  .rti-stat-3 { animation: rti-fade-in-up 0.6s ease 0.5s both; }
+  .rti-video { animation: rti-fade-in 1s ease 0.3s both; }
+  .rti-steps { animation: rti-fade-in 0.6s ease 0.5s both; }
+  .rti-features { animation: rti-fade-in-up 0.6s ease 0.6s both; }
+  
+  @media (prefers-reduced-motion: reduce) {
+    .landing-header-in,
+    .landing-letter-in,
+    .landing-slide-up,
+    .landing-from-left,
+    .landing-from-right,
+    .landing-bottom-fade,
+    .rti-headline,
+    .rti-description,
+    .rti-stat-1,
+    .rti-stat-2,
+    .rti-stat-3,
+    .rti-video,
+    .rti-steps,
+    .rti-features {
+      animation: none !important;
+      opacity: 1 !important;
+      filter: none !important;
+      transform: none !important;
+    }
+  }
