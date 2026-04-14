@@ -15,11 +15,11 @@ const STATS = [
 const VIDEO_PLACEHOLDER_BG =
   "linear-gradient(145deg, #1e1440 0%, #4a2060 30%, #7a3d6a 55%, #9a6080 75%, #5a3070 100%)";
 
-function useScrollReveal(
-  threshold = 0.15
-): [RefObject<HTMLElement | null>, boolean] {
-  const ref = useRef<HTMLElement | null>(null);
-  const [visible, setVisible] = useState(false);
+  function useScrollReveal(
+    threshold = 0.15
+  ): [React.RefObject<HTMLElement>, boolean] {
+    const ref = useRef<HTMLElement>(null);
+    const [visible, setVisible] = useState(false);
 
   useEffect(() => {
     const el = ref.current;

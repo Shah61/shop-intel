@@ -1,6 +1,6 @@
 import { motion } from "framer-motion"
 
-import PhotonBeam from "../ui/photon-beam"
+import PhotonBeam from "@/components/ui/photon-beam"
 
 function parseLivesInsideLine(line: string): { lead: string; rest?: string } {
   const m = line.match(/^(.+?)\s*[—–]\s*(.+)$/)

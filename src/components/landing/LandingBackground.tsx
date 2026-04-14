@@ -1,4 +1,4 @@
-import { BG_IMAGE_SRCSET, LANDING_IMAGES } from '../../constants/landing'
+import { BG_IMAGE_SRCSET, LANDING_IMAGES } from './constants/landing'
 
 export function LandingBackground() {
   return (

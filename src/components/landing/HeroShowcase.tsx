@@ -2,8 +2,8 @@ import {
   DASHBOARD_DELAY_MS,
   SIDE_LEFT_DELAY_MS,
   SIDE_RIGHT_DELAY_MS,
-} from '../../constants/landing-motion'
-import { LANDING_IMAGES } from '../../constants/landing'
+} from './constants/landing-motion'
+import { LANDING_IMAGES } from './constants/landing'
 
 function SideImage({ src, alt }: { src: string; alt: string }) {
   return (
