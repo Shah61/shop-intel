@@ -114,8 +114,9 @@ export function LandingNavBar() {
                   : "linear-gradient(135deg, #7c3aed, #c026d3)",
                 backgroundSize: demoHovered ? "200% auto" : "100% auto",
                 boxShadow: demoHovered
-                  ? "0 0 20px rgba(167,139,250,0.5), 0 0 40px rgba(232,121,249,0.25)"
-                  : "0 4px 16px rgba(124,58,237,0.3)",
+  ? undefined
+  : "0 4px 16px rgba(124,58,237,0.3)",
+
                 transform: demoHovered ? "scale(1.05)" : "scale(1)",
               }}
               
