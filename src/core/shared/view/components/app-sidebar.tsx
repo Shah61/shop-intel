@@ -479,7 +479,7 @@ export default function AppSidebar() {
             children: [
                 { id: "inventory-mgmt", label: "Inventory Management", path: "/inventory" },
                 { id: "ninjavan", label: "Ninjavan Delivery", path: "/inventory?tab=ninjavan" },
-                { id: "warehouse", label: "Warehouse Management", path: "/inventory/stock-tracker" },
+                { id: "warehouse", label: "Stock Management", path: "/inventory/stock-tracker" },
             ],
         },
         {
