@@ -5,6 +5,7 @@ import "./globals.css";
 import { ThemeProvider } from "@/src/core/theme/theme-provider";
 import TanstackQueryClientProvider from "@/src/core/lib/query-client-provider";
 import { DummySessionProvider } from "@/src/core/lib/dummy-session-provider";
+import { VideoGenerationProvider } from "@/src/features/marketing/presentation/view/context/video-generation-context";
 import { Toaster } from 'react-hot-toast';
 
 export const metadata: Metadata = {
@@ -56,7 +57,9 @@ export default function RootLayout({
         <DummySessionProvider>
           <ThemeProvider>
             <TanstackQueryClientProvider>
-              {children}
+              <VideoGenerationProvider>
+                {children}
+              </VideoGenerationProvider>
             </TanstackQueryClientProvider>
             <Toaster />
           </ThemeProvider>

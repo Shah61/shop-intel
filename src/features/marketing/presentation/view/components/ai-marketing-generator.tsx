@@ -9,6 +9,7 @@ import {
     Maximize2, Minimize2, Eye, EyeOff, Upload, ArrowLeft, Camera, Palette,
     ArrowRight, Zap, Grid3X3, Move, FileImage, Package, RefreshCw,
 } from "lucide-react"
+import { useVideoGeneration } from "@/src/features/marketing/presentation/view/context/video-generation-context"
 
 /* ════════════════════════════════════════════
    Types
@@ -20,6 +21,11 @@ interface CanvasPanel {
     dataUrl: string | null
     enhancedUrl: string | null
     isEnhancing: boolean
+}
+
+interface VideoSettings {
+    resolution: "480p" | "720p" | "1080p"
+    duration: number // seconds, 3-10
 }
 
 interface SceneTemplate {
@@ -130,14 +136,107 @@ function getAccent() {
     return getComputedStyle(document.documentElement).getPropertyValue("--preset-primary").trim() || "#7c3aed"
 }
 
+
+/* ════════════════════════════════════════════
+   Custom Brush Slider — looks pretty everywhere
+   ════════════════════════════════════════════ */
+   function BrushSlider({ value, min, max, onChange, width, accent, isDark }: {
+    value: number; min: number; max: number; onChange: (v: number) => void
+    width: number; accent: string; isDark: boolean
+}) {
+    const trackRef = useRef<HTMLDivElement>(null)
+    const [dragging, setDragging] = useState(false)
+    const [hovered, setHovered] = useState(false)
+
+    const percent = ((value - min) / (max - min)) * 100
+
+    const updateFromClientX = useCallback((clientX: number) => {
+        const track = trackRef.current
+        if (!track) return
+        const rect = track.getBoundingClientRect()
+        const ratio = Math.max(0, Math.min(1, (clientX - rect.left) / rect.width))
+        const next = Math.round(min + ratio * (max - min))
+        if (next !== value) onChange(next)
+    }, [min, max, value, onChange])
+
+    useEffect(() => {
+        if (!dragging) return
+        const handleMove = (e: MouseEvent | TouchEvent) => {
+            const x = "touches" in e ? e.touches[0].clientX : e.clientX
+            updateFromClientX(x)
+        }
+        const handleUp = () => setDragging(false)
+        window.addEventListener("mousemove", handleMove)
+        window.addEventListener("mouseup", handleUp)
+        window.addEventListener("touchmove", handleMove, { passive: false })
+        window.addEventListener("touchend", handleUp)
+        return () => {
+            window.removeEventListener("mousemove", handleMove)
+            window.removeEventListener("mouseup", handleUp)
+            window.removeEventListener("touchmove", handleMove)
+            window.removeEventListener("touchend", handleUp)
+        }
+    }, [dragging, updateFromClientX])
+
+    const handleStart = (clientX: number) => {
+        setDragging(true)
+        updateFromClientX(clientX)
+    }
+
+    const trackBg = isDark ? "rgba(255,255,255,0.1)" : "rgba(0,0,0,0.08)"
+    const thumbActive = dragging || hovered
+
+    return (
+        <div
+            ref={trackRef}
+            onMouseDown={(e) => handleStart(e.clientX)}
+            onTouchStart={(e) => handleStart(e.touches[0].clientX)}
+            onMouseEnter={() => setHovered(true)}
+            onMouseLeave={() => setHovered(false)}
+            style={{
+                width, height: 20, position: "relative",
+                cursor: "pointer", display: "flex", alignItems: "center",
+                touchAction: "none", userSelect: "none",
+            }}
+        >
+            {/* Track background */}
+            <div style={{
+                position: "absolute", left: 0, right: 0, height: 4,
+                borderRadius: 999, background: trackBg,
+            }} />
+            {/* Track filled */}
+            <div style={{
+                position: "absolute", left: 0, height: 4,
+                width: `${percent}%`, borderRadius: 999,
+                background: `linear-gradient(90deg, ${accent}cc, ${accent})`,
+                transition: dragging ? "none" : "width 0.1s ease",
+            }} />
+            {/* Thumb */}
+            <div style={{
+                position: "absolute",
+                left: `calc(${percent}% - ${thumbActive ? 8 : 7}px)`,
+                width: thumbActive ? 16 : 14, height: thumbActive ? 16 : 14,
+                borderRadius: "50%", background: accent,
+                border: `2px solid ${isDark ? "#1a1025" : "#fff"}`,
+                boxShadow: thumbActive
+                    ? `0 0 0 4px ${accent}25, 0 2px 8px rgba(0,0,0,0.25)`
+                    : `0 2px 6px rgba(0,0,0,0.2)`,
+                transition: dragging ? "none" : "all 0.15s ease",
+                pointerEvents: "none",
+            }} />
+        </div>
+    )
+}
+
 /* ════════════════════════════════════════════
    Drawing Canvas Component (PRESERVED)
    ════════════════════════════════════════════ */
-function DrawingCanvas({
-    panel, onUpdate, onRemove, index, totalPanels, onMoveUp, onMoveDown, isDark,
+   function DrawingCanvas({
+    panel, onUpdate, onRemove, index, totalPanels, onMoveUp, onMoveDown, isDark, previousPanel,
 }: {
     panel: CanvasPanel; onUpdate: (updates: Partial<CanvasPanel>) => void; onRemove: () => void
     index: number; totalPanels: number; onMoveUp: () => void; onMoveDown: () => void; isDark: boolean
+    previousPanel: CanvasPanel | null
 }) {
     const canvasRef = useRef<HTMLCanvasElement>(null)
     const fullscreenCanvasRef = useRef<HTMLCanvasElement>(null)
@@ -146,6 +245,7 @@ function DrawingCanvas({
     const [brushSize, setBrushSize] = useState(3)
     const [isDescribing, setIsDescribing] = useState(false)
     const [hasDrawn, setHasDrawn] = useState(!!panel.dataUrl)
+    const [viewMode, setViewMode] = useState<"sketch" | "enhanced">("sketch")
     const [collapsed, setCollapsed] = useState(false)
     const [fullscreen, setFullscreen] = useState(false)
     const lastPoint = useRef<{ x: number; y: number } | null>(null)
@@ -160,7 +260,13 @@ function DrawingCanvas({
 
     useEffect(() => { initCanvas(canvasRef.current, CANVAS_W, CANVAS_H, panel.dataUrl) }, [isDark, panel.dataUrl, initCanvas])
     useEffect(() => { if (fullscreen) initCanvas(fullscreenCanvasRef.current, FS_CANVAS_W, FS_CANVAS_H, panel.dataUrl) }, [fullscreen, initCanvas, panel.dataUrl])
-
+        useEffect(() => {
+            if (panel.enhancedUrl && !panel.isEnhancing) {
+              setViewMode("enhanced")
+            }
+          }, [panel.enhancedUrl, panel.isEnhancing])
+          
+        
     const getPos = useCallback((e: React.MouseEvent | React.TouchEvent) => {
         const canvas = activeCanvasRef.current; if (!canvas) return { x: 0, y: 0 }
         const rect = canvas.getBoundingClientRect(); const scaleX = canvas.width / rect.width; const scaleY = canvas.height / rect.height
@@ -190,13 +296,49 @@ function DrawingCanvas({
     }, [isDrawing, onUpdate, activeCanvasRef])
 
     const clearCanvas = () => {
-        const canvas = activeCanvasRef.current; if (!canvas) return; const ctx = canvas.getContext("2d"); if (!ctx) return
-        ctx.fillStyle = isDark ? "#1a1025" : "#ffffff"; ctx.fillRect(0, 0, canvas.width, canvas.height)
-        setHasDrawn(false); onUpdate({ dataUrl: null, enhancedUrl: null })
+        const canvas = activeCanvasRef.current; if (!canvas) return
+        const ctx = canvas.getContext("2d"); if (!ctx) return
+        ctx.fillStyle = isDark ? "#1a1025" : "#ffffff"
+        ctx.fillRect(0, 0, canvas.width, canvas.height)
+        setHasDrawn(false)
+        setViewMode("sketch")
+        onUpdate({ dataUrl: null }) // ← removed `enhancedUrl: null`
     }
 
-    const handleEnhance = () => { if (!hasDrawn) return; onUpdate({ isEnhancing: true }); setTimeout(() => { onUpdate({ isEnhancing: false, enhancedUrl: panel.dataUrl }) }, 2500) }
-
+    const handleEnhance = async () => {
+        if (!hasDrawn || !panel.dataUrl) return
+        onUpdate({ isEnhancing: true })
+    
+        try {
+            const res = await fetch('/api/refine-drawing', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    imageDataUrl: panel.dataUrl,
+                    title: panel.title,
+                    description: panel.description,
+                    sceneIndex: index,
+                    // Only send previous if it has been enhanced (we link to the polished output)
+                    previousEnhancedUrl: previousPanel?.enhancedUrl ?? null,
+                }),
+            })
+    
+            if (!res.ok) {
+                const err = await res.json().catch(() => ({}))
+                console.error('Enhance failed:', err)
+                alert(`Enhancement failed: ${err.error || res.statusText}`)
+                onUpdate({ isEnhancing: false })
+                return
+            }
+    
+            const { enhancedUrl } = await res.json()
+            onUpdate({ isEnhancing: false, enhancedUrl })
+        } catch (err) {
+            console.error('Enhance error:', err)
+            alert('Enhancement failed — check console')
+            onUpdate({ isEnhancing: false })
+        }
+    }
     const exitFullscreen = () => { const fsCanvas = fullscreenCanvasRef.current; if (fsCanvas) onUpdate({ dataUrl: fsCanvas.toDataURL() }); setFullscreen(false) }
     useEffect(() => { if (!fullscreen) return; const handleKey = (e: KeyboardEvent) => { if (e.key === "Escape") exitFullscreen() }; window.addEventListener("keydown", handleKey); return () => window.removeEventListener("keydown", handleKey) }, [fullscreen])
 
@@ -215,11 +357,19 @@ function DrawingCanvas({
                     {([{ id: "pen" as const, icon: <Pencil size={s ? 16 : 15} />, label: "Pen" }, { id: "eraser" as const, icon: <Eraser size={s ? 16 : 15} />, label: "Eraser" }]).map((tl) => (
                         <button key={tl.id} onClick={() => setTool(tl.id)} style={{ display: "flex", alignItems: "center", gap: 5, padding: s ? "8px 16px" : "6px 12px", borderRadius: s ? 10 : 8, border: `1px solid ${tool === tl.id ? accent : borderColor}`, background: tool === tl.id ? `${accent}18` : "transparent", color: tool === tl.id ? accent : textSecondary, fontSize: s ? 13 : 12, fontWeight: 600, cursor: "pointer", fontFamily: "inherit", transition: "all 0.2s ease" }}>{tl.icon} {tl.label}</button>
                     ))}
-                    <div style={{ display: "flex", alignItems: "center", gap: 4, marginLeft: 6 }}>
+<div style={{ display: "flex", alignItems: "center", gap: 8, marginLeft: 6 }}>
                         <Minus size={12} color={textSecondary} />
-                        <input type="range" min={1} max={fullscreen ? 20 : 12} value={brushSize} onChange={(e) => setBrushSize(Number(e.target.value))} style={{ width: s ? 90 : 60, cursor: "pointer", accentColor: accent }} />
+                        <BrushSlider
+                            value={brushSize}
+                            min={1}
+                            max={fullscreen ? 20 : 12}
+                            onChange={setBrushSize}
+                            width={s ? 100 : 70}
+                            accent={accent}
+                            isDark={isDark}
+                        />
                         <Plus size={12} color={textSecondary} />
-                        <span style={{ fontSize: 11, color: textSecondary, marginLeft: 2, minWidth: 22 }}>{brushSize}px</span>
+                        <span style={{ fontSize: 11, color: textSecondary, marginLeft: 2, minWidth: 22, fontVariantNumeric: "tabular-nums" }}>{brushSize}px</span>
                     </div>
                 </div>
                 <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
@@ -250,10 +400,48 @@ function DrawingCanvas({
                     </div>
                 </div>
                 <div style={{ flex: 1, display: "flex", alignItems: "center", justifyContent: "center", padding: 24, overflow: "auto" }}>
-                    <div style={{ position: "relative", borderRadius: 16, overflow: "hidden", border: `1px solid ${borderColor}`, boxShadow: `0 8px 40px ${isDark ? "rgba(0,0,0,0.5)" : "rgba(0,0,0,0.1)"}` }}>
-                        <canvas ref={fullscreenCanvasRef} style={{ display: "block", cursor: tool === "eraser" ? "cell" : "crosshair", touchAction: "none", maxWidth: "100%", maxHeight: "calc(100vh - 180px)", objectFit: "contain" }} {...canvasEvents} />
-                        {panel.isEnhancing && enhancingOverlay}
-                    </div>
+                <div style={{ position: "relative", borderRadius: 16, overflow: "hidden", border: `1px solid ${borderColor}`, boxShadow: `0 8px 40px ${isDark ? "rgba(0,0,0,0.5)" : "rgba(0,0,0,0.1)"}` }}>
+    <canvas ref={fullscreenCanvasRef} style={{ display: "block", cursor: tool === "eraser" ? "cell" : "crosshair", touchAction: "none", maxWidth: "100%", maxHeight: "calc(100vh - 180px)", objectFit: "contain" }} {...canvasEvents} />
+    {panel.isEnhancing && enhancingOverlay}
+    {panel.enhancedUrl && !panel.isEnhancing && viewMode === "enhanced" && (
+        <div style={{ position: "absolute", inset: 0, zIndex: 4, animation: "fadeIn 0.4s ease" }}>
+            <img
+                src={panel.enhancedUrl}
+                alt="Enhanced"
+                style={{ width: "100%", height: "100%", objectFit: "contain", display: "block", background: isDark ? "#0a0612" : "#f0f1f3" }}
+            />
+            <button
+                onClick={() => setViewMode("sketch")}
+                style={{
+                    position: "absolute", top: 12, right: 12,
+                    display: "flex", alignItems: "center", gap: 5,
+                    padding: "8px 14px", borderRadius: 10, border: "none",
+                    background: "rgba(0,0,0,0.7)", backdropFilter: "blur(8px)",
+                    color: "#fff", fontSize: 12, fontWeight: 600,
+                    cursor: "pointer", fontFamily: "inherit",
+                }}
+            >
+                <Pencil size={14} /> See sketch
+            </button>
+        </div>
+    )}
+    {panel.enhancedUrl && !panel.isEnhancing && viewMode === "sketch" && (
+        <button
+            onClick={() => setViewMode("enhanced")}
+            style={{
+                position: "absolute", top: 12, right: 12, zIndex: 4,
+                display: "flex", alignItems: "center", gap: 5,
+                padding: "8px 14px", borderRadius: 10, border: "none",
+                background: `${accent}dd`, backdropFilter: "blur(8px)",
+                color: "#fff", fontSize: 12, fontWeight: 600,
+                cursor: "pointer", fontFamily: "inherit",
+                boxShadow: `0 4px 14px ${accent}40`,
+            }}
+        >
+            <Sparkles size={14} /> See generated
+        </button>
+    )}
+</div>
                 </div>
                 <div style={{ padding: "14px 24px 18px", borderTop: `1px solid ${borderColor}`, background: isDark ? "rgba(255,255,255,0.02)" : "#fff", flexShrink: 0 }}>
                     {toolbarButtons("lg")}
@@ -281,6 +469,21 @@ function DrawingCanvas({
             <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "14px 18px", borderBottom: `1px solid ${borderColor}` }}>
                 <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
                     <div style={{ width: 32, height: 32, borderRadius: 10, background: `linear-gradient(135deg, ${accent}, ${accent}cc)`, display: "flex", alignItems: "center", justifyContent: "center", color: "#fff", fontSize: 14, fontWeight: 800 }}>{index + 1}</div>
+                    {previousPanel?.enhancedUrl && (
+    <div
+        title={`Linked to Scene ${index} — product will stay consistent`}
+        style={{
+            display: "flex", alignItems: "center", gap: 4,
+            padding: "4px 8px", borderRadius: 6,
+            background: `${accent}15`,
+            color: accent,
+            fontSize: 10, fontWeight: 700,
+            letterSpacing: "0.02em",
+        }}
+    >
+        <Layers size={11} /> Linked
+    </div>
+)}
                     <input value={panel.title} onChange={(e) => onUpdate({ title: e.target.value })} placeholder={`Scene ${index + 1}`} style={{ background: "transparent", border: "none", outline: "none", fontSize: 15, fontWeight: 700, color: textPrimary, width: 160, fontFamily: "inherit" }} />
                 </div>
                 <div style={{ display: "flex", alignItems: "center", gap: 4 }}>
@@ -293,15 +496,54 @@ function DrawingCanvas({
                 </div>
             </div>
             <div style={{ padding: 16 }}>
-                <div style={{ position: "relative", borderRadius: 14, overflow: "hidden", border: `1px solid ${borderColor}` }}>
-                    <canvas ref={canvasRef} style={{ width: "100%", height: "auto", display: "block", cursor: tool === "eraser" ? "cell" : "crosshair", touchAction: "none" }} {...canvasEvents} />
-                    {panel.isEnhancing && enhancingOverlay}
-                    {!hasDrawn && !panel.dataUrl && (
-                        <div style={{ position: "absolute", inset: 0, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", pointerEvents: "none", color: textSecondary, gap: 6 }}>
-                            <Pencil size={28} strokeWidth={1.5} /><span style={{ fontSize: 13, fontWeight: 500 }}>Sketch your scene here</span>
-                        </div>
-                    )}
-                </div>
+            <div style={{ position: "relative", borderRadius: 14, overflow: "hidden", border: `1px solid ${borderColor}` }}>
+    <canvas ref={canvasRef} style={{ width: "100%", height: "auto", display: "block", cursor: tool === "eraser" ? "cell" : "crosshair", touchAction: "none" }} {...canvasEvents} />
+    {panel.isEnhancing && enhancingOverlay}
+    {panel.enhancedUrl && !panel.isEnhancing && viewMode === "enhanced" && (
+    <div style={{ position: "absolute", inset: 0, zIndex: 4, animation: "fadeIn 0.4s ease" }}>
+        <img
+            src={panel.enhancedUrl}
+            alt="Enhanced"
+            style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }}
+        />
+        <button
+            onClick={() => setViewMode("sketch")}
+            style={{
+                position: "absolute", top: 8, right: 8,
+                display: "flex", alignItems: "center", gap: 4,
+                padding: "6px 10px", borderRadius: 8, border: "none",
+                background: "rgba(0,0,0,0.6)", backdropFilter: "blur(8px)",
+                color: "#fff", fontSize: 11, fontWeight: 600,
+                cursor: "pointer", fontFamily: "inherit",
+            }}
+        >
+            <Pencil size={12} /> See sketch
+        </button>
+    </div>
+)}
+
+{panel.enhancedUrl && !panel.isEnhancing && viewMode === "sketch" && (
+    <button
+        onClick={() => setViewMode("enhanced")}
+        style={{
+            position: "absolute", top: 8, right: 8, zIndex: 4,
+            display: "flex", alignItems: "center", gap: 4,
+            padding: "6px 10px", borderRadius: 8, border: "none",
+            background: `${accent}dd`, backdropFilter: "blur(8px)",
+            color: "#fff", fontSize: 11, fontWeight: 600,
+            cursor: "pointer", fontFamily: "inherit",
+            boxShadow: `0 4px 14px ${accent}40`,
+        }}
+    >
+        <Sparkles size={12} /> See generated
+    </button>
+)}
+    {!hasDrawn && !panel.dataUrl && (
+        <div style={{ position: "absolute", inset: 0, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", pointerEvents: "none", color: textSecondary, gap: 6 }}>
+            <Pencil size={28} strokeWidth={1.5} /><span style={{ fontSize: 13, fontWeight: 500 }}>Sketch your scene here</span>
+        </div>
+    )}
+</div>
                 <div style={{ marginTop: 12 }}>{toolbarButtons("sm")}</div>
                 <div style={{ marginTop: 14 }}>
                     <button onClick={() => setIsDescribing(!isDescribing)} style={{ display: "flex", alignItems: "center", gap: 6, background: "none", border: "none", cursor: "pointer", color: textSecondary, fontSize: 12, fontWeight: 600, fontFamily: "inherit", padding: 0 }}>
@@ -820,6 +1062,11 @@ function ResultScreen({ template, onBack, onRegenerate, isDark, screen }: {
 }
 
 /* ════════════════════════════════════════════
+   Video Generation Modal + Snackbar — see
+   src/features/marketing/.../context/video-generation-context.tsx
+   ════════════════════════════════════════════ */
+
+/* ════════════════════════════════════════════
    Main Export
    ════════════════════════════════════════════ */
 export default function AIMarketingGenerator({ onLayoutChange }: { onLayoutChange?: (locked: boolean) => void } = {}) {
@@ -828,7 +1075,11 @@ export default function AIMarketingGenerator({ onLayoutChange }: { onLayoutChang
     const screen = useMediaQuery()
     const [mode, setMode] = useState<"drawing" | "text">("drawing")
     const [panels, setPanels] = useState<CanvasPanel[]>([])
-    const [isGenerating, setIsGenerating] = useState(false)
+    const [videoSettings, setVideoSettings] = useState<VideoSettings>({ resolution: "720p", duration: 5 })
+    const [showVideoSettings, setShowVideoSettings] = useState(false)
+    const videoGen = useVideoGeneration()
+    const isGenerating = videoGen.isGenerating
+
     const [textView, setTextView] = useState<TextViewState>("gallery")
     const [selectedTemplate, setSelectedTemplate] = useState<SceneTemplate | null>(null)
 
@@ -848,8 +1099,22 @@ useEffect(() => {
     const updatePanel = (id: string, updates: Partial<CanvasPanel>) => { setPanels(prev => prev.map(p => p.id === id ? { ...p, ...updates } : p)) }
     const removePanel = (id: string) => { setPanels(prev => prev.filter(p => p.id !== id)) }
     const movePanel = (from: number, to: number) => { setPanels(prev => { const arr = [...prev]; const [item] = arr.splice(from, 1); arr.splice(to, 0, item); return arr }) }
-    const handleGenerateVideo = () => { if (panels.length === 0) return; setIsGenerating(true); setTimeout(() => setIsGenerating(false), 3000) }
-
+    const handleGenerateVideo = () => {
+        const validPanels = panels.filter(p => p.enhancedUrl)
+        if (validPanels.length < 2) {
+            alert("You need at least 2 enhanced scenes to generate a video. Sketch and click Enhance on each scene first.")
+            return
+        }
+        videoGen.startGeneration({
+            panels: validPanels.map(p => ({
+                id: p.id,
+                title: p.title,
+                description: p.description,
+                enhancedUrl: p.enhancedUrl,
+            })),
+            settings: videoSettings,
+        })
+    }
     const handleSelectTemplate = (t: SceneTemplate) => { setSelectedTemplate(t); setTextView("upload") }
     const handleGenerate = () => { setTextView("generating") }
     const handleGenerationComplete = useCallback(() => { setTextView("result") }, [])
@@ -870,6 +1135,45 @@ useEffect(() => {
         }}>
             <style>{`
                 @keyframes spin-enhance { to { transform: rotate(360deg); } }
+                .brush-slider {
+    -webkit-appearance: none;
+    appearance: none;
+    height: 4px;
+    border-radius: 999px;
+    background: rgba(128,128,128,0.25);
+    outline: none;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+.brush-slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background: var(--brush-thumb-color, #7c3aed);
+    cursor: pointer;
+    border: 2px solid #fff;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.25);
+    transition: transform 0.15s ease;
+}
+.brush-slider::-webkit-slider-thumb:hover {
+    transform: scale(1.15);
+}
+.brush-slider::-moz-range-thumb {
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background: var(--brush-thumb-color, #7c3aed);
+    cursor: pointer;
+    border: 2px solid #fff;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.25);
+}
+.brush-slider::-moz-range-track {
+    height: 4px;
+    border-radius: 999px;
+    background: rgba(128,128,128,0.25);
+}
                 @keyframes fadeInUp { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
                 @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
                 @keyframes starFloat {
@@ -928,9 +1232,20 @@ useEffect(() => {
                         ) : (
                             <>
                                 <div style={{ display: "grid", gridTemplateColumns: `repeat(auto-fill, minmax(${isMobile ? "280px" : "360px"}, 1fr))`, gap: 16, flex: 1, overflow: "auto", paddingBottom: 12, WebkitOverflowScrolling: "touch" }}>
-                                    {panels.map((panel, i) => (
-                                        <DrawingCanvas key={panel.id} panel={panel} index={i} totalPanels={panels.length} onUpdate={(u) => updatePanel(panel.id, u)} onRemove={() => removePanel(panel.id)} onMoveUp={() => movePanel(i, i - 1)} onMoveDown={() => movePanel(i, i + 1)} isDark={isDark} />
-                                    ))}
+                                {panels.map((panel, i) => (
+    <DrawingCanvas
+        key={panel.id}
+        panel={panel}
+        index={i}
+        totalPanels={panels.length}
+        previousPanel={i > 0 ? panels[i - 1] : null}
+        onUpdate={(u) => updatePanel(panel.id, u)}
+        onRemove={() => removePanel(panel.id)}
+        onMoveUp={() => movePanel(i, i - 1)}
+        onMoveDown={() => movePanel(i, i + 1)}
+        isDark={isDark}
+    />
+))}
                                     <button onClick={addPanel} style={{ minHeight: 200, borderRadius: 20, border: `2px dashed ${borderColor}`, background: cardBg, cursor: "pointer", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 8, color: textSecondary, fontSize: 13, fontWeight: 600, fontFamily: "inherit" }}>
                                         <div style={{ width: 42, height: 42, borderRadius: 12, background: `${accent}12`, display: "flex", alignItems: "center", justifyContent: "center" }}><Plus size={20} color={accent} /></div>Add Canvas
                                     </button>
@@ -938,11 +1253,19 @@ useEffect(() => {
                                 <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginTop: 12, padding: isMobile ? "12px 14px" : "14px 18px", borderRadius: 14, background: cardBg, border: `1px solid ${borderColor}`, flexWrap: "wrap", gap: 10, flexShrink: 0 }}>
                                     <div style={{ display: "flex", alignItems: "center", gap: 6, color: textSecondary, fontSize: 12 }}><Layers size={14} /><span><strong style={{ color: textPrimary }}>{panels.length}</strong> scene{panels.length !== 1 ? "s" : ""}</span></div>
                                     <div style={{ display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap" }}>
-                                        <button style={{ display: "flex", alignItems: "center", gap: 5, padding: "9px 16px", borderRadius: 10, border: `1px solid ${borderColor}`, background: "transparent", color: textPrimary, fontSize: 12, fontWeight: 600, cursor: "pointer", fontFamily: "inherit" }}><Save size={14} /> Save</button>
-                                        <button onClick={handleGenerateVideo} disabled={isGenerating} style={{ display: "flex", alignItems: "center", gap: 6, padding: "9px 20px", borderRadius: 10, border: "none", background: `linear-gradient(135deg, ${accent}, ${accent}dd)`, color: "#fff", fontSize: 12, fontWeight: 700, cursor: "pointer", fontFamily: "inherit", boxShadow: `0 4px 14px ${accent}35`, opacity: isGenerating ? 0.7 : 1 }}>
-                                            {isGenerating ? <><div style={{ width: 13, height: 13, border: "2px solid rgba(255,255,255,0.3)", borderTopColor: "#fff", borderRadius: "50%", animation: "spin-enhance 0.6s linear infinite" }} /> Generating...</> : <><Film size={14} /> Generate Video</>}
-                                        </button>
-                                    </div>
+    <button 
+        onClick={() => setShowVideoSettings(!showVideoSettings)}
+        style={{ display: "flex", alignItems: "center", gap: 5, padding: "9px 14px", borderRadius: 10, border: `1px solid ${borderColor}`, background: "transparent", color: textPrimary, fontSize: 12, fontWeight: 600, cursor: "pointer", fontFamily: "inherit" }}
+    >
+        <Film size={14} /> {videoSettings.resolution} · {videoSettings.duration}s
+    </button>
+    <button style={{ display: "flex", alignItems: "center", gap: 5, padding: "9px 16px", borderRadius: 10, border: `1px solid ${borderColor}`, background: "transparent", color: textPrimary, fontSize: 12, fontWeight: 600, cursor: "pointer", fontFamily: "inherit" }}>
+        <Save size={14} /> Save
+    </button>
+    <button onClick={handleGenerateVideo} disabled={isGenerating} style={{ display: "flex", alignItems: "center", gap: 6, padding: "9px 20px", borderRadius: 10, border: "none", background: `linear-gradient(135deg, ${accent}, ${accent}dd)`, color: "#fff", fontSize: 12, fontWeight: 700, cursor: "pointer", fontFamily: "inherit", boxShadow: `0 4px 14px ${accent}35`, opacity: isGenerating ? 0.7 : 1 }}>
+        {isGenerating ? <><div style={{ width: 13, height: 13, border: "2px solid rgba(255,255,255,0.3)", borderTopColor: "#fff", borderRadius: "50%", animation: "spin-enhance 0.6s linear infinite" }} /> Generating...</> : <><Film size={14} /> Generate Video</>}
+    </button>
+</div>
                                 </div>
                             </>
                         )}
@@ -984,6 +1307,120 @@ useEffect(() => {
                     </div>
                 )}
             </div>
+
+            {/* Video Settings Popover */}
+            {showVideoSettings && (
+                <div
+                    onClick={() => setShowVideoSettings(false)}
+                    style={{
+                        position: "fixed", inset: 0, zIndex: 9000,
+                        background: "rgba(0,0,0,0.4)", backdropFilter: "blur(4px)",
+                        display: "flex", alignItems: "center", justifyContent: "center",
+                        animation: "fadeIn 0.2s ease",
+                    }}
+                >
+                    <div
+                        onClick={(e) => e.stopPropagation()}
+                        style={{
+                            width: "min(420px, 92vw)", borderRadius: 18,
+                            background: isDark ? "#1a1025" : "#fff",
+                            border: `1px solid ${borderColor}`,
+                            padding: 24, animation: "fadeInUp 0.25s ease",
+                            boxShadow: "0 20px 60px rgba(0,0,0,0.4)",
+                        }}
+                    >
+                        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 20 }}>
+                            <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                                <Film size={18} color={accent} />
+                                <h3 style={{ margin: 0, fontSize: 15, fontWeight: 700, color: textPrimary }}>Video Settings</h3>
+                            </div>
+                            <button onClick={() => setShowVideoSettings(false)} style={{ background: "none", border: "none", cursor: "pointer", color: textSecondary, padding: 4, display: "flex" }}>
+                                <X size={18} />
+                            </button>
+                        </div>
+
+                        {/* Resolution */}
+                        <div style={{ marginBottom: 20 }}>
+                            <label style={{ display: "block", fontSize: 12, fontWeight: 700, color: textPrimary, marginBottom: 8 }}>Resolution</label>
+                            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 6 }}>
+                                {([
+                                    { id: "480p" as const, label: "480p", price: "$0.07/s" },
+                                    { id: "720p" as const, label: "720p", price: "$0.15/s" },
+                                    { id: "1080p" as const, label: "1080p", price: "$0.34/s" },
+                                ]).map((r) => (
+                                    <button
+                                        key={r.id}
+                                        onClick={() => setVideoSettings(s => ({ ...s, resolution: r.id }))}
+                                        style={{
+                                            display: "flex", flexDirection: "column", alignItems: "center", gap: 2,
+                                            padding: "10px 8px", borderRadius: 10,
+                                            border: `1.5px solid ${videoSettings.resolution === r.id ? accent : borderColor}`,
+                                            background: videoSettings.resolution === r.id ? `${accent}15` : "transparent",
+                                            color: videoSettings.resolution === r.id ? accent : textPrimary,
+                                            fontSize: 13, fontWeight: 700, cursor: "pointer", fontFamily: "inherit",
+                                            transition: "all 0.15s ease",
+                                        }}
+                                    >
+                                        <span>{r.label}</span>
+                                        <span style={{ fontSize: 9, opacity: 0.7, fontWeight: 500 }}>{r.price}</span>
+                                    </button>
+                                ))}
+                            </div>
+                        </div>
+
+                        {/* Duration */}
+                        <div style={{ marginBottom: 20 }}>
+                            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 8 }}>
+                                <label style={{ fontSize: 12, fontWeight: 700, color: textPrimary }}>Duration per clip</label>
+                                <span style={{ fontSize: 12, fontWeight: 700, color: accent, fontVariantNumeric: "tabular-nums" }}>{videoSettings.duration}s</span>
+                            </div>
+                            <BrushSlider
+                                value={videoSettings.duration}
+                                min={3}
+                                max={10}
+                                onChange={(v) => setVideoSettings(s => ({ ...s, duration: v }))}
+                                width={372}
+                                accent={accent}
+                                isDark={isDark}
+                            />
+                            <div style={{ display: "flex", justifyContent: "space-between", marginTop: 6, fontSize: 10, color: textSecondary }}>
+                                <span>3s</span><span>10s</span>
+                            </div>
+                        </div>
+
+                        {/* Cost estimate */}
+                        <div style={{ padding: 12, borderRadius: 10, background: isDark ? "rgba(255,255,255,0.03)" : "rgba(0,0,0,0.03)", marginBottom: 16 }}>
+                            <div style={{ display: "flex", justifyContent: "space-between", fontSize: 11, color: textSecondary, marginBottom: 4 }}>
+                                <span>Clips to generate</span>
+                                <span style={{ color: textPrimary, fontWeight: 600 }}>{Math.max(0, panels.filter(p => p.enhancedUrl).length - 1)}</span>
+                            </div>
+                            <div style={{ display: "flex", justifyContent: "space-between", fontSize: 11, color: textSecondary }}>
+                                <span>Estimated cost</span>
+                                <span style={{ color: accent, fontWeight: 700 }}>
+                                    ~${(
+                                        Math.max(0, panels.filter(p => p.enhancedUrl).length - 1) *
+                                        videoSettings.duration *
+                                        ({ "480p": 0.06726, "720p": 0.1512, "1080p": 0.3402 }[videoSettings.resolution])
+                                    ).toFixed(2)}
+                                </span>
+                            </div>
+                        </div>
+
+                        <button
+                            onClick={() => setShowVideoSettings(false)}
+                            style={{
+                                width: "100%", padding: "12px", borderRadius: 12, border: "none",
+                                background: accent, color: "#fff", fontSize: 13, fontWeight: 700,
+                                cursor: "pointer", fontFamily: "inherit",
+                            }}
+                        >
+                            Done
+                        </button>
+                    </div>
+                </div>
+            )}
+
+            {/* Video Generation Modal + Snackbar are rendered globally via VideoGenerationProvider */}
         </div>
     )
 }
