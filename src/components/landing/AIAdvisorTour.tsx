@@ -15,24 +15,24 @@ interface Turn { role: ChatRole; text: string }
 
 const SCENARIOS: Turn[][] = [
   [
-    { role:'ai', text:'I found an opportunity to deduct €4,000 as R&D expenses in your German subsidiary. Would you like to apply this adjustment?' },
-    { role:'user', text:'Yes, and suggest how I could reinvest those savings.' },
-    { role:'ai', text:'Based on your risk profile, I recommend tokenized real estate in Berlin with an estimated annual return of 7%. Your financial intelligence layer across Europe.' },
+    { role:'ai', text:'Pulse detected a revenue dip on Shopee for your top SKU over the last 48 hours. Would you like the likely root causes?' },
+    { role:'user', text:'Yes, and tell me what the team should do first.' },
+    { role:'ai', text:'Primary drivers: ad fatigue on the winning creative and a 12% stock imbalance in two warehouses. First actions: rotate fresh creatives and rebalance stock to high-demand zones today.' },
   ],
   [
-    { role:'ai', text:'Your Q1 revenue across all entities reached €2.4M — an 18% increase from last quarter. Three invoices are still outstanding.' },
-    { role:'user', text:'Which clients are late? Draft a follow-up for each.' },
-    { role:'ai', text:'Drafted 3 personalized follow-ups for Müller GmbH, Dupont SA, and TechVentures BV. Each references their specific contract terms and payment history.' },
+    { role:'ai', text:'Your paid campaigns generated strong traffic this week, but checkout conversion dropped by 9% on mobile.' },
+    { role:'user', text:'What changed, and draft a quick action brief.' },
+    { role:'ai', text:'Drop is concentrated on one landing flow after a recent update. I prepared a concise brief with rollback, QA checks, and messaging updates for your growth and product leads.' },
   ],
   [
-    { role:'ai', text:'I detected a new EU regulation affecting your Dutch holding structure. Your current setup may result in €12K additional tax liability next quarter.' },
-    { role:'user', text:'What are my options to restructure before the deadline?' },
-    { role:'ai', text:"You have two viable paths: migrate the IP holding to Ireland saving ~€9K annually, or establish a Luxembourg SPV. I've prepared a comparison with projected 5-year savings." },
+    { role:'ai', text:'I found repeat customer complaints tied to delayed fulfillment in two branches.' },
+    { role:'user', text:'Summarize impact and draft a response plan.' },
+    { role:'ai', text:"I created a branch-level impact report, flagged the highest-risk orders, and drafted a response plan for operations and customer support with clear owner actions." },
   ],
   [
-    { role:'ai', text:'Your portfolio allocation has drifted 8% from your target. Tech exposure is now 42% versus your 35% benchmark across all accounts.' },
-    { role:'user', text:'Rebalance it, but keep my top 3 performers.' },
-    { role:'ai', text:"Done. I've trimmed 6 positions and reallocated €28K into European green bonds and emerging market ETFs while preserving your stakes in SAP, ASML, and Novo Nordisk." },
+    { role:'ai', text:'Branch A leads on conversion, while Branch B leads on traffic but underperforms on basket size.' },
+    { role:'user', text:'Give me a coaching playbook each manager can use this week.' },
+    { role:'ai', text:"Done. I prepared manager-ready coaching notes: Branch A focuses on traffic acquisition; Branch B applies upsell and bundle tactics proven in Branch A." },
   ],
 ]
 
@@ -476,7 +476,7 @@ export default function AIAdvisorTour() {
 
       {/* Subtitle */}
       <div style={{ position:'absolute', bottom:40, left: device === 'iphone' ? 20 : 40, maxWidth:340, zIndex:2 }}>
-        <StreamingText text="A conversational assistant designed for European entrepreneurs, founders, and investors." />
+        <StreamingText text="A conversational AI advisor built for operators running modern commerce brands with PULSE." />
       </div>
     </section>
   )

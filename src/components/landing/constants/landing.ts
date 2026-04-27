@@ -9,7 +9,6 @@ export const AVATARS = [
 export const NAV_LINKS = [
   'Our Features',
   'Why Pulse',
-  'Pricing',
 ] as const
 
 export const HERO_FEATURE_LABELS = [

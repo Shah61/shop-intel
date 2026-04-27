@@ -14,23 +14,23 @@ const GET_WORK_DONE_CARD_BG_STYLE: CSSProperties = {
 const faqs = [
   {
     q: "What is Pulse?",
-    a: "Pulse is a powerful platform designed to help businesses integrate, analyze, and automate data workflows using artificial intelligence. It empowers teams to make smarter decisions and drive growth.",
+    a: "Pulse is an operations and intelligence platform for modern commerce brands. It unifies your sales, marketing, inventory, retail, and customer signals into one decision-ready workspace.",
   },
   {
     q: "Can I integrate Pulse with my existing tools?",
-    a: "Yes! Pulse supports integration with a wide range of tools and platforms. Our APIs allow seamless connection with your data sources.",
+    a: "Yes. Pulse is built to connect with your existing stack, including commerce channels and marketing platforms, so your team works from one consistent source of truth.",
   },
   {
     q: "How does Pulse automate tasks?",
-    a: "Pulse uses intelligent automation to streamline repetitive workflows, saving time and increasing efficiency.",
+    a: "Pulse automates repetitive reporting and analysis work, then uses AI to surface what changed, why it matters, and what your team should do next.",
   },
   {
     q: "Is my data secure with Pulse?",
-    a: "Yes, we implement enterprise-grade security and encryption to ensure your data is always protected.",
+    a: "Yes. Pulse uses enterprise-grade security controls and encrypted data handling so your business data stays protected.",
   },
   {
     q: "What kind of support do you offer?",
-    a: "We offer 24/7 support, onboarding assistance, and dedicated account managers for enterprise clients.",
+    a: "We provide onboarding guidance, implementation support, and ongoing product assistance to help your team get value from Pulse quickly.",
   },
 ]
 
@@ -60,7 +60,7 @@ export default function FAQSection({ workDoneBackdrop }: Props) {
           </h3>
 
           <p className="text-white/60 mb-6">
-            Contact us! We’ll be happy to help you.
+            Contact us and our team will help you get started.
           </p>
 
           {/* avatars */}

@@ -12,9 +12,9 @@ export default function Footer() {
                 Company
               </h4>
               <ul className="space-y-4 text-white/60">
-                <li className="hover:text-white transition cursor-pointer">About Us</li>
-                <li className="hover:text-white transition cursor-pointer">Features</li>
-                <li className="hover:text-white transition cursor-pointer">Why Pulse</li>
+                <li className="hover:text-white transition cursor-pointer">About Pulse</li>
+                <li className="hover:text-white transition cursor-pointer">Platform Overview</li>
+                <li className="hover:text-white transition cursor-pointer">Why Teams Choose Pulse</li>
               </ul>
             </div>
   
@@ -24,10 +24,10 @@ export default function Footer() {
                 Features
               </h4>
               <ul className="space-y-4 text-white/60">
-                <li className="hover:text-white transition cursor-pointer">Task Management</li>
-                <li className="hover:text-white transition cursor-pointer">Databases & Tables</li>
-                <li className="hover:text-white transition cursor-pointer">Docs & Notes</li>
-                <li className="hover:text-white transition cursor-pointer">Habit Tracker</li>
+                <li className="hover:text-white transition cursor-pointer">Sales Intelligence</li>
+                <li className="hover:text-white transition cursor-pointer">Marketing Intelligence</li>
+                <li className="hover:text-white transition cursor-pointer">Inventory & Fulfillment</li>
+                <li className="hover:text-white transition cursor-pointer">Retail & Branch Analytics</li>
               </ul>
             </div>
   
@@ -38,7 +38,7 @@ export default function Footer() {
               </h4>
               <ul className="space-y-4 text-white/60">
                 <li className="hover:text-white transition cursor-pointer">FAQ</li>
-                <li className="hover:text-white transition cursor-pointer">Pricing</li>
+                <li className="hover:text-white transition cursor-pointer">Book a Demo</li>
               </ul>
             </div>
   

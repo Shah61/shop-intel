@@ -87,55 +87,52 @@ interface WhySection {
 
 const WHY_SECTIONS: WhySection[] = [
   {
-    title: 'Everything in one place',
+    title: 'Run every channel from one workspace',
     body: (
       <>
-        Juggling between multiple apps for notes, tasks, and projects is
-        frustrating and inefficient. With Pulse, you get a unified workspace
-        where you can write documents, manage projects, track tasks, and build
-        databases—all within a single, customizable platform. No more jumping
-        between scattered tools or losing important information.
+        Pulse brings your sales channels, campaign performance, inventory, and
+        retail operations into one command center so your team can decide and
+        execute faster without jumping across disconnected tools.
       </>
     ),
   },
   {
     title: (
       <>
-        Fully Customizable &amp;
+        Built for your operating
         <br className="hidden sm:inline" />
-        {' '}Flexible
+        {' '}rhythm
       </>
     ),
     body: (
       <>
-        No two workflows are the same, which is why Pulse lets you structure your
-        workspace the way{' '}
+        Every business runs differently. Pulse gives you flexible dashboards and
+        workflows so operators, marketers, and managers can focus on the same
+        numbers while still working in the way{' '}
         <strong className="font-bold text-white">you</strong> want. Use
-        drag-and-drop elements to design pages, create nested databases, and
-        build workspaces that fit your needs—whether you&apos;re an individual
-        organizing personal projects or a team managing large-scale operations.
+        structured views and AI summaries to align teams without adding more
+        reporting overhead.
       </>
     ),
   },
   {
     title: (
       <>
-        Real-Time Collaboration
+        Real-time clarity for
         <br className="hidden sm:inline" />
-        {' '}Made Simple
+        {' '}every team
       </>
     ),
     body: (
       <>
-        Stay in sync with your team, no matter where they are. With live
-        editing, task assignments, inline comments, and shared workspaces,
-        collaboration feels{' '}
+        Pulse keeps your team in sync with live operational visibility across
+        revenue, fulfillment, marketing, and branch performance. That means
+        decisions feel{' '}
         <strong className="font-bold text-white">
-          effortless and intuitive.
+          faster and more confident.
         </strong>{' '}
-        Need to control who can see or edit certain information? Custom
-        permissions ensure that the right people have access to the right
-        content.
+        Everyone gets the context they need to move, without waiting on manual
+        updates.
       </>
     ),
   },
@@ -745,22 +742,22 @@ function WhyPulseCards() {
           {
             w: '75%',
             bg: 'linear-gradient(90deg, #e879f9, #f472b6, #c084fc, rgba(255,255,255,0.35))',
-            label: 'Saving',
+            label: 'Revenue',
           },
           {
             w: '58%',
             bg: 'linear-gradient(90deg, #818cf8, #a78bfa, rgba(200,180,255,0.45))',
-            label: 'Project',
+            label: 'Marketing',
           },
           {
             w: '42%',
             bg: 'linear-gradient(90deg, #6366f1, #818cf8, rgba(180,170,255,0.35))',
-            label: 'Innovation',
+            label: 'Inventory',
           },
           {
             w: '28%',
             bg: 'linear-gradient(90deg, #a78bfa, #c4b5fd)',
-            label: 'Notification',
+            label: 'Branches',
           },
         ].map((b, i) => (
           <div key={i} className={i < 3 ? 'mb-2.5 sm:mb-3' : ''}>
@@ -798,7 +795,7 @@ function WhyPulseCards() {
             </svg>
           </div>
           <span className="text-[14px] font-bold text-white sm:text-[15px]">
-            Reading Goals
+            Weekly Operations
           </span>
         </div>
 
@@ -814,21 +811,21 @@ function WhyPulseCards() {
             />
           </div>
           <span className="whitespace-nowrap text-[11px] font-medium text-white/60 sm:text-xs">
-            35 of 50 books
+            35 tracked signals
           </span>
         </div>
 
         {/* Circle progress rings */}
         <div className="mb-3 flex justify-between px-0.5 sm:mb-4 sm:px-1">
-          <CircleProgress percent={45} label="Scifi" color="#a78bfa" />
-          <CircleProgress percent={14} label="Horror" color="#6366f1" />
-          <CircleProgress percent={20} label="Lit" color="#818cf8" />
-          <CircleProgress percent={21} label="Classic" color="#4f46e5" />
+          <CircleProgress percent={45} label="Sales" color="#a78bfa" />
+          <CircleProgress percent={14} label="Ads" color="#6366f1" />
+          <CircleProgress percent={20} label="Stock" color="#818cf8" />
+          <CircleProgress percent={21} label="Stores" color="#4f46e5" />
         </div>
 
         {/* Footer */}
         <div className="rounded-[10px] border border-white/[0.06] bg-white/[0.04] py-[9px] text-center text-[11px] font-medium text-white/[0.55] sm:py-[11px] sm:text-xs">
-          You have 158 days left
+          Updated in real time
         </div>
       </div>
     </>

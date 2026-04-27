@@ -33,9 +33,9 @@ interface Section {
 const SECTIONS: Section[] = [
   {
     tag: "Pulse",
-    title: "Why choose us",
-    titleHtml: `On a <em>professional</em> note`,
-    subtitle: "Why choose us",
+    title: "Why teams choose Pulse",
+    titleHtml: `Why serious teams choose <em>Pulse</em>`,
+    subtitle: "Why Pulse",
     items: [],
     bentoLayout: "hero",
   },
@@ -334,9 +334,9 @@ export default function WhyChooseUsPage() {
                 }}
               />
               <p className="mt-6 max-w-xl text-[15px] leading-relaxed text-white/45">
-                One workspace for revenue, campaigns, inventory, and AI that
-                turns noise into next actions — built for operators who outgrow
-                spreadsheets.
+                Pulse gives operators one place to run revenue, campaigns,
+                inventory, and branch performance with AI guidance built into
+                every workflow.
               </p>
 
               {/* Mini bento preview */}

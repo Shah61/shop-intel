@@ -209,55 +209,49 @@ interface Section {
 
 const SECTIONS: Section[] = [
   {
-    title: 'Everything in one place',
+    title: 'Run every channel from one workspace',
     body: (
       <>
-        Juggling between multiple apps for notes, tasks, and projects is
-        frustrating and inefficient. With Pulse, you get a unified workspace
-        where you can write documents, manage projects, track tasks, and build
-        databases—all within a single, customizable platform. No more jumping
-        between scattered tools or losing important information.
+        Pulse unifies your sales, campaigns, inventory, and branch performance
+        into one command center so your team can act from the same live picture.
       </>
     ),
   },
   {
     title: (
       <>
-        Fully Customizable &amp;
+        Built for your operating
         <br />
-        Flexible
+        rhythm
       </>
     ),
     body: (
       <>
-        No two workflows are the same, which is why Pulse lets you structure your
-        workspace the way{' '}
+        Every brand runs differently, so Pulse gives teams flexible views and
+        workflows while keeping everyone aligned on shared performance signals.
+        Work the way{' '}
         <strong className="font-bold text-white">you</strong> want. Use
-        drag-and-drop elements to design pages, create nested databases, and
-        build workspaces that fit your needs—whether you're an individual
-        organizing personal projects or a team managing large-scale operations.
+        AI summaries and coordinated dashboards to move faster without manual
+        reporting loops.
       </>
     ),
   },
   {
     title: (
       <>
-        Real-Time Collaboration
+        Real-time clarity for
         <br />
-        Made Simple
+        every team
       </>
     ),
     body: (
       <>
-        Stay in sync with your team, no matter where they are. With live
-        editing, task assignments, inline comments, and shared workspaces,
-        collaboration feels{' '}
+        Pulse keeps teams aligned with live operational context across channels,
+        stores, and fulfillment so collaboration feels{' '}
         <strong className="font-bold text-white">
-          effortless and intuitive.
+          faster and more accountable.
         </strong>{' '}
-        Need to control who can see or edit certain information? Custom
-        permissions ensure that the right people have access to the right
-        content.
+        Decisions happen with confidence because everyone sees the same truth.
       </>
     ),
   },

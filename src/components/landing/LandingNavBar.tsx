@@ -12,7 +12,6 @@ const SCROLL_SHRINK_PX = 24
 const ROUTE_MAP: Record<string, string> = {
   "Our Features": "/home/features",
   "Why Pulse": "/home/why-choose-us",
-  Pricing: "/home/pricing",
 }
 
 export function LandingNavBar() {

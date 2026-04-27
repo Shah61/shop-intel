@@ -28,11 +28,11 @@ export default function GetWorkDoneSection() {
 
         <div className="relative z-10">
           <h2 className="mb-4 text-4xl font-semibold text-white md:text-5xl">
-            Get your work done
+            Move from insight to action
           </h2>
 
           <p className="mb-10 text-lg text-gray-400">
-            No setup, no training—just a better way to track work.
+            Pulse gives your team one place to understand what changed and what to do next.
           </p>
 
           <button

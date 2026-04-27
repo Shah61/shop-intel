@@ -14,22 +14,22 @@ function publicImage(path: string) {
 
 const TOP_CARDS = [
   {
-    title: "Smart Handles Data",
-    body: "This software revolutionized how our company collects, analyzes, and secures complex data in real time.",
+    title: "Commerce Signal Clarity",
+    body: "Pulse combines sales, marketing, and operations signals so teams can spot what changed and why in real time.",
     image: publicImage("images/second/card1.png"),
     placeholder: "p1" as const,
     icon: "pin" as const,
   },
   {
-    title: "Intelligent Manufacturing",
-    body: "Empowering industries with precision-driven AI systems that streamline production and enhance quality control.",
+    title: "Campaign to Revenue Visibility",
+    body: "Track performance from ad spend to conversion with one connected view across channels and teams.",
     image: publicImage("images/second/card2.png"),
     placeholder: "p2" as const,
     icon: "grid" as const,
   },
   {
-    title: "AI-Driven Innovation",
-    body: "Harnessing artificial intelligence to transform ideas into scalable, real-world industrial solutions.",
+    title: "AI Decisions, Not Noise",
+    body: "Get plain-language recommendations from your own business data so daily decisions are faster and more confident.",
     image: publicImage("images/second/card3.png"),
     placeholder: "p3" as const,
     icon: "layers" as const,
@@ -38,16 +38,16 @@ const TOP_CARDS = [
 
 const BOTTOM_CARDS = [
   {
-    title: "Connected Industries",
-    body: "Integrating cloud technology and machine learning to connect factories, people, and data seamlessly.",
+    title: "Inventory and Fulfillment Control",
+    body: "See stock movement, delivery risks, and fulfillment bottlenecks before they impact customer experience.",
     image: publicImage("images/second/bigCard1.png"),
     placeholder: "p4" as const,
     icon: "sun" as const,
     tall: true,
   },
   {
-    title: "Next-Gen Automation",
-    body: "Redefining workflows through adaptive automation, reducing errors, and maximizing operational efficiency.",
+    title: "Aligned Teams at Every Branch",
+    body: "Benchmark store and branch performance with shared metrics so leaders can coach consistently and scale what works.",
     image: publicImage("images/second/bigCard2.png"),
     placeholder: "p5" as const,
     icon: "bolt" as const,
@@ -307,7 +307,7 @@ export default function HumanityThroughAISection() {
           </ScrollReveal>
           <ScrollReveal animation="slide-right" delay={0.15} threshold={0.05}>
             <p className="mt-3 max-w-[280px] text-[0.95rem] leading-relaxed text-[#f0efe9]/60">
-              Over 2,000+ teams use our AI platform to automate their business and unlock growth.
+              Pulse helps modern commerce teams move from scattered data to coordinated, high-confidence execution.
             </p>
           </ScrollReveal>
         </header>

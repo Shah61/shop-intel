@@ -1,15 +1,15 @@
 import { useState, useEffect, useRef, useCallback, type RefObject } from "react";
 
 const STEPS = [
-  { id: "01", features: ["SDK Integration", "Blockchain API"] },
-  { id: "02", features: ["Real-time Sync", "Webhook Pipeline"] },
-  { id: "03", features: ["Secure Enclave", "Audit Logging"] },
+  { id: "01", features: ["Channel Data Sync", "Unified Revenue Signals"] },
+  { id: "02", features: ["Live Inventory Visibility", "Fulfillment Tracking"] },
+  { id: "03", features: ["AI Risk Detection", "Actionable Ops Alerts"] },
 ];
 
 const STATS = [
-  { label: "Satisfaction", value: "128K" },
-  { label: "Integrations", value: "200+" },
-  { label: "Transaction", value: "80.1%" },
+  { label: "Monitored Signals", value: "128K" },
+  { label: "Connected Sources", value: "200+" },
+  { label: "Insight Accuracy", value: "80.1%" },
 ];
 
 function useScrollReveal(
@@ -51,6 +51,13 @@ export default function RealTimeIntelligenceSection() {
   const [isPlaying, setIsPlaying] = useState(false);
   const [hasStarted, setHasStarted] = useState(false);
   const [isMuted, setIsMuted] = useState(false);
+
+  useEffect(() => {
+    const v = videoRef.current;
+    if (!v) return;
+    // Always initialize at maximum browser-allowed media volume.
+    v.volume = 1;
+  }, []);
 
   // Global interaction listener
   useEffect(() => {
@@ -106,6 +113,7 @@ export default function RealTimeIntelligenceSection() {
         if (entry.isIntersecting) {
           if (userInteractedRef.current) {
             v.muted = false;
+            v.volume = 1;
             v.play()
               .then(() => {
                 setIsPlaying(true);
@@ -124,6 +132,7 @@ export default function RealTimeIntelligenceSection() {
               });
           } else {
             v.muted = true;
+            v.volume = 1;
             setIsMuted(true);
             v.play()
               .then(() => {
@@ -158,6 +167,7 @@ export default function RealTimeIntelligenceSection() {
 
     if (v.paused) {
       v.muted = false;
+      v.volume = 1;
       setIsMuted(false);
       v.play().then(() => {
         setIsPlaying(true);
@@ -166,6 +176,7 @@ export default function RealTimeIntelligenceSection() {
     } else {
       if (v.muted) {
         v.muted = false;
+        v.volume = 1;
         setIsMuted(false);
       } else {
         v.pause();
@@ -269,8 +280,8 @@ export default function RealTimeIntelligenceSection() {
               style={{ transitionDelay: "0.25s" }}
             >
               <p className="max-w-[300px] text-[14.5px] leading-[1.7] text-white/[0.55] xl:text-right">
-                Visualize insights, detect anomalies, and make data-driven
-                decisions — all from one powerful AI dashboard.
+                Turn live business data into clear insights, catch issues early,
+                and move faster with one AI-powered operations view.
               </p>
             </div>
           </div>
@@ -307,7 +318,7 @@ export default function RealTimeIntelligenceSection() {
             >
               <video
                 ref={videoRef}
-                src="/video.mp4"
+                src="/video-ads.mp4"
                 playsInline
                 loop
                 preload="metadata"
