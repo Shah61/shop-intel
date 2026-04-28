@@ -62,7 +62,7 @@ const accentRadialBlob = (accent: string) => (isPresetPrimaryColor(accent) ? pre
 const COLORS_GRADIENT = ['#6366f1', '#8b5cf6', '#a78bfa', '#c4b5fd', '#818cf8', '#7c3aed', '#6d28d9'];
 
 // ─────────────────────────────────────────────────────────────────────────────
-// MICRO COMPONENTS (Trend Intelligence style)
+// MICRO COMPONENTS (Trend Intelligence style) test
 // ─────────────────────────────────────────────────────────────────────────────
 const PulseDot: React.FC<{ color?: string; size?: number }> = ({ color = 'var(--preset-primary)', size = 7 }) => (
   <span style={{ position: 'relative', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', width: size, height: size, flexShrink: 0 }}>
@@ -657,7 +657,7 @@ const TopPerformersSection: React.FC<{
             {overviewLoading ? <span style={{ fontSize: 13, color: 'rgba(255,255,255,.35)' }}>…</span> : ownerContentEngagement != null ? `${ownerContentEngagement.toFixed(2)}%` : <span style={{ fontSize: 12, fontWeight: 600, color: 'rgba(255,255,255,.35)' }}>No owner data in range</span>}
           </div>
         </div>
-      )}
+      )} 
 
       {isLoading && <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: 180, gap: 12 }}><div style={{ display: 'flex', gap: 5 }}>{[0, 1, 2].map(i => <div key={i} style={{ width: 7, height: 7, borderRadius: '50%', background: '#f97316', opacity: .7, animation: `ait-pulse 1.2s ease-in-out ${i * .2}s infinite` }} />)}</div><span style={{ fontSize: 12, color: 'rgba(255,255,255,.35)' }}>Loading…</span></div>}
       {error && !isLoading && <EmptyState icon={<TrendingDown style={{ width: 24, height: 24 }} />} title="Failed to load" subtitle="Check connection" />}
