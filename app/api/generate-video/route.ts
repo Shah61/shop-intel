@@ -93,10 +93,36 @@ export async function POST(req: NextRequest) {
     }
 
     const result = await response.json()
+
+    // LOG EVERYTHING — we need to see the actual shape
+    console.log('[generate-video] FULL response from OpenRouter:', JSON.stringify(result, null, 2))
+    
+    // Try every field name that might hold the polling URL
+    const pollingUrl =
+        result.polling_url ||
+        result.pollingUrl ||
+        result.poll_url ||
+        result.pollUrl ||
+        result.url ||
+        (result.data && (result.data.polling_url || result.data.pollingUrl)) ||
+        null
+    
+    const jobId = result.id || result.job_id || result.jobId || null
+    
+    if (!pollingUrl) {
+        console.error('[generate-video] No polling URL found. Full response keys:', Object.keys(result))
+        console.error('[generate-video] Full response:', JSON.stringify(result).slice(0, 1000))
+        return NextResponse.json(
+            { error: 'No polling URL in response', raw: result },
+            { status: 500 }
+        )
+    }
+    
+    console.log('[generate-video] Got pollingUrl:', pollingUrl, 'jobId:', jobId)
+    
     return NextResponse.json({
-      jobId: result.id,
-      pollingUrl: result.polling_url,
-      status: result.status,
+        jobId,
+        pollingUrl,
     })
   } catch (err) {
     console.error('[generate-video] route error:', err)

@@ -275,14 +275,19 @@ function getAccent() {
     }, [activeCanvasRef])
 
     const startDraw = useCallback((e: React.MouseEvent | React.TouchEvent) => {
-        e.preventDefault(); setIsDrawing(true); const pos = getPos(e); lastPoint.current = pos
+        // Only call preventDefault for mouse events. React attaches touch listeners as
+        // passive by default, so preventDefault on touch is a no-op and emits a warning.
+        // The canvas already uses `touch-action: none` to stop page scrolling.
+        if (!("touches" in e)) e.preventDefault()
+        setIsDrawing(true); const pos = getPos(e); lastPoint.current = pos
         const ctx = activeCanvasRef.current?.getContext("2d"); if (!ctx) return
         ctx.beginPath(); ctx.arc(pos.x, pos.y, brushSize / 2, 0, Math.PI * 2)
         ctx.fillStyle = tool === "eraser" ? (isDark ? "#1a1025" : "#ffffff") : (isDark ? "#e5e7eb" : "#1a1025"); ctx.fill()
     }, [getPos, brushSize, tool, isDark, activeCanvasRef])
 
     const draw = useCallback((e: React.MouseEvent | React.TouchEvent) => {
-        if (!isDrawing) return; e.preventDefault()
+        if (!isDrawing) return
+        if (!("touches" in e)) e.preventDefault()
         const ctx = activeCanvasRef.current?.getContext("2d"); if (!ctx || !lastPoint.current) return
         const pos = getPos(e); ctx.beginPath(); ctx.moveTo(lastPoint.current.x, lastPoint.current.y); ctx.lineTo(pos.x, pos.y)
         ctx.strokeStyle = tool === "eraser" ? (isDark ? "#1a1025" : "#ffffff") : (isDark ? "#e5e7eb" : "#1a1025")

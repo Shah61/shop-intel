@@ -191,7 +191,25 @@ export function VideoGenerationProvider({ children }: { children: ReactNode }) {
                         const err = await submitRes.json().catch(() => ({}))
                         throw new Error(err.error || "Submit failed")
                     }
-                    const { pollingUrl } = await submitRes.json()
+
+                    const submitData = await submitRes.json()
+                    if (process.env.NODE_ENV !== 'production') {
+                        console.log('[startGeneration] submit response:', submitData)
+                    }
+
+                    const pollingUrl: string | null =
+                        submitData?.pollingUrl ||
+                        submitData?.polling_url ||
+                        submitData?.url ||
+                        null
+
+                    if (!pollingUrl || typeof pollingUrl !== 'string') {
+                        console.error('[startGeneration] no usable pollingUrl in submit response:', submitData)
+                        throw new Error(
+                            `No polling URL returned. Got: ${JSON.stringify(submitData).slice(0, 200)}`
+                        )
+                    }
+
                     if (myGenId !== generationIdRef.current) return
                     updateClip(clip.id, { status: "polling", pollingUrl })
 
@@ -203,7 +221,7 @@ export function VideoGenerationProvider({ children }: { children: ReactNode }) {
                         const pollRes = await fetch("/api/poll-video", {
                             method: "POST",
                             headers: { "Content-Type": "application/json" },
-                            body: JSON.stringify({ pollingUrl }),
+                            body: JSON.stringify({ pollingUrl: String(pollingUrl) }),
                         })
                         if (!pollRes.ok) continue
                         const { status, videoUrls, error } = await pollRes.json()
