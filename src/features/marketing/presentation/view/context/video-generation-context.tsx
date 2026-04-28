@@ -22,6 +22,7 @@ import {
     Cat,
     AlertTriangle,
 } from "lucide-react"
+import { saveVideoProjectToHistory } from "@/src/features/marketing/presentation/view/lib/marketing-history"
 
 /* ════════════════════════════════════════════
    Types
@@ -133,6 +134,29 @@ export function VideoGenerationProvider({ children }: { children: ReactNode }) {
     const updateClip = useCallback((id: string, patch: Partial<VideoClip>) => {
         setClips((prev) => prev.map((c) => (c.id === id ? { ...c, ...patch } : c)))
     }, [])
+
+    // Persist a finished project to local history exactly once per generation.
+    const archivedRef = useRef<string | null>(null)
+    useEffect(() => {
+        if (clips.length === 0 || !settings) return
+        if (!clips.every((c) => c.status === "complete" || c.status === "failed")) return
+        const ready = clips.filter((c) => c.status === "complete" && c.videoUrl)
+        if (ready.length === 0) return
+        const fingerprint = clips.map((c) => c.id).join("|")
+        if (archivedRef.current === fingerprint) return
+        archivedRef.current = fingerprint
+
+        const sceneEnhancedDataUrls = panels
+            .map((p) => p.enhancedUrl)
+            .filter((u): u is string => Boolean(u))
+
+        saveVideoProjectToHistory({
+            videoUrls: ready.map((c) => c.videoUrl!),
+            sceneEnhancedDataUrls,
+            durationPerClip: settings.duration,
+            resolution: settings.resolution,
+        }).catch((e) => console.warn("[history] saveVideo failed:", e))
+    }, [clips, panels, settings])
 
     const startGeneration = useCallback(
         ({ panels: ps, settings: s }: StartArgs) => {

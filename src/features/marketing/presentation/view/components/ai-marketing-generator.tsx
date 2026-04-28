@@ -9,7 +9,9 @@ import {
     Maximize2, Minimize2, Eye, EyeOff, Upload, ArrowLeft, Camera, Palette,
     ArrowRight, Zap, Grid3X3, Move, FileImage, Package, RefreshCw,
 } from "lucide-react"
-import { useVideoGeneration } from "@/src/features/marketing/presentation/view/context/video-generation-context"
+import { useVideoGeneration } from "../context/video-generation-context"
+import { saveImageToHistory } from "../lib/marketing-history"
+import { MarketingHistorySection } from "./marketing-history-section"
 
 /* ════════════════════════════════════════════
    Types
@@ -338,6 +340,16 @@ function getAccent() {
     
             const { enhancedUrl } = await res.json()
             onUpdate({ isEnhancing: false, enhancedUrl })
+
+            // Persist to history (fire & forget — never blocks the UX)
+            if (enhancedUrl) {
+                saveImageToHistory({
+                    dataUrl: enhancedUrl,
+                    title: panel.title,
+                    description: panel.description,
+                    sceneIndex: index,
+                }).catch((e) => console.warn("[history] saveImage failed:", e))
+            }
         } catch (err) {
             console.error('Enhance error:', err)
             alert('Enhancement failed — check console')
@@ -1349,16 +1361,16 @@ useEffect(() => {
                             <label style={{ display: "block", fontSize: 12, fontWeight: 700, color: textPrimary, marginBottom: 8 }}>Resolution</label>
                             <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 6 }}>
                                 {([
-                                    { id: "480p" as const, label: "480p", price: "$0.07/s" },
-                                    { id: "720p" as const, label: "720p", price: "$0.15/s" },
-                                    { id: "1080p" as const, label: "1080p", price: "$0.34/s" },
+                                    { id: "480p" as const, label: "480p" },
+                                    { id: "720p" as const, label: "720p" },
+                                    { id: "1080p" as const, label: "1080p" },
                                 ]).map((r) => (
                                     <button
                                         key={r.id}
                                         onClick={() => setVideoSettings(s => ({ ...s, resolution: r.id }))}
                                         style={{
-                                            display: "flex", flexDirection: "column", alignItems: "center", gap: 2,
-                                            padding: "10px 8px", borderRadius: 10,
+                                            display: "flex", alignItems: "center", justifyContent: "center",
+                                            padding: "12px 8px", borderRadius: 10,
                                             border: `1.5px solid ${videoSettings.resolution === r.id ? accent : borderColor}`,
                                             background: videoSettings.resolution === r.id ? `${accent}15` : "transparent",
                                             color: videoSettings.resolution === r.id ? accent : textPrimary,
@@ -1366,8 +1378,7 @@ useEffect(() => {
                                             transition: "all 0.15s ease",
                                         }}
                                     >
-                                        <span>{r.label}</span>
-                                        <span style={{ fontSize: 9, opacity: 0.7, fontWeight: 500 }}>{r.price}</span>
+                                        {r.label}
                                     </button>
                                 ))}
                             </div>
@@ -1393,21 +1404,11 @@ useEffect(() => {
                             </div>
                         </div>
 
-                        {/* Cost estimate */}
+                        {/* Summary */}
                         <div style={{ padding: 12, borderRadius: 10, background: isDark ? "rgba(255,255,255,0.03)" : "rgba(0,0,0,0.03)", marginBottom: 16 }}>
-                            <div style={{ display: "flex", justifyContent: "space-between", fontSize: 11, color: textSecondary, marginBottom: 4 }}>
-                                <span>Clips to generate</span>
-                                <span style={{ color: textPrimary, fontWeight: 600 }}>{Math.max(0, panels.filter(p => p.enhancedUrl).length - 1)}</span>
-                            </div>
                             <div style={{ display: "flex", justifyContent: "space-between", fontSize: 11, color: textSecondary }}>
-                                <span>Estimated cost</span>
-                                <span style={{ color: accent, fontWeight: 700 }}>
-                                    ~${(
-                                        Math.max(0, panels.filter(p => p.enhancedUrl).length - 1) *
-                                        videoSettings.duration *
-                                        ({ "480p": 0.06726, "720p": 0.1512, "1080p": 0.3402 }[videoSettings.resolution])
-                                    ).toFixed(2)}
-                                </span>
+                                <span>Clips to generate</span>
+                                <span style={{ color: textPrimary, fontWeight: 700, fontVariantNumeric: "tabular-nums" }}>{Math.max(0, panels.filter(p => p.enhancedUrl).length - 1)}</span>
                             </div>
                         </div>
 
@@ -1426,6 +1427,9 @@ useEffect(() => {
             )}
 
             {/* Video Generation Modal + Snackbar are rendered globally via VideoGenerationProvider */}
+
+            {/* History — saved generations on this device */}
+            {!isEmptyDrawing && <MarketingHistorySection isMobile={isMobile} />}
         </div>
     )
 }
