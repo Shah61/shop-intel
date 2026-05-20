@@ -40,7 +40,7 @@ const BOTTOM_CARDS = [
   {
     title: "Inventory and Fulfillment Control",
     body: "See stock movement, delivery risks, and fulfillment bottlenecks before they impact customer experience.",
-    image: publicImage("images/second/bigCard1.png"),
+    image: publicImage("images/second/bigCard3.png"),
     placeholder: "p4" as const,
     icon: "sun" as const,
     tall: true,
