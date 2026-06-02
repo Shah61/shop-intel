@@ -129,7 +129,7 @@ export default function FAQSection({ workDoneBackdrop }: Props) {
 
   if (workDoneBackdrop) {
     return (
-      <section className="w-full bg-black px-5 py-16 text-white sm:px-8 lg:px-10 lg:py-28">
+      <section id="faq" className="w-full scroll-mt-28 bg-black px-5 py-16 text-white sm:px-8 lg:px-10 lg:py-28 md:scroll-mt-32">
         <div className="relative mx-auto w-full max-w-[min(86.4vw,1512px)] overflow-hidden rounded-2xl border border-white/10">
           <div
             aria-hidden
@@ -149,7 +149,7 @@ export default function FAQSection({ workDoneBackdrop }: Props) {
   }
 
   return (
-    <section className="w-full bg-black py-28 px-6 text-white md:px-16">
+    <section id="faq" className="w-full scroll-mt-28 bg-black py-28 px-6 text-white md:scroll-mt-32 md:px-16">
       {inner}
     </section>
   )

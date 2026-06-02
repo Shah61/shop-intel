@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState, useCallback } from "react"
 
+import { ContactDialog, useContactDialog } from "../components/landing/ContactDialog"
 import { LandingNavBar } from "../components/landing/LandingNavBar"
 
 function publicImage(path: string) {
@@ -199,8 +200,10 @@ export default function WhyChooseUsPage() {
   const [isAnimating, setIsAnimating] = useState(false)
   const [slideVisible, setSlideVisible] = useState(true)
   const containerRef = useRef<HTMLDivElement>(null)
+  const getStartedButtonRef = useRef<HTMLButtonElement>(null)
   const touchStartY = useRef(0)
   const lastScrollTime = useRef(0)
+  const { mounted, shown, openDialog, closeDialog, panelRef } = useContactDialog()
 
   useEffect(() => {
     const prev = document.title
@@ -463,11 +466,14 @@ export default function WhyChooseUsPage() {
             }}
           >
             <button
+              ref={getStartedButtonRef}
+              type="button"
               className="rounded-full px-8 py-3.5 text-sm font-semibold text-white transition-all duration-300 hover:scale-105 hover:shadow-lg"
               style={{
                 background: "linear-gradient(135deg, #7c3aed, #d946ef)",
                 boxShadow: "0 8px 32px rgba(124,58,237,0.3)",
               }}
+              onClick={() => openDialog(getStartedButtonRef.current)}
               onMouseEnter={(e) => {
                 ;(e.currentTarget as HTMLButtonElement).style.boxShadow =
                   "0 12px 40px rgba(124,58,237,0.5)"
@@ -483,6 +489,7 @@ export default function WhyChooseUsPage() {
         )}
       </div>
 
+      <ContactDialog mounted={mounted} shown={shown} onClose={closeDialog} panelRef={panelRef} />
     </div>
   )
 }

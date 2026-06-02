@@ -41,6 +41,18 @@ export default function FeaturesPage() {
     }
   }, [])
 
+  useEffect(() => {
+    const scrollToFaq = () => {
+      if (window.location.hash !== "#faq") return
+      const el = document.getElementById("faq")
+      if (!el) return
+      el.scrollIntoView({ behavior: "smooth", block: "start" })
+    }
+    scrollToFaq()
+    window.addEventListener("hashchange", scrollToFaq)
+    return () => window.removeEventListener("hashchange", scrollToFaq)
+  }, [])
+
   const sections = [
     {
       title: "Sales",

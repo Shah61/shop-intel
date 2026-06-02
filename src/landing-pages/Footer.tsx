@@ -1,85 +1,76 @@
+import Link from "next/link"
+
+type FooterLink = { label: string; href: string; external?: boolean }
+
+const FOOTER_COLUMNS: { title: string; links: FooterLink[] }[] = [
+  {
+    title: "Company",
+    links: [
+      { label: "About Pulse", href: "/home#real-time-intelligence" },
+      { label: "Platform Overview", href: "/home/features" },
+      { label: "Why Teams Choose Pulse", href: "/home/why-choose-us" },
+    ],
+  },
+  {
+    title: "Features",
+    links: [
+      { label: "Sales Intelligence", href: "/home/features" },
+      { label: "Marketing Intelligence", href: "/home/features" },
+      { label: "Inventory & Fulfillment", href: "/home/features" },
+      { label: "Retail & Branch Analytics", href: "/home/features" },
+    ],
+  },
+  {
+    title: "Learn More",
+    links: [
+      { label: "FAQ", href: "/home/features#faq" },
+      { label: "Book a Demo", href: "/home#contact" },
+    ],
+  },
+]
+
 export default function Footer() {
-    return (
-      <footer className="w-full bg-[#050508] text-white px-6 md:px-16 pt-20 pb-10">
-        <div className="max-w-7xl mx-auto">
-  
-          {/* TOP GRID */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-12">
-  
-            {/* Company */}
-            <div>
-              <h4 className="text-sm font-semibold mb-6 text-white/90">
-                Company
-              </h4>
+  return (
+    <footer className="w-full bg-[#050508] text-white px-6 md:px-16 pt-20 pb-10">
+      <div className="max-w-7xl mx-auto">
+
+        {/* TOP GRID */}
+        <div className="grid grid-cols-2 gap-x-8 gap-y-12 sm:grid-cols-3 md:gap-12">
+          {FOOTER_COLUMNS.map((col) => (
+            <div key={col.title}>
+              <h4 className="text-sm font-semibold mb-6 text-white/90">{col.title}</h4>
               <ul className="space-y-4 text-white/60">
-                <li className="hover:text-white transition cursor-pointer">About Pulse</li>
-                <li className="hover:text-white transition cursor-pointer">Platform Overview</li>
-                <li className="hover:text-white transition cursor-pointer">Why Teams Choose Pulse</li>
+                {col.links.map((link) => (
+                  <li key={link.label}>
+                    {link.external ? (
+                      <a
+                        href={link.href}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-block hover:text-white transition"
+                      >
+                        {link.label}
+                      </a>
+                    ) : (
+                      <Link href={link.href} className="inline-block hover:text-white transition">
+                        {link.label}
+                      </Link>
+                    )}
+                  </li>
+                ))}
               </ul>
             </div>
-  
-            {/* Features */}
-            <div>
-              <h4 className="text-sm font-semibold mb-6 text-white/90">
-                Features
-              </h4>
-              <ul className="space-y-4 text-white/60">
-                <li className="hover:text-white transition cursor-pointer">Sales Intelligence</li>
-                <li className="hover:text-white transition cursor-pointer">Marketing Intelligence</li>
-                <li className="hover:text-white transition cursor-pointer">Inventory & Fulfillment</li>
-                <li className="hover:text-white transition cursor-pointer">Retail & Branch Analytics</li>
-              </ul>
-            </div>
-  
-            {/* Learn More */}
-            <div>
-              <h4 className="text-sm font-semibold mb-6 text-white/90">
-                Learn More
-              </h4>
-              <ul className="space-y-4 text-white/60">
-                <li className="hover:text-white transition cursor-pointer">FAQ</li>
-                <li className="hover:text-white transition cursor-pointer">Book a Demo</li>
-              </ul>
-            </div>
-  
-            {/* Others */}
-            <div>
-              <h4 className="text-sm font-semibold mb-6 text-white/90">
-                Others
-              </h4>
-              <ul className="space-y-4 text-white/60">
-                <li className="hover:text-white transition cursor-pointer">404</li>
-              </ul>
-            </div>
-  
-          </div>
-  
-          {/* BOTTOM */}
-          <div className="mt-20 flex flex-col md:flex-row items-center justify-between gap-6">
-  
-            {/* Social Icons */}
-            <div className="flex items-center gap-6 text-white/70">
-              <div className="w-9 h-9 border border-white/20 rounded-md flex items-center justify-center hover:border-white hover:text-white transition cursor-pointer">
-                in
-              </div>
-              <div className="w-9 h-9 border border-white/20 rounded-md flex items-center justify-center hover:border-white hover:text-white transition cursor-pointer">
-                ig
-              </div>
-              <div className="w-9 h-9 border border-white/20 rounded-md flex items-center justify-center hover:border-white hover:text-white transition cursor-pointer">
-                x
-              </div>
-              <div className="w-9 h-9 border border-white/20 rounded-md flex items-center justify-center hover:border-white hover:text-white transition cursor-pointer">
-                yt
-              </div>
-            </div>
-  
-            {/* Copyright */}
-            <div className="text-white/50 text-sm">
-              © 2026 Haris AI Solutions, Inc.
-            </div>
-          </div>
-  
+          ))}
         </div>
-      </footer>
-    )
-  }
+
+        {/* BOTTOM */}
+        <div className="mt-20 flex justify-center sm:justify-end">
+          <div className="text-center text-sm text-white/50 sm:text-right">
+            © 2026 Haris AI Solutions, Inc.
+          </div>
+        </div>
+
+      </div>
+    </footer>
+  )
+}

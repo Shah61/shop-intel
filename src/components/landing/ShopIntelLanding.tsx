@@ -12,6 +12,7 @@ import HumanityThroughAISection from './HumanityThroughAISection'
 import InnovationSection from './InnovationSection'
 import RealTimeIntelligenceSection from './RealTimeIntelligenceSection'
 import GetWorkDoneSection from './GetWorkDoneSection'
+import ContactSection from './ContactSection'
 import { LandingNavBar } from './LandingNavBar'
 import Footer from '../../landing-pages/Footer'
 
@@ -353,6 +354,20 @@ export default function PulseLanding() {
     updateIndicatorPosition()
     requestAnimationFrame(updateIndicatorPosition)
   }, [whySectionInView, updateIndicatorPosition, isMobile])
+
+  useEffect(() => {
+    const scrollToHash = () => {
+      const hash = window.location.hash
+      if (hash !== "#real-time-intelligence" && hash !== "#contact") return
+      const id = hash.slice(1)
+      const el = document.getElementById(id)
+      if (!el) return
+      el.scrollIntoView({ behavior: "smooth", block: "start" })
+    }
+    scrollToHash()
+    window.addEventListener("hashchange", scrollToHash)
+    return () => window.removeEventListener("hashchange", scrollToHash)
+  }, [])
 
   return (
     <div className="font-dm-sans relative min-h-screen overscroll-none bg-[#0a0815]">
@@ -720,6 +735,9 @@ export default function PulseLanding() {
 
       {/* SECTION 7 — Get work done CTA */}
       <GetWorkDoneSection />
+
+      {/* SECTION 8 — Contact */}
+      <ContactSection />
 
       <Footer />
     </div>

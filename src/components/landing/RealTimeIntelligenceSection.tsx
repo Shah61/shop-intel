@@ -258,8 +258,9 @@ export default function RealTimeIntelligenceSection() {
       `}</style>
 
       <section
+        id="real-time-intelligence"
         ref={sectionRef}
-        className="rti-root flex min-h-dvh w-full flex-col bg-[#0d0d0f] text-white"
+        className="rti-root flex min-h-dvh w-full scroll-mt-28 flex-col bg-[#0d0d0f] text-white md:scroll-mt-32"
       >
         <div className="flex w-full max-w-none flex-1 flex-col justify-center px-5 py-12 sm:px-8 md:px-10 xl:px-12 xl:py-14 2xl:px-20">
           {/* ── HEADER ROW ── */}
