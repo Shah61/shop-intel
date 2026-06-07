@@ -211,8 +211,8 @@ const Panel: React.FC<{children:React.ReactNode;style?:React.CSSProperties}> = (
   <div style={{borderRadius:14,border:"1px solid rgba(255,255,255,.07)",background:"rgba(255,255,255,.025)",padding:"18px 20px",position:"relative",overflow:"hidden",...style}}>{children}</div>
 );
 
-const PanelHeader: React.FC<{title:string;subtitle?:string;icon:React.ReactNode;iconColor?:string}> = ({title,subtitle,icon,iconColor="var(--preset-primary)"}) => (
-  <div style={{display:"flex",alignItems:"center",gap:9,marginBottom:14}}>
+const PanelHeader: React.FC<{title:string;subtitle?:string;icon:React.ReactNode;iconColor?:string;compact?:boolean}> = ({title,subtitle,icon,iconColor="var(--preset-primary)",compact}) => (
+  <div style={{display:"flex",alignItems:"center",gap:9,marginBottom:compact?8:14,flexShrink:0}}>
     <div style={{width:30,height:30,borderRadius:8,background:`${iconColor}18`,display:"flex",alignItems:"center",justifyContent:"center",color:iconColor,flexShrink:0}}>{icon}</div>
     <div><div style={{fontSize:13,fontWeight:800,letterSpacing:"-0.2px"}}>{title}</div>{subtitle&&<div style={{fontSize:11,color:"rgba(255,255,255,.38)",marginTop:1}}>{subtitle}</div>}</div>
   </div>
@@ -323,15 +323,15 @@ const BranchDetail: React.FC<{branch:BranchData;allBranches:BranchData[];onClose
   ];
 
   return (
-    <div style={{display:"flex",flexDirection:"column",gap:14,animation:"br-slideIn .3s ease"}}>
+    <div style={{display:"flex",flexDirection:"column",gap:8,flex:1,minHeight:0,overflow:"hidden",animation:"br-slideIn .3s ease"}}>
       {/* Header */}
-      <div style={{display:"flex",alignItems:"flex-start",gap:12}}>
+      <div style={{display:"flex",alignItems:"flex-start",gap:12,flexShrink:0}}>
         <button onClick={onClose} style={{width:34,height:34,borderRadius:9,background:"rgba(255,255,255,.06)",border:"1px solid rgba(255,255,255,.08)",display:"flex",alignItems:"center",justifyContent:"center",cursor:"pointer",color:"rgba(255,255,255,.5)",flexShrink:0}}>
           <ChevronLeft style={{width:16,height:16}} />
         </button>
         <div>
           <div style={{display:"flex",alignItems:"center",gap:8,flexWrap:"wrap"}}>
-            <h3 style={{margin:0,fontSize:18,fontWeight:800,letterSpacing:"-0.4px"}}>{branch.name}</h3>
+            <h3 style={{margin:0,fontSize:16,fontWeight:800,letterSpacing:"-0.4px"}}>{branch.name}</h3>
             <span style={{display:"inline-flex",alignItems:"center",gap:3,padding:"2px 8px",borderRadius:5,background:`${s.bg}18`,border:`1px solid ${s.bg}44`,fontSize:9,fontWeight:800,color:s.bg}}><PulseDot size={5} color={s.bg} />{s.label}</span>
             {rank<=3&&rank>0&&<span style={{display:"inline-flex",alignItems:"center",gap:3,padding:"2px 8px",borderRadius:5,background:"rgba(245,158,11,.12)",border:"1px solid rgba(245,158,11,.3)",fontSize:9,fontWeight:800,color:"#f59e0b"}}><Crown style={{width:8,height:8}} />#{rank}</span>}
           </div>
@@ -346,7 +346,7 @@ const BranchDetail: React.FC<{branch:BranchData;allBranches:BranchData[];onClose
       </div>
 
       {/* Tabs */}
-      <div style={{display:"flex",gap:2,borderBottom:"1px solid rgba(255,255,255,.07)",overflowX:"auto"}}>
+      <div style={{display:"flex",gap:2,borderBottom:"1px solid rgba(255,255,255,.07)",overflowX:"auto",flexShrink:0}}>
         {TABS.map(t=>(
           <button key={t.key} onClick={()=>setTab(t.key)} style={{display:"inline-flex",alignItems:"center",gap:5,padding:"7px 13px",borderRadius:"9px 9px 0 0",fontSize:11,fontWeight:700,cursor:"pointer",border:"1px solid transparent",fontFamily:"inherit",transition:"all .15s",whiteSpace:"nowrap",flexShrink:0,...(tab===t.key?{background:"linear-gradient(135deg,var(--preset-primary),var(--preset-lighter))",color:"#fff",boxShadow:"0 4px 14px rgba(var(--preset-primary-rgb),.28)"}:{background:"transparent",color:"rgba(255,255,255,.38)"})}}>{t.icon}{t.label}</button>
         ))}
@@ -354,65 +354,68 @@ const BranchDetail: React.FC<{branch:BranchData;allBranches:BranchData[];onClose
 
       {/* OVERVIEW */}
       {tab==="overview"&&branch.status==="open"&&(
-        <div style={{display:"flex",flexDirection:"column",gap:12}}>
-          <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fit,minmax(145px,1fr))",gap:10}}>
+        <div style={{display:"flex",flexDirection:"column",gap:8,flex:1,minHeight:0,overflow:"hidden"}}>
+          <div style={{display:"grid",gridTemplateColumns:"repeat(6,minmax(0,1fr))",gap:8,flexShrink:0}}>
             {[
-              {l:"Today Revenue",v:fmtRM(branch.todayRevenue),ic:<DollarSign style={{width:14,height:14}} />,ac:"var(--preset-primary)",t:branch.revenueTrend},
-              {l:"Today Orders",v:String(branch.todayOrders),ic:<ShoppingBag style={{width:14,height:14}} />,ac:"#6366f1",t:branch.ordersTrend},
-              {l:"Foot Traffic",v:branch.footTraffic.toLocaleString(),ic:<Footprints style={{width:14,height:14}} />,ac:"#10b981",t:branch.trafficTrend},
-              {l:"Avg Order",v:`RM ${branch.avgOrderValue.toFixed(0)}`,ic:<CreditCard style={{width:14,height:14}} />,ac:"#ec4899",t:null},
-              {l:"Conversion",v:`${branch.conversionRate}%`,ic:<Target style={{width:14,height:14}} />,ac:"#f59e0b",t:null},
-              {l:"Satisfaction",v:`${branch.customerSatisfaction}/5`,ic:<Star style={{width:14,height:14}} />,ac:"#f59e0b",t:null},
+              {l:"Today Revenue",v:fmtRM(branch.todayRevenue),ic:<DollarSign style={{width:12,height:12}} />,ac:"var(--preset-primary)",t:branch.revenueTrend},
+              {l:"Today Orders",v:String(branch.todayOrders),ic:<ShoppingBag style={{width:12,height:12}} />,ac:"#6366f1",t:branch.ordersTrend},
+              {l:"Foot Traffic",v:branch.footTraffic.toLocaleString(),ic:<Footprints style={{width:12,height:12}} />,ac:"#10b981",t:branch.trafficTrend},
+              {l:"Avg Order",v:`RM ${branch.avgOrderValue.toFixed(0)}`,ic:<CreditCard style={{width:12,height:12}} />,ac:"#ec4899",t:null},
+              {l:"Conversion",v:`${branch.conversionRate}%`,ic:<Target style={{width:12,height:12}} />,ac:"#f59e0b",t:null},
+              {l:"Satisfaction",v:`${branch.customerSatisfaction}/5`,ic:<Star style={{width:12,height:12}} />,ac:"#f59e0b",t:null},
             ].map((k,i)=>(
-              <div key={i} style={{borderRadius:12,border:"1px solid rgba(255,255,255,.07)",background:"rgba(255,255,255,.03)",padding:"14px 16px",position:"relative",overflow:"hidden"}}>
-                <div style={{position:"absolute",top:"-35%",right:"-12%",width:90,height:90,borderRadius:"50%",background:`radial-gradient(circle,${k.ac}15,transparent 70%)`,pointerEvents:"none"}} />
-                <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:8}}>
-                  <div style={{width:28,height:28,borderRadius:7,background:`${k.ac}18`,display:"flex",alignItems:"center",justifyContent:"center",color:k.ac}}>{k.ic}</div>
-                  {k.t!==null&&<span style={{display:"inline-flex",alignItems:"center",gap:2,fontSize:10,fontWeight:800,color:k.t>=0?"#10b981":"#ef4444"}}>{k.t>=0?<ArrowUp style={{width:9,height:9}} />:<ArrowDown style={{width:9,height:9}} />}{Math.abs(k.t).toFixed(1)}%</span>}
+              <div key={i} style={{borderRadius:10,border:"1px solid rgba(255,255,255,.07)",background:"rgba(255,255,255,.03)",padding:"10px 12px",position:"relative",overflow:"hidden"}}>
+                <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:5}}>
+                  <div style={{width:24,height:24,borderRadius:6,background:`${k.ac}18`,display:"flex",alignItems:"center",justifyContent:"center",color:k.ac}}>{k.ic}</div>
+                  {k.t!==null&&<span style={{display:"inline-flex",alignItems:"center",gap:2,fontSize:9,fontWeight:800,color:k.t>=0?"#10b981":"#ef4444"}}>{k.t>=0?<ArrowUp style={{width:8,height:8}} />:<ArrowDown style={{width:8,height:8}} />}{Math.abs(k.t).toFixed(1)}%</span>}
                 </div>
-                <div style={{fontSize:20,fontWeight:800,letterSpacing:"-0.4px",color:"rgba(255,255,255,.92)",marginBottom:3}}>{k.v}</div>
-                <div style={{fontSize:10,color:"rgba(255,255,255,.35)",fontWeight:700,textTransform:"uppercase",letterSpacing:".05em"}}>{k.l}</div>
+                <div style={{fontSize:16,fontWeight:800,letterSpacing:"-0.3px",color:"rgba(255,255,255,.92)",marginBottom:2}}>{k.v}</div>
+                <div style={{fontSize:9,color:"rgba(255,255,255,.35)",fontWeight:700,textTransform:"uppercase",letterSpacing:".05em"}}>{k.l}</div>
               </div>
             ))}
           </div>
-          <div style={{display:"grid",gridTemplateColumns:"1.2fr .8fr",gap:12}}>
-            <Panel>
-              <PanelHeader title="This Week's Revenue" subtitle="Daily vs target" icon={<BarChart2 style={{width:14,height:14}} />} />
-              <ResponsiveContainer width="100%" height={180}>
-                <ComposedChart data={weekly} margin={{top:0,right:0,left:-22,bottom:0}}>
-                  <CartesianGrid strokeDasharray="2 2" stroke="rgba(255,255,255,.04)" vertical={false} />
-                  <XAxis dataKey="day" tick={{fontSize:10,fill:"rgba(255,255,255,.3)"}} tickLine={false} axisLine={false} />
-                  <YAxis tick={{fontSize:9,fill:"rgba(255,255,255,.25)"}} tickLine={false} axisLine={false} tickFormatter={v=>`${(v/1000).toFixed(0)}K`} />
-                  <Tooltip content={<ChartTip />} />
-                  <Bar dataKey="revenue" name="Revenue" radius={[4,4,0,0]} maxBarSize={22}>{weekly.map((_,i)=><Cell key={i} fill={i===weekly.length-1?"var(--preset-primary)":`rgba(var(--preset-primary-rgb),${0.3+i*0.08})`} />)}</Bar>
-                  <Line type="monotone" dataKey="target" name="Target" stroke="#f59e0b" strokeWidth={1.5} strokeDasharray="4 3" dot={false} />
-                </ComposedChart>
-              </ResponsiveContainer>
-            </Panel>
-            <Panel>
-              <PanelHeader title="Sales by Category" subtitle="Current month" icon={<PieChartIcon style={{width:14,height:14}} />} iconColor="#ec4899" />
-              <ResponsiveContainer width="100%" height={140}>
-                <RePieChart><Pie data={CATS} dataKey="value" nameKey="name" cx="50%" cy="50%" outerRadius={52} innerRadius={28} strokeWidth={0} paddingAngle={3}>{CATS.map((c,i)=><Cell key={i} fill={c.color} />)}</Pie><Tooltip content={<ChartTip />} /></RePieChart>
-              </ResponsiveContainer>
-              <div style={{display:"flex",flexWrap:"wrap",gap:8,justifyContent:"center",marginTop:6}}>{CATS.map((c,i)=>(<div key={i} style={{display:"flex",alignItems:"center",gap:4,fontSize:10}}><span style={{width:6,height:6,borderRadius:"50%",background:c.color}} /><span style={{color:"rgba(255,255,255,.4)"}}>{c.name}</span></div>))}</div>
-            </Panel>
-          </div>
-          <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:12}}>
-            <Panel>
-              <PanelHeader title="Monthly Target" subtitle={`${fmtRM(branch.monthRevenue)} of ${fmtRM(branch.monthlyTarget)}`} icon={<Target style={{width:14,height:14}} />} iconColor={perfC(branch.targetAchievement)} />
-              <div style={{position:"relative",width:130,height:130,margin:"0 auto"}}>
-                <svg viewBox="0 0 120 120" style={{transform:"rotate(-90deg)"}}><circle cx="60" cy="60" r="50" fill="none" stroke="rgba(255,255,255,.06)" strokeWidth="10" /><circle cx="60" cy="60" r="50" fill="none" stroke={perfC(branch.targetAchievement)} strokeWidth="10" strokeLinecap="round" strokeDasharray={`${(branch.targetAchievement/100)*314} 314`} style={{transition:"stroke-dasharray 1s ease"}} /></svg>
-                <div style={{position:"absolute",inset:0,display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center"}}><span style={{fontSize:26,fontWeight:900,color:perfC(branch.targetAchievement)}}>{branch.targetAchievement}%</span><span style={{fontSize:10,color:"rgba(255,255,255,.3)"}}>achieved</span></div>
+          <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gridTemplateRows:"1fr 1fr",gap:8,flex:1,minHeight:0}}>
+            <Panel style={{display:"flex",flexDirection:"column",minHeight:0,padding:"12px 14px"}}>
+              <PanelHeader compact title="This Week's Revenue" subtitle="Daily vs target" icon={<BarChart2 style={{width:14,height:14}} />} />
+              <div style={{flex:1,minHeight:0}}>
+                <ResponsiveContainer width="100%" height="100%">
+                  <ComposedChart data={weekly} margin={{top:0,right:0,left:-22,bottom:0}}>
+                    <CartesianGrid strokeDasharray="2 2" stroke="rgba(255,255,255,.04)" vertical={false} />
+                    <XAxis dataKey="day" tick={{fontSize:10,fill:"rgba(255,255,255,.3)"}} tickLine={false} axisLine={false} />
+                    <YAxis tick={{fontSize:9,fill:"rgba(255,255,255,.25)"}} tickLine={false} axisLine={false} tickFormatter={v=>`${(v/1000).toFixed(0)}K`} />
+                    <Tooltip content={<ChartTip />} />
+                    <Bar dataKey="revenue" name="Revenue" radius={[4,4,0,0]} maxBarSize={18}>{weekly.map((_,i)=><Cell key={i} fill={i===weekly.length-1?"var(--preset-primary)":`rgba(var(--preset-primary-rgb),${0.3+i*0.08})`} />)}</Bar>
+                    <Line type="monotone" dataKey="target" name="Target" stroke="#f59e0b" strokeWidth={1.5} strokeDasharray="4 3" dot={false} />
+                  </ComposedChart>
+                </ResponsiveContainer>
               </div>
-              <div style={{textAlign:"center",marginTop:10,fontSize:12,color:"rgba(255,255,255,.5)"}}>Remaining: <b style={{color:"rgba(255,255,255,.8)"}}>{fmtRM(branch.monthlyTarget-branch.monthRevenue)}</b></div>
             </Panel>
-            <Panel>
-              <PanelHeader title="Branch Details" icon={<Info style={{width:14,height:14}} />} iconColor="var(--preset-lighter)" />
-              <div style={{display:"flex",flexDirection:"column",gap:8}}>
+            <Panel style={{display:"flex",flexDirection:"column",minHeight:0,padding:"12px 14px"}}>
+              <PanelHeader compact title="Sales by Category" subtitle="Current month" icon={<PieChartIcon style={{width:14,height:14}} />} iconColor="#ec4899" />
+              <div style={{flex:1,minHeight:0}}>
+                <ResponsiveContainer width="100%" height="100%">
+                  <RePieChart><Pie data={CATS} dataKey="value" nameKey="name" cx="50%" cy="50%" outerRadius="75%" innerRadius="40%" strokeWidth={0} paddingAngle={3}>{CATS.map((c,i)=><Cell key={i} fill={c.color} />)}</Pie><Tooltip content={<ChartTip />} /></RePieChart>
+                </ResponsiveContainer>
+              </div>
+              <div style={{display:"flex",flexWrap:"wrap",gap:6,justifyContent:"center",marginTop:4,flexShrink:0}}>{CATS.map((c,i)=>(<div key={i} style={{display:"flex",alignItems:"center",gap:4,fontSize:9}}><span style={{width:5,height:5,borderRadius:"50%",background:c.color}} /><span style={{color:"rgba(255,255,255,.4)"}}>{c.name}</span></div>))}</div>
+            </Panel>
+            <Panel style={{display:"flex",flexDirection:"column",minHeight:0,padding:"12px 14px"}}>
+              <PanelHeader compact title="Monthly Target" subtitle={`${fmtRM(branch.monthRevenue)} of ${fmtRM(branch.monthlyTarget)}`} icon={<Target style={{width:14,height:14}} />} iconColor={perfC(branch.targetAchievement)} />
+              <div style={{flex:1,display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",minHeight:0}}>
+                <div style={{position:"relative",width:96,height:96}}>
+                  <svg viewBox="0 0 120 120" style={{transform:"rotate(-90deg)",width:"100%",height:"100%"}}><circle cx="60" cy="60" r="50" fill="none" stroke="rgba(255,255,255,.06)" strokeWidth="10" /><circle cx="60" cy="60" r="50" fill="none" stroke={perfC(branch.targetAchievement)} strokeWidth="10" strokeLinecap="round" strokeDasharray={`${(branch.targetAchievement/100)*314} 314`} style={{transition:"stroke-dasharray 1s ease"}} /></svg>
+                  <div style={{position:"absolute",inset:0,display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center"}}><span style={{fontSize:20,fontWeight:900,color:perfC(branch.targetAchievement)}}>{branch.targetAchievement}%</span><span style={{fontSize:9,color:"rgba(255,255,255,.3)"}}>achieved</span></div>
+                </div>
+                <div style={{textAlign:"center",marginTop:6,fontSize:11,color:"rgba(255,255,255,.5)"}}>Remaining: <b style={{color:"rgba(255,255,255,.8)"}}>{fmtRM(branch.monthlyTarget-branch.monthRevenue)}</b></div>
+              </div>
+            </Panel>
+            <Panel style={{display:"flex",flexDirection:"column",minHeight:0,padding:"12px 14px",overflow:"hidden"}}>
+              <PanelHeader compact title="Branch Details" icon={<Info style={{width:14,height:14}} />} iconColor="var(--preset-lighter)" />
+              <div style={{display:"flex",flexDirection:"column",gap:2,flex:1,minHeight:0,justifyContent:"space-evenly"}}>
                 {[{l:"Manager",v:branch.manager,ic:<UserCheck style={{width:11,height:11}} />},{l:"Phone",v:branch.phone,ic:<Phone style={{width:11,height:11}} />},{l:"Opened",v:new Date(branch.openedDate).toLocaleDateString("en-MY",{year:"numeric",month:"long"}),ic:<Calendar style={{width:11,height:11}} />},{l:"Best Seller",v:branch.bestSeller,ic:<Star style={{width:11,height:11}} />},{l:"Top Category",v:branch.topCategory,ic:<Tag style={{width:11,height:11}} />},{l:"Return Rate",v:`${branch.returnRate}%`,ic:<BarChart2 style={{width:11,height:11}} />}].map((d,i)=>(
-                  <div key={i} style={{display:"flex",alignItems:"center",justifyContent:"space-between",padding:"6px 0",borderBottom:i<5?"1px solid rgba(255,255,255,.05)":"none"}}>
-                    <div style={{display:"flex",alignItems:"center",gap:6,color:"rgba(255,255,255,.35)"}}>{d.ic}<span style={{fontSize:11}}>{d.l}</span></div>
-                    <span style={{fontSize:11,fontWeight:700,color:"rgba(255,255,255,.75)"}}>{d.v}</span>
+                  <div key={i} style={{display:"flex",alignItems:"center",justifyContent:"space-between",padding:"3px 0",borderBottom:i<5?"1px solid rgba(255,255,255,.05)":"none"}}>
+                    <div style={{display:"flex",alignItems:"center",gap:5,color:"rgba(255,255,255,.35)"}}>{d.ic}<span style={{fontSize:10}}>{d.l}</span></div>
+                    <span style={{fontSize:10,fontWeight:700,color:"rgba(255,255,255,.75)",textAlign:"right",maxWidth:"55%",overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}}>{d.v}</span>
                   </div>
                 ))}
               </div>
@@ -423,7 +426,7 @@ const BranchDetail: React.FC<{branch:BranchData;allBranches:BranchData[];onClose
 
       {/* REVENUE */}
       {tab==="revenue"&&branch.status==="open"&&(
-        <div style={{display:"flex",flexDirection:"column",gap:12}}>
+        <div style={{display:"flex",flexDirection:"column",gap:12,flex:1,minHeight:0,overflowY:"auto"}}>
           <Panel>
             <PanelHeader title="6-Month Revenue Trend" icon={<TrendingUp style={{width:14,height:14}} />} />
             <ResponsiveContainer width="100%" height={200}>
@@ -447,7 +450,7 @@ const BranchDetail: React.FC<{branch:BranchData;allBranches:BranchData[];onClose
 
       {/* TRAFFIC */}
       {tab==="traffic"&&branch.status==="open"&&(
-        <div style={{display:"flex",flexDirection:"column",gap:12}}>
+        <div style={{display:"flex",flexDirection:"column",gap:12,flex:1,minHeight:0,overflowY:"auto"}}>
           <Panel>
             <PanelHeader title="Hourly Foot Traffic" subtitle="Today" icon={<Footprints style={{width:14,height:14}} />} iconColor="#10b981" />
             <ResponsiveContainer width="100%" height={200}>
@@ -471,7 +474,7 @@ const BranchDetail: React.FC<{branch:BranchData;allBranches:BranchData[];onClose
 
       {/* STAFF */}
       {tab==="staff"&&branch.status==="open"&&(
-        <div style={{display:"flex",flexDirection:"column",gap:12}}>
+        <div style={{display:"flex",flexDirection:"column",gap:12,flex:1,minHeight:0,overflowY:"auto"}}>
           <div style={{display:"grid",gridTemplateColumns:"1fr 1fr 1fr 1fr",gap:10}}>
             {[{l:"Total Staff",v:branch.staffCount,ic:<Users style={{width:14,height:14}} />,c:"var(--preset-primary)"},{l:"Present",v:branch.staffPresent,ic:<UserCheck style={{width:14,height:14}} />,c:"#10b981"},{l:"Absent",v:branch.staffCount-branch.staffPresent,ic:<UserMinus style={{width:14,height:14}} />,c:"#ef4444"},{l:"Avg Service",v:`${branch.avgServiceTime}m`,ic:<Clock style={{width:14,height:14}} />,c:"#f59e0b"}].map((k,i)=>(
               <Panel key={i}><div style={{color:k.c,marginBottom:10}}>{k.ic}</div><div style={{fontSize:22,fontWeight:900,color:k.c}}>{k.v}</div><div style={{fontSize:10,color:"rgba(255,255,255,.35)",fontWeight:700,textTransform:"uppercase",marginTop:4}}>{k.l}</div></Panel>
@@ -490,7 +493,7 @@ const BranchDetail: React.FC<{branch:BranchData;allBranches:BranchData[];onClose
 
       {/* COMPARE */}
       {tab==="compare"&&(
-        <Panel>
+        <div style={{flex:1,minHeight:0,overflowY:"auto"}}><Panel>
           <PanelHeader title="Branch vs Network Average" icon={<BarChart3 style={{width:14,height:14}} />} iconColor="#8b5cf6" />
           {(()=>{
             const avg={revenue:open.reduce((s,b)=>s+b.todayRevenue,0)/open.length,orders:open.reduce((s,b)=>s+b.todayOrders,0)/open.length,traffic:open.reduce((s,b)=>s+b.footTraffic,0)/open.length,conv:open.reduce((s,b)=>s+b.conversionRate,0)/open.length,aov:open.reduce((s,b)=>s+b.avgOrderValue,0)/open.length,sat:open.reduce((s,b)=>s+b.customerSatisfaction,0)/open.length};
@@ -507,7 +510,7 @@ const BranchDetail: React.FC<{branch:BranchData;allBranches:BranchData[];onClose
               </div>);
             });
           })()}
-        </Panel>
+        </Panel></div>
       )}
 
       {branch.status!=="open"&&(
@@ -621,12 +624,14 @@ const BranchesPage: React.FC = () => {
         .branches-theme.light-mode .maplibregl-popup-close-button:hover{color:rgba(15,23,42,.8)!important;background:rgba(226,232,240,.95)!important}
         .branches-theme.light-mode .maplibregl-ctrl-group{background:rgba(255,255,255,.95)!important;border:1px solid rgba(148,163,184,.35)!important}
         .branches-theme.light-mode .maplibregl-ctrl-group button span{filter:invert(0)!important}
+        .branches-theme{height:calc(100vh - 5rem);min-height:0}
+        @media (min-width:1024px){.branches-theme{height:calc(100vh - 4rem)}}
       `}</style>
 
-<div className={`branches-theme ${isLight ? "light-mode" : ""}`} style={{color:isLight?"#0f172a":"rgba(255,255,255,.88)",display:"flex",flexDirection:"column",gap:14,width:"100%",height:"100vh",overflow:"hidden",padding:16,boxSizing:"border-box",fontFamily:"-apple-system,BlinkMacSystemFont,'Segoe UI','Helvetica Neue',sans-serif"}}>
+<div className={`branches-theme ${isLight ? "light-mode" : ""} -mt-4 sm:-mt-6 lg:-mt-8`} style={{color:isLight?"#0f172a":"rgba(255,255,255,.88)",display:"flex",flexDirection:"column",gap:detailBranch?8:12,width:"100%",overflow:"hidden",boxSizing:"border-box",fontFamily:"-apple-system,BlinkMacSystemFont,'Segoe UI','Helvetica Neue',sans-serif"}}>
 
-        {/* HEADER */}
-        <div style={{display:"flex",alignItems:"flex-start",justifyContent:"space-between",gap:16,flexWrap:"wrap",flexShrink:0}}>          <div>
+        {/* HEADER — hidden in detail view to reclaim vertical space */}
+        {!detailBranch && <div style={{display:"flex",alignItems:"flex-start",justifyContent:"space-between",gap:16,flexWrap:"wrap",flexShrink:0}}>          <div>
             <div style={{display:"flex",alignItems:"center",gap:10,marginBottom:5}}>
               <div style={{width:40,height:40,borderRadius:12,background:"linear-gradient(135deg,var(--preset-primary),var(--preset-lighter))",display:"flex",alignItems:"center",justifyContent:"center",boxShadow:"0 4px 20px rgba(var(--preset-primary-rgb),.35)",flexShrink:0}}><Building2 style={{width:18,height:18,color:"#fff"}} /></div>
               <div>
@@ -644,10 +649,10 @@ const BranchesPage: React.FC = () => {
             <div style={{position:"relative"}}><Search style={{position:"absolute",left:9,top:"50%",transform:"translateY(-50%)",width:13,height:13,color:"rgba(255,255,255,.25)"}} /><input value={searchQ} onChange={e=>setSearchQ(e.target.value)} placeholder="Search..." style={{width:170,height:33,paddingLeft:28,paddingRight:10,fontSize:12,background:"rgba(255,255,255,.05)",border:"1px solid rgba(255,255,255,.08)",borderRadius:9,color:"rgba(255,255,255,.8)",outline:"none",fontFamily:"inherit"}} /></div>
             <Select value={sortBy} onValueChange={v=>setSortBy(v as any)}><SelectTrigger style={{width:125,height:33,fontSize:12,fontWeight:700,background:"rgba(255,255,255,.05)",border:"1px solid rgba(255,255,255,.08)",color:"rgba(255,255,255,.8)",borderRadius:9,fontFamily:"inherit"}}><SelectValue /></SelectTrigger><SelectContent><SelectItem value="revenue">By Revenue</SelectItem><SelectItem value="orders">By Orders</SelectItem><SelectItem value="target">By Target %</SelectItem></SelectContent></Select>
           </div>
-        </div>
+        </div>}
 
-        {/* KPI STRIP */}
-        <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fit,minmax(148px,1fr))",gap:10,flexShrink:0}}>          {[
+        {/* KPI STRIP — hidden in detail view */}
+        {!detailBranch && <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fit,minmax(148px,1fr))",gap:10,flexShrink:0}}>          {[
             {l:"Today Revenue",v:fmtRM(net.rev),ic:<DollarSign style={{width:14,height:14}} />,ac:"var(--preset-primary)"},
             {l:"Today Orders",v:net.orders.toLocaleString(),ic:<ShoppingBag style={{width:14,height:14}} />,ac:"#6366f1"},
             {l:"Foot Traffic",v:net.traffic.toLocaleString(),ic:<Footprints style={{width:14,height:14}} />,ac:"#10b981"},
@@ -664,7 +669,7 @@ const BranchesPage: React.FC = () => {
               <div style={{fontSize:10,color:"rgba(255,255,255,.35)",fontWeight:700,textTransform:"uppercase",letterSpacing:".05em"}}>{k.l}</div>
             </div>
           ))}
-        </div>
+        </div>}
 
         {/* DETAIL VIEW or MAP+LIST */}
         {detailBranch ? (
