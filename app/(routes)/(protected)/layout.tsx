@@ -1,55 +1,15 @@
-'use client';
+import type { Metadata } from "next"
+import ProtectedLayoutClient from "./protected-layout-client"
 
-import AppSidebar from "@/src/core/shared/view/components/app-sidebar";
-import { useSession } from "@/src/core/lib/dummy-session-provider";
-import { useRouter, usePathname } from "next/navigation";
-import { useTheme } from "next-themes";
-import { useEffect } from "react";
+export const metadata: Metadata = {
+    robots: {
+        index: false,
+        follow: false,
+    },
+}
 
 const ProtectedLayout = ({ children }: { children: React.ReactNode }) => {
-    const { status } = useSession();
-    const { resolvedTheme } = useTheme();
-    const router = useRouter();
-    const pathname = usePathname();
-    const isIntelligence = pathname?.startsWith("/intelligence");
-    const isSeasonal = pathname?.startsWith("/seasonal");
-    const isDark = resolvedTheme === "dark";
-
-    useEffect(() => {
-        if (status === 'unauthenticated') {
-            router.push('/sign-in');
-        }
-    }, [status, router]);
-
-    if (status === 'loading') {
-        return (
-            <div className="min-h-screen flex items-center justify-center">
-                <div className="text-center">
-                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto"></div>
-                    <p className="mt-4 text-sm text-muted-foreground">Loading...</p>
-                </div>
-            </div>
-        );
-    }
-
-    if (status === 'unauthenticated') {
-        return null;
-    }
-
-    return (
-        <div
-            className="protected-layout-root flex h-screen overflow-hidden"
-            style={{ backgroundColor: isDark ? "#131820" : "#ffffff" }}
-        >
-            <AppSidebar />
-            <main
-                className={`main-content flex-1 overflow-y-auto overflow-x-hidden ${isIntelligence ? "main-content--intelligence p-0" : isSeasonal ? "p-0" : "p-4 sm:p-6 lg:p-8 pb-24 lg:pb-8"}`}
-                style={{ backgroundColor: isDark ? "#131820" : "#ffffff" }}
-            >
-                {children}
-            </main>
-        </div>
-    );
+    return <ProtectedLayoutClient>{children}</ProtectedLayoutClient>;
 };
 
 export default ProtectedLayout;

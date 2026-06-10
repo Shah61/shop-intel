@@ -7,31 +7,53 @@ import TanstackQueryClientProvider from "@/src/core/lib/query-client-provider";
 import { DummySessionProvider } from "@/src/core/lib/dummy-session-provider";
 import { VideoGenerationProvider } from "@/src/features/marketing/presentation/view/context/video-generation-context";
 import { Toaster } from 'react-hot-toast';
+import { siteConfig } from "@/lib/seo/site";
+import { JsonLd, organizationJsonLd, webSiteJsonLd } from "@/lib/seo/json-ld";
 
 export const metadata: Metadata = {
+  metadataBase: new URL(siteConfig.url),
   title: {
-    default: "Pulse | AI-Powered E-Commerce Intelligence",
-    template: "%s | Pulse",
+    default: siteConfig.title,
+    template: `%s | ${siteConfig.name}`,
   },
-  description: "Pulse unifies your sales channels, marketing, inventory, and AI intelligence into one command center. Built for e-commerce operators who outgrow spreadsheets.",
-  keywords: ["pulsetech", "pulse", "pulse tech", "ecommerce analytics", "AI commerce", "shopee analytics", "tiktok shop analytics", "inventory management", "marketing intelligence", "ecommerce dashboard"],
-  authors: [{ name: "Haris AI Solutions" }],
-  creator: "Haris AI Solutions",
+  description: siteConfig.description,
+  keywords: [...siteConfig.keywords],
+  authors: [{ name: siteConfig.legalName, url: siteConfig.url }],
+  creator: siteConfig.legalName,
+  publisher: siteConfig.legalName,
+  applicationName: siteConfig.name,
+  category: "technology",
   openGraph: {
-    title: "Pulse | AI-Powered E-Commerce Intelligence",
-    description: "One workspace for revenue, campaigns, inventory, and AI that turns noise into next actions.",
+    title: siteConfig.title,
+    description: siteConfig.shortDescription,
     type: "website",
-    siteName: "Pulse",
-    locale: "en_US",
+    siteName: siteConfig.name,
+    locale: siteConfig.locale,
+    url: siteConfig.url,
   },
   twitter: {
     card: "summary_large_image",
-    title: "Pulse | AI-Powered E-Commerce Intelligence",
-    description: "One workspace for revenue, campaigns, inventory, and AI that turns noise into next actions.",
+    title: siteConfig.title,
+    description: siteConfig.shortDescription,
+    creator: siteConfig.twitterHandle,
   },
-  robots: "index, follow",
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+      "max-video-preview": -1,
+    },
+  },
   icons: {
     icon: "/Icon.png",
+    apple: "/Icon.png",
+  },
+  formatDetection: {
+    telephone: false,
   },
 };
 
@@ -54,6 +76,7 @@ export default function RootLayout({
       <body
         className={`${GeistSans.variable} ${GeistMono.variable} antialiased`}
       >
+        <JsonLd data={[organizationJsonLd(), webSiteJsonLd()]} />
         <DummySessionProvider>
           <ThemeProvider>
             <TanstackQueryClientProvider>

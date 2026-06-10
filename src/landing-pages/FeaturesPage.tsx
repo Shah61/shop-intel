@@ -34,14 +34,6 @@ const FEATURE_IMG = {
 
 export default function FeaturesPage() {
   useEffect(() => {
-    const prev = document.title
-    document.title = "Our Features | Pulse"
-    return () => {
-      document.title = prev
-    }
-  }, [])
-
-  useEffect(() => {
     const scrollToFaq = () => {
       if (window.location.hash !== "#faq") return
       const el = document.getElementById("faq")

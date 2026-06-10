@@ -1,10 +1,26 @@
 import type { Metadata } from "next"
+import { buildPageMetadata } from "@/lib/seo/metadata"
+import { siteConfig } from "@/lib/seo/site"
+import { faqJsonLd, JsonLd, softwareApplicationJsonLd } from "@/lib/seo/json-ld"
 
 export const metadata: Metadata = {
-  title: "Pulse | AI-Powered E-Commerce Intelligence",
-  description: "Unify sales, marketing, inventory, and AI intelligence in one command center. Built for e-commerce operators.",
+  ...buildPageMetadata({
+    title: siteConfig.title,
+    description: siteConfig.description,
+    path: siteConfig.links.home,
+  }),
+  // Keep the homepage title exact while re-providing the template for child pages
+  title: {
+    absolute: siteConfig.title,
+    template: `%s | ${siteConfig.name}`,
+  },
 }
 
 export default function HomeLayout({ children }: { children: React.ReactNode }) {
-  return <>{children}</>
+  return (
+    <>
+      <JsonLd data={[softwareApplicationJsonLd(), faqJsonLd()]} />
+      {children}
+    </>
+  )
 }
