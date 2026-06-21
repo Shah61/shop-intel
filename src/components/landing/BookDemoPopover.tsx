@@ -2,6 +2,8 @@
 
 import { useEffect, useRef, useState } from "react"
 
+import { trackWhatsAppConversion } from "@/lib/gtag"; 
+
 import {
   EMAIL,
   EMAIL_MAILTO,
@@ -138,15 +140,18 @@ export function BookDemoPopover({ compact = false }: { compact?: boolean }) {
 
           <div className="grid grid-cols-2 gap-2 p-3">
             <a
-              href={PHONE_WHATSAPP}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex items-center justify-center gap-2 rounded-xl bg-[#25D366]/15 px-3 py-2.5 text-[13px] font-semibold text-[#25D366] transition-colors hover:bg-[#25D366]/25"
-              onClick={() => setOpen(false)}
-            >
-              <WhatsAppIcon />
-              WhatsApp
-            </a>
+          href={PHONE_WHATSAPP}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="flex items-center justify-center gap-2 rounded-xl bg-[#25D366]/15 px-3 py-2.5 text-[13px] font-semibold text-[#25D366] transition-colors hover:bg-[#25D366]/25"
+          onClick={() => {
+            trackWhatsAppConversion()
+            setOpen(false)
+          }}
+        >
+          <WhatsAppIcon />
+          WhatsApp
+        </a>
             <a
               href={PHONE_TEL}
               className="flex items-center justify-center gap-2 rounded-xl border border-white/10 bg-white/[0.04] px-3 py-2.5 text-[13px] font-semibold text-white/90 transition-colors hover:bg-white/[0.08]"

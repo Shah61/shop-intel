@@ -3,6 +3,8 @@
 import { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react"
 import { createPortal } from "react-dom"
 
+import { trackWhatsAppConversion } from "@/lib/gtag"; 
+
 import {
   EMAIL,
   EMAIL_MAILTO,
@@ -192,13 +194,14 @@ export function ContactDialog({ mounted, shown, onClose, panelRef }: ContactDial
 
           <div className="mt-5 grid grid-cols-1 gap-3 sm:grid-cols-2">
             <a
-              href={PHONE_WHATSAPP}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex w-full items-center justify-center gap-2 rounded-full bg-[#25D366]/15 px-6 py-3.5 text-[15px] font-medium text-[#25D366] transition-colors duration-200 hover:bg-[#25D366]/25"
-            >
-              Chat on WhatsApp
-            </a>
+             href={PHONE_WHATSAPP}
+             target="_blank"
+             rel="noopener noreferrer"
+             onClick={() => trackWhatsAppConversion()}
+             className="flex w-full items-center justify-center gap-2 rounded-full bg-[#25D366]/15 px-6 py-3.5 text-[15px] font-medium text-[#25D366] transition-colors duration-200 hover:bg-[#25D366]/25"
+           >
+             Chat on WhatsApp
+           </a>
             <a
               href={EMAIL_MAILTO}
               className="flex w-full items-center justify-center gap-2 rounded-full border border-white/15 bg-white/[0.06] px-6 py-3.5 text-[15px] font-medium text-white/90 transition-colors duration-200 hover:bg-white/[0.12] hover:text-white"
