@@ -1,3 +1,5 @@
+"use client"
+
 import '@fontsource/press-start-2p'
 
 const pixelLogoGradient = `linear-gradient(
@@ -12,6 +14,10 @@ const pixelLogoGradient = `linear-gradient(
 )`
 
 export default function GetWorkDoneSection() {
+  const scrollToContact = () => {
+    document.getElementById("contact")?.scrollIntoView({ behavior: "smooth", block: "start" })
+  }
+
   return (
     <section className="flex min-h-dvh w-full flex-col items-center justify-center gap-14 bg-[#0d0d0e] px-5 py-16 sm:px-8 lg:gap-16 lg:px-10">
       <div
@@ -37,6 +43,7 @@ export default function GetWorkDoneSection() {
 
           <button
             type="button"
+            onClick={scrollToContact}
             className="rounded-full bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 px-8 py-3 font-medium text-white shadow-lg transition hover:opacity-90"
           >
             Try Pulse Now

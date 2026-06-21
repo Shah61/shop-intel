@@ -62,7 +62,7 @@ export default function ContactSection() {
             }}
             aria-hidden
           />
-          <span className="relative z-10">Get Started with Pulse</span>
+          <span className="relative z-10">Book a Free Demo</span>
           <svg
             className="relative z-10 transition-transform duration-300 group-hover:translate-x-1"
             width="16"

@@ -1,10 +1,17 @@
 "use client"
 
 import { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react"
+import { createPortal } from "react-dom"
 
-export const PHONE_DISPLAY = "+60 13-721 1535"
-export const PHONE_HREF = `tel:${PHONE_DISPLAY.replace(/[\s-]/g, "")}`
-export const EMAIL = "hello@pulsetech.my"
+import {
+  EMAIL,
+  EMAIL_MAILTO,
+  PHONE_DISPLAY,
+  PHONE_TEL,
+  PHONE_WHATSAPP,
+} from "./contact-info"
+
+export { EMAIL, PHONE_DISPLAY, PHONE_TEL as PHONE_HREF } from "./contact-info"
 
 const OPEN_MS = 480
 const CLOSE_MS = 260
@@ -86,20 +93,20 @@ type ContactDialogProps = {
 }
 
 export function ContactDialog({ mounted, shown, onClose, panelRef }: ContactDialogProps) {
-  if (!mounted) return null
+  if (!mounted || typeof document === "undefined") return null
 
-  return (
+  return createPortal(
     <div
-      className="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-6"
+      className="fixed inset-0 z-[9999] flex items-center justify-center p-4 sm:p-6"
       role="dialog"
       aria-modal="true"
-      aria-label="Get started with Pulse"
+      aria-label="Book a free demo"
     >
       <button
         type="button"
         aria-label="Close dialog"
         onClick={onClose}
-        className="absolute inset-0 cursor-default bg-black/60 backdrop-blur-md transition-opacity"
+        className="absolute inset-0 z-0 cursor-default bg-black/70 backdrop-blur-sm transition-opacity"
         style={{
           opacity: shown ? 1 : 0,
           transitionDuration: `${shown ? OPEN_MS : CLOSE_MS}ms`,
@@ -108,7 +115,7 @@ export function ContactDialog({ mounted, shown, onClose, panelRef }: ContactDial
 
       <div
         ref={panelRef}
-        className="relative z-10 w-full max-w-[520px] overflow-hidden rounded-3xl border border-white/[0.1] bg-[#100e1b] shadow-[0_30px_90px_rgba(0,0,0,0.6)]"
+        className="relative z-[1] w-full max-w-[520px] max-h-[min(90dvh,720px)] overflow-y-auto rounded-3xl border border-white/[0.12] bg-[#100e1b] opacity-100 shadow-[0_30px_90px_rgba(0,0,0,0.8)]"
         style={{
           opacity: shown ? 1 : 0,
           transform: shown ? "scale(1)" : "scale(0.12)",
@@ -155,7 +162,7 @@ export function ContactDialog({ mounted, shown, onClose, panelRef }: ContactDial
 
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
             <a
-              href={PHONE_HREF}
+              href={PHONE_TEL}
               className="group/card relative flex flex-col items-start gap-4 overflow-hidden rounded-2xl border border-white/[0.08] bg-white/[0.03] p-5 transition-all duration-300 hover:-translate-y-1 hover:border-white/20"
             >
               <div className="flex h-11 w-11 items-center justify-center rounded-xl border border-white/10 bg-white/[0.04]">
@@ -169,7 +176,7 @@ export function ContactDialog({ mounted, shown, onClose, panelRef }: ContactDial
             </a>
 
             <a
-              href={`mailto:${EMAIL}`}
+              href={EMAIL_MAILTO}
               className="group/card relative flex flex-col items-start gap-4 overflow-hidden rounded-2xl border border-white/[0.08] bg-white/[0.03] p-5 transition-all duration-300 hover:-translate-y-1 hover:border-white/20"
             >
               <div className="flex h-11 w-11 items-center justify-center rounded-xl border border-white/10 bg-white/[0.04]">
@@ -183,14 +190,25 @@ export function ContactDialog({ mounted, shown, onClose, panelRef }: ContactDial
             </a>
           </div>
 
-          <a
-            href={`mailto:${EMAIL}`}
-            className="mt-5 flex w-full items-center justify-center gap-2 rounded-full border border-white/15 bg-white/[0.06] px-6 py-3.5 text-[15px] font-medium text-white/90 transition-colors duration-200 hover:bg-white/[0.12] hover:text-white"
-          >
-            Send us a message
-          </a>
+          <div className="mt-5 grid grid-cols-1 gap-3 sm:grid-cols-2">
+            <a
+              href={PHONE_WHATSAPP}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex w-full items-center justify-center gap-2 rounded-full bg-[#25D366]/15 px-6 py-3.5 text-[15px] font-medium text-[#25D366] transition-colors duration-200 hover:bg-[#25D366]/25"
+            >
+              Chat on WhatsApp
+            </a>
+            <a
+              href={EMAIL_MAILTO}
+              className="flex w-full items-center justify-center gap-2 rounded-full border border-white/15 bg-white/[0.06] px-6 py-3.5 text-[15px] font-medium text-white/90 transition-colors duration-200 hover:bg-white/[0.12] hover:text-white"
+            >
+              Send us a message
+            </a>
+          </div>
         </div>
       </div>
-    </div>
+    </div>,
+    document.body,
   )
 }

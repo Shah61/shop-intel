@@ -483,7 +483,7 @@ export default function WhyChooseUsPage() {
                   "0 8px 32px rgba(124,58,237,0.3)"
               }}
             >
-              Get Started with Pulse
+              Book a Free Demo
             </button>
           </div>
         )}

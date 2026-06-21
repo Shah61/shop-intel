@@ -14,6 +14,7 @@ import RealTimeIntelligenceSection from './RealTimeIntelligenceSection'
 import GetWorkDoneSection from './GetWorkDoneSection'
 import ContactSection from './ContactSection'
 import { LandingNavBar } from './LandingNavBar'
+import { MobileHeroBookDemo } from './MobileHeroBookDemo'
 import Footer from '../../landing-pages/Footer'
 
 // ─────────────────────────────────────────────
@@ -528,7 +529,7 @@ export default function PulseLanding() {
           </div>
 
           <div
-            className="landing-bottom-fade mx-auto grid w-full max-w-[900px] grid-cols-2 gap-x-6 gap-y-3 px-6 pt-8 pb-6 sm:flex sm:justify-center sm:gap-10 sm:px-10 sm:pt-12 sm:pb-10 md:gap-16 md:pt-20 md:pb-[60px] lg:gap-20"
+            className="landing-bottom-fade mx-auto grid w-full max-w-[900px] grid-cols-2 gap-x-6 gap-y-3 px-6 pt-8 pb-3 sm:flex sm:justify-center sm:gap-10 sm:px-10 sm:pt-12 sm:pb-10 md:gap-16 md:pt-20 md:pb-[60px] lg:gap-20"
             style={{ animationDelay: `${BOTTOM_LABELS_DELAY_MS}ms` }}
           >
             {HERO_FEATURE_LABELS.map((label) => (
@@ -540,6 +541,8 @@ export default function PulseLanding() {
               </div>
             ))}
           </div>
+
+          <MobileHeroBookDemo />
         </div>
 
         <div

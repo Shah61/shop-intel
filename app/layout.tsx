@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { GeistSans } from "geist/font/sans";
 import { GeistMono } from "geist/font/mono";
+import Script from "next/script";
 import "./globals.css";
 import { ThemeProvider } from "@/src/core/theme/theme-provider";
 import TanstackQueryClientProvider from "@/src/core/lib/query-client-provider";
@@ -76,6 +77,20 @@ export default function RootLayout({
       <body
         className={`${GeistSans.variable} ${GeistMono.variable} antialiased`}
       >
+        {/* Google Ads (gtag.js) */}
+        <Script
+          src="https://www.googletagmanager.com/gtag/js?id=AW-18253883339"
+          strategy="afterInteractive"
+        />
+        <Script id="google-ads" strategy="afterInteractive">
+          {`
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+            gtag('config', 'AW-18253883339');
+          `}
+        </Script>
+
         <JsonLd data={[organizationJsonLd(), webSiteJsonLd()]} />
         <DummySessionProvider>
           <ThemeProvider>

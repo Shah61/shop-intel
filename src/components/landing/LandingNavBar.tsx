@@ -2,11 +2,12 @@
 import { useEffect, useState } from "react"
 import Link from "next/link"
 
+import { BookDemoPopover } from "./BookDemoPopover"
 import { NAV_LINKS } from "./constants/landing"
 
 const HEADER_LOGO_DELAY_MS = 100
 const HEADER_NAV_LINK_DELAYS_MS = [200, 260, 320] as const
-const DEMO_BUTTON_DELAY_MS = 400
+const SIGN_IN_BUTTON_DELAY_MS = 400
 const SCROLL_SHRINK_PX = 24
 
 const ROUTE_MAP: Record<string, string> = {
@@ -18,8 +19,6 @@ export function LandingNavBar() {
   const [hoveredLink, setHoveredLink] = useState<string | null>(null)
   const [compact, setCompact] = useState(false)
   const [menuOpen, setMenuOpen] = useState(false)
-  const [demoHovered, setDemoHovered] = useState(false)
-
   useEffect(() => {
     const onScroll = () => setCompact(window.scrollY > SCROLL_SHRINK_PX)
     onScroll()
@@ -61,26 +60,30 @@ export function LandingNavBar() {
 
       <nav className="fixed top-0 right-0 left-0 z-50 flex w-full justify-center px-3 pt-3 pb-2 md:px-4 md:pt-5 md:pb-3">
         <div
-          className={`flex w-full items-center rounded-2xl border border-white/10 bg-white/[0.04] px-5 py-2.5 backdrop-blur-2xl transition-[max-width,background-color] duration-300 ease-out md:gap-10 md:px-12 md:py-3.5 ${
+          className={`flex w-full items-center rounded-2xl border border-white/10 bg-white/[0.04] px-5 py-2.5 backdrop-blur-2xl transition-[max-width,background-color,padding,gap] duration-300 ease-out md:px-12 ${
             compact
-              ? "max-w-[min(42rem,calc(100%-1rem))] bg-white/[0.06] md:max-w-3xl"
-              : "max-w-[min(73.6rem,calc(100%-1rem))] md:max-w-[min(73.6rem,calc(100%-2rem))]"
+              ? "max-w-[min(52rem,calc(100%-1rem))] gap-4 bg-white/[0.06] py-2 md:max-w-4xl md:px-8"
+              : "max-w-[min(73.6rem,calc(100%-1rem))] gap-10 py-2.5 md:max-w-[min(73.6rem,calc(100%-2rem))] md:py-3.5"
           }`}
         >
           <Link
             href="/home"
-            className="landing-header-in shrink-0 bg-gradient-to-br from-violet-400 via-fuchsia-400 to-pink-300 bg-clip-text text-[20px] font-bold tracking-[5px] text-transparent uppercase sm:text-[22px] md:text-[28px] md:tracking-[6px]"
+            className={`landing-header-in shrink-0 bg-gradient-to-br from-violet-400 via-fuchsia-400 to-pink-300 bg-clip-text font-bold text-transparent uppercase transition-all duration-300 ${
+              compact
+                ? "text-[18px] tracking-[4px] sm:text-[20px] md:text-[22px] md:tracking-[5px]"
+                : "text-[20px] tracking-[5px] sm:text-[22px] md:text-[28px] md:tracking-[6px]"
+            }`}
             style={{ fontFamily: "'DM Sans', monospace", animationDelay: `${HEADER_LOGO_DELAY_MS}ms` }}
           >
             Pulse
           </Link>
 
           {/* Desktop nav links */}
-          <div className="ml-auto hidden items-center gap-8 md:flex">
+          <div className={`ml-auto hidden shrink-0 items-center md:flex ${compact ? "gap-5" : "gap-8"}`}>
             {NAV_LINKS.map((link, i) => {
-              const cls = `landing-header-in cursor-pointer text-[15px] font-normal transition-colors duration-200 ${
-                hoveredLink === link ? "text-white/95" : "text-white/70 hover:text-white/85"
-              }`
+              const cls = `landing-header-in cursor-pointer font-normal transition-colors duration-200 ${
+                compact ? "text-[14px]" : "text-[15px]"
+              } ${hoveredLink === link ? "text-white/95" : "text-white/70 hover:text-white/85"}`
               const style = { animationDelay: `${HEADER_NAV_LINK_DELAYS_MS[i] ?? 200}ms` }
               const href = ROUTE_MAP[link]
               if (href) {
@@ -97,50 +100,26 @@ export function LandingNavBar() {
               )
             })}
 
-            {/* Demo Button */}
-            <Link
-              href="/sign-in"
-              className={`relative overflow-hidden rounded-full px-6 py-2 text-[13px] font-semibold text-white transition-all duration-300 ${demoHovered ? "demo-btn-hover" : ""}`}
-              style={{
-                animationName: "landing-header-in",
-                animationDuration: "0.55s",
-                animationTimingFunction: "cubic-bezier(0.22, 1, 0.36, 1)",
-                animationFillMode: "forwards",
-                animationDelay: `${DEMO_BUTTON_DELAY_MS}ms`,
-                opacity: 0,
-                background: demoHovered
-                  ? "linear-gradient(135deg, #8b5cf6, #d946ef, #8b5cf6)"
-                  : "linear-gradient(135deg, #7c3aed, #c026d3)",
-                backgroundSize: demoHovered ? "200% auto" : "100% auto",
-                boxShadow: demoHovered
-  ? undefined
-  : "0 4px 16px rgba(124,58,237,0.3)",
-
-                transform: demoHovered ? "scale(1.05)" : "scale(1)",
-              }}
-              
-              
-              onMouseEnter={() => setDemoHovered(true)}
-              onMouseLeave={() => setDemoHovered(false)}
-            >
-              {/* Shine sweep */}
-              <span
-                className="pointer-events-none absolute inset-0 rounded-full"
+            <div className={`flex shrink-0 items-center ${compact ? "gap-3" : "gap-4"}`}>
+              <Link
+                href="/sign-in"
+                className={`landing-header-in shrink-0 rounded-full border border-white/20 bg-white/[0.06] font-medium text-white/85 transition-all duration-300 hover:border-white/30 hover:bg-white/[0.1] hover:text-white ${
+                  compact ? "px-3 py-1 text-[11px]" : "px-4 py-1.5 text-[12px]"
+                }`}
                 style={{
-                  background: "linear-gradient(105deg, transparent 35%, rgba(255,255,255,0.2) 45%, rgba(255,255,255,0.35) 50%, rgba(255,255,255,0.2) 55%, transparent 65%)",
-                  backgroundSize: "250% 100%",
-                  animation: demoHovered ? "demo-shimmer 1.2s ease-in-out infinite" : "none",
-                  opacity: demoHovered ? 1 : 0,
-                  transition: "opacity 0.3s ease",
+                  animationDelay: `${SIGN_IN_BUTTON_DELAY_MS}ms`,
                 }}
-              />
-              <span className="relative z-10 flex items-center gap-1.5">
-                Demo
-                <svg width="14" height="14" viewBox="0 0 14 14" fill="none" className="transition-transform duration-300" style={{ transform: demoHovered ? "translateX(2px)" : "translateX(0)" }}>
-                  <path d="M5.5 3L9.5 7L5.5 11" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-                </svg>
-              </span>
-            </Link>
+              >
+                <span className="flex items-center gap-1 whitespace-nowrap">
+                  Get Started
+                  <svg width="12" height="12" viewBox="0 0 14 14" fill="none">
+                    <path d="M5.5 3L9.5 7L5.5 11" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                  </svg>
+                </span>
+              </Link>
+
+              <BookDemoPopover compact={compact} />
+            </div>
           </div>
 
           {/* Hamburger */}
@@ -168,7 +147,6 @@ export function LandingNavBar() {
             return <a key={link} href="#" className={cls} style={style} onClick={() => setMenuOpen(false)}>{link}</a>
           })}
 
-          {/* Mobile Demo Button */}
           <Link
             href="/sign-in"
             className="mt-2 rounded-full px-8 py-3 text-[16px] font-semibold text-white"
@@ -182,7 +160,7 @@ export function LandingNavBar() {
             }}
             onClick={() => setMenuOpen(false)}
           >
-            Demo →
+            Get Started →
           </Link>
         </div>
       </div>
