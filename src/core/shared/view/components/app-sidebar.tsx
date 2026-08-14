@@ -455,6 +455,7 @@ export default function AppSidebar() {
             label: "Intelligence",
             icon: <Brain size={20} />,
             children: [
+                { id: "agent", label: "AI Agent", path: "/intelligence/agent" },
                 { id: "assistant", label: "Assistant", path: "/intelligence" },
                 { id: "trends", label: "Trends", path: "/intelligence?tab=trends" },
                 { id: "analysis", label: "Analysis", path: "/intelligence?tab=analysis" },

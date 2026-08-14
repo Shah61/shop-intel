@@ -1,6 +1,7 @@
 'use client';
 
 import AppSidebar from "@/src/core/shared/view/components/app-sidebar";
+import { AgentTourProvider } from "@/src/core/shared/view/components/agent-tour";
 import { useSession } from "@/src/core/lib/dummy-session-provider";
 import { useRouter, usePathname } from "next/navigation";
 import { useTheme } from "next-themes";
@@ -37,18 +38,20 @@ const ProtectedLayoutClient = ({ children }: { children: React.ReactNode }) => {
     }
 
     return (
-        <div
-            className="protected-layout-root flex h-screen overflow-hidden"
-            style={{ backgroundColor: isDark ? "#131820" : "#ffffff" }}
-        >
-            <AppSidebar />
-            <main
-                className={`main-content flex-1 overflow-y-auto overflow-x-hidden ${isIntelligence ? "main-content--intelligence p-0" : isSeasonal ? "p-0" : "p-4 sm:p-6 lg:p-8 pb-24 lg:pb-8"}`}
+        <AgentTourProvider>
+            <div
+                className="protected-layout-root flex h-screen overflow-hidden"
                 style={{ backgroundColor: isDark ? "#131820" : "#ffffff" }}
             >
-                {children}
-            </main>
-        </div>
+                <AppSidebar />
+                <main
+                    className={`main-content flex-1 overflow-y-auto overflow-x-hidden ${isIntelligence ? "main-content--intelligence p-0" : isSeasonal ? "p-0" : "p-4 sm:p-6 lg:p-8 pb-24 lg:pb-8"}`}
+                    style={{ backgroundColor: isDark ? "#131820" : "#ffffff" }}
+                >
+                    {children}
+                </main>
+            </div>
+        </AgentTourProvider>
     );
 };
 

@@ -673,7 +673,7 @@ const MarketingScreen = () => {
           {/* ═══ HEADER ═══ */}
           <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 16, flexWrap: 'wrap' }}>
             <div>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 5 }}>
+              <div data-tour="pm-heading" style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 5 }}>
                 <div style={{ width: 40, height: 40, borderRadius: 12, background: 'linear-gradient(135deg,var(--preset-primary),var(--preset-lighter))', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 4px 20px rgba(var(--preset-primary-rgb),.35)', flexShrink: 0 }}><DollarSign style={{ width: 18, height: 18, color: '#fff' }} /></div>
                 <div>
                   <h2 style={{ margin: 0, fontSize: 22, fontWeight: 800, letterSpacing: '-0.5px', lineHeight: 1.15 }}>Personal Marketing Hub</h2>
@@ -699,21 +699,21 @@ const MarketingScreen = () => {
                 </PopoverContent>
               </Popover>
               <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-                <DialogTrigger asChild><button style={{ display: 'inline-flex', alignItems: 'center', gap: 5, padding: '6px 14px', borderRadius: 9, background: 'linear-gradient(135deg,var(--preset-primary),var(--preset-lighter))', border: 'none', color: '#fff', fontSize: 11, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit', height: 33, boxShadow: '0 4px 14px rgba(var(--preset-primary-rgb),.28)' }}><Plus style={{ width: 12, height: 12 }} />New Campaign</button></DialogTrigger>
+                <DialogTrigger asChild><button data-tour="pm-new-campaign" style={{ display: 'inline-flex', alignItems: 'center', gap: 5, padding: '6px 14px', borderRadius: 9, background: 'linear-gradient(135deg,var(--preset-primary),var(--preset-lighter))', border: 'none', color: '#fff', fontSize: 11, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit', height: 33, boxShadow: '0 4px 14px rgba(var(--preset-primary-rgb),.28)' }}><Plus style={{ width: 12, height: 12 }} />New Campaign</button></DialogTrigger>
                 <DialogContent className="sm:max-w-3xl max-h-[90vh] overflow-y-auto bg-[#0f1724] border border-white/10">
                   <DialogHeader><DialogTitle className="text-lg font-bold text-white">Create New Campaign</DialogTitle><DialogDescription className="text-white/40">Add campaign details and marketing items</DialogDescription></DialogHeader>
                   <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
-                    <div><label style={{ fontSize: 11, fontWeight: 700, color: 'rgba(255,255,255,.5)' }}>Campaign Name</label><input value={campaignForm.name} onChange={e => setCampaignForm(p => ({ ...p, name: e.target.value }))} placeholder="e.g., Holiday Beauty Collection" style={{ width: '100%', height: 36, padding: '0 12px', borderRadius: 8, background: 'rgba(255,255,255,.05)', border: '1px solid rgba(255,255,255,.1)', color: 'rgba(255,255,255,.8)', fontSize: 12, outline: 'none', fontFamily: 'inherit', marginTop: 4 }} /></div>
+                    <div><label style={{ fontSize: 11, fontWeight: 700, color: 'rgba(255,255,255,.5)' }}>Campaign Name</label><input data-agent="mk-campaign-name" value={campaignForm.name} onChange={e => setCampaignForm(p => ({ ...p, name: e.target.value }))} placeholder="e.g., Holiday Beauty Collection" style={{ width: '100%', height: 36, padding: '0 12px', borderRadius: 8, background: 'rgba(255,255,255,.05)', border: '1px solid rgba(255,255,255,.1)', color: 'rgba(255,255,255,.8)', fontSize: 12, outline: 'none', fontFamily: 'inherit', marginTop: 4 }} /></div>
                     {campaignForm.items.map((item, idx) => (
                       <div key={idx} style={{ padding: 16, borderRadius: 12, border: '1px solid rgba(255,255,255,.07)', background: 'rgba(255,255,255,.02)' }}>
                         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}><span style={{ fontSize: 12, fontWeight: 800 }}>Item {idx + 1}</span>{campaignForm.items.length > 1 && <button onClick={() => removeFormItem(idx)} style={{ background: 'none', border: 'none', color: '#ef4444', cursor: 'pointer' }}><Trash2 style={{ width: 14, height: 14 }} /></button>}</div>
                         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
-                          <div><label style={{ fontSize: 10, color: 'rgba(255,255,255,.4)' }}>Name</label><input value={item.name} onChange={e => updateFormItem(idx, 'name', e.target.value)} style={{ width: '100%', height: 32, padding: '0 10px', borderRadius: 7, background: 'rgba(255,255,255,.05)', border: '1px solid rgba(255,255,255,.08)', color: 'rgba(255,255,255,.8)', fontSize: 11, outline: 'none', fontFamily: 'inherit', marginTop: 4 }} /></div>
-                          <div><label style={{ fontSize: 10, color: 'rgba(255,255,255,.4)' }}>Cost (RM)</label><input type="number" value={item.cost} onChange={e => updateFormItem(idx, 'cost', Number(e.target.value))} style={{ width: '100%', height: 32, padding: '0 10px', borderRadius: 7, background: 'rgba(255,255,255,.05)', border: '1px solid rgba(255,255,255,.08)', color: 'rgba(255,255,255,.8)', fontSize: 11, outline: 'none', fontFamily: 'inherit', marginTop: 4 }} /></div>
-                          <div><label style={{ fontSize: 10, color: 'rgba(255,255,255,.4)' }}>Duration (days)</label><input type="number" value={item.duration} onChange={e => updateFormItem(idx, 'duration', Number(e.target.value))} style={{ width: '100%', height: 32, padding: '0 10px', borderRadius: 7, background: 'rgba(255,255,255,.05)', border: '1px solid rgba(255,255,255,.08)', color: 'rgba(255,255,255,.8)', fontSize: 11, outline: 'none', fontFamily: 'inherit', marginTop: 4 }} /></div>
+                          <div><label style={{ fontSize: 10, color: 'rgba(255,255,255,.4)' }}>Name</label><input data-agent="mk-item-name" value={item.name} onChange={e => updateFormItem(idx, 'name', e.target.value)} style={{ width: '100%', height: 32, padding: '0 10px', borderRadius: 7, background: 'rgba(255,255,255,.05)', border: '1px solid rgba(255,255,255,.08)', color: 'rgba(255,255,255,.8)', fontSize: 11, outline: 'none', fontFamily: 'inherit', marginTop: 4 }} /></div>
+                          <div><label style={{ fontSize: 10, color: 'rgba(255,255,255,.4)' }}>Cost (RM)</label><input data-agent="mk-item-cost" type="number" value={item.cost} onChange={e => updateFormItem(idx, 'cost', Number(e.target.value))} style={{ width: '100%', height: 32, padding: '0 10px', borderRadius: 7, background: 'rgba(255,255,255,.05)', border: '1px solid rgba(255,255,255,.08)', color: 'rgba(255,255,255,.8)', fontSize: 11, outline: 'none', fontFamily: 'inherit', marginTop: 4 }} /></div>
+                          <div><label style={{ fontSize: 10, color: 'rgba(255,255,255,.4)' }}>Duration (days)</label><input data-agent="mk-item-duration" type="number" value={item.duration} onChange={e => updateFormItem(idx, 'duration', Number(e.target.value))} style={{ width: '100%', height: 32, padding: '0 10px', borderRadius: 7, background: 'rgba(255,255,255,.05)', border: '1px solid rgba(255,255,255,.08)', color: 'rgba(255,255,255,.8)', fontSize: 11, outline: 'none', fontFamily: 'inherit', marginTop: 4 }} /></div>
                           <div><label style={{ fontSize: 10, color: 'rgba(255,255,255,.4)' }}>Start Date</label><input type="date" value={item.start_date} onChange={e => updateFormItem(idx, 'start_date', e.target.value)} style={{ width: '100%', height: 32, padding: '0 10px', borderRadius: 7, background: 'rgba(255,255,255,.05)', border: '1px solid rgba(255,255,255,.08)', color: 'rgba(255,255,255,.8)', fontSize: 11, outline: 'none', fontFamily: 'inherit', marginTop: 4 }} /></div>
                         </div>
-                        <div style={{ marginTop: 8 }}><label style={{ fontSize: 10, color: 'rgba(255,255,255,.4)' }}>Description</label><textarea value={item.description} onChange={e => updateFormItem(idx, 'description', e.target.value)} rows={2} style={{ width: '100%', padding: '8px 10px', borderRadius: 7, background: 'rgba(255,255,255,.05)', border: '1px solid rgba(255,255,255,.08)', color: 'rgba(255,255,255,.8)', fontSize: 11, outline: 'none', fontFamily: 'inherit', marginTop: 4, resize: 'vertical' }} /></div>
+                        <div style={{ marginTop: 8 }}><label style={{ fontSize: 10, color: 'rgba(255,255,255,.4)' }}>Description</label><textarea data-agent="mk-item-desc" value={item.description} onChange={e => updateFormItem(idx, 'description', e.target.value)} rows={2} style={{ width: '100%', padding: '8px 10px', borderRadius: 7, background: 'rgba(255,255,255,.05)', border: '1px solid rgba(255,255,255,.08)', color: 'rgba(255,255,255,.8)', fontSize: 11, outline: 'none', fontFamily: 'inherit', marginTop: 4, resize: 'vertical' }} /></div>
                         <div style={{ marginTop: 10 }}>
                           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 6 }}><span style={{ fontSize: 10, fontWeight: 700, color: 'rgba(255,255,255,.4)' }}>Links</span><button type="button" onClick={() => addFormLink(idx)} style={{ display: 'inline-flex', alignItems: 'center', gap: 3, background: 'none', border: 'none', color: 'var(--preset-primary)', fontSize: 10, fontWeight: 700, cursor: 'pointer' }}><Plus style={{ width: 10, height: 10 }} />Add</button></div>
                           {item.links.map((link, li) => (
@@ -748,7 +748,7 @@ const MarketingScreen = () => {
 
           {/* ═══ KPI STRIP (visible in overview) ═══ */}
           {!isLoading && mainTab === 'overview' && (
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(140px,1fr))', gap: 10 }}>
+            <div data-tour="pm-summary-cards" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(140px,1fr))', gap: 10 }}>
               {[
                 { label: 'Total Spend', value: analytics.totalCost, fmtFn: fmtRM, icon: <DollarSign style={{ width: 14, height: 14 }} />, accent: 'var(--preset-primary)', delay: '0s' },
                 { label: 'Campaign Items', value: analytics.totalItems, fmtFn: (v: number) => v.toString(), icon: <Package style={{ width: 14, height: 14 }} />, accent: '#6366f1', delay: '.06s' },
@@ -783,9 +783,13 @@ const MarketingScreen = () => {
               {mainTab === 'overview' && (
                 <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
                   <div style={{ display: 'grid', gridTemplateColumns: '1.6fr 1fr', gap: 12, minHeight: 280 }}>
-                    <SpendChart startDate={dateRange.startDate} endDate={dateRange.endDate} platform={selectedPlatform !== 'all' ? selectedPlatform : undefined} />
+                    <div data-tour="pm-spend-chart" style={{ display: 'flex', flexDirection: 'column', minWidth: 0 }}>
+                      <SpendChart startDate={dateRange.startDate} endDate={dateRange.endDate} platform={selectedPlatform !== 'all' ? selectedPlatform : undefined} />
+                    </div>
                     <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
-                      <SpendVelocity items={marketingItems} />
+                      <div data-tour="pm-spend-velocity">
+                        <SpendVelocity items={marketingItems} />
+                      </div>
                       <PlatformBreakdown items={marketingItems} />
                     </div>
                   </div>
